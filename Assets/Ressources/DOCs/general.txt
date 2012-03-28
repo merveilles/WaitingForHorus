@@ -1,0 +1,99 @@
+================
+ Gameplay
+================
+
+ + Controles
+================
+
+	WASD, spacebar, Mouse[LC,RC]
+	
+	W - forward en direction de la camera
+	A - straif left
+	D - straif right
+	S - backward
+	
+	Spacebar - jump
+	
+	LC - NS
+	RC - Zoom
+	LC[Zoom] - HS
+	
+	Mouse - Look around, anchor sur le mecha
+
+ + UI
+================
+
+	Les joueurs on un nom au dessu de leur perso si visible par la camera
+	
+	Le health est affiche par l'entremise des cells (orange) sur le mecha
+	
+	Le rank est affiche par la banniere du mecha
+	
+	Une liste des joueurs, par rank, est affichee en transparence
+
+ + Animations
+================	
+
+	Jump
+	Run
+	Idle
+	Straif left
+	Straif right
+	
+ + Level
+================	
+
+	Un seul level
+	
+	Les limites du level augmentent par le nombre de joueurs dans la game.
+	
+	+-----------MAX------------+
+	|                          |
+	|   +-------MED--------+   |
+	|   |                  |   |
+	|   |  +----MIN-----+  |   |
+	|   |  |            |  |   |
+	|                          |
+	+--------------------------+
+
+ + Gunnery
+================
+
+	Le mecha a un long gun qui permet 2 types de tirs.
+	
+	I.  Normal Shot [left click] est un machine gun.
+	II. Heavy Shot [right click, left click] est un sniper.
+	
+	* Right click rapetisse la camera angle et zoom in
+	* appuyer sur left click en zoom, shoot un heavy shot
+	
+	Les balles sont illimitees
+	
+	Le HS laisse une trainee blanche de sa trajectoire
+	Le recoil du HS dans les airs permet de sauter plus haut
+	
+ + Health
+================
+
+	Le mecha a 4 "cells" de vie, 4 cells de shield
+	un normal shot(NS) enleve 1 cell
+	Un heavy shot(HS) enleve 7 cells
+	
+	Le shielf remonte de lui meme
+	Un fois le shield down, le radar n'apparait plus
+	
+ + Radar
+================
+
+	Le radar est affiche sur le shield qui englobe le joueur
+	le radar affiche un point sur le shield en direction d'un joueur
+	le radar affiche tout les joueurs visible sur 360'
+	
+	Si le shield est down, le radar n'affiche pas
+	
+ + Rank
+================
+
+	Le rank est le ratio par kill / time if(kill>=5)
+	
+	Depandament du rank, la banniere du joueur change
