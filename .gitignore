@@ -2,3 +2,12 @@
 /Temp
 *~
 *.sln
+
+/_ReSharper.waiting-for-horus-csharp
+/obj
+/Assembly-CSharp.csproj
+/Assembly-CSharp-vs.csproj
+/Assembly-UnityScript.unityproj
+/Assembly-UnityScript-vs.unityproj
+/waiting-for-horus-csharp.5.1.ReSharper.user
+/waiting-for-horus-csharp.suo
