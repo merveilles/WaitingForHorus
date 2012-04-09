@@ -3,6 +3,15 @@ using System.Collections;
 
 public class BulletScript : MonoBehaviour 
 {
+    public static int BulletCollisionLayers
+    {
+        get
+        {
+            return (1<<LayerMask.NameToLayer("Default")) |
+                   (1<<LayerMask.NameToLayer("Player Hit"));
+        }
+    }
+
     public GameObject explosionPrefab;
     public GameObject explosionHitPrefab;
     public GameObject bulletCasingPrefab;
@@ -30,7 +39,7 @@ public class BulletScript : MonoBehaviour
 
         RaycastHit hitInfo;
         Physics.Raycast(transform.position, transform.forward, out hitInfo,
-                distance);
+                distance, BulletCollisionLayers);
 
         if(hitInfo.transform)
         {
@@ -41,6 +50,12 @@ public class BulletScript : MonoBehaviour
                      hitInfo.transform.networkView.owner != Network.player))
                 {
                     HealthScript health = hitInfo.transform.GetComponent<HealthScript>();
+                    // err, kinda lame, this is so that the collider can be
+                    // directly inside the damaged object rather than on it,
+                    // useful when the damage collider is different from the
+                    // real collider
+                    if(health == null && hitInfo.transform.parent != null)
+                       health = hitInfo.transform.parent.GetComponent<HealthScript>();
 
                     string effect = health == null ? "Explosion" : "ExplosionHit";
                     EffectsScript.DoEffect(
@@ -50,7 +65,8 @@ public class BulletScript : MonoBehaviour
 
                     if(health != null)
                     {
-                        health.networkView.RPC("DoDamage", RPCMode.Others, damage, Network.player);
+                        health.networkView.RPC(
+                            "DoDamage", RPCMode.Others, damage, Network.player);
                     }
 
                     Destroy(gameObject);

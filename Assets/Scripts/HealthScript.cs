@@ -29,6 +29,11 @@ public class HealthScript : MonoBehaviour
                 timeUntilShieldRegen += shieldRegenTime;
                 Shield += 1;
             }
+
+            //if(Input.GetKeyDown("z"))
+            //{
+            //    DoDamage(1, Network.player);
+            //}
         }
     }
 

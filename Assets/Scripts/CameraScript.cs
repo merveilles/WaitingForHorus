@@ -59,7 +59,8 @@ public class CameraScript : MonoBehaviour
     public Vector3 GetTargetPosition()
     {
         RaycastHit hitInfo;
-        if(Physics.Raycast(transform.position, transform.forward, out hitInfo))
+        if(Physics.Raycast(transform.position, transform.forward, out hitInfo,
+                           Mathf.Infinity, 1<<LayerMask.NameToLayer("Default")))
             return hitInfo.point;
         else
             return transform.position + transform.forward * 1000;

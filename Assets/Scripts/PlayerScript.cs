@@ -137,6 +137,9 @@ public class PlayerScript : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(!controller.enabled)
+            return;
+
         // jump and dash
         dashCooldown -= Time.deltaTime;
         if(networkView.isMine && Time.time - lastJumpInputTime <= JumpInputQueueTime)
