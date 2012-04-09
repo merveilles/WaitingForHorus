@@ -7,6 +7,7 @@ public class HealthScript : MonoBehaviour
     public int maxHealth = 4;
     public float shieldRegenTime = 5;
     public GameObject deathPrefab;
+    bool dead;
 
     public int Shield { get; private set; }
     public int Health { get; private set; }
@@ -40,7 +41,7 @@ public class HealthScript : MonoBehaviour
     [RPC]
     void DoDamage(int damage, NetworkPlayer shootingPlayer)
     {
-        if (networkView.isMine)
+        if (networkView.isMine && !dead)
         {
             Shield -= damage;
             timeUntilShieldRegen = shieldRegenTime;
@@ -55,6 +56,7 @@ public class HealthScript : MonoBehaviour
                 Network.Instantiate(deathPrefab, transform.position, transform.rotation, 0);
                 networkView.RPC("ScheduleRespawn", RPCMode.All);
                 Health = 0;
+                dead = true;
             }
         }
     }
@@ -82,5 +84,6 @@ public class HealthScript : MonoBehaviour
         transform.position = Vector3.up * 10;
         Shield = maxShield;
         Health = maxHealth;
+        dead = false;
     }
 }

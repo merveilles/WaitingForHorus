@@ -31,6 +31,7 @@ public class PlayerScript : MonoBehaviour
     float dashCooldown = 0;
     Animation animation;
     bool isRunning;
+    NetworkPlayer? owner;
 
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
@@ -48,12 +49,14 @@ public class PlayerScript : MonoBehaviour
     {
         if (!networkView.isMine)
             iPosition = new VectorInterpolator();
+        else
+            owner = networkView.owner;
 
         TaskManager.Instance.WaitUntil(_ => 
             PlayerRegistry.Instance != null && 
-            PlayerRegistry.For.ContainsKey(networkView.owner)).Then(() =>
+            owner.HasValue && PlayerRegistry.For.ContainsKey(owner.Value)).Then(() =>
             {
-                GetComponentInChildren<TextMesh>().text = PlayerRegistry.For[networkView.owner].Username;
+                GetComponentInChildren<TextMesh>().text = PlayerRegistry.For[owner.Value].Username;
             });
     }
 
@@ -200,8 +203,11 @@ public class PlayerScript : MonoBehaviour
 
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
-        Vector3 pPosition = stream.isWriting ?
-            transform.position : Vector3.zero;
+        var pOwner = owner.HasValue ? owner.Value : default(NetworkPlayer);
+        stream.Serialize(ref pOwner);
+        if (stream.isReading) owner = pOwner;
+
+        Vector3 pPosition = stream.isWriting ? transform.position : Vector3.zero;
 
         stream.Serialize(ref pPosition);
 
