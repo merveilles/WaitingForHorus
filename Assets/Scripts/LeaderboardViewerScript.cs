@@ -86,6 +86,9 @@ class LeaderboardViewerScript : MonoBehaviour
     {
         foreach (var log in Leaderboard.Entries)
         {
+            if (!PlayerRegistry.For.ContainsKey(Network.player))
+                continue;
+
             GUIStyle rowStyle = RowStyle;
             if (log.NetworkPlayer == Network.player)
                 rowStyle = MyRowStyle;
