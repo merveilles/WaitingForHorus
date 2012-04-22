@@ -26,11 +26,13 @@ public class PlayerScript : MonoBehaviour
     Vector3 fallingVelocity;
 	bool invertMouse = true;
     Vector3 inputVelocity;
+    Vector3 lastInputVelocity;
     Vector3 lookRotationEuler;
     float lastJumpInputTime = -1;
     float dashCooldown = 0;
     Animation animation;
     bool isRunning;
+    NetworkPlayer? owner;
 
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
@@ -47,14 +49,18 @@ public class PlayerScript : MonoBehaviour
     void OnNetworkInstantiate(NetworkMessageInfo info)
     {
         if (!networkView.isMine)
+        {
             iPosition = new VectorInterpolator();
-
-        TaskManager.Instance.WaitUntil(_ => 
-            PlayerRegistry.Instance != null && 
-            PlayerRegistry.For.ContainsKey(networkView.owner)).Then(() =>
-            {
-                GetComponentInChildren<TextMesh>().text = PlayerRegistry.For[networkView.owner].Username;
-            });
+            TaskManager.Instance.WaitUntil(_ => 
+                PlayerRegistry.Instance != null && 
+                owner.HasValue && PlayerRegistry.For.ContainsKey(owner.Value)).Then(() =>
+                {
+                    GetComponentInChildren<TextMesh>().text =
+                        PlayerRegistry.For[owner.Value].Username;
+                });
+        }
+        else
+            owner = networkView.owner;
     }
 
     void OnGUI()
@@ -140,6 +146,9 @@ public class PlayerScript : MonoBehaviour
         if(!controller.enabled)
             return;
 
+        Vector3 smoothedInputVelocity = (lastInputVelocity + inputVelocity)/2;
+        lastInputVelocity = inputVelocity;
+
         // jump and dash
         dashCooldown -= Time.deltaTime;
         if(networkView.isMine && Time.time - lastJumpInputTime <= JumpInputQueueTime)
@@ -150,12 +159,12 @@ public class PlayerScript : MonoBehaviour
                 fallingVelocity.y = jumpVelocity;
                 animation.Play("Jump");
             }
-            else if(inputVelocity != Vector3.zero && dashCooldown <= 0)
+            else if(smoothedInputVelocity != Vector3.zero && dashCooldown <= 0)
             {
                 lastJumpInputTime = -1;
                 dashCooldown = timeBetweenDashes;
                 fallingVelocity +=
-                    inputVelocity.normalized * dashForwardVelocity +
+                    smoothedInputVelocity.normalized * dashForwardVelocity +
                     Vector3.up * dashUpwardVelocity;
             }
         }
@@ -177,7 +186,7 @@ public class PlayerScript : MonoBehaviour
         // Update running animation
         if (controller.isGrounded)
         {
-            if (!MathHelper.Approximately(inputVelocity, Vector3.zero))
+            if (!MathHelper.Approximately(smoothedInputVelocity, Vector3.zero))
             {
                 if (!isRunning)
                 {
@@ -195,13 +204,16 @@ public class PlayerScript : MonoBehaviour
             isRunning = false;
 
         // move!
-        controller.Move((fallingVelocity + inputVelocity) * Time.deltaTime);
+        controller.Move((fallingVelocity + smoothedInputVelocity) * Time.deltaTime);
     }
 
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
-        Vector3 pPosition = stream.isWriting ?
-            transform.position : Vector3.zero;
+        var pOwner = owner.HasValue ? owner.Value : default(NetworkPlayer);
+        stream.Serialize(ref pOwner);
+        if (stream.isReading) owner = pOwner;
+
+        Vector3 pPosition = stream.isWriting ? transform.position : Vector3.zero;
 
         stream.Serialize(ref pPosition);
 

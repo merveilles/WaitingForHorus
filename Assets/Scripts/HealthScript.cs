@@ -7,6 +7,7 @@ public class HealthScript : MonoBehaviour
     public int maxHealth = 4;
     public float shieldRegenTime = 5;
     public GameObject deathPrefab;
+    bool dead;
 
     public int Shield { get; private set; }
     public int Health { get; private set; }
@@ -23,6 +24,11 @@ public class HealthScript : MonoBehaviour
     {
         if(networkView.isMine)
         {
+            if(transform.position.y < -300)
+            {
+                DoDamage(1, Network.player);
+            }
+
             timeUntilShieldRegen -= Time.deltaTime;
             if(timeUntilShieldRegen < 0 && Shield < maxShield)
             {
@@ -40,7 +46,7 @@ public class HealthScript : MonoBehaviour
     [RPC]
     void DoDamage(int damage, NetworkPlayer shootingPlayer)
     {
-        if (networkView.isMine)
+        if (networkView.isMine && !dead)
         {
             Shield -= damage;
             timeUntilShieldRegen = shieldRegenTime;
@@ -52,9 +58,10 @@ public class HealthScript : MonoBehaviour
             if(Health <= 0)
             {
                 NetworkLeaderboard.Instance.networkView.RPC("RegisterKill", RPCMode.All, shootingPlayer, Network.player);
-                Network.Instantiate(deathPrefab, transform.position, transform.rotation, 0);
-                networkView.RPC("ScheduleRespawn", RPCMode.All);
+                networkView.RPC("ScheduleRespawn", RPCMode.All,
+                        RespawnZone.GetRespawnPoint());
                 Health = 0;
+                dead = true;
             }
         }
     }
@@ -62,25 +69,28 @@ public class HealthScript : MonoBehaviour
     public float timeUntilRespawn = 5;
 
     [RPC]
-    void ScheduleRespawn()
+    void ScheduleRespawn(Vector3 position)
     {
         Hide();
-        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(Respawn);
+        Instantiate(deathPrefab, transform.position, transform.rotation);
+        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(delegate {Respawn(position);});
     }
+
     void Hide()
     {
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = false;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = false;
     }
-    void Respawn()
+    void Respawn(Vector3 position)
     {
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
 
-        transform.position = Vector3.up * 10;
+        transform.position = position;
         Shield = maxShield;
         Health = maxHealth;
+        dead = false;
     }
 }

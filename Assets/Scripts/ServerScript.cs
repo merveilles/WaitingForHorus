@@ -96,7 +96,7 @@ public class ServerScript : MonoBehaviour
                     {
                         if (GUILayout.Button("CREATE"))
                         {
-                            var result = Network.InitializeServer(32, Port, false);
+                            var result = Network.InitializeServer(8, Port, false);
                             if (result == NetworkConnectionError.NoError)
                             {
                                 //serverIp = ThreadPool.Instance.Evaluate<string>(GetIP);
@@ -138,7 +138,11 @@ public class ServerScript : MonoBehaviour
 
     void OnFailedToConnect(NetworkConnectionError error)
     {
-        lastStatus = "Failed.";
+        if (error == NetworkConnectionError.TooManyConnectedPlayers)
+            lastStatus = "Server full.";
+        else
+            lastStatus = "Failed.";
+
         connecting = false;
     }
 }

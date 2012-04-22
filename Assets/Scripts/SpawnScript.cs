@@ -28,7 +28,8 @@ public class SpawnScript : MonoBehaviour
 	public void Spawn()
 	{
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));
-	    Network.Instantiate(PlayerTemplate, Vector3.up * 10, Quaternion.identity, 0);
+	    Network.Instantiate(PlayerTemplate,
+            RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);
     }
 	
 	void OnPlayerDisconnected(NetworkPlayer player) 
