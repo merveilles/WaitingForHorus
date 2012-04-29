@@ -1,7 +1,8 @@
 fileFormatVersion: 2
 guid: 7ce58379f4d4945989202b56cc54d891
 ModelImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    4300000: Cube-Cube.1
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -35,4 +36,20 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  textMetaNamesToFileIDs: {}
+  textMetaNamesToFileIDs:
+    //RootNode:
+      data:
+        first: 1
+        second: a0860100
+      data:
+        first: 4
+        second: 801a0600
+      data:
+        first: 23
+        second: 60182300
+      data:
+        first: 33
+        second: a05a3200
+      data:
+        first: 111
+        second: 605fa900

@@ -3,6 +3,7 @@ guid: 226231e76c92c4fd5b637dec74197895
 ModelImporter:
   fileIDToRecycleName:
     4300000: Disc
+    4300002: Disc_3
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -32,9 +33,9 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
   tangentSpace:
-    normalSmoothAngle: 60
+    normalSmoothAngle: 0
     splitTangentsAcrossUV: 1
-    normalImportMode: 0
+    normalImportMode: 1
     tangentImportMode: 1
   textMetaNamesToFileIDs:
     //RootNode:
@@ -47,7 +48,7 @@ ModelImporter:
       data:
         first: 111
         second: 605fa900
-    Disc:
+    Disc_3:
       data:
         first: 1
         second: a2860100
