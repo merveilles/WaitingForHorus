@@ -30,7 +30,7 @@ public class PlayerScript : MonoBehaviour
     Vector3 lookRotationEuler;
     float lastJumpInputTime = -1;
     float dashCooldown = 0;
-    Animation animation;
+    Animation characterAnimation;
     bool isRunning;
     NetworkPlayer? owner;
 
@@ -40,10 +40,10 @@ public class PlayerScript : MonoBehaviour
 	void Awake() 
 	{
         controller = GetComponent<CharacterController>();
-        animation = GetComponentInChildren<Animation>();
-        animation.AddClip(animation.GetClip("Run"), "Run", 0, 20, true);
-        //animation.AddClip(animation.GetClip("Idle"), "Idle", 0, 20, true);
-        animation.Play("Idle");
+        characterAnimation = transform.Find("Graphics").animation;
+        characterAnimation.AddClip(characterAnimation.GetClip("Run"), "Run", 0, 20, true);
+        //characterAnimation.AddClip(characterAnimation.GetClip("Idle"), "Idle", 0, 20, true);
+        characterAnimation.Play("Idle");
 	}
 
     void OnNetworkInstantiate(NetworkMessageInfo info)
@@ -157,7 +157,7 @@ public class PlayerScript : MonoBehaviour
             {
                 lastJumpInputTime = -1;
                 fallingVelocity.y = jumpVelocity;
-                animation.Play("Jump");
+                characterAnimation.Play("Jump");
             }
             else if(smoothedInputVelocity != Vector3.zero && dashCooldown <= 0)
             {
@@ -190,13 +190,13 @@ public class PlayerScript : MonoBehaviour
             {
                 if (!isRunning)
                 {
-                    animation.CrossFade("Run");
+                    characterAnimation.CrossFade("Run");
                     isRunning = true;
                 }
             }
-            else if (isRunning || !animation.isPlaying)
+            else if (isRunning || !characterAnimation.isPlaying)
             {
-                animation.Play("Idle");
+                characterAnimation.Play("Idle");
                 isRunning = false;
             }
         }
