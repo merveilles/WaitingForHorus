@@ -66,8 +66,12 @@ class NetworkLeaderboard : MonoBehaviour
     {
         if (!Network.isServer) return;
 
-        var entry = Entries.FirstOrDefault(x => x.NetworkPlayer == shooter);
-        if (entry != null) entry.Kills++;
+        LeaderboardEntry entry;
+        if(shooter != victim)
+        {
+            entry = Entries.FirstOrDefault(x => x.NetworkPlayer == shooter);
+            if (entry != null) entry.Kills++;
+        }
 
         entry = Entries.FirstOrDefault(x => x.NetworkPlayer == victim);
         if (entry != null) entry.Deaths++;
