@@ -5,8 +5,8 @@ public class PlayerShootingScript : MonoBehaviour
 	const int BurstCount = 8;
 	const float ShotCooldown = 0.045f;
 	const float ReloadTime = 0.6f;
-    const float BurstSpread = 3;
-    const float ShotgunSpread = 20;
+    const float BurstSpread = 1.5f;
+    const float ShotgunSpread = 10;
 
 	float cooldownLeft = 0;
     int bulletsLeft = 0;
