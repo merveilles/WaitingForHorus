@@ -24,7 +24,7 @@ public class HealthScript : MonoBehaviour
     {
         if(networkView.isMine)
         {
-            if(transform.position.y < -300)
+            if(transform.position.y < -104)
             {
                 DoDamage(1, Network.player);
             }
