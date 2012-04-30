@@ -71,6 +71,9 @@ class NetworkLeaderboard : MonoBehaviour
 
         entry = Entries.FirstOrDefault(x => x.NetworkPlayer == victim);
         if (entry != null) entry.Deaths++;
+
+        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter,
+            "* KILLED " + PlayerRegistry.For[victim].Username.ToUpper() + "*");
     }
 
     void OnPlayerConnected(NetworkPlayer player)

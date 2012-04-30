@@ -12,6 +12,19 @@ public class ChatScript : MonoBehaviour
 	string lastMessage = "";
 	bool showChat, ignoreT;
 
+    public static ChatScript Instance { get; private set; }
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        if(Instance == this)
+            Instance = null;
+    }
+
     void Start()
     {
         ChatStyle = new GUIStyle { normal = { textColor = Color.white }, padding = { top = 9, left = 5, right = 10 }, fixedWidth = 209, fixedHeight = 32 };
@@ -123,7 +136,7 @@ public class ChatScript : MonoBehaviour
 
             GUILayout.EndHorizontal();
         }
-        catch (ArgumentException e)
+        catch (ArgumentException)
         {
             // Wtf...
         }
