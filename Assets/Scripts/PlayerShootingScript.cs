@@ -8,8 +8,10 @@ public class PlayerShootingScript : MonoBehaviour
     const float BurstSpread = 1.5f;
     const float ShotgunSpread = 10;
 
+    public AudioSource reloadSound;
+
 	float cooldownLeft = 0;
-    int bulletsLeft = 0;
+    int bulletsLeft = BurstCount;
 
     public BulletScript bulletPrefab;
     public Transform gun;
@@ -38,15 +40,19 @@ public class PlayerShootingScript : MonoBehaviour
                 {
                     bulletsLeft = BurstCount;
                     cooldownLeft += ReloadTime;
+                    reloadSound.Play();
                 }
-                else if (Input.GetButton("Alternate Fire")) // shotgun shot
+                else
                 {
-                    while(bulletsLeft > 0)
-                        DoShot(ShotgunSpread);
-                }
-                else if (Input.GetButton("Fire")) // burst fire
-                {
-                    DoShot(BurstSpread);
+                    if (Input.GetButton("Alternate Fire")) // shotgun shot
+                    {
+                        while(bulletsLeft > 0)
+                            DoShot(ShotgunSpread);
+                    }
+                    else if (Input.GetButton("Fire")) // burst fire
+                    {
+                        DoShot(BurstSpread);
+                    }
                 }
             }
         }
