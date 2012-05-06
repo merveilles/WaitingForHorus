@@ -20,8 +20,8 @@ public class DayNightCycleScript : MonoBehaviour {
 	}
 	
 	void Update () {
-		
-		float lerp = Mathf.PingPong(Time.time, duration) / duration;
+	
+		float lerp = Mathf.PingPong((float) Network.time, duration) / duration;
 		
 		// Fix Fog
 		RenderSettings.fogColor = Color.Lerp(daylightFogColor, nightlightFogColor, lerp);

@@ -3,13 +3,6 @@ using UnityEngine;
 
 class PlayerRegistry : MonoBehaviour
 {
-    public Color[] ColorPool = new[]
-    {
-        new Color(0, 193 / 255f, 1.0f), 
-        new Color(0, 1.0f, 204 / 255f),
-        new Color(1.0f, 193 / 255f, 151 / 255f),
-    };
-
     static PlayerRegistry instance;
     public static PlayerRegistry Instance
     {
@@ -31,14 +24,14 @@ class PlayerRegistry : MonoBehaviour
     [RPC]
     public void RegisterPlayer(NetworkPlayer player, string username)
     {
-        Debug.Log(player + " = " + username);
-        var color = ColorPool[For.Count % ColorPool.Length];
+        //Debug.Log(player + " = " + username);
+        var color = Color.white;
         For.Add(player, new PlayerInfo { Username = username, Color = color });
     }
     [RPC]
     public void RegisterPlayerFull(NetworkPlayer player, string username, float r, float g, float b)
     {
-        Debug.Log(player + " = " + username);
+        //Debug.Log(player + " = " + username);
         For.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b)});
     }
 

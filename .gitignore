@@ -16,3 +16,5 @@
 /bin
 /Assembly-CSharp.pidb
 /Assembly-UnityScript.pidb
+
+/.DS_Store

@@ -7,6 +7,7 @@ public class ServerScript : MonoBehaviour
 {	
 	public string IP = "127.0.0.1";
 	public const int Port = 10000;
+    const int NumPlayers = 12;
     public NetworkPeerType PeerType;
 
     public GUISkin Skin;
@@ -96,7 +97,7 @@ public class ServerScript : MonoBehaviour
                     {
                         if (GUILayout.Button("CREATE"))
                         {
-                            var result = Network.InitializeServer(8, Port, false);
+                            var result = Network.InitializeServer(NumPlayers, Port, false);
                             if (result == NetworkConnectionError.NoError)
                             {
                                 //serverIp = ThreadPool.Instance.Evaluate<string>(GetIP);
