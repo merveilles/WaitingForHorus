@@ -12,6 +12,7 @@ public class EffectsScript : MonoBehaviour
 
     public GameObject explosionPrefab;
     public GameObject explosionHitPrefab;
+    public GameObject areaExplosionPrefab;
 
     void Awake()
     {
@@ -28,5 +29,17 @@ public class EffectsScript : MonoBehaviour
     void ExplosionHit(Vector3 position, Quaternion rotation)
     {
         Instantiate(explosionHitPrefab, position, rotation);
+    }
+
+    [RPC]
+    void ExplosionArea(Vector3 position, Quaternion rotation)
+    {
+        Instantiate(areaExplosionPrefab, position, rotation);
+    }
+
+    [RPC]
+    void ExplosionHitArea(Vector3 position, Quaternion rotation)
+    {
+        ExplosionArea(position, rotation);
     }
 }

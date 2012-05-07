@@ -12,17 +12,17 @@ public class BulletScript : MonoBehaviour
         }
     }
 
-    public GameObject explosionPrefab;
-    public GameObject explosionHitPrefab;
     public GameObject bulletCasingPrefab;
     public float speed = 900;
 	public float lifetime = 2;
     public int damage = 1;
+    public float areaOfEffect = 0;
 
     public NetworkPlayer Player { get; set; }
 
     void Awake()
     {
+        print(name);
         GameObject casing = (GameObject)
             Instantiate(bulletCasingPrefab, transform.position, transform.rotation);
         casing.rigidbody.AddRelativeForce(
@@ -31,6 +31,25 @@ public class BulletScript : MonoBehaviour
         casing.rigidbody.AddTorque(
             5 * new Vector3(-0.5f-Random.value, -Random.value*0.1f, -0.5f-Random.value),
             ForceMode.Impulse);
+    }
+
+    bool DoDamageTo(Transform t)
+    {
+        HealthScript health = t.GetComponent<HealthScript>();
+        // err, kinda lame, this is so that the collider can be
+        // directly inside the damaged object rather than on it,
+        // useful when the damage collider is different from the
+        // real collider
+        if(health == null && t.parent != null)
+           health = t.parent.GetComponent<HealthScript>();
+
+        if(health != null)
+        {
+            health.networkView.RPC(
+                "DoDamage", RPCMode.Others, damage, Network.player);
+            return true;
+        }
+        return false;
     }
 
 	void Update()
@@ -49,25 +68,31 @@ public class BulletScript : MonoBehaviour
                     (hitInfo.transform.networkView == null ||
                      hitInfo.transform.networkView.owner != Network.player))
                 {
-                    HealthScript health = hitInfo.transform.GetComponent<HealthScript>();
-                    // err, kinda lame, this is so that the collider can be
-                    // directly inside the damaged object rather than on it,
-                    // useful when the damage collider is different from the
-                    // real collider
-                    if(health == null && hitInfo.transform.parent != null)
-                       health = hitInfo.transform.parent.GetComponent<HealthScript>();
+                    bool playerHit = false;
+                    if(areaOfEffect > 0)
+                    {
+                        Collider[] colliders = Physics.OverlapSphere(
+                            hitInfo.point, areaOfEffect,
+                            (1<<LayerMask.NameToLayer("Player Hit")));
+                        foreach(Collider c in colliders)
+                        {
+                            playerHit = playerHit || DoDamageTo(c.transform);
+                        }
+                    }
+                    else
+                    {
+                        playerHit = DoDamageTo(hitInfo.transform);
+                    }
 
-                    string effect = health == null ? "Explosion" : "ExplosionHit";
+                    string effect = playerHit ? "ExplosionHit" : "Explosion";
+                    if(areaOfEffect > 0)
+                    {
+                        effect += "Area";
+                    }
                     EffectsScript.DoEffect(
                         effect,
                         hitInfo.point,
                         Quaternion.LookRotation(hitInfo.normal));
-
-                    if(health != null)
-                    {
-                        health.networkView.RPC(
-                            "DoDamage", RPCMode.Others, damage, Network.player);
-                    }
 
                     Destroy(gameObject);
                 }
