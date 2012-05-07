@@ -5,11 +5,13 @@ using UnityEngine;
 
 class LeaderboardViewerScript : MonoBehaviour
 {
+    #pragma warning disable 0649
     public GUISkin Skin;
     GUIStyle RowStyle, MyRowStyle, SingleRowWindowStyle, MultiRowWindowStyle;
 
     public GameObject LeaderboardPrefab;
     NetworkLeaderboard Leaderboard;
+    #pragma warning restore 0649
 
     bool visible;
 
@@ -84,7 +86,7 @@ class LeaderboardViewerScript : MonoBehaviour
 
     void BoardWindow(int windowId)
     {
-        foreach (var log in Leaderboard.Entries)
+        foreach (var log in Leaderboard.Entries.OrderByDescending(x => x.Kills))
         {
             if (!PlayerRegistry.For.ContainsKey(Network.player))
                 continue;
@@ -92,6 +94,7 @@ class LeaderboardViewerScript : MonoBehaviour
             GUIStyle rowStyle = RowStyle;
             if (log.NetworkPlayer == Network.player)
                 rowStyle = MyRowStyle;
+
             rowStyle.normal.textColor = PlayerRegistry.For[log.NetworkPlayer].Color;
 
             GUILayout.BeginHorizontal();

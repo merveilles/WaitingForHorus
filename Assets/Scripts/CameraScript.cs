@@ -52,7 +52,23 @@ public class CameraScript : MonoBehaviour
                 Screen.height/2 - crosshair.width/2,
                 crosshair.width,
                 crosshair.height);
+
+            RaycastHit hitInfo;
+
+            player.gameObject.FindChild("PlayerHit").collider.enabled = false;
+
+            var aimingAtPlayer = Physics.Raycast(transform.position, transform.forward, out hitInfo,
+                                                 Mathf.Infinity, (1 << LayerMask.NameToLayer("Default")) |
+                                                                 (1 << LayerMask.NameToLayer("Player Hit"))) &&
+                                 hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Player Hit");
+
+            if (aimingAtPlayer)
+                GUI.color = Color.red;
             GUI.DrawTexture(position, crosshair);
+            if (aimingAtPlayer)
+                GUI.color = Color.white;
+
+            player.gameObject.FindChild("PlayerHit").collider.enabled = true;
         }
     }
 

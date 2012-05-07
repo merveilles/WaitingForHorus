@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ChatScript : MonoBehaviour
 {
-    readonly List<Pair<NetworkPlayer, string>> ChatLog = new List<Pair<NetworkPlayer, string>>();
+    readonly List<ChatMessage> ChatLog = new List<ChatMessage>();
 
     public GUISkin Skin;
     GUIStyle ChatStyle, MyChatStyle;
@@ -21,7 +21,7 @@ public class ChatScript : MonoBehaviour
 
     void OnDestroy()
     {
-        if(Instance == this)
+        if (Instance == this)
             Instance = null;
     }
 
@@ -74,18 +74,37 @@ public class ChatScript : MonoBehaviour
             foreach (var log in ChatLog)
             {
                 GUIStyle rowStyle = ChatStyle;
-                if (log.First == Network.player) rowStyle = MyChatStyle;
+                if (log.Player == Network.player && !log.IsSystem) rowStyle = MyChatStyle;
 
                 GUILayout.BeginHorizontal();
-                rowStyle.normal.textColor = PlayerRegistry.For[log.First].Color;
+                rowStyle.normal.textColor = PlayerRegistry.For[log.Player].Color;
                 rowStyle.padding.left = 10;
                 rowStyle.fixedWidth = 0;
-                GUILayout.Label(PlayerRegistry.For[log.First].Username.ToUpper() + ":", rowStyle, GUILayout.MinWidth(0), GUILayout.MaxWidth(125));
-                rowStyle.normal.textColor = Color.white;
-                rowStyle.padding.left = 5;
-                rowStyle.alignment = TextAnchor.UpperLeft;
-                rowStyle.wordWrap = true;
-                GUILayout.Label(log.Second, rowStyle, GUILayout.MaxWidth(200)); 
+                rowStyle.wordWrap = false;
+                if (log.IsSystem)
+                {
+                    //rowStyle.fontStyle = FontStyle.Italic;
+                    rowStyle.padding.right = 1;
+                    var playerName = PlayerRegistry.For[log.Player].Username.ToUpper();
+                    rowStyle.fixedWidth = rowStyle.CalcSize(new GUIContent(playerName)).x;
+                    GUILayout.Label(playerName, rowStyle);
+                    rowStyle.fixedWidth = 0;
+                    rowStyle.padding.left = 0;
+                    rowStyle.normal.textColor = Color.white;
+                    GUILayout.Label(" " + log.Message, rowStyle);
+                    rowStyle.padding.right = 10;
+                    rowStyle.fontStyle = FontStyle.Normal;
+                }
+                else
+                {
+                    GUILayout.Label(PlayerRegistry.For[log.Player].Username.ToUpper() + ":", rowStyle, GUILayout.MinWidth(0), GUILayout.MaxWidth(100));
+                    rowStyle.normal.textColor = Color.white;
+                    rowStyle.padding.left = 5;
+                    rowStyle.alignment = TextAnchor.UpperLeft;
+                    rowStyle.wordWrap = true;
+                    GUILayout.Label(log.Message, rowStyle, GUILayout.MaxWidth(225)); 
+                }
+                
                 GUILayout.EndHorizontal();
             }
 
@@ -111,7 +130,7 @@ public class ChatScript : MonoBehaviour
                 if (Event.current.keyCode == KeyCode.Return)
                 {
                     if (lastMessage.Trim() != string.Empty)
-                        networkView.RPC("LogChat", RPCMode.All, Network.player, lastMessage);
+                        networkView.RPC("LogChat", RPCMode.All, Network.player, lastMessage, false);
                     lastMessage = string.Empty;
                     showChat = false;
                     Event.current.Use();
@@ -143,11 +162,18 @@ public class ChatScript : MonoBehaviour
     }
 	
 	[RPC]
-    public void LogChat(NetworkPlayer player, string message)
+    public void LogChat(NetworkPlayer player, string message, bool systemMessage)
     {
         //ChatLog.Insert(0, new Pair<string, string>(username, message));
-        ChatLog.Add(new Pair<NetworkPlayer, string>(player, message));
+        ChatLog.Add(new ChatMessage { Player = player, Message = message, IsSystem = systemMessage});
         if (ChatLog.Count > 10)
             ChatLog.RemoveAt(0);
+    }
+
+    struct ChatMessage
+    {
+        public NetworkPlayer Player;
+        public string Message;
+        public bool IsSystem;
     }
 }

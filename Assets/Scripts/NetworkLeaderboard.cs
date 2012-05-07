@@ -27,11 +27,28 @@ class NetworkLeaderboard : MonoBehaviour
     void Update()
     {
         if (Network.isServer)
+        {
             foreach (var entry in Entries)
-            {
                 entry.Ping = Network.GetLastPing(entry.NetworkPlayer);
-                entry.Ratio = (float)entry.Kills / (entry.Deaths == 0 ? 1 : entry.Deaths);
-            }
+        }
+
+        // update colors
+        var isFirst = true;
+        foreach (var entry in Entries.OrderByDescending(x => x.Kills))
+        {
+            if (!PlayerRegistry.For.ContainsKey(Network.player))
+                continue;
+
+            var player = PlayerRegistry.For[entry.NetworkPlayer];
+            if (entry.NetworkPlayer == Network.player)
+                player.Color = new Color(114 / 255f, 222 / 255f, 194 / 255f); // cyan
+            else if (isFirst)
+                player.Color = new Color(255 / 255f, 166 / 255f, 27 / 255f); // orange
+            else
+                player.Color = Color.white;
+
+            isFirst = false;
+        }
     }
 
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
@@ -48,16 +65,13 @@ class NetworkLeaderboard : MonoBehaviour
         }
 
         // Sync entries
-        for (int i = 0; i < 100; i++)
+        foreach (var entry in Entries)
         {
-            foreach (var entry in Entries)
-            {
-                stream.Serialize(ref entry.NetworkPlayer);
-                stream.Serialize(ref entry.Kills);
-                stream.Serialize(ref entry.Deaths);
-                stream.Serialize(ref entry.Ping);
-                stream.Serialize(ref entry.Ratio);
-            }
+            stream.Serialize(ref entry.NetworkPlayer);
+            stream.Serialize(ref entry.Kills);
+            stream.Serialize(ref entry.Deaths);
+            stream.Serialize(ref entry.Ping);
+            stream.Serialize(ref entry.ConsecutiveKills);
         }
     }
 
@@ -66,18 +80,41 @@ class NetworkLeaderboard : MonoBehaviour
     {
         if (!Network.isServer) return;
 
+        var scheduledMessage = 0;
+
         LeaderboardEntry entry;
         if(shooter != victim)
         {
             entry = Entries.FirstOrDefault(x => x.NetworkPlayer == shooter);
-            if (entry != null) entry.Kills++;
+            if (entry != null)
+            {
+                entry.Kills++;
+                entry.ConsecutiveKills++;
+
+                if (entry.ConsecutiveKills == 3)
+                    scheduledMessage = 1;
+                if (entry.ConsecutiveKills == 6)
+                    scheduledMessage = 2;
+                if (entry.ConsecutiveKills == 9)
+                    scheduledMessage = 3;
+            }
         }
 
         entry = Entries.FirstOrDefault(x => x.NetworkPlayer == victim);
-        if (entry != null) entry.Deaths++;
+        if (entry != null)
+        {
+            entry.Deaths++;
+            entry.ConsecutiveKills = 0;
+        }
 
-        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter,
-            "* KILLED " + PlayerRegistry.For[victim].Username.ToUpper() + "*");
+        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "killed " + PlayerRegistry.For[victim].Username.ToUpper(), true);
+
+        if (scheduledMessage == 1)
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is threatening!", true);
+        if (scheduledMessage == 2)
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is dangerous!", true);
+        if (scheduledMessage == 3)
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is merciless!", true);
     }
 
     void OnPlayerConnected(NetworkPlayer player)
@@ -104,5 +141,5 @@ class LeaderboardEntry
     public int Kills;
     public int Deaths;
     public int Ping;
-    public float Ratio;
+    public int ConsecutiveKills;
 }
