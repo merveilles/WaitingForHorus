@@ -36,8 +36,10 @@ class NetworkLeaderboard : MonoBehaviour
         var isFirst = true;
         foreach (var entry in Entries.OrderByDescending(x => x.Kills))
         {
-            if (!PlayerRegistry.For.ContainsKey(Network.player))
+            if (!PlayerRegistry.For.ContainsKey(Network.player) ||
+                !PlayerRegistry.For.ContainsKey(entry.NetworkPlayer))
                 continue;
+            
 
             var player = PlayerRegistry.For[entry.NetworkPlayer];
             if (entry.NetworkPlayer == Network.player)
