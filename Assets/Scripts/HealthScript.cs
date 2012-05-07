@@ -12,6 +12,8 @@ public class HealthScript : MonoBehaviour
     public int Shield { get; private set; }
     public int Health { get; private set; }
 
+    public Renderer shieldRenderer;
+
     float timeUntilShieldRegen;
 
     void Awake()
@@ -41,6 +43,8 @@ public class HealthScript : MonoBehaviour
             //    DoDamage(1, Network.player);
             //}
         }
+
+        shieldRenderer.enabled = Shield > 0;
     }
 
     [RPC]
