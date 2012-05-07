@@ -22,7 +22,6 @@ public class BulletScript : MonoBehaviour
 
     void Awake()
     {
-        print(name);
         GameObject casing = (GameObject)
             Instantiate(bulletCasingPrefab, transform.position, transform.rotation);
         casing.rigidbody.AddRelativeForce(
