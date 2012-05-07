@@ -43,8 +43,12 @@ public class HealthScript : MonoBehaviour
             //    DoDamage(1, Network.player);
             //}
         }
+    }
 
-        shieldRenderer.enabled = Shield > 0;
+    [RPC]
+    void SetShield(bool on)
+    {
+        shieldRenderer.enabled = on;
     }
 
     [RPC]
@@ -52,6 +56,7 @@ public class HealthScript : MonoBehaviour
     {
         if (networkView.isMine && !dead)
         {
+            int oldShield = Shield;
             Shield -= damage;
             timeUntilShieldRegen = shieldRegenTime;
             if(Shield < 0)
@@ -66,6 +71,11 @@ public class HealthScript : MonoBehaviour
                         RespawnZone.GetRespawnPoint());
                 Health = 0;
                 dead = true;
+            }
+
+            if((Shield != 0) != (oldShield != 0))
+            {
+                networkView.RPC("SetShield", RPCMode.All, Shield > 0);
             }
         }
     }
