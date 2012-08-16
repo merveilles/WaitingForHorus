@@ -39,7 +39,7 @@ Shader "Hidden/ChromaticAberrationShader" {
 		half2 coords = i.uv;
 		half2 uv = i.uv;
 		
-		coords = (coords - 0.5) * 2.0;		
+		coords = (coords - 0.5) * 1.5;		
 		half coordDot = dot (coords,coords);
 		
 		float2 uvG = uv - _MainTex_TexelSize.xy * _ChromaticAberration * coords * coordDot;
