@@ -1,27 +1,8 @@
 fileFormatVersion: 2
-guid: 36612d18a64c64c1a826460d2f2d908b
+guid: 83fd9fca56c274bd491588b2239cbf9f
 ModelImporter:
   fileIDToRecycleName:
     4300000: Cube
-    4300002: Cube_1
-    4300004: Cube_2
-    4300006: Cube_3
-    4300008: Tube
-    4300010: Cube_4
-    4300012: Cube_5
-    4300014: Cube_6
-    4300016: Cube_7
-    4300018: Cube_8
-    4300020: Cube_9
-    4300022: Boole
-    4300024: Boole_1
-    4300026: Boole_2
-    4300028: Cube_1-Cube_2_Null-Extrude_NURBS-Cube
-    4300030: Boole_3_Cube_1-Cube_2_Null-Extrude_NURBS-Cube_Cube_1-Cube_2_Null-Extrude_NURBS-Cube_1
-    4300032: Cube_1-Cube_2_Null-Extrude_NURBS-Cube_1
-    4300034: Cube_1_Cube_Cube_3
-    4300036: Boole-Cube
-    4300038: Cube_2_Boole-Cube
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -51,9 +32,9 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
   tangentSpace:
-    normalSmoothAngle: 0
+    normalSmoothAngle: 60
     splitTangentsAcrossUV: 1
-    normalImportMode: 1
+    normalImportMode: 0
     tangentImportMode: 1
   textMetaNamesToFileIDs:
     //RootNode:
@@ -66,7 +47,7 @@ ModelImporter:
       data:
         first: 111
         second: 605fa900
-    Cube_2_Boole-Cube:
+    Cube:
       data:
         first: 1
         second: a0860100
