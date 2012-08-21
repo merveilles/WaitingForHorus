@@ -47,11 +47,13 @@ public class CameraScript : MonoBehaviour
     {
         if(player.networkView.isMine)
         {
+            var scale = Screen.height / 1750f;
+
             Rect position = new Rect(
-                Screen.width/2 - crosshair.width/2,
-                Screen.height/2 - crosshair.width/2,
-                crosshair.width,
-                crosshair.height);
+                Screen.width / 2 - crosshair.width / 2f * scale,
+                Screen.height / 2 - crosshair.width / 2f * scale,
+                crosshair.width * scale,
+                crosshair.height * scale);
 
             RaycastHit hitInfo;
 

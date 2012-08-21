@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ServerScript : MonoBehaviour 
 {	
-	public string IP = "127.0.0.1";
+	public string IP = "192.168.1.106";
 	public const int Port = 10000;
     const int NumPlayers = 12;
     public NetworkPeerType PeerType;
@@ -93,7 +93,7 @@ public class ServerScript : MonoBehaviour
 
                     GUILayout.FlexibleSpace();
 
-                    if (Input.GetKey("w") && Input.GetKey("f") &&  Input.GetKey("h"))
+                    //if (Input.GetKey("w") && Input.GetKey("f") &&  Input.GetKey("h"))
                     {
                         if (GUILayout.Button("CREATE"))
                         {

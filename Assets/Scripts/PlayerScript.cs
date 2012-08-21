@@ -57,6 +57,9 @@ public class PlayerScript : MonoBehaviour
                 {
                     GetComponentInChildren<TextMesh>().text =
                         PlayerRegistry.For[owner.Value].Username;
+
+                    transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color =
+                        PlayerRegistry.For[owner.Value].Color;
                 });
         }
         else
@@ -139,6 +142,12 @@ public class PlayerScript : MonoBehaviour
             color.a = 0;
         }
         dashEffectRenderer.material.SetColor("_TintColor", color);
+
+        if (networkView.isMine && PlayerRegistry.For.ContainsKey(owner.Value))
+        {
+            transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color =
+                PlayerRegistry.For[owner.Value].Color;
+        }
     }
 
     void FixedUpdate()

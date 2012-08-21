@@ -92,6 +92,8 @@ public class HealthScript : MonoBehaviour
 
     void Hide()
     {
+        Health = 0;
+        dead = true;
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = false;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = false;

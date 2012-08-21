@@ -17,6 +17,8 @@ public class BulletScript : MonoBehaviour
 	public float lifetime = 2;
     public int damage = 1;
     public float areaOfEffect = 0;
+    public float homing = 0;
+    public Transform target;
 
     public NetworkPlayer Player { get; set; }
 
@@ -103,8 +105,16 @@ public class BulletScript : MonoBehaviour
         }
 
         transform.position += transform.forward * distance;
-		
-        // max lifetime
+
+        // homing
+        if (target != null && homing > 0)
+        {
+            //Debug.Log("Is homing @ " + homing);
+            var lookVec = (target.position - transform.position).normalized;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookVec), Mathf.Clamp01(homing * Time.deltaTime * 5));
+        }
+
+	    // max lifetime
 		lifetime -= Time.deltaTime;
 		if (lifetime <= 0)
 			Destroy(gameObject);

@@ -13,6 +13,7 @@ public class EffectsScript : MonoBehaviour
     public GameObject explosionPrefab;
     public GameObject explosionHitPrefab;
     public GameObject areaExplosionPrefab;
+    public GameObject hitConePrefab;
 
     void Awake()
     {
@@ -23,12 +24,17 @@ public class EffectsScript : MonoBehaviour
     void Explosion(Vector3 position, Quaternion rotation)
     {
         Instantiate(explosionPrefab, position, rotation);
+
+        var count = 3;//RandomHelper.Random.Next(1, 4);
+        for (int i = 0; i < count; i++)
+            Instantiate(hitConePrefab, position, rotation);
     }
 
     [RPC]
     void ExplosionHit(Vector3 position, Quaternion rotation)
     {
         Instantiate(explosionHitPrefab, position, rotation);
+        Instantiate(hitConePrefab, position, rotation);
     }
 
     [RPC]
