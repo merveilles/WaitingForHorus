@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: moon
-  m_Shader: {fileID: 4800000, guid: c03f36235a36d4dd1a98440201ae2329, type: 1}
+  m_Name: fxHitCone
+  m_Shader: {fileID: 203, guid: 0000000000000000e000000000000000, type: 0}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -15,12 +15,20 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: ed0b22969adfa7a40bed3689ae018b2c, type: 1}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-    m_Floats: {}
+    m_Floats:
+      data:
+        first:
+          name: _InvFade
+        second: 1
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: .888059676, g: .762140751, b: .762140751, a: 1}
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _TintColor
+        second: {r: 1, g: 1, b: 1, a: .223529413}
