@@ -194,7 +194,7 @@ public class PlayerScript : MonoBehaviour
 
                 var dashDirection = smoothedInputVelocity.normalized;
                 if (dashDirection == Vector3.zero)
-                    dashDirection = Vector3.up * 0.35f;
+                    dashDirection = Vector3.up * 0.4f;
 
                 fallingVelocity +=
                     dashDirection * dashForwardVelocity +

@@ -2316,7 +2316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 298e49c89bef139449fc81eeac50ee98, type: 1}
   m_Name: 
   maxShield: 1
-  maxHealth: 1
+  maxHealth: 2
   shieldRegenTime: 5
   deathPrefab: {fileID: 100000, guid: 44f7ec49704fd0f47a7e2a94bd9c0fe2, type: 2}
   shieldRenderer: {fileID: 2300050}

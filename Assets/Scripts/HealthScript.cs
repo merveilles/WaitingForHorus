@@ -3,8 +3,8 @@ using System.Collections;
 
 public class HealthScript : MonoBehaviour
 {
-    public int maxShield = 4;
-    public int maxHealth = 4;
+    public int maxShield = 1;
+    public int maxHealth = 2;
     public float shieldRegenTime = 5;
     public GameObject deathPrefab;
     bool dead;
@@ -16,10 +16,17 @@ public class HealthScript : MonoBehaviour
 
     float timeUntilShieldRegen;
 
+    Renderer bigCell;
+    Renderer[] smallCells;
+
     void Awake()
     {
         Shield = maxShield;
         Health = maxHealth;
+
+        var graphics = gameObject.FindChild("Graphics");
+        bigCell = graphics.FindChild("MECHA_CellCarrier_C").FindChild("MECHA_CellCarrier_C cell_C").GetComponentInChildren<Renderer>();
+        smallCells = graphics.FindChild("MECHA_CellCarrier_Mini cells_mini").GetComponentsInChildren<Renderer>();
     }
 
     void Update()
@@ -35,6 +42,8 @@ public class HealthScript : MonoBehaviour
             if(timeUntilShieldRegen < 0 && Shield < maxShield)
             {
                 timeUntilShieldRegen += shieldRegenTime;
+                if (Shield == 0)
+                    networkView.RPC("SetShield", RPCMode.All, true, false);
                 Shield += 1;
             }
 
@@ -46,9 +55,28 @@ public class HealthScript : MonoBehaviour
     }
 
     [RPC]
-    void SetShield(bool on)
+    void SetShield(bool on, bool immediate)
     {
-        shieldRenderer.enabled = on;
+        if (immediate)
+        {
+            shieldRenderer.enabled = on;
+            return;
+        }
+
+        TaskManager.Instance.WaitUntil(t =>
+        {
+            var p = Easing.EaseIn(Mathf.Clamp01(t / 0.75f), EasingType.Quadratic);
+            p = on ? p : 1 - p;
+            shieldRenderer.enabled = RandomHelper.Probability(Mathf.Clamp01(p));
+            return t >= 1;
+        }).Then(() => shieldRenderer.enabled = on);
+    }
+    [RPC]
+    void SetHealth(int health)
+    {
+        bigCell.enabled = health >= 2;
+        foreach (var r in smallCells)
+            r.enabled = health >= 2;
     }
 
     [RPC]
@@ -56,6 +84,9 @@ public class HealthScript : MonoBehaviour
     {
         if (networkView.isMine && !dead)
         {
+            //Debug.Log("Got " + damage + " damage");
+            //Debug.Log("Before hit : Shield = " + Shield + ", Health = " + Health);
+
             int oldShield = Shield;
             Shield -= damage;
             timeUntilShieldRegen = shieldRegenTime;
@@ -73,9 +104,13 @@ public class HealthScript : MonoBehaviour
                 dead = true;
             }
 
+            //Debug.Log("Shield = " + Shield + ", Health = " + Health);
+
+            networkView.RPC("SetHealth", RPCMode.All, Health);
+
             if((Shield != 0) != (oldShield != 0))
             {
-                networkView.RPC("SetShield", RPCMode.All, Shield > 0);
+                networkView.RPC("SetShield", RPCMode.All, Shield > 0, dead);
             }
         }
     }
