@@ -32,6 +32,7 @@ ModelImporter:
     4300054: _________-Cube
     4300056: Leg F
     4300058: _________.2-_________.3-_________.2.2
+    4300060: _________.2-_________.3-_________.2.3
     7400000: C4D Animation Take //// mecha
   serializedVersion: 10
   materials:
@@ -256,6 +257,13 @@ ModelImporter:
       data:
         first: 33
         second: c25a3200
+    Lathe NURBS.1.2:
+      data:
+        first: 1
+        second: 04870100
+      data:
+        first: 4
+        second: e41a0600
     Leg F:
       data:
         first: 1
@@ -269,20 +277,55 @@ ModelImporter:
       data:
         first: 33
         second: a25a3200
-    Null Object:
+    Leg F.2:
       data:
         first: 1
         second: de860100
       data:
         first: 4
         second: be1a0600
-    Null Object.2:
+    Null:
       data:
         first: 1
-        second: da860100
+        second: 08870100
       data:
         first: 4
-        second: ba1a0600
+        second: e81a0600
+    Null.2:
+      data:
+        first: 1
+        second: 06870100
+      data:
+        first: 4
+        second: e61a0600
+    Null.3:
+      data:
+        first: 1
+        second: 02870100
+      data:
+        first: 4
+        second: e21a0600
+    Rectangle:
+      data:
+        first: 1
+        second: 14870100
+      data:
+        first: 4
+        second: f41a0600
+    Rectangle.2:
+      data:
+        first: 1
+        second: 10870100
+      data:
+        first: 4
+        second: f01a0600
+    Rectangle.3:
+      data:
+        first: 1
+        second: 0c870100
+      data:
+        first: 4
+        second: ec1a0600
     Shield:
       data:
         first: 1
@@ -335,6 +378,27 @@ ModelImporter:
       data:
         first: 33
         second: c85a3200
+    Spline:
+      data:
+        first: 1
+        second: 12870100
+      data:
+        first: 4
+        second: f21a0600
+    Spline.2:
+      data:
+        first: 1
+        second: 0e870100
+      data:
+        first: 4
+        second: ee1a0600
+    Spline.3:
+      data:
+        first: 1
+        second: 0a870100
+      data:
+        first: 4
+        second: ea1a0600
     Sweep NURBS:
       data:
         first: 1
@@ -387,6 +451,20 @@ ModelImporter:
       data:
         first: 33
         second: b65a3200
+    Sweep NURBS.1.4:
+      data:
+        first: 1
+        second: fe860100
+      data:
+        first: 4
+        second: de1a0600
+    Sweep NURBS.1.5:
+      data:
+        first: 1
+        second: fc860100
+      data:
+        first: 4
+        second: dc1a0600
     Sweep NURBS.2:
       data:
         first: 1
@@ -447,6 +525,13 @@ ModelImporter:
       data:
         first: 33
         second: a45a3200
+    _________-Cube.2:
+      data:
+        first: 1
+        second: fa860100
+      data:
+        first: 4
+        second: da1a0600
     _________.2:
       data:
         first: 1
@@ -480,12 +565,26 @@ ModelImporter:
       data:
         first: 4
         second: 821a0600
+    _________.2-_________.3-_________.2.3:
+      data:
+        first: 1
+        second: f8860100
+      data:
+        first: 4
+        second: d81a0600
       data:
         first: 23
         second: 60182300
       data:
         first: 33
         second: a05a3200
+    _________.2-_________.3-_________.2.4:
+      data:
+        first: 1
+        second: da860100
+      data:
+        first: 4
+        second: ba1a0600
     _________.3-_________.1:
       data:
         first: 1
@@ -558,3 +657,10 @@ ModelImporter:
       data:
         first: 33
         second: ba5a3200
+    tune.1.2:
+      data:
+        first: 1
+        second: 00870100
+      data:
+        first: 4
+        second: e01a0600

@@ -40,6 +40,10 @@ ModelImporter:
     4300070: Cube.2
     4300072: _________.1.3
     4300074: Ground
+    4300076: _________.2-_________.3-_________.2.3
+    4300078: Cube.4
+    4300080: _________.1.5
+    7400000: C4D Animation Take //// mecha copy
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -137,6 +141,20 @@ ModelImporter:
       data:
         first: 4
         second: 861a0600
+    Cube.3:
+      data:
+        first: 1
+        second: 16870100
+      data:
+        first: 4
+        second: f61a0600
+    Cube.4:
+      data:
+        first: 1
+        second: be860100
+      data:
+        first: 4
+        second: 9e1a0600
       data:
         first: 23
         second: 64182300
@@ -228,20 +246,27 @@ ModelImporter:
       data:
         first: 33
         second: ae5a3200
-    Null Object:
+    Leg F.2:
       data:
         first: 1
-        second: 04870100
+        second: 0a870100
       data:
         first: 4
-        second: e41a0600
-    Null Object.2:
+        second: ea1a0600
+    Null:
       data:
         first: 1
-        second: be860100
+        second: 22870100
       data:
         first: 4
-        second: 9e1a0600
+        second: 021b0600
+    Null.2:
+      data:
+        first: 1
+        second: 12870100
+      data:
+        first: 4
+        second: f21a0600
     Shield:
       data:
         first: 1
@@ -255,6 +280,48 @@ ModelImporter:
       data:
         first: 33
         second: a65a3200
+    Spline:
+      data:
+        first: 1
+        second: 1e870100
+      data:
+        first: 4
+        second: fe1a0600
+    Spline.2:
+      data:
+        first: 1
+        second: 1c870100
+      data:
+        first: 4
+        second: fc1a0600
+    Spline.3:
+      data:
+        first: 1
+        second: 1a870100
+      data:
+        first: 4
+        second: fa1a0600
+    Spline.4:
+      data:
+        first: 1
+        second: 04870100
+      data:
+        first: 4
+        second: e41a0600
+    Spline.5:
+      data:
+        first: 1
+        second: f6860100
+      data:
+        first: 4
+        second: d61a0600
+    Spline.6:
+      data:
+        first: 1
+        second: c6860100
+      data:
+        first: 4
+        second: a61a0600
     Symmetry:
       data:
         first: 1
@@ -382,10 +449,10 @@ ModelImporter:
     ______.1:
       data:
         first: 1
-        second: bc860100
+        second: 10870100
       data:
         first: 4
-        second: 9c1a0600
+        second: f01a0600
       data:
         first: 23
         second: 74182300
@@ -415,10 +482,10 @@ ModelImporter:
     _________.1:
       data:
         first: 1
-        second: f2860100
+        second: 20870100
       data:
         first: 4
-        second: d21a0600
+        second: 001b0600
       data:
         first: 23
         second: 9c182300
@@ -445,6 +512,20 @@ ModelImporter:
       data:
         first: 4
         second: 841a0600
+    _________.1.4:
+      data:
+        first: 1
+        second: 14870100
+      data:
+        first: 4
+        second: f41a0600
+    _________.1.5:
+      data:
+        first: 1
+        second: b8860100
+      data:
+        first: 4
+        second: 981a0600
       data:
         first: 23
         second: 62182300
@@ -454,10 +535,10 @@ ModelImporter:
     _________.2:
       data:
         first: 1
-        second: 06870100
+        second: 24870100
       data:
         first: 4
-        second: e61a0600
+        second: 041b0600
     _________.2-_________.3-_________.2:
       data:
         first: 1
@@ -478,12 +559,26 @@ ModelImporter:
       data:
         first: 4
         second: 961a0600
+    _________.2-_________.3-_________.2.3:
+      data:
+        first: 1
+        second: 0e870100
+      data:
+        first: 4
+        second: ee1a0600
       data:
         first: 23
         second: 70182300
       data:
         first: 33
         second: b05a3200
+    _________.2-_________.3-_________.2.4:
+      data:
+        first: 1
+        second: 0c870100
+      data:
+        first: 4
+        second: ec1a0600
     _________.2.2:
       data:
         first: 1
@@ -513,10 +608,10 @@ ModelImporter:
     _________.3:
       data:
         first: 1
-        second: 08870100
+        second: 26870100
       data:
         first: 4
-        second: e81a0600
+        second: 061b0600
     _________.3-_________.1:
       data:
         first: 1
@@ -569,6 +664,13 @@ ModelImporter:
       data:
         first: 33
         second: e45a3200
+    _________.4.2:
+      data:
+        first: 1
+        second: 18870100
+      data:
+        first: 4
+        second: f81a0600
     ____________ NURBS:
       data:
         first: 1
@@ -582,6 +684,13 @@ ModelImporter:
       data:
         first: 33
         second: aa5a3200
+    ____________ NURBS.2:
+      data:
+        first: 1
+        second: f8860100
+      data:
+        first: 4
+        second: d81a0600
     reactor:
       data:
         first: 1

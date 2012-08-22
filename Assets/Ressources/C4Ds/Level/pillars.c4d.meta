@@ -50,6 +50,7 @@ ModelImporter:
     4300090: Cube.2.5
     4300092: Cube.3.4
     4300094: pillar1
+    7400000: C4D Animation Take //// pillars
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -692,7 +693,7 @@ ModelImporter:
       data:
         first: 33
         second: b45a3200
-    Null Object:
+    Null:
       data:
         first: 1
         second: 08870100
@@ -713,13 +714,6 @@ ModelImporter:
       data:
         first: 4
         second: ce1a0600
-    Null Object.2.2:
-      data:
-        first: 1
-        second: bc860100
-      data:
-        first: 4
-        second: 9c1a0600
     Null Object.3:
       data:
         first: 1
@@ -727,6 +721,13 @@ ModelImporter:
       data:
         first: 4
         second: e61a0600
+    Null.2:
+      data:
+        first: 1
+        second: bc860100
+      data:
+        first: 4
+        second: 9c1a0600
     pillar1:
       data:
         first: 1

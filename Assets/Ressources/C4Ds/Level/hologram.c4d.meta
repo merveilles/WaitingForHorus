@@ -18,6 +18,7 @@ ModelImporter:
     4300026: Disc.1
     4300028: Disc
     4300030: Plane
+    7400000: C4D Animation Take //// hologram
   serializedVersion: 10
   materials:
     importMaterials: 1

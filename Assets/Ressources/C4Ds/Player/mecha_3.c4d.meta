@@ -21,6 +21,7 @@ ModelImporter:
     4300032: cells_mini
     4300034: CellCarrier_C
     4300036: cell_C
+    7400000: C4D Animation Take //// mecha_3
   serializedVersion: 10
   materials:
     importMaterials: 1
