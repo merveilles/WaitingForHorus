@@ -4,8 +4,8 @@ using System.Collections;
 
 public class RoundScript : MonoBehaviour
 {
-    const float RoundDuration = 30;
-    const float PauseDuration = 5;
+    const float RoundDuration = 60 * 5;
+    const float PauseDuration = 25;
 
     float sinceRoundTransition;
     public bool RoundStopped { get; private set; }
@@ -20,8 +20,7 @@ public class RoundScript : MonoBehaviour
 
     void Update() 
     {
-        Debug.Log("Peer type : " + Network.peerType);
-        if (Network.peerType == NetworkPeerType.Server)
+        if (Network.isServer)
 	    {
             sinceRoundTransition += Time.deltaTime;
 
