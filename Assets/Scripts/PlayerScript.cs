@@ -31,7 +31,7 @@ public class PlayerScript : MonoBehaviour
     float lastJumpInputTime = -1;
     float dashCooldown = 0;
     Animation characterAnimation;
-    bool isRunning;
+    string currentAnim;
     public NetworkPlayer? owner;
     float sinceNotGrounded;
     bool activelyJumping;
@@ -40,7 +40,10 @@ public class PlayerScript : MonoBehaviour
 
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
-	
+    Vector3 lastNetworkFramePosition;
+    Quaternion smoothLookRotation;
+    float smoothYaw;
+
 	void Awake() 
 	{
         controller = GetComponent<CharacterController>();
@@ -113,17 +116,27 @@ public class PlayerScript : MonoBehaviour
                 Screen.lockCursor = true;
 
             Screen.showCursor = !Screen.lockCursor;
-		}
+            smoothYaw = lookRotationEuler.y;
+            smoothLookRotation = Quaternion.Euler(lookRotationEuler);
+        }
         else
         {
-            if (iPosition.IsRunning) transform.position += iPosition.Update();
+            if (iPosition.IsRunning)
+            {
+                //Debug.Log("Before correct : " + transform.position);
+                transform.position += iPosition.Update();
+                //Debug.Log("After correct : " + transform.position);
+            }
+
+            smoothYaw = Mathf.LerpAngle(smoothYaw, lookRotationEuler.y, 0.4f);
+            smoothLookRotation = Quaternion.Slerp(smoothLookRotation, Quaternion.Euler(lookRotationEuler), 0.3f);
         }
 
         // sync up actual player and camera transforms
         Vector3 euler = transform.rotation.eulerAngles;
-        euler.y = lookRotationEuler.y;
+        euler.y = smoothYaw;
         transform.rotation = Quaternion.Euler(euler);
-        cameraPivot.rotation = Quaternion.Euler(lookRotationEuler);
+        cameraPivot.rotation = smoothLookRotation;
 
         // dash animation
         Color color = dashEffectRenderer.material.GetColor("_TintColor");
@@ -168,7 +181,7 @@ public class PlayerScript : MonoBehaviour
                 justJumped = true;
                 activelyJumping = true;
                 fallingVelocity.y = jumpVelocity;
-                characterAnimation.Play("Jump");
+                characterAnimation.Play(currentAnim = "Jump");
                 sinceNotGrounded = 0.25f;
             }
             else if(dashCooldown <= 0)
@@ -176,6 +189,8 @@ public class PlayerScript : MonoBehaviour
                 activelyJumping = false;
                 lastJumpInputTime = -1;
                 dashCooldown = timeBetweenDashes;
+
+                characterAnimation.Play(currentAnim = "Jump");
 
                 var dashDirection = smoothedInputVelocity.normalized;
                 if (dashDirection == Vector3.zero)
@@ -205,24 +220,19 @@ public class PlayerScript : MonoBehaviour
         }
 
         // Update running animation
-        if (controller.isGrounded)
+        if (controller.isGrounded && !justJumped)
         {
-            if (!MathHelper.Approximately(smoothedInputVelocity, Vector3.zero))
+            if (MathHelper.Approximately(smoothedInputVelocity, Vector3.zero))
             {
-                if (!isRunning)
-                {
-                    characterAnimation.CrossFade("Run");
-                    isRunning = true;
-                }
+                if (currentAnim != "Idle")
+                    characterAnimation.Play(currentAnim = "Idle");
             }
-            else if (isRunning || !characterAnimation.isPlaying)
+            else 
             {
-                characterAnimation.Play("Idle");
-                isRunning = false;
+                if (currentAnim != "Run")
+                    characterAnimation.Play(currentAnim = "Run");
             }
         }
-        else
-            isRunning = false;
 
         // move!
         controller.Move((fallingVelocity + smoothedInputVelocity) * Time.deltaTime);
@@ -246,8 +256,15 @@ public class PlayerScript : MonoBehaviour
 
         if (stream.isReading)
         {
+            //Debug.Log("pPosition = " + pPosition + " / transform.position = " + transform.position);
+
+            if (lastNetworkFramePosition == pPosition)
+                transform.position = pPosition;
+
             if (!iPosition.Start(pPosition - transform.position))
                 transform.position = pPosition;
+
+            lastNetworkFramePosition = pPosition;
         }
     }
 }
@@ -290,6 +307,7 @@ class VectorInterpolator : Interpolator<Vector3>
     {
         UpdateInternal();
         if (!IsRunning) return Vector3.zero;
+        //Debug.Log("Correcting for " + Delta + " with " + (Delta * Time.deltaTime / InterpolationTime));
         return Delta * Time.deltaTime / InterpolationTime;
     }
 }
