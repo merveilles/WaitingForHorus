@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Linq;
 using System.Collections.Generic;
 
 public class ChatScript : MonoBehaviour
@@ -11,6 +12,7 @@ public class ChatScript : MonoBehaviour
 
 	string lastMessage = "";
 	bool showChat, ignoreT;
+    bool forceVisible;
 
     public static ChatScript Instance { get; private set; }
 
@@ -46,6 +48,11 @@ public class ChatScript : MonoBehaviour
         lastMessage = string.Empty;
     }
 
+    void Update()
+    {
+        forceVisible = Input.GetKey(KeyCode.Tab) || RoundScript.Instance.RoundStopped;
+    }
+
 	void OnGUI()
 	{
 	    if (Network.peerType == NetworkPeerType.Disconnected || Network.peerType == NetworkPeerType.Connecting) return;
@@ -56,7 +63,7 @@ public class ChatScript : MonoBehaviour
 	    if (enteredChat)
 	        showChat = true;
 
-	    var height = 32 + ChatLog.Count * 32;
+	    var height = 32 + ChatLog.Count(x => !x.Hidden || forceVisible) * 32;
 	    GUILayout.Window(1, new Rect(0, Screen.height - height, 277, height), Chat, string.Empty);
 
 	    if (enteredChat)
@@ -71,20 +78,24 @@ public class ChatScript : MonoBehaviour
     {
         try
         {
-            ChatLog.RemoveAll(x => x.Life >= 10);
-
             foreach (var log in ChatLog)
             {
                 if (!PlayerRegistry.For.ContainsKey(log.Player))
                     continue;
 
                 log.Life += Time.deltaTime;
+                if (log.Life > 15)
+                    log.Hidden = true;
+
+                if (log.Hidden && !forceVisible)
+                    continue;
 
                 GUIStyle rowStyle = ChatStyle;
                 if (log.Player == Network.player && !log.IsSystem) rowStyle = MyChatStyle;
 
                 GUILayout.BeginHorizontal();
-                rowStyle.normal.textColor = PlayerRegistry.For[log.Player].Color;
+                if (!log.IsSourceless)
+                    rowStyle.normal.textColor = PlayerRegistry.For[log.Player].Color;
                 rowStyle.padding.left = 10;
                 rowStyle.fixedWidth = 0;
                 rowStyle.wordWrap = false;
@@ -92,9 +103,18 @@ public class ChatScript : MonoBehaviour
                 {
                     //rowStyle.fontStyle = FontStyle.Italic;
                     rowStyle.padding.right = 1;
-                    var playerName = PlayerRegistry.For[log.Player].Username.ToUpper();
-                    rowStyle.fixedWidth = rowStyle.CalcSize(new GUIContent(playerName)).x;
-                    GUILayout.Label(playerName, rowStyle);
+                    if (!log.IsSourceless)
+                    {
+                        var playerName = PlayerRegistry.For[log.Player].Username.ToUpper();
+                        rowStyle.fixedWidth = rowStyle.CalcSize(new GUIContent(playerName)).x;
+                        GUILayout.Label(playerName, rowStyle);
+                    }
+                    else
+                    {
+                        rowStyle.fixedWidth = rowStyle.CalcSize(new GUIContent(" ")).x;
+                        rowStyle.padding.left = 0;
+                        GUILayout.Label(" ", rowStyle);
+                    }
                     rowStyle.fixedWidth = 0;
                     rowStyle.padding.left = 0;
                     rowStyle.normal.textColor = Color.white;
@@ -137,7 +157,7 @@ public class ChatScript : MonoBehaviour
                 if (Event.current.keyCode == KeyCode.Return)
                 {
                     if (lastMessage.Trim() != string.Empty)
-                        networkView.RPC("LogChat", RPCMode.All, Network.player, lastMessage, false);
+                        networkView.RPC("LogChat", RPCMode.All, Network.player, lastMessage, false, false);
                     lastMessage = string.Empty;
                     showChat = false;
                     Event.current.Use();
@@ -169,11 +189,11 @@ public class ChatScript : MonoBehaviour
     }
 	
 	[RPC]
-    public void LogChat(NetworkPlayer player, string message, bool systemMessage)
+    public void LogChat(NetworkPlayer player, string message, bool systemMessage, bool isSourceless)
     {
         //ChatLog.Insert(0, new Pair<string, string>(username, message));
-        ChatLog.Add(new ChatMessage { Player = player, Message = message, IsSystem = systemMessage});
-        if (ChatLog.Count > 10)
+        ChatLog.Add(new ChatMessage { Player = player, Message = message, IsSystem = systemMessage, IsSourceless = isSourceless });
+        if (ChatLog.Count > 60)
             ChatLog.RemoveAt(0);
     }
 
@@ -181,7 +201,8 @@ public class ChatScript : MonoBehaviour
     {
         public NetworkPlayer Player;
         public string Message;
-        public bool IsSystem;
+        public bool IsSystem, IsSourceless;
         public float Life;
+        public bool Hidden;
     }
 }

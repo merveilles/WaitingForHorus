@@ -65,11 +65,13 @@ public class HealthScript : MonoBehaviour
 
         TaskManager.Instance.WaitUntil(t =>
         {
+            if (shieldRenderer == null)
+                return true;
             var p = Easing.EaseIn(Mathf.Clamp01(t / 0.75f), EasingType.Quadratic);
             p = on ? p : 1 - p;
             shieldRenderer.enabled = RandomHelper.Probability(Mathf.Clamp01(p));
             return t >= 1;
-        }).Then(() => shieldRenderer.enabled = on);
+        }).Then(() => { if (shieldRenderer != null) shieldRenderer.enabled = on; });
     }
     [RPC]
     void SetHealth(int health)
@@ -102,6 +104,7 @@ public class HealthScript : MonoBehaviour
                         RespawnZone.GetRespawnPoint());
                 Health = 0;
                 dead = true;
+                Camera.main.GetComponent<WeaponIndicatorScript>().CooldownStep = 0;
             }
 
             //Debug.Log("Shield = " + Shield + ", Health = " + Health);

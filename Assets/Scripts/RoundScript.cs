@@ -11,6 +11,7 @@ public class RoundScript : MonoBehaviour
     public bool GameStarted { get; set; }
     public bool RoundStopped { get; private set; }
     float sinceInteround;
+    bool said60secWarning, said30secWarning, said10secWarning, said5secWarning;
 
     public static RoundScript Instance { get; private set; }
 
@@ -25,14 +26,55 @@ public class RoundScript : MonoBehaviour
 	    {
             sinceRoundTransition += Time.deltaTime;
 
+            if (!RoundStopped)
+            {
+                if (!said60secWarning && RoundDuration - sinceRoundTransition < 60)
+                {
+                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                                        "60 seconds remaining...", true, true);
+                    said60secWarning = true;
+                }
+                if (!said30secWarning && RoundDuration - sinceRoundTransition < 30)
+                {
+                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                                        "30 seconds remaining...", true, true);
+                    said30secWarning = true;
+                }
+                if (!said10secWarning && RoundDuration - sinceRoundTransition < 10)
+                {
+                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                                        "10 seconds remaining!", true, true);
+                    said10secWarning = true;
+                }
+            }
+            else
+            {
+                if (!said5secWarning && PauseDuration - sinceRoundTransition < 5)
+                {
+                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                                        "Game starts in 5 seconds...", true, true);
+                    said5secWarning = true;
+                }
+            }
+
+
             if (sinceRoundTransition >= (RoundStopped ? PauseDuration : RoundDuration))
             {
                 RoundStopped = !RoundStopped;
                 if (RoundStopped)
+                {
                     networkView.RPC("StopRound", RPCMode.All);
+                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                    "Round over!", true, true);
+                }
                 else
+                {
                     networkView.RPC("RestartRound", RPCMode.All);
+                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                    "Game start!", true, true);
+                }
                 sinceRoundTransition = 0;
+                said60secWarning = said30secWarning = said10secWarning = said5secWarning = false;
             }
 	    }
 	}
@@ -62,7 +104,7 @@ public class RoundScript : MonoBehaviour
             entry.ConsecutiveKills = 0;
         }
 
-        ChatScript.Instance.ChatLog.Clear();
+        ChatScript.Instance.ChatLog.ForEach(x => x.Hidden = true);
         RoundStopped = false;
     }
 }

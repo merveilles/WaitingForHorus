@@ -119,16 +119,16 @@ class NetworkLeaderboard : MonoBehaviour
         }
 
         if (victim == shooter)
-            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "commited suicide", true);
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "commited suicide", true, false);
         else
-            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "killed " + (endedSpree ? "and stopped " : "") + PlayerRegistry.For[victim].Username.ToUpper(), true);
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "killed " + (endedSpree ? "and stopped " : "") + PlayerRegistry.For[victim].Username.ToUpper(), true, false);
 
         if (scheduledMessage == 1)
-            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is threatening!", true);
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is threatening!", true, false);
         if (scheduledMessage == 2)
-            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is dangerous!", true);
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is dangerous!", true, false);
         if (scheduledMessage == 3)
-            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is merciless!", true);
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is merciless!", true, false);
     }
 
     void OnPlayerConnected(NetworkPlayer player)

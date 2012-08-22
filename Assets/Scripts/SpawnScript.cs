@@ -23,7 +23,7 @@ public class SpawnScript : MonoBehaviour
 	void OnConnectedToServer()
 	{
 	    Spawn();
-        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player, "connected", true);
+        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player, "connected", true, false);
 	}
 	
 	public void Spawn()
@@ -36,7 +36,7 @@ public class SpawnScript : MonoBehaviour
 	void OnPlayerDisconnected(NetworkPlayer player) 
     {
         if (Network.isServer)
-            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, player, "disconnected", true);
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, player, "disconnected", true, false);
 
         Debug.Log("Clean up after player " + player);
 		Network.RemoveRPCs(player);
