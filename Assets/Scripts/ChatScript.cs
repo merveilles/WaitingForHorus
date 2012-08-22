@@ -73,6 +73,9 @@ public class ChatScript : MonoBehaviour
         {
             foreach (var log in ChatLog)
             {
+                if (!PlayerRegistry.For.ContainsKey(log.Player))
+                    continue;
+
                 GUIStyle rowStyle = ChatStyle;
                 if (log.Player == Network.player && !log.IsSystem) rowStyle = MyChatStyle;
 

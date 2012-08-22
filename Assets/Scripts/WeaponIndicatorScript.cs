@@ -13,12 +13,13 @@ public class WeaponIndicatorScript : MonoBehaviour
 
     public class PlayerData
     {
+        public PlayerScript Script;
         public Vector2 ScreenPosition;
         public float SinceInCrosshair;
         public bool Found;
     }
 
-    public Dictionary<PlayerScript, PlayerData> Targets { get; private set; }
+    public List<PlayerData> Targets { get; private set; }
 
     void Start()
     {
@@ -32,7 +33,7 @@ public class WeaponIndicatorScript : MonoBehaviour
         mat.hideFlags = HideFlags.HideAndDontSave;
         mat.shader.hideFlags = HideFlags.HideAndDontSave;
 
-        Targets = new Dictionary<PlayerScript, PlayerData>();
+        Targets = new List<PlayerData>();
     }
 
     public float CooldownStep { get; set; }
@@ -86,7 +87,7 @@ public class WeaponIndicatorScript : MonoBehaviour
             var diag = edge;
 
             isReady = false;
-            foreach (var t in Targets.Values)
+            foreach (var t in Targets)
             {
                 var step = 1 -
                            Easing.EaseIn(Mathf.Clamp01(t.SinceInCrosshair / PlayerShootingScript.AimingTime),

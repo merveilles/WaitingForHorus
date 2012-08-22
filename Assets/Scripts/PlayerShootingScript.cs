@@ -32,7 +32,7 @@ public class PlayerShootingScript : MonoBehaviour
     int bulletsLeft = BurstCount;
 
     float cannonChargeCountdown = CannonChargeTime;
-    Dictionary<PlayerScript, WeaponIndicatorScript.PlayerData> targets;
+    List<WeaponIndicatorScript.PlayerData> targets;
 
     CameraScript playerCamera;
     PlayerScript playerScript;
@@ -65,7 +65,7 @@ public class PlayerShootingScript : MonoBehaviour
                 if (Input.GetButton("Alternate Fire"))
                 {
                     // find homing target(s)
-                    var aimedAt = targets.Where(x => x.Value.SinceInCrosshair >= AimingTime);
+                    var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime);
 
                     while (bulletsLeft > 0)
                     {
@@ -74,7 +74,7 @@ public class PlayerShootingScript : MonoBehaviour
                         else
                         {
                             var chosen = aimedAt.OrderBy(x => Guid.NewGuid()).First();
-                            DoHomingShot(ShotgunSpread, chosen.Key, Mathf.Clamp01(chosen.Value.SinceInCrosshair / AimingTime));
+                            DoHomingShot(ShotgunSpread, chosen.Script, Mathf.Clamp01(chosen.SinceInCrosshair / AimingTime));
                         }
                         cooldownLeft += ShotCooldown;
                     }
@@ -102,7 +102,8 @@ public class PlayerShootingScript : MonoBehaviour
 		    var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
             var allowedDistance = 130 * Screen.height / 1500f;
 
-            foreach (var v in targets.Values) v.Found = false;
+            foreach (var v in targets) v.Found = false;
+            //Debug.Log(targets.Values.Count + " targets to find");
 
             // Test for players in crosshair
             foreach (var p in FindSceneObjectsOfType(typeof(PlayerScript)))
@@ -120,22 +121,20 @@ public class PlayerShootingScript : MonoBehaviour
                 if (health.Health > 0 && (screenPos.XY() - screenCenter).magnitude < allowedDistance)
                 {
                     WeaponIndicatorScript.PlayerData data;
-                    if (!targets.TryGetValue(ps, out data))
-                        targets.Add(ps, data = new WeaponIndicatorScript.PlayerData());
+                    if ((data = targets.FirstOrDefault(x => x.Script == ps)) == null)
+                        targets.Add(data = new WeaponIndicatorScript.PlayerData { Script = ps });
 
                     data.ScreenPosition = screenPos.XY();
                     data.SinceInCrosshair += Time.deltaTime;
                     data.Found = true;
+
+                    //Debug.Log("Found target at " + data.ScreenPosition);
                 }
-                else
-                    targets.Remove(ps);
             }
 
             if (targets.Count > 0)
-                foreach (var p in targets.Keys.ToArray())
-                    if (!targets[p].Found)
-                        targets.Remove(p);
-        }
+                targets.RemoveAll(x => x.Script == null || !x.Found);
+		}
     }
 
     void DoShot(float spread)
