@@ -34,6 +34,7 @@ public class PlayerScript : MonoBehaviour
     bool isRunning;
     public NetworkPlayer? owner;
     float sinceNotGrounded;
+    bool activelyJumping;
 
     public bool Paused { get; set; }
 
@@ -81,11 +82,14 @@ public class PlayerScript : MonoBehaviour
 
             inputVelocity *= speed;
 
-			if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump"))
+            {
                 lastJumpInputTime = Time.time;
+            }
 
             if (!Input.GetButton("Jump"))
             {
+                activelyJumping = false;
                 if(fallingVelocity.y > 2)
                     fallingVelocity.y = 2;
             }
@@ -123,7 +127,7 @@ public class PlayerScript : MonoBehaviour
 
         // dash animation
         Color color = dashEffectRenderer.material.GetColor("_TintColor");
-        Vector3 dashVelocity = new Vector3(fallingVelocity.x, 0, fallingVelocity.z);
+        Vector3 dashVelocity = new Vector3(fallingVelocity.x, activelyJumping ? 0 : Math.Max(fallingVelocity.y, 0), fallingVelocity.z);
         if(dashVelocity.magnitude > 1/256.0)
         {
             color.a = dashVelocity.magnitude / dashForwardVelocity / 8;
@@ -162,16 +166,23 @@ public class PlayerScript : MonoBehaviour
             {
                 lastJumpInputTime = -1;
                 justJumped = true;
+                activelyJumping = true;
                 fallingVelocity.y = jumpVelocity;
                 characterAnimation.Play("Jump");
                 sinceNotGrounded = 0.25f;
             }
-            else if(smoothedInputVelocity != Vector3.zero && dashCooldown <= 0)
+            else if(dashCooldown <= 0)
             {
+                activelyJumping = false;
                 lastJumpInputTime = -1;
                 dashCooldown = timeBetweenDashes;
+
+                var dashDirection = smoothedInputVelocity.normalized;
+                if (dashDirection == Vector3.zero)
+                    dashDirection = Vector3.up * 0.35f;
+
                 fallingVelocity +=
-                    smoothedInputVelocity.normalized * dashForwardVelocity +
+                    dashDirection * dashForwardVelocity +
                     Vector3.up * dashUpwardVelocity;
             }
         }
@@ -229,6 +240,7 @@ public class PlayerScript : MonoBehaviour
 
         stream.Serialize(ref inputVelocity);
         stream.Serialize(ref fallingVelocity);
+        stream.Serialize(ref activelyJumping);
 
         stream.Serialize(ref lookRotationEuler);
 
