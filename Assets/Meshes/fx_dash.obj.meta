@@ -4,6 +4,8 @@ ModelImporter:
   fileIDToRecycleName:
     4300000: Disc
     4300002: Disc_3
+    4300004: Sphere
+    4300006: Sphere_1
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -48,7 +50,7 @@ ModelImporter:
       data:
         first: 111
         second: 605fa900
-    Disc_3:
+    Sphere_1:
       data:
         first: 1
         second: a2860100
