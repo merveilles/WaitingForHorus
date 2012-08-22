@@ -58,6 +58,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
+  debugUnloadMode: 0
   iPhoneBundleIdentifier: com.Company.ProductName
   iPhoneBundleVersion: 1.0
   AndroidBundleVersionCode: 1
@@ -113,7 +114,7 @@ PlayerSettings:
   wiiFloatingPointExceptions: 0
   wiiScreenCrashDumps: 1
   wiiMemoryLabelCount: 147
-  wiiMemorySetup: 0000000000000014020000000000000000000000
+  wiiMemorySetup: 0000000000000000000000000000000000000000
   XboxTitleId: 
   XboxImageXexPath: 
   XboxSpaPath: 
@@ -129,7 +130,10 @@ PlayerSettings:
   ps3TrophyCommId: 
   ps3TrophyPackagePath: 
   ps3ReservedMemorySizeMB: 2
-  ps3ReservedHDDSizeMB: 128
+  ps3BootCheckMaxSaveGameSizeKB: 128
+  ps3TrophyCommSig: 
+  ps3SaveGameSlots: 1
+  ps3TrialMode: 0
   flashStrippingLevel: 2
   firstStreamedLevelWithResources: 0
   unityRebuildLibraryVersion: 9
