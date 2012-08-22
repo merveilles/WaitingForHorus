@@ -115,7 +115,10 @@ class NetworkLeaderboard : MonoBehaviour
             entry.ConsecutiveKills = 0;
         }
 
-        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "killed " + PlayerRegistry.For[victim].Username.ToUpper(), true);
+        if (victim == shooter)
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "commited suicide", true);
+        else
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "killed " + PlayerRegistry.For[victim].Username.ToUpper(), true);
 
         if (scheduledMessage == 1)
             ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is threatening!", true);
