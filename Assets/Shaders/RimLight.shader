@@ -77,7 +77,7 @@ Shader "Rim Light" {
 
                     float dotProduct = 1 - dot(v.normal, viewDir);
 
-                    float rimWidth = 0.7;
+                    float rimWidth = 0.2;
 
                     o.color = smoothstep(1 - rimWidth, 1.0, dotProduct);
 
