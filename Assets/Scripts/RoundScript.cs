@@ -4,8 +4,8 @@ using System.Collections;
 
 public class RoundScript : MonoBehaviour
 {
-    const float RoundDuration = 60 * 5;
-    const float PauseDuration = 25;
+    const float RoundDuration = 30;
+    const float PauseDuration = 5;
 
     float sinceRoundTransition;
     public bool RoundStopped { get; private set; }
