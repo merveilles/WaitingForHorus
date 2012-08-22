@@ -34,22 +34,28 @@ class NetworkLeaderboard : MonoBehaviour
 
         // update colors
         var isFirst = true;
+        var isSecond = false;
         foreach (var entry in Entries.OrderByDescending(x => x.Kills))
         {
             if (!PlayerRegistry.For.ContainsKey(Network.player) ||
                 !PlayerRegistry.For.ContainsKey(entry.NetworkPlayer))
                 continue;
-            
 
             var player = PlayerRegistry.For[entry.NetworkPlayer];
-            if (entry.NetworkPlayer == Network.player)
+            if (isSecond)
                 player.Color = new Color(114 / 255f, 222 / 255f, 194 / 255f); // cyan
             else if (isFirst)
                 player.Color = new Color(255 / 255f, 166 / 255f, 27 / 255f); // orange
             else
-                player.Color = Color.white;
+                player.Color = new Color(226f / 255, 220f / 255, 198f / 255); // blanc cassé
 
-            isFirst = false;
+            if (isFirst)
+            {
+                isSecond = true;
+                isFirst = false;
+            }
+            else
+                isSecond = false;
         }
     }
 

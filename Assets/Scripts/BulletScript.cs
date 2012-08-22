@@ -14,11 +14,12 @@ public class BulletScript : MonoBehaviour
 
     public GameObject bulletCasingPrefab;
     public float speed = 900;
-	public float lifetime = 2;
+	float lifetime = 3;
     public int damage = 1;
     public float areaOfEffect = 0;
     public float homing = 0;
     public Transform target;
+    bool dead;
 
     public NetworkPlayer Player { get; set; }
 
@@ -55,64 +56,73 @@ public class BulletScript : MonoBehaviour
 
 	void Update()
     {
-        float distance = speed * Time.deltaTime;
-
-        RaycastHit hitInfo;
-        Physics.Raycast(transform.position, transform.forward, out hitInfo,
-                distance, BulletCollisionLayers);
-
-        if(hitInfo.transform)
+        if (!dead)
         {
-            if(Player == Network.player)
+            float distance = speed * Time.deltaTime;
+
+            RaycastHit hitInfo;
+            Physics.Raycast(transform.position, transform.forward, out hitInfo,
+                            distance, BulletCollisionLayers);
+
+            if (hitInfo.transform)
             {
-                if(hitInfo.transform != null &&
-                    (hitInfo.transform.networkView == null ||
-                     hitInfo.transform.networkView.owner != Network.player))
+                if (Player == Network.player)
                 {
-                    bool playerHit = false;
-                    if(areaOfEffect > 0)
+                    if (hitInfo.transform != null &&
+                        (hitInfo.transform.networkView == null ||
+                         hitInfo.transform.networkView.owner != Network.player))
                     {
-                        Collider[] colliders = Physics.OverlapSphere(
-                            hitInfo.point, areaOfEffect,
-                            (1<<LayerMask.NameToLayer("Player Hit")));
-                        foreach(Collider c in colliders)
+                        bool playerHit = false;
+                        if (areaOfEffect > 0)
                         {
-                            playerHit = playerHit || DoDamageTo(c.transform);
+                            Collider[] colliders = Physics.OverlapSphere(
+                                hitInfo.point, areaOfEffect,
+                                (1 << LayerMask.NameToLayer("Player Hit")));
+                            foreach (Collider c in colliders)
+                            {
+                                playerHit = playerHit || DoDamageTo(c.transform);
+                            }
                         }
-                    }
-                    else
-                    {
-                        playerHit = DoDamageTo(hitInfo.transform);
-                    }
+                        else
+                        {
+                            playerHit = DoDamageTo(hitInfo.transform);
+                        }
 
-                    string effect = playerHit ? "ExplosionHit" : "Explosion";
-                    if(areaOfEffect > 0)
-                    {
-                        effect += "Area";
-                    }
-                    EffectsScript.DoEffect(
-                        effect,
-                        hitInfo.point,
-                        Quaternion.LookRotation(hitInfo.normal));
+                        string effect = playerHit ? "ExplosionHit" : "Explosion";
+                        if (areaOfEffect > 0)
+                        {
+                            effect += "Area";
+                        }
+                        EffectsScript.DoEffect(
+                            effect,
+                            hitInfo.point,
+                            Quaternion.LookRotation(hitInfo.normal));
 
-                    Destroy(gameObject);
+                        dead = true;
+                        renderer.enabled = false;
+                    }
+                }
+                else
+                {
+                    dead = true;
+                    renderer.enabled = false;
                 }
             }
-            else
+
+            transform.position += transform.forward * distance;
+
+            // homing
+            if (target != null && homing > 0)
             {
-                Destroy(gameObject);
+                //Debug.Log("Is homing @ " + homing);
+                var lookVec = (target.position - transform.position).normalized;
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookVec),
+                                                      Mathf.Clamp01(homing * Time.deltaTime * 4));
             }
         }
 
-        transform.position += transform.forward * distance;
-
-        // homing
-        if (target != null && homing > 0)
-        {
-            //Debug.Log("Is homing @ " + homing);
-            var lookVec = (target.position - transform.position).normalized;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookVec), Mathf.Clamp01(homing * Time.deltaTime * 5));
-        }
+	    var o = lifetime / 3f * 0.75f;
+        GetComponent<TrailRenderer>().material.SetColor("_TintColor", new Color(o, o, o, 1));
 
 	    // max lifetime
 		lifetime -= Time.deltaTime;

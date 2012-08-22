@@ -32,8 +32,10 @@ public class PlayerScript : MonoBehaviour
     float dashCooldown = 0;
     Animation characterAnimation;
     bool isRunning;
-    NetworkPlayer? owner;
+    public NetworkPlayer? owner;
     float sinceNotGrounded;
+
+    public bool Paused { get; set; }
 
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
@@ -50,19 +52,7 @@ public class PlayerScript : MonoBehaviour
     void OnNetworkInstantiate(NetworkMessageInfo info)
     {
         if (!networkView.isMine)
-        {
             iPosition = new VectorInterpolator();
-            TaskManager.Instance.WaitUntil(_ => 
-                PlayerRegistry.Instance != null && 
-                owner.HasValue && PlayerRegistry.For.ContainsKey(owner.Value)).Then(() =>
-                {
-                    GetComponentInChildren<TextMesh>().text =
-                        PlayerRegistry.For[owner.Value].Username;
-
-                    transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color =
-                        PlayerRegistry.For[owner.Value].Color;
-                });
-        }
         else
             owner = networkView.owner;
     }
@@ -79,6 +69,7 @@ public class PlayerScript : MonoBehaviour
     void Update()
     {
         if (Network.peerType == NetworkPeerType.Disconnected) return;
+        if (Paused) return;
 
         if (networkView.isMine)
         {
@@ -144,17 +135,20 @@ public class PlayerScript : MonoBehaviour
         }
         dashEffectRenderer.material.SetColor("_TintColor", color);
 
-        if (networkView.isMine && PlayerRegistry.For.ContainsKey(owner.Value))
+        PlayerRegistry.PlayerInfo info;
+        if (PlayerRegistry.For.TryGetValue(owner.Value, out info))
         {
-            transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color =
-                PlayerRegistry.For[owner.Value].Color;
+            transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color = info.Color;
+
+            if (!networkView.isMine)
+                GetComponentInChildren<TextMesh>().text = info.Username;
         }
     }
 
     void FixedUpdate()
     {
-        if(!controller.enabled)
-            return;
+        if(!controller.enabled) return;
+        if (Paused) return;
 
         Vector3 smoothedInputVelocity = (lastInputVelocity + inputVelocity)/2;
         lastInputVelocity = inputVelocity;

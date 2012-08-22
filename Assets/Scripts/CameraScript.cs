@@ -11,7 +11,7 @@ public class CameraScript : MonoBehaviour
 
     Camera mainCamera;
 
-    void Awake()
+    void Start()
     {
         player = transform.parent.parent.GetComponent<PlayerScript>();
         if(player.networkView.isMine)
@@ -22,6 +22,13 @@ public class CameraScript : MonoBehaviour
 
     void LateUpdate()
     {
+        if (player.Paused && mainCamera != null)
+        {
+            mainCamera.transform.localPosition = new Vector3(-85.77416f, 32.8305f, -69.88891f);
+            mainCamera.transform.localRotation = Quaternion.Euler(16.48679f, 21.83607f, 6.487632f);
+            return;
+        }
+
         if(player.networkView.isMine)
         {
             Vector3 cameraPosition = transform.position;

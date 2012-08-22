@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ChatScript : MonoBehaviour
 {
-    readonly List<ChatMessage> ChatLog = new List<ChatMessage>();
+    public readonly List<ChatMessage> ChatLog = new List<ChatMessage>();
 
     public GUISkin Skin;
     GUIStyle ChatStyle, MyChatStyle;
@@ -170,7 +170,7 @@ public class ChatScript : MonoBehaviour
             ChatLog.RemoveAt(0);
     }
 
-    struct ChatMessage
+    public struct ChatMessage
     {
         public NetworkPlayer Player;
         public string Message;

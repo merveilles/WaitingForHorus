@@ -39,7 +39,7 @@ class LeaderboardViewerScript : MonoBehaviour
 
     void Update()
     {
-        visible = Input.GetKey(KeyCode.Tab);
+        visible = Input.GetKey(KeyCode.Tab) || RoundScript.Instance.RoundStopped;
     }
 
     void OnGUI()

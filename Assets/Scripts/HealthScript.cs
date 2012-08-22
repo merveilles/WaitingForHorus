@@ -90,6 +90,13 @@ public class HealthScript : MonoBehaviour
         TaskManager.Instance.WaitFor(timeUntilRespawn).Then(delegate {Respawn(position);});
     }
 
+    [RPC]
+    void ImmediateRespawn()
+    {
+        Hide();
+        Respawn(RespawnZone.GetRespawnPoint());
+    }
+
     void Hide()
     {
         Health = 0;

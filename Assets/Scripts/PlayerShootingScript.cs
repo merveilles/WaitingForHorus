@@ -35,21 +35,26 @@ public class PlayerShootingScript : MonoBehaviour
     Dictionary<PlayerScript, WeaponIndicatorScript.PlayerData> targets;
 
     CameraScript playerCamera;
+    PlayerScript playerScript;
 
     void Awake()
     {
         playerCamera = GetComponentInChildren<CameraScript>();
         targets = Camera.main.GetComponent<WeaponIndicatorScript>().Targets;
+        playerScript = GetComponent<PlayerScript>();
     }
 
     void Update()
     {
         gun.LookAt(playerCamera.GetTargetPosition());
+
+        if (playerScript.Paused)
+            bulletsLeft = BurstCount;
     }
 
     void FixedUpdate()
     {
-        if (networkView.isMine && Screen.lockCursor)
+        if (networkView.isMine && Screen.lockCursor && !playerScript.Paused)
 		{
 			cooldownLeft = Mathf.Max(0, cooldownLeft - Time.deltaTime);
             Camera.main.GetComponent<WeaponIndicatorScript>().CooldownStep = 1 - Math.Min(Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1);
@@ -69,7 +74,7 @@ public class PlayerShootingScript : MonoBehaviour
                         else
                         {
                             var chosen = aimedAt.OrderBy(x => Guid.NewGuid()).First();
-                            DoHomingShot(ShotgunSpread, chosen.Key.networkView.owner, Mathf.Clamp01(chosen.Value.SinceInCrosshair / AimingTime));
+                            DoHomingShot(ShotgunSpread, chosen.Key, Mathf.Clamp01(chosen.Value.SinceInCrosshair / AimingTime));
                         }
                         cooldownLeft += ShotCooldown;
                     }
@@ -102,28 +107,28 @@ public class PlayerShootingScript : MonoBehaviour
             // Test for players in crosshair
             foreach (var p in FindSceneObjectsOfType(typeof(PlayerScript)))
             {
-                var playerScript = p as PlayerScript;
+                var ps = p as PlayerScript;
 
                 if (p == gameObject.GetComponent<PlayerScript>())
                     continue;
 
-                var health = playerScript.gameObject.GetComponent<HealthScript>();
+                var health = ps.gameObject.GetComponent<HealthScript>();
 
-                var position = playerScript.transform.position;
+                var position = ps.transform.position;
                 var screenPos = Camera.main.WorldToScreenPoint(position);
 
                 if (health.Health > 0 && (screenPos.XY() - screenCenter).magnitude < allowedDistance)
                 {
                     WeaponIndicatorScript.PlayerData data;
-                    if (!targets.TryGetValue(playerScript, out data))
-                        targets.Add(playerScript, data = new WeaponIndicatorScript.PlayerData());
+                    if (!targets.TryGetValue(ps, out data))
+                        targets.Add(ps, data = new WeaponIndicatorScript.PlayerData());
 
                     data.ScreenPosition = screenPos.XY();
                     data.SinceInCrosshair += Time.deltaTime;
                     data.Found = true;
                 }
                 else
-                    targets.Remove(playerScript);
+                    targets.Remove(ps);
             }
 
             if (targets.Count > 0)
@@ -148,11 +153,11 @@ public class PlayerShootingScript : MonoBehaviour
             Network.player);
     }
 
-    void DoHomingShot(float spread, NetworkPlayer? target, float homing)
+    void DoHomingShot(float spread, PlayerScript target, float homing)
     {
         bulletsLeft -= 1;
 
-        spread *= (1 + homing);
+        spread *= (1 + homing * 1.75f);
 
         float roll = Random.value * 360;
         Quaternion spreadRotation =
@@ -160,8 +165,16 @@ public class PlayerShootingScript : MonoBehaviour
             Quaternion.Euler(Random.value * spread, 0, 0) *
             Quaternion.Euler(0, 0, -roll);
 
+        var lastKnownPosition = Vector3.zero;
+        NetworkPlayer targetOwner = Network.player;
+        if (target != null)
+        {
+            targetOwner = target.owner ?? Network.player;
+            lastKnownPosition = target.transform.position;
+        }
+
         networkView.RPC("ShootHoming", RPCMode.All,
-            gun.position + gun.forward, gun.rotation * spreadRotation, Network.player, target ?? Network.player, homing);
+            gun.position + gun.forward, gun.rotation * spreadRotation, Network.player, targetOwner, lastKnownPosition, homing);
     }
 
     [RPC]
@@ -172,13 +185,14 @@ public class PlayerShootingScript : MonoBehaviour
     }
 
     [RPC]
-    void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, float homing)
+    void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, Vector3 lastKnownPosition, float homing)
     {
         BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
         bullet.Player = player;
-        var targetScript = FindSceneObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>().First(x => x.networkView.owner == target);
+        var targetScript = FindSceneObjectsOfType(typeof (PlayerScript)).Cast<PlayerScript>().Where(
+            x => x.owner == target).OrderBy(x => Vector3.Distance(x.transform.position, lastKnownPosition)).First();
         bullet.target = targetScript == null ? null : targetScript.transform;
         bullet.homing = homing;
-        bullet.speed = 500;
+        bullet.speed = 400;
     }
 }

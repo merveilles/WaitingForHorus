@@ -25,7 +25,7 @@ public class ServerScript : MonoBehaviour
 
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
     }
-	
+
 	void OnGUI() 
     {
         PeerType = Network.peerType;
