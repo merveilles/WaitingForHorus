@@ -20,7 +20,8 @@ public class RoundScript : MonoBehaviour
 
     void Update() 
     {
-        if (Network.isServer)
+        Debug.Log("Peer type : " + Network.peerType);
+        if (Network.peerType == NetworkPeerType.Server)
 	    {
             sinceRoundTransition += Time.deltaTime;
 
