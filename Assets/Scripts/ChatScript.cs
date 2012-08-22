@@ -71,10 +71,14 @@ public class ChatScript : MonoBehaviour
     {
         try
         {
+            ChatLog.RemoveAll(x => x.Life >= 10);
+
             foreach (var log in ChatLog)
             {
                 if (!PlayerRegistry.For.ContainsKey(log.Player))
                     continue;
+
+                log.Life += Time.deltaTime;
 
                 GUIStyle rowStyle = ChatStyle;
                 if (log.Player == Network.player && !log.IsSystem) rowStyle = MyChatStyle;
@@ -173,10 +177,11 @@ public class ChatScript : MonoBehaviour
             ChatLog.RemoveAt(0);
     }
 
-    public struct ChatMessage
+    public class ChatMessage
     {
         public NetworkPlayer Player;
         public string Message;
         public bool IsSystem;
+        public float Life;
     }
 }

@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\Billboard.cs" />
      <Compile Include="Assets\Scripts\BulletScript.cs" />
      <Compile Include="Assets\Scripts\CameraScript.cs" />
+     <Compile Include="Assets\Scripts\CameraSpin.cs" />
      <Compile Include="Assets\Scripts\ChatScript.cs" />
      <Compile Include="Assets\Scripts\Common\ArrayHelper.cs" />
      <Compile Include="Assets\Scripts\Common\BoolHelper.cs" />

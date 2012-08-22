@@ -8,6 +8,7 @@ public class RoundScript : MonoBehaviour
     const float PauseDuration = 25;
 
     float sinceRoundTransition;
+    public bool GameStarted { get; set; }
     public bool RoundStopped { get; private set; }
     float sinceInteround;
 
