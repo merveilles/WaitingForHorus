@@ -27,16 +27,16 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Illum
+          name: _RampTex
         second:
-          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 1}
+          m_Texture: {fileID: 2800000, guid: 9f0b68b94f3a74248bbbdac83fce1181, type: 1}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _RampTex
+          name: _Illum
         second:
-          m_Texture: {fileID: 2800000, guid: 9f0b68b94f3a74248bbbdac83fce1181, type: 1}
+          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 1}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -100,7 +100,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .87818718, g: .818165421, b: .748199701, a: 1}
+        second: {r: .877402723, g: .81887567, b: .745746315, a: 1}
       data:
         first:
           name: _SpecColor
