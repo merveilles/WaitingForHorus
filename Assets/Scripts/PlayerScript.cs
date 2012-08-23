@@ -24,6 +24,7 @@ public class PlayerScript : MonoBehaviour
 
     CharacterController controller;
     Vector3 fallingVelocity;
+    Vector3 lastFallingVelocity;
 	bool invertMouse = true;
     Vector3 inputVelocity;
     Vector3 lastInputVelocity;
@@ -167,8 +168,8 @@ public class PlayerScript : MonoBehaviour
         if(!controller.enabled) return;
         if (Paused) return;
 
-        Vector3 smoothedInputVelocity = (lastInputVelocity + inputVelocity)/2;
-        lastInputVelocity = inputVelocity;
+        Vector3 smoothedInputVelocity = inputVelocity * 0.6f + lastInputVelocity * 0.45f;
+        lastInputVelocity = smoothedInputVelocity;
 
         // jump and dash
         dashCooldown -= Time.deltaTime;
@@ -192,7 +193,7 @@ public class PlayerScript : MonoBehaviour
 
                 characterAnimation.Play(currentAnim = "Jump");
 
-                var dashDirection = smoothedInputVelocity.normalized;
+                var dashDirection = inputVelocity.normalized;
                 if (dashDirection == Vector3.zero)
                     dashDirection = Vector3.up * 0.4f;
 
@@ -234,8 +235,11 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
+        var smoothFallingVelocity = fallingVelocity * 0.4f + lastFallingVelocity * 0.65f;
+        lastFallingVelocity = smoothFallingVelocity;
+
         // move!
-        controller.Move((fallingVelocity + smoothedInputVelocity) * Time.deltaTime);
+        controller.Move((smoothFallingVelocity + smoothedInputVelocity) * Time.deltaTime);
     }
 
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)

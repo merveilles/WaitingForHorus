@@ -156,9 +156,9 @@ public class PlayerShootingScript : MonoBehaviour
     {
         bulletsLeft -= 1;
 
-        spread *= (1 + homing * 1.75f);
+        spread *= (1 + homing * 2);
 
-        float roll = Random.value * 360;
+        float roll = RandomHelper.Between(homing * 90, 360 - homing * 90);
         Quaternion spreadRotation =
             Quaternion.Euler(0, 0, roll) *
             Quaternion.Euler(Random.value * spread, 0, 0) *

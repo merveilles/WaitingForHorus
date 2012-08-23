@@ -142,14 +142,14 @@ TrailRenderer:
       rgba: 4294967295
     m_Color[2]:
       serializedVersion: 2
-      rgba: 2516582399
+      rgba: 4294967295
     m_Color[3]:
       serializedVersion: 2
-      rgba: 721420287
+      rgba: 4294967295
     m_Color[4]:
       serializedVersion: 2
       rgba: 0
-  m_MinVertexDistance: .5
+  m_MinVertexDistance: 1
   m_Autodestruct: 0
 --- !u!114 &11400000
 MonoBehaviour:

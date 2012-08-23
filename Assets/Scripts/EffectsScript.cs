@@ -20,12 +20,17 @@ public class EffectsScript : MonoBehaviour
         Instance = this;
     }
 
+    void Update()
+    {
+        
+    }
+
     [RPC]
     void Explosion(Vector3 position, Quaternion rotation)
     {
         Instantiate(explosionPrefab, position, rotation);
 
-        var count = 3;//RandomHelper.Random.Next(1, 4);
+        var count = RandomHelper.Random.Next(1, 4);
         for (int i = 0; i < count; i++)
             Instantiate(hitConePrefab, position, rotation);
     }
@@ -34,7 +39,10 @@ public class EffectsScript : MonoBehaviour
     void ExplosionHit(Vector3 position, Quaternion rotation)
     {
         Instantiate(explosionHitPrefab, position, rotation);
-        Instantiate(hitConePrefab, position, rotation);
+
+        var count = RandomHelper.Random.Next(1, 4);
+        for (int i = 0; i < count; i++)
+            Instantiate(hitConePrefab, position, rotation);
     }
 
     [RPC]

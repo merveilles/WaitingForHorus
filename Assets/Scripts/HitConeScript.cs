@@ -20,9 +20,9 @@ public class HitConeScript : MonoBehaviour
 
         baseColor = GetComponentInChildren<Renderer>().material.GetColor("_TintColor");
         transform.rotation = transform.rotation * Quaternion.Euler(90, 0, 0) * spreadRotation;
-	    baseScale = transform.localScale * 1.25f;
+	    baseScale = transform.localScale;
 	    baseScale = new Vector3(baseScale.x, baseScale.y * Random.Range(0.5f, 1), baseScale.z);
-	    maxScale = Random.Range(0.5f, 2);
+	    maxScale = Random.Range(0.25f, 2);
 	}
 	
 	void Update()

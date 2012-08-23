@@ -7,7 +7,7 @@ public class ServerScript : MonoBehaviour
 {	
 	public string IP = "192.168.1.106";
 	public const int Port = 10000;
-    const int NumPlayers = 12;
+    const int NumPlayers = 6;
     public NetworkPeerType PeerType;
 
     public GUISkin Skin;

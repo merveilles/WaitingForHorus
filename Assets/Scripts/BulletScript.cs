@@ -14,7 +14,7 @@ public class BulletScript : MonoBehaviour
 
     public GameObject bulletCasingPrefab;
     public float speed = 900;
-	float lifetime = 3;
+	float lifetime = 2;
     public int damage = 1;
     public float areaOfEffect = 0;
     public float homing = 0;
@@ -28,11 +28,12 @@ public class BulletScript : MonoBehaviour
         GameObject casing = (GameObject)
             Instantiate(bulletCasingPrefab, transform.position, transform.rotation);
         casing.rigidbody.AddRelativeForce(
-            new Vector3(1 + Random.value, Random.value, 0),
+            new Vector3(1 + Random.value, Random.value + 1, 0),
             ForceMode.Impulse);
         casing.rigidbody.AddTorque(
             5 * new Vector3(-0.5f-Random.value, -Random.value*0.1f, -0.5f-Random.value),
             ForceMode.Impulse);
+        casing.rigidbody.useGravity = true;
     }
 
     bool DoDamageTo(Transform t)
@@ -117,11 +118,11 @@ public class BulletScript : MonoBehaviour
                 //Debug.Log("Is homing @ " + homing);
                 var lookVec = (target.position - transform.position).normalized;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookVec),
-                                                      Mathf.Clamp01(homing * Time.deltaTime * 4));
+                                                      Mathf.Clamp01(homing * Time.deltaTime * 6));
             }
         }
 
-	    var o = lifetime / 3f * 0.75f;
+	    var o = lifetime / 2f * 0.75f;
         GetComponent<TrailRenderer>().material.SetColor("_TintColor", new Color(o, o, o, 1));
 
 	    // max lifetime
