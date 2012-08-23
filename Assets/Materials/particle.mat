@@ -42,9 +42,9 @@ Material:
         second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
-          name: _Emission
-        second: {r: .422237873, g: .402312756, b: .374658376, a: .689999998}
+          name: _TintColor
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _TintColor
-        second: {r: .948257208, g: 1, b: .964941323, a: 1}
+          name: _Emission
+        second: {r: .422237873, g: .402312756, b: .374658376, a: .689999998}

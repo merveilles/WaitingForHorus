@@ -11,10 +11,10 @@ public class PlayerShootingScript : MonoBehaviour
 
 	const int BurstCount = 8;
 	const float ShotCooldown = 0.045f;
-	const float ReloadTime = 0.6f;
+	const float ReloadTime = 0.45f;
     const float BurstSpread = 1.5f;
     const float ShotgunSpread = 10;
-    const float CannonChargeTime = 1.0f;
+    const float CannonChargeTime = 0.5f;
 
     public AudioSource reloadSound;
 
