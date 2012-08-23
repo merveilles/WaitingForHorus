@@ -17,6 +17,7 @@ public class PlayerScript : MonoBehaviour
     public float dashUpwardVelocity = 30;
     // air velocity damping: 0.05f -> speed drops to 5% in one second
     public float airVelocityDamping = 0.05f;
+    public float recoilDamping = 0.0005f;
 
     public Transform cameraPivot;
     public Transform dashEffectPivot;
@@ -25,6 +26,7 @@ public class PlayerScript : MonoBehaviour
     CharacterController controller;
     Vector3 fallingVelocity;
     Vector3 lastFallingVelocity;
+    Vector3 recoilVelocity;
 	bool invertMouse = true;
     Vector3 inputVelocity;
     Vector3 lastInputVelocity;
@@ -69,6 +71,16 @@ public class PlayerScript : MonoBehaviour
         {
             Screen.lockCursor = false;
         }
+    }
+
+    [RPC]
+    public void AddRecoil(Vector3 impulse)
+    {
+        if (!networkView.isMine) return;
+        recoilVelocity += impulse;
+        if (impulse.y > 0)
+            sinceNotGrounded = 0.25f;
+        Debug.Log("added recoil : " + impulse);
     }
 
     void Update()
@@ -176,8 +188,9 @@ public class PlayerScript : MonoBehaviour
         bool justJumped = false;
         if(networkView.isMine && Time.time - lastJumpInputTime <= JumpInputQueueTime)
         {
-            if (controller.isGrounded || sinceNotGrounded < 0.25f)
+            if ((controller.isGrounded || sinceNotGrounded < 0.25f) && recoilVelocity.y <= 0)
             {
+                Debug.Log("Accepted jump");
                 lastJumpInputTime = -1;
                 justJumped = true;
                 activelyJumping = true;
@@ -200,6 +213,8 @@ public class PlayerScript : MonoBehaviour
                 fallingVelocity +=
                     dashDirection * dashForwardVelocity +
                     Vector3.up * dashUpwardVelocity;
+
+                recoilVelocity.y *= 0.5f;
             }
         }
 
@@ -208,7 +223,7 @@ public class PlayerScript : MonoBehaviour
             if (!justJumped)
                 sinceNotGrounded = 0;
             // infinite friction
-            if(fallingVelocity.y <= 0)
+            if (fallingVelocity.y <= 0)
                 fallingVelocity = Vector3.up * gravity * Time.deltaTime;
         }
         else
@@ -223,7 +238,7 @@ public class PlayerScript : MonoBehaviour
         // Update running animation
         if (controller.isGrounded && !justJumped)
         {
-            if (MathHelper.Approximately(smoothedInputVelocity, Vector3.zero))
+            if (MathHelper.AlmostEquals(smoothedInputVelocity, Vector3.zero, 0.01f))
             {
                 if (currentAnim != "Idle")
                     characterAnimation.Play(currentAnim = "Idle");
@@ -238,8 +253,25 @@ public class PlayerScript : MonoBehaviour
         var smoothFallingVelocity = fallingVelocity * 0.4f + lastFallingVelocity * 0.65f;
         lastFallingVelocity = smoothFallingVelocity;
 
+        // damp recoil
+        if (!controller.isGrounded)
+        {
+            recoilVelocity.x *= Mathf.Pow(recoilDamping * 10, Time.deltaTime);
+            recoilVelocity.y *= Mathf.Pow(recoilDamping * 100, Time.deltaTime);
+            recoilVelocity.z *= Mathf.Pow(recoilDamping * 10, Time.deltaTime);
+        }
+        else
+        {
+            recoilVelocity.x *= Mathf.Pow(recoilDamping / 25, Time.deltaTime);
+            recoilVelocity.y *= Mathf.Pow(recoilDamping * 100, Time.deltaTime);
+            recoilVelocity.z *= Mathf.Pow(recoilDamping / 25, Time.deltaTime);
+        }
+
         // move!
-        controller.Move((smoothFallingVelocity + smoothedInputVelocity) * Time.deltaTime);
+        controller.Move((smoothFallingVelocity + smoothedInputVelocity + recoilVelocity) * Time.deltaTime);
+
+        if (controller.isGrounded)
+            recoilVelocity.y = 0;
     }
 
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
@@ -255,6 +287,7 @@ public class PlayerScript : MonoBehaviour
         stream.Serialize(ref inputVelocity);
         stream.Serialize(ref fallingVelocity);
         stream.Serialize(ref activelyJumping);
+        stream.Serialize(ref recoilVelocity);
 
         stream.Serialize(ref lookRotationEuler);
 

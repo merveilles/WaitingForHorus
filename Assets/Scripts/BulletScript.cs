@@ -17,6 +17,7 @@ public class BulletScript : MonoBehaviour
 	float lifetime = 2;
     public int damage = 1;
     public float areaOfEffect = 0;
+    public float recoil = 0;
     public float homing = 0;
     public Transform target;
     bool dead;
@@ -74,6 +75,7 @@ public class BulletScript : MonoBehaviour
                          hitInfo.transform.networkView.owner != Network.player))
                     {
                         bool playerHit = false;
+
                         if (areaOfEffect > 0)
                         {
                             Collider[] colliders = Physics.OverlapSphere(
@@ -87,6 +89,37 @@ public class BulletScript : MonoBehaviour
                         else
                         {
                             playerHit = DoDamageTo(hitInfo.transform);
+                        }
+
+                        if (recoil > 0)
+                        {
+                            Collider[] colliders = Physics.OverlapSphere(hitInfo.point, 15, (1 << LayerMask.NameToLayer("Player Hit")));
+                            foreach (Collider c in colliders)
+                            {
+                                var t = c.transform;
+                                NetworkView view = t.networkView;
+                                while (view == null)
+                                {
+                                    t = t.parent;
+                                    view = t.networkView;
+                                }
+
+                                t = t.FindChild("mecha_gun");
+                                var endpoint = t.position + t.forward;
+
+                                var direction = (endpoint - hitInfo.point);
+                                var dist = Mathf.Max(direction.magnitude, 0.5f);
+                                direction.Normalize();
+
+                                var impulse = direction * (40 / dist);
+                                if (impulse.y > 0) impulse.y *= 2.125f;
+                                else impulse.y = 0;
+
+                                if (playerHit && hitInfo.transform == c.transform)
+                                    impulse *= 10;
+
+                                view.RPC("AddRecoil", RPCMode.All, impulse);
+                            }
                         }
 
                         string effect = playerHit ? "ExplosionHit" : "Explosion";

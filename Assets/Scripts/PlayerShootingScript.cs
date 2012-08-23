@@ -193,5 +193,6 @@ public class PlayerShootingScript : MonoBehaviour
         bullet.target = targetScript == null ? null : targetScript.transform;
         bullet.homing = homing;
         bullet.speed = 400;
+        bullet.recoil = 1;
     }
 }
