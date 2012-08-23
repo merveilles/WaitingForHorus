@@ -11,7 +11,8 @@ public class ChatScript : MonoBehaviour
     GUIStyle ChatStyle, MyChatStyle;
 
 	string lastMessage = "";
-	bool showChat, ignoreT;
+    public bool showChat;
+    bool ignoreT;
     bool forceVisible;
 
     public static ChatScript Instance { get; private set; }

@@ -71,8 +71,8 @@ public class BulletScript : MonoBehaviour
                 if (Player == Network.player)
                 {
                     if (hitInfo.transform != null &&
-                        (hitInfo.transform.networkView == null ||
-                         hitInfo.transform.networkView.owner != Network.player))
+                        (hitInfo.transform.parent.networkView == null ||
+                         hitInfo.transform.parent.networkView.owner != Network.player))
                     {
                         bool playerHit = false;
 

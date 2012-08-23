@@ -50,6 +50,7 @@ public class CameraScript : MonoBehaviour
             foreach (var r in player.GetComponentsInChildren<Renderer>())
             {
                 if (!r.material.HasProperty("_Color")) continue;
+                if (r.gameObject.name == "TextBubble") continue;
                 var c = r.material.color;
                 r.material.color = new Color(c.r, c.g, c.b, o);
             }

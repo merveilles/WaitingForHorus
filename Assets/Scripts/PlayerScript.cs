@@ -23,6 +23,7 @@ public class PlayerScript : MonoBehaviour
     public Transform dashEffectPivot;
     public Renderer dashEffectRenderer;
     public CharacterController controller;
+    GameObject textBubble;
 
     Vector3 fallingVelocity;
     Vector3 lastFallingVelocity;
@@ -38,6 +39,7 @@ public class PlayerScript : MonoBehaviour
     public NetworkPlayer? owner;
     float sinceNotGrounded;
     bool activelyJumping;
+    bool textBubbleVisible;
 
     public bool Paused { get; set; }
 
@@ -54,6 +56,8 @@ public class PlayerScript : MonoBehaviour
         characterAnimation.AddClip(characterAnimation.GetClip("Run"), "Run", 0, 20, true);
         //characterAnimation.AddClip(characterAnimation.GetClip("Idle"), "Idle", 0, 20, true);
         characterAnimation.Play("Idle");
+	    textBubble = gameObject.FindChild("TextBubble");
+        textBubble.renderer.material.color = new Color(1, 1, 1, 0);
 	}
 
     void OnNetworkInstantiate(NetworkMessageInfo info)
@@ -83,6 +87,12 @@ public class PlayerScript : MonoBehaviour
         //Debug.Log("added recoil : " + impulse);
     }
 
+    public void ResetRecoil()
+    {
+        if (!networkView.isMine) return;
+        recoilVelocity = Vector3.zero;
+    }
+
     void Update()
     {
         if (Network.peerType == NetworkPeerType.Disconnected) return;
@@ -90,6 +100,8 @@ public class PlayerScript : MonoBehaviour
 
         if (networkView.isMine)
         {
+            textBubbleVisible = ChatScript.Instance.showChat;
+
             inputVelocity =
                 Input.GetAxisRaw("Strafe") * transform.right +
                 Input.GetAxisRaw("Thrust") * transform.forward;
@@ -144,6 +156,23 @@ public class PlayerScript : MonoBehaviour
             smoothYaw = Mathf.LerpAngle(smoothYaw, lookRotationEuler.y, 0.4f);
             smoothLookRotation = Quaternion.Slerp(smoothLookRotation, Quaternion.Euler(lookRotationEuler), 0.3f);
         }
+
+        // set up text bubble visibility
+        if (!textBubbleVisible)
+        {
+            var o = textBubble.renderer.material.color.a;
+            textBubble.renderer.material.color = new Color(1, 1, 1, Mathf.Clamp(o - Time.deltaTime * 10, 0, 0.875f));
+            if (o <= 0)
+                textBubble.renderer.enabled = false;
+        }
+        else
+        {
+            textBubble.renderer.enabled = true;
+            var o = textBubble.renderer.material.color.a;
+            textBubble.renderer.material.color = new Color(1, 1, 1, Mathf.Clamp(o + Time.deltaTime * 10, 0, 0.875f));
+        }
+        textBubble.transform.LookAt(Camera.main.transform);
+        textBubble.transform.localRotation = textBubble.transform.localRotation * Quaternion.Euler(90, 0, 0);
 
         // sync up actual player and camera transforms
         Vector3 euler = transform.rotation.eulerAngles;
@@ -288,6 +317,7 @@ public class PlayerScript : MonoBehaviour
         stream.Serialize(ref fallingVelocity);
         stream.Serialize(ref activelyJumping);
         stream.Serialize(ref recoilVelocity);
+        stream.Serialize(ref textBubbleVisible);
 
         stream.Serialize(ref lookRotationEuler);
 

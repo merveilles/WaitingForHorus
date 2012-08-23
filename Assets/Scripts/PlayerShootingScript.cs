@@ -98,7 +98,7 @@ public class PlayerShootingScript : MonoBehaviour
                         cooldownLeft += ReloadTime;
                 }
 
-                if (Input.GetButton("Reload"))
+                if (bulletsLeft != BurstCount && Input.GetButton("Reload"))
                 {
                     bulletsLeft = BurstCount;
                     reloadSound.Play();
@@ -163,6 +163,11 @@ public class PlayerShootingScript : MonoBehaviour
         networkView.RPC("Shoot", RPCMode.All,
             gun.position + gun.forward, gun.rotation * spreadRotation,
             Network.player);
+    }
+
+    public void InstantReload()
+    {
+        bulletsLeft = BurstCount;
     }
 
     void DoHomingShot(float spread, PlayerScript target, float homing)

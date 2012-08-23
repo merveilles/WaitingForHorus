@@ -150,6 +150,9 @@ public class HealthScript : MonoBehaviour
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
 
         transform.position = position;
+        GetComponent<PlayerScript>().ResetRecoil();
+        GetComponent<PlayerShootingScript>().InstantReload();
+        
         Shield = maxShield;
         Health = maxHealth;
         dead = false;
