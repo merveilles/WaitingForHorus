@@ -91,6 +91,13 @@ public class PlayerShootingScript : MonoBehaviour
                     if (bulletsLeft <= 0)
                         cooldownLeft += ReloadTime;
                 }
+
+                if (Input.GetButton("Reload"))
+                {
+                    bulletsLeft = BurstCount;
+                    reloadSound.Play();
+                    cooldownLeft += ReloadTime;
+                }
             }
 
             if (bulletsLeft <= 0) 
