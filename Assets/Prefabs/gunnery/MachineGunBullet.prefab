@@ -149,7 +149,7 @@ TrailRenderer:
     m_Color[4]:
       serializedVersion: 2
       rgba: 0
-  m_MinVertexDistance: .100000001
+  m_MinVertexDistance: .5
   m_Autodestruct: 0
 --- !u!114 &11400000
 MonoBehaviour:
