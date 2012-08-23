@@ -41047,6 +41047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e6cc0494fa0f495a8c04f5b907a76be, type: 1}
   m_Name: 
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
+  showChat: 0
 --- !u!148 &1714618694
 NetworkView:
   m_ObjectHideFlags: 0
