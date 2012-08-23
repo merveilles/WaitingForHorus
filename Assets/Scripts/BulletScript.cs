@@ -111,8 +111,8 @@ public class BulletScript : MonoBehaviour
                                 var dist = Mathf.Max(direction.magnitude, 0.5f);
                                 direction.Normalize();
 
-                                var impulse = direction * (40 / dist);
-                                if (impulse.y > 0) impulse.y *= 2.125f;
+                                var impulse = direction * (45 / dist);
+                                if (impulse.y > 0) impulse.y *= 2.25f;
                                 else impulse.y = 0;
 
                                 if (playerHit && hitInfo.transform == c.transform)

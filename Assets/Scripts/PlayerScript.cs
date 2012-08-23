@@ -22,8 +22,8 @@ public class PlayerScript : MonoBehaviour
     public Transform cameraPivot;
     public Transform dashEffectPivot;
     public Renderer dashEffectRenderer;
+    public CharacterController controller;
 
-    CharacterController controller;
     Vector3 fallingVelocity;
     Vector3 lastFallingVelocity;
     Vector3 recoilVelocity;
@@ -80,7 +80,7 @@ public class PlayerScript : MonoBehaviour
         recoilVelocity += impulse;
         if (impulse.y > 0)
             sinceNotGrounded = 0.25f;
-        Debug.Log("added recoil : " + impulse);
+        //Debug.Log("added recoil : " + impulse);
     }
 
     void Update()
@@ -190,7 +190,7 @@ public class PlayerScript : MonoBehaviour
         {
             if ((controller.isGrounded || sinceNotGrounded < 0.25f) && recoilVelocity.y <= 0)
             {
-                Debug.Log("Accepted jump");
+                //Debug.Log("Accepted jump");
                 lastJumpInputTime = -1;
                 justJumped = true;
                 activelyJumping = true;
@@ -238,7 +238,7 @@ public class PlayerScript : MonoBehaviour
         // Update running animation
         if (controller.isGrounded && !justJumped)
         {
-            if (MathHelper.AlmostEquals(smoothedInputVelocity, Vector3.zero, 0.01f))
+            if (MathHelper.AlmostEquals(smoothedInputVelocity, Vector3.zero, 0.1f))
             {
                 if (currentAnim != "Idle")
                     characterAnimation.Play(currentAnim = "Idle");

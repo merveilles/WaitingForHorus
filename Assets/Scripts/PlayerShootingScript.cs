@@ -67,6 +67,7 @@ public class PlayerShootingScript : MonoBehaviour
                     // find homing target(s)
                     var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime);
 
+                    var bulletsShot = bulletsLeft;
                     while (bulletsLeft > 0)
                     {
                         if (!aimedAt.Any())
@@ -79,6 +80,11 @@ public class PlayerShootingScript : MonoBehaviour
                         cooldownLeft += ShotCooldown;
                     }
                     cooldownLeft += ReloadTime;
+
+                    var recoilImpulse = -gun.forward * ((float)bulletsShot / BurstCount);
+                    recoilImpulse *= playerScript.controller.isGrounded ? 25 : 87.5f;
+                    recoilImpulse.y *= playerScript.controller.isGrounded ? 0.1f : 0.375f;
+                    playerScript.AddRecoil(recoilImpulse);
 
                     cannonChargeCountdown = CannonChargeTime;
                 }
