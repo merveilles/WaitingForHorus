@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class SpawnScript : MonoBehaviour 
@@ -6,6 +7,8 @@ public class SpawnScript : MonoBehaviour
 
 	public GameObject PlayerTemplate;
     public GameObject PlayerRegistryPrefab;
+
+    GameObject PlayerInstance;
 	
 	string chosenUsername;
 	
@@ -26,11 +29,10 @@ public class SpawnScript : MonoBehaviour
         ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player, "connected", true, false);
 	}
 	
-	public void Spawn()
+	void Spawn()
 	{
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));
-	    Network.Instantiate(PlayerTemplate,
-            RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);
+        PlayerInstance = Network.Instantiate(PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0) as GameObject;
     }
 	
 	void OnPlayerDisconnected(NetworkPlayer player) 
@@ -55,12 +57,20 @@ public class SpawnScript : MonoBehaviour
 
         if (Network.isServer)
         {
-            Network.RemoveRPCs(PlayerRegistry.Instance.networkView.viewID);
-            Network.Destroy(PlayerRegistry.Instance.networkView.viewID);
+            foreach (var c in Network.connections)
+            {
+                Network.DestroyPlayerObjects(c);
+                Network.RemoveRPCs(c);
+            }
+            Network.Destroy(PlayerInstance);
         }
-
-		Application.LoadLevel(Application.loadedLevel);
-	}
+        else
+        {
+            foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                Destroy(p.gameObject);
+        }
+	    PlayerInstance = null;
+    }
 	
 	public void SetChosenUsername(string chosenUsername) 
 	{

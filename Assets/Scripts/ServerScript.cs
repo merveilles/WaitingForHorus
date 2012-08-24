@@ -1,29 +1,187 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
+using Mono.Nat;
 using UnityEngine;
 
 public class ServerScript : MonoBehaviour 
 {	
-	public string IP = "192.168.1.106";
-	public const int Port = 10000;
-    const int NumPlayers = 6;
+	public const int Port = 12345;
+    const int MaxPlayers = 6;
     public NetworkPeerType PeerType;
+
+    public const bool LocalMode = false;
 
     public GUISkin Skin;
 
-    IFuture<string> serverIp;
+    IFuture<string> wanIp;
+    IFuture<ServerInfo[]> serverList;
+    IFuture<int> thisServerId;
+    ServerInfo chosenServer;
     bool connecting;
     string lastStatus;
 	string chosenUsername = "Anon";
 
+    INatDevice natDevice;
+    Mapping udpMapping, tcpMapping;
+    bool? udpMappingSuccess, tcpMappingSuccess;
+    bool natDiscoveryStarted;
+    float sinceRefreshedPlayers;
+    int lastPlayerCount;
+    bool couldntCreateServer;
+
     GUIStyle TextStyle;
 
-    void Awake()
+    class ServerInfo
+    {
+        public int Id;
+        public string Ip;
+        public int PlayerCount;
+        public DateTime Timestamp;
+        public bool ConnectionFailed;
+    }
+
+    enum HostingState
+    {
+        WaitingForInput,
+        ReadyToListServers,
+        WaitingForServers,
+        ReadyToChooseServer,
+        ReadyToDiscoverNat,
+        ReadyToConnect,
+        WaitingForNat,
+        ReadyToHost,
+        Hosting,
+        Connected
+    }
+    HostingState hostState = HostingState.WaitingForInput;
+
+    void Start()
     {
         Application.targetFrameRate = 60;
-
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
+    }
+
+    void Update()
+    {
+        // Automatic host/connect logic follows
+
+        switch (hostState)
+        {
+            case HostingState.ReadyToListServers:
+                lastStatus = "Listing servers...";
+                QueryServerList();
+                hostState = HostingState.WaitingForServers;
+                break;
+
+            case HostingState.WaitingForServers:
+                if (!serverList.HasValue)
+                    break;
+
+                var shouldHost = serverList.Value.Sum(x => MaxPlayers - x.PlayerCount) < MaxPlayers / 2f;
+
+                Debug.Log("Should host? " + shouldHost);
+
+                if (shouldHost)
+                    hostState = HostingState.ReadyToDiscoverNat;
+                else
+                    hostState = HostingState.ReadyToChooseServer;
+                break;
+
+            case HostingState.ReadyToChooseServer:
+                chosenServer = serverList.Value.OrderBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.PlayerCount < MaxPlayers);
+                if (chosenServer == null)
+                {
+                    if (couldntCreateServer || (udpMappingSuccess.HasValue && tcpMappingSuccess.HasValue && (!udpMappingSuccess.Value || !tcpMappingSuccess.Value)))
+                    {
+                        Debug.Log("Tried to host, failed, tried to find server, failed. Returning to interactive state.");
+                        serverList = null;
+                        hostState = HostingState.WaitingForInput;
+                    }
+                    else
+                        hostState = HostingState.ReadyToDiscoverNat;
+                }
+                else
+                    hostState = HostingState.ReadyToConnect;
+                break;
+
+            case HostingState.ReadyToDiscoverNat:
+                lastStatus = "Trying to open port...";
+                if (!natDiscoveryStarted || !wanIp.HasValue)
+                {
+                    Debug.Log("NAT discovery started");
+                    StartNatDiscovery();
+                    GetWanIP();
+                }
+                hostState = HostingState.WaitingForNat;
+                break;
+
+            case HostingState.WaitingForNat:
+                if (!udpMappingSuccess.HasValue || !tcpMappingSuccess.HasValue || !wanIp.HasValue)
+                    break;
+
+                if (udpMappingSuccess.Value && tcpMappingSuccess.Value)
+                {
+                    Debug.Log("Ready to host!");
+                    hostState = HostingState.ReadyToHost;
+                }
+                else
+                {
+                    Debug.Log("No uPnP despite needing to host, will try to choose server");
+                    hostState = HostingState.ReadyToChooseServer;
+                }
+                break;
+
+            case HostingState.ReadyToHost:
+                lastStatus = "Creating server...";
+                couldntCreateServer = false;
+                if (CreateServer())
+                {
+                    hostState = HostingState.Hosting;
+                    AddServerToList();
+                    lastPlayerCount = 0;
+                    sinceRefreshedPlayers = 0;
+                }
+                else
+                {
+                    Debug.Log("Couldn't create server, will try joining instead");
+                    couldntCreateServer = true;
+                    hostState = HostingState.ReadyToChooseServer;
+                }
+                break;
+
+            case HostingState.Hosting:
+                if (!Network.isServer)
+                {
+                    Debug.Log("Hosting but is not the server...?");
+                    break;
+                }
+
+                sinceRefreshedPlayers += Time.deltaTime;
+                if (thisServerId.HasValue && (lastPlayerCount != Network.connections.Length || sinceRefreshedPlayers > 25))
+                {
+                    Debug.Log("Refreshing...");
+                    RefreshListedServer();
+                    sinceRefreshedPlayers = 0;
+                    lastPlayerCount = Network.connections.Length;
+                }
+                break;
+
+            case HostingState.ReadyToConnect:
+                lastStatus = "Connecting...";
+                if (Connect())
+                    hostState = HostingState.Connected;
+                else
+                {
+                    chosenServer.ConnectionFailed = true;
+                    Debug.Log("Couldn't connect, will try choosing another server");
+                    hostState = HostingState.ReadyToChooseServer;
+                }
+                break;
+        }
     }
 
 	void OnGUI() 
@@ -36,7 +194,7 @@ public class ServerScript : MonoBehaviour
         if (PeerType == NetworkPeerType.Connecting || PeerType == NetworkPeerType.Disconnected)
         {
             Screen.showCursor = true;
-            GUILayout.Window(0, new Rect(0, Screen.height - 97, 277, 97), Login, string.Empty);
+            GUILayout.Window(0, new Rect(0, Screen.height - 70, 277, 70), Login, string.Empty);
         }
     }
 
@@ -50,19 +208,9 @@ public class ServerScript : MonoBehaviour
     {
         switch (PeerType)
         {
-            //case NetworkPeerType.Client:
-            //    connecting = false;
-            //    //lastStatus = "Connected to " + IP + ":" + Port + ", ping is " + Network.GetLastPing(Network.player);
-            //    if (GUILayout.Button("Disconnect"))
-            //    {
-            //        Network.Disconnect();
-            //        lastStatus = null;
-            //    }
-            //    break;
-
             case NetworkPeerType.Disconnected:
             case NetworkPeerType.Connecting:
-                GUI.enabled = PeerType != NetworkPeerType.Connecting;
+                GUI.enabled = hostState == HostingState.WaitingForInput;
 
                 GUILayout.Space(7);
 
@@ -74,13 +222,6 @@ public class ServerScript : MonoBehaviour
 				}
 				GUILayout.EndHorizontal();
 
-                GUILayout.BeginHorizontal();
-                {
-                    IP = GUILayout.TextField(IP);
-                    GUILayout.Label("SERVER IP");
-                }
-                GUILayout.EndHorizontal();
-
                 GUILayout.HorizontalSlider(0, 0, 1);
 
                 GUILayout.Space(3);
@@ -89,34 +230,15 @@ public class ServerScript : MonoBehaviour
                 {
                     GUI.enabled = true;
                     GUILayout.Label(lastStatus, TextStyle);
-                    GUI.enabled = PeerType != NetworkPeerType.Connecting;
+                    GUI.enabled = hostState == HostingState.WaitingForInput;
 
                     GUILayout.FlexibleSpace();
 
-                    //if (Input.GetKey("w") && Input.GetKey("f") &&  Input.GetKey("h"))
+                    if (GUILayout.Button("QUICKPLAY") && hostState == HostingState.WaitingForInput)
                     {
-                        if (GUILayout.Button("CREATE"))
-                        {
-                            var result = Network.InitializeServer(NumPlayers, Port, false);
-                            if (result == NetworkConnectionError.NoError)
-                            {
-                                //serverIp = ThreadPool.Instance.Evaluate<string>(GetIP);
-                            }
-                            else
-                                lastStatus = "Failed.";
-                        }
+                        hostState = HostingState.ReadyToListServers;
                     }
-
-                    if (GUILayout.Button("CONNECT"))
-                    {
-                        lastStatus = "Connecting...";
-
-                        var result = Network.Connect(IP, Port);
-                        if (result != NetworkConnectionError.NoError)
-                            lastStatus = "Failed.";
-                        else
-                            connecting = true;
-                    }
+                    GUI.enabled = true;
                 }
 
                 GUILayout.EndHorizontal();
@@ -126,15 +248,259 @@ public class ServerScript : MonoBehaviour
         }
     }
 
-    static string GetIP()
+    void QueryServerList()
     {
-        string strIP;
-        using (var wc = new WebClient())
+        var blackList = new int[0];
+        if (serverList != null && serverList.HasValue)
         {
-            strIP = wc.DownloadString("http://checkip.dyndns.org");
-            strIP = (new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Match(strIP).Value;
+            blackList = serverList.Value.Where(x => x.ConnectionFailed).Select(x => x.Id).ToArray();
+            Debug.Log("blacklisted servers : " + blackList);
         }
-        return strIP;
+
+        serverList = ThreadPool.Instance.Evaluate(() =>
+        {
+            using (var client = new WebClient())
+            {
+                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=list");
+                Debug.Log("Got server list : ");
+                try
+                {
+                    var list = response.Split('\n').Where(x => x.Trim().Length > 0 && x.Trim().Split('_').Length == 4).Select(x =>
+                    {
+                        var y = x.Trim().Split('_');
+                        Debug.Log("Parts : '" + y[0] + "' '" + y[1] + "' '" + y[2] + "' '" + y[3] + "'");
+                        var id = int.Parse(y[0]);
+                        return new ServerInfo
+                        {
+                            Id = id,
+                            Ip = y[1],
+                            PlayerCount = int.Parse(y[2]),
+                            Timestamp = DateTime.FromFileTimeUtc(long.Parse(y[3])),
+                            ConnectionFailed = blackList.Contains(id)
+                        };
+                    });
+
+                    foreach (var s in list)
+                        Debug.Log(s.Id + " is " + (DateTime.UtcNow - s.Timestamp).TotalSeconds + " seconds old");
+
+                    return list.Where(x => (DateTime.UtcNow - x.Timestamp).TotalSeconds < 30).ToArray();
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log(ex.ToString());
+                    return new ServerInfo[0];
+                }
+            }
+        });
+    }
+
+    void AddServerToList()
+    {
+        thisServerId = ThreadPool.Instance.Evaluate(() =>
+        {
+            using (var client = new WebClient())
+            {
+                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=add&value=" + wanIp.Value + "_1_" + DateTime.UtcNow.ToFileTimeUtc());
+                Debug.Log("Added server, got id = " + response);
+                return int.Parse(response);
+            }
+        });
+    }
+
+    void RefreshListedServer()
+    {
+        var connections = Network.connections.Length;
+        ThreadPool.Instance.Fire(() =>
+        {
+            string uri = "http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value + "&value=" +
+                         wanIp.Value + "_" + (connections + 1) + "_" + DateTime.UtcNow.ToFileTimeUtc();
+            using (var client = new WebClient())
+            {
+                client.DownloadString(uri);
+                Debug.Log("Updated timestamp to " + DateTime.UtcNow.ToFileTimeUtc() + " and connection count to " +
+                            (connections + 1));
+            }
+        });
+    }
+
+    void DeleteServer()
+    {
+        ThreadPool.Instance.Fire(() =>
+        {
+            using (var client = new WebClient())
+            {
+                client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=delete&id=" + thisServerId.Value);
+                Debug.Log("Deleted server " + thisServerId.Value);
+            }
+        });
+    }
+
+    bool CreateServer()
+    {
+        var result = Network.InitializeServer(MaxPlayers, Port, false);
+        if (result == NetworkConnectionError.NoError)
+        {
+            //serverIp = ThreadPool.Instance.Evaluate<string>(GetIP);
+            return true;
+        }
+        lastStatus = "Failed.";
+        return false;
+    }
+
+    bool Connect()
+    {
+        lastStatus = "Connecting...";
+        Debug.Log("Connecting to " + chosenServer.Ip + " (id = " + chosenServer.Id + ")");
+        var result = Network.Connect(chosenServer.Ip, Port);
+        if (result != NetworkConnectionError.NoError)
+        {
+            lastStatus = "Failed.";
+            return false;
+        }
+        connecting = true;
+        return true;
+    }
+
+    void GetWanIP()
+    {
+        wanIp = ThreadPool.Instance.Evaluate(() =>
+        {
+            if (LocalMode)
+                return "127.0.0.1";
+
+            using (var client = new WebClient())
+            {
+                var response = client.DownloadString("http://checkip.dyndns.org");
+                var ip = (new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Match(response).Value;
+                Debug.Log("Got IP : " + ip);
+                return ip;
+            }
+        });
+    }
+
+    void StartNatDiscovery()
+    {
+        natDiscoveryStarted = true;
+
+        NatUtility.DeviceFound += (s, ea) =>
+        {
+            natDevice = ea.Device;
+            MapPort();
+
+            // -- This is probably useless
+            //string externalIp;
+            //try
+            //{
+            //    externalIp = natDevice.GetExternalIP().ToString();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.Log("Failed to get external IP :\n" + ex.ToString());
+            //    externalIp = "UNKNOWN";
+            //}
+
+            //if (WanIP == "UNKNOWN")
+            //{
+            //    Debug.Log("Reverted to UPnP device's external IP");
+            //    WanIP = externalIp;
+            //}
+        };
+        NatUtility.DeviceLost += (s, ea) => { natDevice = null; };
+        NatUtility.StartDiscovery();
+    }
+
+    void MapPort()
+    {
+        try
+        {
+            Debug.Log("Mapping port...");
+
+            udpMapping = new Mapping(Protocol.Udp, Port, Port) { Description = "Horus (UDP)" };
+            natDevice.BeginCreatePortMap(udpMapping, state =>
+            {
+                if (state.IsCompleted)
+                {
+                    Debug.Log("UDP Mapping complete!");
+                    try
+                    {
+                        var m = natDevice.GetSpecificMapping(Protocol.Udp, Port);
+                        if (m == null)
+                            throw new InvalidOperationException("Mapping not found");
+                        if (m.PrivatePort != Port || m.PublicPort != Port)
+                            throw new InvalidOperationException("Mapping invalid");
+
+                        Debug.Log("Success!");
+                        udpMappingSuccess = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log("Failed to validate UDP mapping :\n" + ex.ToString());
+                        udpMappingSuccess = false;
+                    }
+                    //udpMappingSuccess = true;
+                }
+            }, null);
+
+            tcpMapping = new Mapping(Protocol.Tcp, Port, Port) { Description = "Horus (TCP)" };
+            natDevice.BeginCreatePortMap(tcpMapping, state =>
+            {
+                if (state.IsCompleted)
+                {
+                    Debug.Log("TCP Mapping complete!");
+                    try
+                    {
+                        var m = natDevice.GetSpecificMapping(Protocol.Tcp, Port);
+                        if (m == null)
+                            throw new InvalidOperationException("Mapping not found");
+                        if (m.PrivatePort != Port || m.PublicPort != Port)
+                            throw new InvalidOperationException("Mapping invalid");
+
+                        Debug.Log("Success!");
+                        tcpMappingSuccess = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log("Failed to validate TCP mapping :\n" + ex.ToString());
+                        tcpMappingSuccess = false;
+                    }
+                    //tcpMappingSuccess = true;
+                }
+            }, null);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Failed to map port :\n" + ex.ToString());
+            tcpMappingSuccess = false;
+            udpMappingSuccess = false;
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        if (natDevice != null)
+        {
+            try
+            {
+                if (udpMapping != null)
+                    natDevice.DeletePortMap(udpMapping);
+                if (tcpMapping != null)
+                    natDevice.DeletePortMap(tcpMapping);
+                tcpMapping = udpMapping = null;
+                Debug.Log("Deleted port mapping");
+            }
+            catch (Exception ex)
+            {
+                Debug.Log("Failed to delete port mapping");
+            }
+        }
+        if (natDiscoveryStarted)
+            NatUtility.StopDiscovery();
+
+        Network.Disconnect();
+
+        natDiscoveryStarted = false;
+        natDevice = null;
+        tcpMappingSuccess = udpMappingSuccess = null;
     }
 
     void OnFailedToConnect(NetworkConnectionError error)
@@ -144,6 +510,21 @@ public class ServerScript : MonoBehaviour
         else
             lastStatus = "Failed.";
 
+        chosenServer.ConnectionFailed = true;
+        Debug.Log("Couldn't connect, will try choosing another server");
+        hostState = HostingState.ReadyToListServers;
+
         connecting = false;
+    }
+
+    void OnDisconnectedFromServer(NetworkDisconnection info)
+    {
+        if (Network.isServer)
+        {
+            if (thisServerId.HasValue)
+                DeleteServer();
+        }
+        hostState = HostingState.WaitingForInput;
+        lastStatus = "";
     }
 }

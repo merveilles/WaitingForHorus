@@ -36,6 +36,8 @@ public class ThreadPool : MonoBehaviour, IThreadPool
     {
         ActiveThreads++;
         var thread = stack.Count > 0 ? stack.Pop() : CreateThread();
+        Debug.Log("thread is started? " + thread.Started);
+        Debug.Log("thread has worker?" + (thread.CurrentWorker != null));
         new Worker<bool>(this, thread, dummy => task()) { Priority = priority }.Start(false);
     }
 
@@ -98,7 +100,7 @@ class PersistentThread : IDisposable
     public bool Started { get; private set; }
     public bool Disposed { get; private set; }
 
-    public IWorker CurrentWorker { private get; set; }
+    public IWorker CurrentWorker { internal get; set; }
 
     public PersistentThread()
     {
@@ -120,8 +122,6 @@ class PersistentThread : IDisposable
     {
         joinEvent.WaitOne();
         joinEvent.Reset();
-
-        Started = false;
     }
 
     void DoWork()
@@ -134,6 +134,7 @@ class PersistentThread : IDisposable
             CurrentWorker.Act();
 
             joinEvent.Set();
+            Started = false;
             startEvent.WaitOne();
             startEvent.Reset();
         }
@@ -174,10 +175,10 @@ interface IWorker
 
 public interface IFuture<T>
 {
-    bool IsReady { get; }
+    bool HasValue { get; }
     bool InError { get; }
     Exception Exception { get; }
-    T Result { get; }
+    T Value { get; }
 }
 
 public class Worker<TContext> : WorkerBase
@@ -186,14 +187,22 @@ public class Worker<TContext> : WorkerBase
 
     TContext cachedContext;
 
-    internal Worker(ThreadPool pool,PersistentThread thread, Action<TContext> task) : base(pool, thread)
+    internal Worker(ThreadPool pool, PersistentThread thread, Action<TContext> task) : base(pool, thread)
     {
         this.task = task;
     }
 
     public override void Act()
     {
-        task(cachedContext);
+        try
+        {
+            task(cachedContext);
+        }
+        catch (Exception ex)
+        {
+            Exception = ex;
+            InError = true;
+        }
         End();
     }
 
@@ -216,9 +225,7 @@ public class Worker<TContext, TResult> : WorkerBase, IFuture<TResult>
     TContext cachedContext;
     TResult result;
 
-    public bool IsReady { get; private set; }
-    public bool InError { get; private set; }
-    public Exception Exception { get; private set; }
+    public bool HasValue { get; private set; }
 
     internal Worker(ThreadPool pool, PersistentThread thread, Func<TContext, TResult> task) : base(pool, thread)
     {
@@ -230,7 +237,7 @@ public class Worker<TContext, TResult> : WorkerBase, IFuture<TResult>
         try
         {
             result = task(cachedContext);
-            IsReady = true;
+            HasValue = true;
         }
         catch (Exception ex) 
         {
@@ -253,11 +260,11 @@ public class Worker<TContext, TResult> : WorkerBase, IFuture<TResult>
         return this;
     }
 
-    public TResult Result
+    public TResult Value
     {
         get
         {
-            if (thread.Started) Join();
+            if (!HasValue) Join();
             return result;
         }
     }
@@ -267,6 +274,9 @@ public abstract class WorkerBase : IWorker
 {
     readonly internal PersistentThread thread;
     readonly ThreadPool pool;
+
+    public bool InError { get; protected set; }
+    public Exception Exception { get; protected set; }
 
     internal WorkerBase(ThreadPool pool, PersistentThread thread)
     {

@@ -29,11 +29,6 @@ class LeaderboardViewerScript : MonoBehaviour
     }
     void OnDisconnectedFromServer(NetworkDisconnection info) 
     {
-        if (Network.isServer)
-        {
-            Network.RemoveRPCs(NetworkLeaderboard.Instance.networkView.viewID);
-            Network.Destroy(NetworkLeaderboard.Instance.networkView.viewID);
-        }
         Leaderboard = null;
     }
 
