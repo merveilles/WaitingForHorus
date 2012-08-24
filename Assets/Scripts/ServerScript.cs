@@ -92,7 +92,7 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.ReadyToChooseServer:
-                chosenServer = serverList.Value.OrderBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.PlayerCount < MaxPlayers);
+                chosenServer = serverList.Value.OrderBy(x => x.PlayerCount).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.PlayerCount < MaxPlayers);
                 if (chosenServer == null)
                 {
                     if (couldntCreateServer || (udpMappingSuccess.HasValue && tcpMappingSuccess.HasValue && (!udpMappingSuccess.Value || !tcpMappingSuccess.Value)))
