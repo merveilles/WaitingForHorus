@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: character
-  m_Shader: {fileID: 4800000, guid: 01a7eb828308d4dce8e3b9e4db130979, type: 1}
+  m_Shader: {fileID: 6, guid: 0000000000000000e000000000000000, type: 0}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -100,15 +100,15 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .871788919, g: .823958158, b: .728189468, a: 1}
+        second: {r: .842518449, g: .801074684, b: .664912581, a: 1}
       data:
         first:
           name: _SpecColor
-        second: {r: 1, g: .836342752, b: .582089543, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: _Emission
-        second: {r: 0, g: 0, b: 0, a: 0}
+        second: {r: 0, g: .0642939433, b: .119403005, a: 0}
       data:
         first:
           name: _RimColor
