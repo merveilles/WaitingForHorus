@@ -17,6 +17,11 @@ public class WeaponIndicatorScript : MonoBehaviour
         public Vector2 ScreenPosition;
         public float SinceInCrosshair;
         public bool Found;
+    
+        public bool Locked
+        {
+            get { return SinceInCrosshair >= PlayerShootingScript.AimingTime; }
+        }
     }
 
     public List<PlayerData> Targets { get; private set; }

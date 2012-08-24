@@ -17,6 +17,7 @@ public class PlayerShootingScript : MonoBehaviour
     const float CannonChargeTime = 0.5f;
 
     public AudioSource reloadSound;
+    public AudioSource targetSound;
 
     public BulletScript bulletPrefab;
     public BulletScript cannonBulletPrefab;
@@ -138,9 +139,11 @@ public class PlayerShootingScript : MonoBehaviour
                         targets.Add(data = new WeaponIndicatorScript.PlayerData { Script = ps });
 
                     data.ScreenPosition = screenPos.XY();
+                    var wasLocked = data.Locked;
                     data.SinceInCrosshair += Time.deltaTime;
                     data.Found = true;
-
+                    if (!wasLocked && data.Locked)
+                        targetSound.Play();
                     //Debug.Log("Found target at " + data.ScreenPosition);
                 }
             }

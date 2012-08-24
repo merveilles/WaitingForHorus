@@ -176,7 +176,10 @@ public class ChatScript : MonoBehaviour
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button(" DISCONNECT "))
+            {
+                GlobalSoundsScript.PlayButtonPress();
                 Network.Disconnect();
+            }
 
             GUILayout.EndHorizontal();
         }

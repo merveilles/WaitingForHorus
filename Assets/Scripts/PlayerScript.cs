@@ -40,6 +40,11 @@ public class PlayerScript : MonoBehaviour
     float sinceNotGrounded;
     bool activelyJumping;
     bool textBubbleVisible;
+    bool playJumpSound, playDashSound;
+
+    public AudioSource dashSound;
+    public AudioSource landingSound;
+    public AudioSource jumpSound;
 
     public bool Paused { get; set; }
 
@@ -225,6 +230,8 @@ public class PlayerScript : MonoBehaviour
                 activelyJumping = true;
                 fallingVelocity.y = jumpVelocity;
                 characterAnimation.Play(currentAnim = "Jump");
+                playJumpSound = true;
+                jumpSound.Play();
                 sinceNotGrounded = 0.25f;
             }
             else if(dashCooldown <= 0)
@@ -234,6 +241,8 @@ public class PlayerScript : MonoBehaviour
                 dashCooldown = timeBetweenDashes;
 
                 characterAnimation.Play(currentAnim = "Jump");
+                playDashSound = true;
+                dashSound.Play();
 
                 var dashDirection = inputVelocity.normalized;
                 if (dashDirection == Vector3.zero)
@@ -296,8 +305,13 @@ public class PlayerScript : MonoBehaviour
             recoilVelocity.z *= Mathf.Pow(recoilDamping / 25, Time.deltaTime);
         }
 
+        var wasGrounded = controller.isGrounded;
+
         // move!
         controller.Move((smoothFallingVelocity + smoothedInputVelocity + recoilVelocity) * Time.deltaTime);
+
+        if (!wasGrounded && controller.isGrounded)
+            landingSound.Play();
 
         if (controller.isGrounded)
             recoilVelocity.y = 0;
@@ -312,13 +326,13 @@ public class PlayerScript : MonoBehaviour
         Vector3 pPosition = stream.isWriting ? transform.position : Vector3.zero;
 
         stream.Serialize(ref pPosition);
-
         stream.Serialize(ref inputVelocity);
         stream.Serialize(ref fallingVelocity);
         stream.Serialize(ref activelyJumping);
         stream.Serialize(ref recoilVelocity);
         stream.Serialize(ref textBubbleVisible);
-
+        stream.Serialize(ref playDashSound);
+        stream.Serialize(ref playJumpSound);
         stream.Serialize(ref lookRotationEuler);
 
         if (stream.isReading)
@@ -331,8 +345,13 @@ public class PlayerScript : MonoBehaviour
             if (!iPosition.Start(pPosition - transform.position))
                 transform.position = pPosition;
 
+            if (playDashSound) dashSound.Play();
+            if (playJumpSound) jumpSound.Play();
+
             lastNetworkFramePosition = pPosition;
         }
+
+        playJumpSound = playDashSound = false;
     }
 }
 

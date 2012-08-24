@@ -258,10 +258,12 @@ public class ServerScript : MonoBehaviour
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("PRACTICE") && hostState == HostingState.WaitingForInput)
                     {
+                        GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyToHost;
                     }
                     if (GUILayout.Button("QUICKPLAY") && hostState == HostingState.WaitingForInput)
                     {
+                        GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyToListServers;
                         lastStatus = "";
                     }
