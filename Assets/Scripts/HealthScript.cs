@@ -125,7 +125,7 @@ public class HealthScript : MonoBehaviour
     {
         Hide();
         Instantiate(deathPrefab, transform.position, transform.rotation);
-        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(delegate {Respawn(position);});
+        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(delegate { Respawn(position);});
     }
 
     [RPC]
@@ -137,6 +137,9 @@ public class HealthScript : MonoBehaviour
 
     void Hide()
     {
+        if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
+            return;
+
         Health = 0;
         dead = true;
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
@@ -145,6 +148,9 @@ public class HealthScript : MonoBehaviour
     }
     void Respawn(Vector3 position)
     {
+        if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
+            return;
+
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;

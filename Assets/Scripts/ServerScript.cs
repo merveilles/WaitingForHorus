@@ -13,7 +13,7 @@ public class ServerScript : MonoBehaviour
     const int MaxPlayers = 6;
     public NetworkPeerType PeerType;
 
-    public const bool LocalMode = false;
+    public bool LocalMode = false;
 
     public GUISkin Skin;
 
@@ -32,6 +32,8 @@ public class ServerScript : MonoBehaviour
     float sinceRefreshedPlayers;
     int lastPlayerCount;
     bool couldntCreateServer;
+    float sinceStartedDiscovery;
+    bool cantNat;
 
     GUIStyle TextStyle;
 
@@ -44,7 +46,7 @@ public class ServerScript : MonoBehaviour
         public bool ConnectionFailed;
     }
 
-    enum HostingState
+    public enum HostingState
     {
         WaitingForInput,
         ReadyToListServers,
@@ -57,7 +59,7 @@ public class ServerScript : MonoBehaviour
         Hosting,
         Connected
     }
-    HostingState hostState = HostingState.WaitingForInput;
+    public static HostingState hostState = HostingState.WaitingForInput;
 
     void Start()
     {
@@ -85,7 +87,7 @@ public class ServerScript : MonoBehaviour
 
                 Debug.Log("Should host? " + shouldHost);
 
-                if (shouldHost)
+                if (shouldHost && !cantNat && !couldntCreateServer)
                     hostState = HostingState.ReadyToDiscoverNat;
                 else
                     hostState = HostingState.ReadyToChooseServer;
@@ -95,10 +97,11 @@ public class ServerScript : MonoBehaviour
                 chosenServer = serverList.Value.OrderBy(x => x.PlayerCount).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.PlayerCount < MaxPlayers);
                 if (chosenServer == null)
                 {
-                    if (couldntCreateServer || (udpMappingSuccess.HasValue && tcpMappingSuccess.HasValue && (!udpMappingSuccess.Value || !tcpMappingSuccess.Value)))
+                    if (couldntCreateServer || cantNat)
                     {
                         Debug.Log("Tried to host, failed, tried to find server, failed. Returning to interactive state.");
                         serverList = null;
+                        lastStatus = "No server found.";
                         hostState = HostingState.WaitingForInput;
                     }
                     else
@@ -120,8 +123,22 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.WaitingForNat:
+                sinceStartedDiscovery += Time.deltaTime;
+                if (sinceStartedDiscovery > 10)
+                {
+                    NatUtility.StopDiscovery();
+                    natDevice = null;
+                    sinceStartedDiscovery = 0;
+                    cantNat = true;
+
+                    Debug.Log("No uPnP despite needing to host, will try to choose server");
+                    hostState = HostingState.ReadyToChooseServer;
+                }
+
                 if (!udpMappingSuccess.HasValue || !tcpMappingSuccess.HasValue || !wanIp.HasValue)
                     break;
+
+                sinceStartedDiscovery = 0;
 
                 if (udpMappingSuccess.Value && tcpMappingSuccess.Value)
                 {
@@ -130,8 +147,12 @@ public class ServerScript : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("No uPnP despite needing to host, will try to choose server");
-                    hostState = HostingState.ReadyToChooseServer;
+                    NatUtility.StopDiscovery();
+                    natDevice = null;
+
+                    Debug.Log("No uPnP despite needing to host, will re-list servers");
+                    hostState = HostingState.ReadyToListServers;
+                    cantNat = true;
                 }
                 break;
 
@@ -229,14 +250,20 @@ public class ServerScript : MonoBehaviour
                 GUILayout.BeginHorizontal();
                 {
                     GUI.enabled = true;
+                    TextStyle.padding.left = 5;
+                    TextStyle.margin.left = 5;
                     GUILayout.Label(lastStatus, TextStyle);
                     GUI.enabled = hostState == HostingState.WaitingForInput;
 
                     GUILayout.FlexibleSpace();
-
+                    if (GUILayout.Button("PRACTICE") && hostState == HostingState.WaitingForInput)
+                    {
+                        hostState = HostingState.ReadyToHost;
+                    }
                     if (GUILayout.Button("QUICKPLAY") && hostState == HostingState.WaitingForInput)
                     {
                         hostState = HostingState.ReadyToListServers;
+                        lastStatus = "";
                     }
                     GUI.enabled = true;
                 }

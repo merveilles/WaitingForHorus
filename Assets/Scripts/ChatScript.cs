@@ -175,10 +175,7 @@ public class ChatScript : MonoBehaviour
 
             GUILayout.FlexibleSpace();
 
-            if (
-                GUILayout.Button(Network.isServer || Network.connections.Length == 0
-                                     ? "127.0.0.1"
-                                     : Network.connections[0].externalIP))
+            if (GUILayout.Button(" DISCONNECT "))
                 Network.Disconnect();
 
             GUILayout.EndHorizontal();

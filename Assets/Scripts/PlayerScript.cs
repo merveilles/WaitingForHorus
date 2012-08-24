@@ -195,7 +195,7 @@ public class PlayerScript : MonoBehaviour
         dashEffectRenderer.material.SetColor("_TintColor", color);
 
         PlayerRegistry.PlayerInfo info;
-        if (PlayerRegistry.For.TryGetValue(owner.Value, out info))
+        if (owner.HasValue && PlayerRegistry.For.TryGetValue(owner.Value, out info))
         {
             transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color = info.Color;
 
