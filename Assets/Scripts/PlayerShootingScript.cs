@@ -18,6 +18,8 @@ public class PlayerShootingScript : MonoBehaviour
 
     public AudioSource reloadSound;
     public AudioSource targetSound;
+    public AudioSource pepperGunSound;
+    public AudioSource burstGunSound;
 
     public BulletScript bulletPrefab;
     public BulletScript cannonBulletPrefab;
@@ -68,6 +70,8 @@ public class PlayerShootingScript : MonoBehaviour
                     // find homing target(s)
                     var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime);
 
+                    pepperGunSound.Play();
+
                     var bulletsShot = bulletsLeft;
                     while (bulletsLeft > 0)
                     {
@@ -93,6 +97,8 @@ public class PlayerShootingScript : MonoBehaviour
                 // Burst
                 else if (Input.GetButton("Fire")) // burst fire
                 {
+                    burstGunSound.Play();
+
                     DoShot(BurstSpread);
                     cooldownLeft += ShotCooldown;
                     if (bulletsLeft <= 0)

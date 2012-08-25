@@ -305,12 +305,10 @@ public class PlayerScript : MonoBehaviour
             recoilVelocity.z *= Mathf.Pow(recoilDamping / 25, Time.deltaTime);
         }
 
-        var wasGrounded = controller.isGrounded;
-
         // move!
         controller.Move((smoothFallingVelocity + smoothedInputVelocity + recoilVelocity) * Time.deltaTime);
 
-        if (!wasGrounded && controller.isGrounded)
+        if (sinceNotGrounded > 0.25f && controller.isGrounded)
             landingSound.Play();
 
         if (controller.isGrounded)
