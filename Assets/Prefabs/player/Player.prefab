@@ -812,7 +812,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -38.076828, y: -90.2691498, z: -76.0794678}
   m_LocalScale: {x: 1.79999995, y: 1.79999995, z: 1.79999995}
   m_Children:
   - {fileID: 400094}
@@ -1354,7 +1354,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100090}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 158.625458, y: 86.4871063, z: 173.648849}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .555555582, y: .555555582, z: .555555582}
   m_Children: []
   m_Father: {fileID: 400000}
@@ -1365,7 +1365,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100092}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 158.625458, y: 86.4871063, z: 173.648849}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .555555582, y: .555555582, z: .555555582}
   m_Children: []
   m_Father: {fileID: 400000}
@@ -1376,7 +1376,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100094}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 158.625458, y: 86.4871063, z: 173.648849}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .555555582, y: .555555582, z: .555555582}
   m_Children: []
   m_Father: {fileID: 400000}
@@ -2188,18 +2188,18 @@ AudioSource:
   m_GameObject: {fileID: 100068}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: ed6ae640117edc04fb18ffcf113114a6, type: 1}
+  m_audioClip: {fileID: 8300000, guid: 168b456f0d6d340f78da98f62cbe7066, type: 1}
   m_PlayOnAwake: 0
-  m_Volume: .300000012
+  m_Volume: .600000024
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
+  DopplerLevel: 0
+  MinDistance: 0
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 2
+  rolloffMode: 1
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2244,18 +2244,18 @@ AudioSource:
   m_GameObject: {fileID: 100088}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 01ff67c7e86784e22ac7e86e66c4c80e, type: 1}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2300,18 +2300,18 @@ AudioSource:
   m_GameObject: {fileID: 100092}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: b2c960980045443b9ac3083fe3334a8a, type: 1}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: .5
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
+  DopplerLevel: 0
+  MinDistance: 0
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2356,18 +2356,18 @@ AudioSource:
   m_GameObject: {fileID: 100090}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 491fd690e558f451d83ad23459f866fd, type: 1}
   m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
+  m_Volume: .5
+  m_Pitch: .5
   Loop: 0
   Mute: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2412,18 +2412,18 @@ AudioSource:
   m_GameObject: {fileID: 100094}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 52a1846df2274437d89590621e28df76, type: 1}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: .5
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2650,7 +2650,7 @@ MonoBehaviour:
   reloadSound: {fileID: 8200000}
   targetSound: {fileID: 0}
   bulletPrefab: {fileID: 11400000, guid: a83a93c4702bdaa498af2d2a23f89779, type: 2}
-  cannonBulletPrefab: {fileID: 11400000, guid: 1357ab6cfa97a0a4eb6c67fb8269326b, type: 2}
+  cannonBulletPrefab: {fileID: 0}
   gun: {fileID: 400058}
   cannonIndicator: {fileID: 2800000, guid: 7751ea7854caf654a8d794d137427e22, type: 1}
   cannonOuterScale:

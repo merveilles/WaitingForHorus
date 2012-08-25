@@ -64,9 +64,9 @@ AudioSource:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: 350ca191d19f24389ba2f38cdbc440d7, type: 1}
+  m_audioClip: {fileID: 8300000, guid: 54c39794552c54c939415775469e6454, type: 1}
   m_PlayOnAwake: 1
-  m_Volume: .344000012
+  m_Volume: .400000006
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -165,6 +165,7 @@ MonoBehaviour:
   speed: 1500
   damage: 1
   areaOfEffect: 0
+  recoil: 0
   homing: 0
   target: {fileID: 0}
 --- !u!1001 &100100000
