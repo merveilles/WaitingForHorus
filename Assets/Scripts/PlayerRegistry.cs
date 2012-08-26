@@ -12,6 +12,7 @@ class PlayerRegistry : MonoBehaviour
     void OnNetworkInstantiate(NetworkMessageInfo info)
     {
         instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public static Dictionary<NetworkPlayer, PlayerInfo> For = new Dictionary<NetworkPlayer, PlayerInfo>();

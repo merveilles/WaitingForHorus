@@ -16,7 +16,7 @@ class NetworkLeaderboard : MonoBehaviour
     {
         instance = this;
 
-        DontDestroyOnLoad(this);
+        DontDestroyOnLoad(gameObject);
 
         if (Network.isServer)
             Entries.Add(new LeaderboardEntry
