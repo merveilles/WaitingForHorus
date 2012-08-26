@@ -26,8 +26,8 @@ public class ServerScript : MonoBehaviour
 	string chosenUsername = "Anon";
 
     INatDevice natDevice;
-    Mapping udpMapping;//, tcpMapping;
-    bool? udpMappingSuccess;//, tcpMappingSuccess;
+    Mapping udpMapping, tcpMapping;
+    bool? udpMappingSuccess, tcpMappingSuccess;
     bool natDiscoveryStarted;
     float sinceRefreshedPlayers;
     int lastPlayerCount;
@@ -135,12 +135,12 @@ public class ServerScript : MonoBehaviour
                     hostState = HostingState.ReadyToChooseServer;
                 }
 
-                if (!udpMappingSuccess.HasValue || /*!tcpMappingSuccess.HasValue ||*/ !wanIp.HasValue)
+                if (!udpMappingSuccess.HasValue || !tcpMappingSuccess.HasValue || !wanIp.HasValue)
                     break;
 
                 sinceStartedDiscovery = 0;
 
-                if (udpMappingSuccess.Value) // && tcpMappingSuccess.Value)
+                if (udpMappingSuccess.Value && tcpMappingSuccess.Value)
                 {
                     Debug.Log("Ready to host!");
                     hostState = HostingState.ReadyToHost;
@@ -472,7 +472,7 @@ public class ServerScript : MonoBehaviour
                 }
             }, null);
 
-            /*tcpMapping = new Mapping(Protocol.Tcp, Port, Port) { Description = "Horus (TCP)" };
+            tcpMapping = new Mapping(Protocol.Tcp, Port, Port) { Description = "Horus (TCP)" };
             natDevice.BeginCreatePortMap(tcpMapping, state =>
             {
                 if (state.IsCompleted)
@@ -496,12 +496,12 @@ public class ServerScript : MonoBehaviour
                     }
                     //tcpMappingSuccess = true;
                 }
-            }, null);*/
+            }, null);
         }
         catch (Exception ex)
         {
             Debug.Log("Failed to map port :\n" + ex.ToString());
-            //tcpMappingSuccess = false;
+            tcpMappingSuccess = false;
             udpMappingSuccess = false;
         }
     }
@@ -514,9 +514,9 @@ public class ServerScript : MonoBehaviour
             {
                 if (udpMapping != null)
                     natDevice.DeletePortMap(udpMapping);
-                /*if (tcpMapping != null)
+                if (tcpMapping != null)
                     natDevice.DeletePortMap(tcpMapping);
-                tcpMapping = udpMapping = null;*/
+                tcpMapping = udpMapping = null;
                 Debug.Log("Deleted port mapping");
             }
             catch (Exception)
@@ -531,7 +531,7 @@ public class ServerScript : MonoBehaviour
 
         natDiscoveryStarted = false;
         natDevice = null;
-        /* tcpMappingSuccess = */ udpMappingSuccess = null;
+        tcpMappingSuccess = udpMappingSuccess = null;
     }
 
     void OnFailedToConnect(NetworkConnectionError error)
