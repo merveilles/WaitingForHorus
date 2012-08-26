@@ -27,7 +27,6 @@ GameObject:
   - 4: {fileID: 400002}
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400006}
   m_Layer: 0
   m_Name: Globals
   m_TagString: Untagged
@@ -285,24 +284,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8433ff6a1df0124f84694dbb12c8210, type: 1}
   m_Name: 
---- !u!114 &11400006
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11fcc8a31b3894ba6981d6ae1ad62f1c, type: 1}
-  m_Name: 
-  duration: 150
-  daylightFogColor: {r: .709397554, g: .866162121, b: .884839296, a: 1}
-  daylightCameraColor: {r: .895232439, g: 1, b: .978123128, a: 1}
-  daylightMaterialColor: {r: .864217162, g: .830813289, b: .704509258, a: 1}
-  nightlightFogColor: {r: .521698594, g: .61716944, b: .738323689, a: 1}
-  nightlightCameraColor: {r: .913128376, g: .865791738, b: .749360859, a: 1}
-  nightlightMaterialColor: {r: .880596995, g: .815983713, b: .755736232, a: 1}
-  worldTexture: {fileID: 2100000, guid: 35b6e756b86a34e0484cb642e52a7598, type: 2}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
