@@ -240,7 +240,7 @@ Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 7e31bcd9841d64b439329b967ca25f4e, type: 3}
   m_PrefabInternal: {fileID: 1163311085}
   m_GameObject: {fileID: 60887883}
-  m_LocalRotation: {x: 0, y: .707107008, z: 0, w: .70710665}
+  m_LocalRotation: {x: 0, y: .707106948, z: 0, w: .70710659}
   m_LocalPosition: {x: -166.451187, y: -81.0416641, z: -19.3902168}
   m_LocalScale: {x: 9.82461166, y: 9.82461166, z: 9.48862934}
   m_Children: []
@@ -4929,25 +4929,6 @@ Transform:
   - {fileID: 1765740300}
   - {fileID: 1604646849}
   m_Father: {fileID: 0}
---- !u!114 &1078492026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400006, guid: 2dd6de682d9c2430d81417f49e0625c4,
-    type: 2}
-  m_PrefabInternal: {fileID: 1993282464}
-  m_GameObject: {fileID: 1078492024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11fcc8a31b3894ba6981d6ae1ad62f1c, type: 1}
-  m_Name: 
-  duration: 150
-  daylightFogColor: {r: .890196085, g: .807843149, b: .572549045, a: 1}
-  daylightCameraColor: {r: .929411769, g: .909803927, b: .650980413, a: 1}
-  daylightMaterialColor: {r: .864217162, g: .830813289, b: .704509258, a: 1}
-  nightlightFogColor: {r: .305882365, g: .380392164, b: .333333343, a: 1}
-  nightlightCameraColor: {r: .423529416, g: .470588237, b: .384313732, a: 1}
-  nightlightMaterialColor: {r: .615686297, g: .490196079, b: .250980407, a: 1}
-  worldTexture: {fileID: 2100000, guid: 35b6e756b86a34e0484cb642e52a7598, type: 2}
 --- !u!114 &1078492027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6760,14 +6741,14 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11fcc8a31b3894ba6981d6ae1ad62f1c, type: 1}
   m_Name: 
-  duration: 2
-  daylightFogColor: {r: .75, g: .889999986, b: .0900000036, a: 1}
-  daylightCameraColor: {r: .920000017, g: 1, b: .980000019, a: 1}
-  daylightMaterialColor: {r: .920000017, g: 1, b: .980000019, a: 1}
-  nightlightFogColor: {r: 0, g: 0, b: 0, a: 1}
-  nightlightCameraColor: {r: 0, g: 0, b: 0, a: 1}
-  nightlightMaterialColor: {r: .920000017, g: 1, b: .980000019, a: 1}
-  worldTexture: {fileID: 0}
+  duration: 100
+  daylightFogColor: {r: .894117653, g: .807843149, b: .56078434, a: 1}
+  daylightCameraColor: {r: .933333337, g: .909803927, b: .639215708, a: 1}
+  daylightMaterialColor: {r: .866666675, g: .831372559, b: .701960802, a: 1}
+  nightlightFogColor: {r: .576470613, g: .419607848, b: .298039228, a: 1}
+  nightlightCameraColor: {r: .941176474, g: .862745106, b: .745098054, a: 1}
+  nightlightMaterialColor: {r: .329411775, g: .380392164, b: .549019635, a: 1}
+  worldTexture: {fileID: 2100000, guid: 35b6e756b86a34e0484cb642e52a7598, type: 2}
 --- !u!1 &1746574009
 GameObject:
   m_ObjectHideFlags: 0
@@ -7724,7 +7705,8 @@ Prefab:
       propertyPath: nightlightMaterialColor.b
       value: .615686297
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
   m_RootGameObject: {fileID: 1078492024}
   m_IsPrefabParent: 0
