@@ -56,6 +56,8 @@ public class PlayerScript : MonoBehaviour
 
 	void Awake() 
 	{
+        DontDestroyOnLoad(gameObject);
+
         controller = GetComponent<CharacterController>();
         characterAnimation = transform.Find("Graphics").animation;
         characterAnimation.AddClip(characterAnimation.GetClip("Run"), "Run", 0, 20, true);

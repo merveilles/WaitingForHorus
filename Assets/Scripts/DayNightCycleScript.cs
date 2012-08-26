@@ -16,7 +16,7 @@ public class DayNightCycleScript : MonoBehaviour {
 	public Material worldTexture;
 	
 	void Start () {	
-		//Debug.Log(worldTexture.color);	
+		//Debug.Log(worldTexture.color);
 	}
 	
 	void Update () {
@@ -32,6 +32,5 @@ public class DayNightCycleScript : MonoBehaviour {
 		
 		// Fix Texture
 		worldTexture.color = Color.Lerp(daylightMaterialColor, nightlightMaterialColor, lerp);
-	
 	}
 }

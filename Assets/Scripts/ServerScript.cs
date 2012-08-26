@@ -34,7 +34,7 @@ public class ServerScript : MonoBehaviour
     bool couldntCreateServer;
     float sinceStartedDiscovery;
     bool cantNat;
-    string serverLevelName;
+    string levelName;
 
     GUIStyle TextStyle;
 
@@ -65,8 +65,13 @@ public class ServerScript : MonoBehaviour
 
     void Start()
     {
+        DontDestroyOnLoad(gameObject);
+
         Application.targetFrameRate = 60;
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
+
+        levelName = RandomHelper.Probability(0.5) ? "rah" : "mar";
+        ChangeLevelIfNeeded(levelName, true);
     }
 
     void Update()
@@ -326,7 +331,7 @@ public class ServerScript : MonoBehaviour
         {
             using (var client = new WebClient())
             {
-                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=add&value=" + wanIp.Value + "_1_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + serverLevelName);
+                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=add&value=" + wanIp.Value + "_1_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + levelName);
                 Debug.Log("Added server, got id = " + response);
                 return int.Parse(response);
             }
@@ -339,7 +344,7 @@ public class ServerScript : MonoBehaviour
         ThreadPool.Instance.Fire(() =>
         {
             string uri = "http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value + "&value=" +
-                         wanIp.Value + "_" + (connections + 1) + "_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + serverLevelName;
+                         wanIp.Value + "_" + (connections + 1) + "_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + levelName;
             using (var client = new WebClient())
             {
                 client.DownloadString(uri);
@@ -366,9 +371,6 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer(MaxPlayers, Port, false);
         if (result == NetworkConnectionError.NoError)
         {
-            serverLevelName = RandomHelper.Probability(0.5) ? "rah" : "mar";
-            ChangeLevelIfNeeded(serverLevelName);
-
             //serverIp = ThreadPool.Instance.Evaluate<string>(GetIP);
             return true;
         }
@@ -376,12 +378,19 @@ public class ServerScript : MonoBehaviour
         return false;
     }
 
-    void ChangeLevelIfNeeded(string levelName)
+    public void ChangeLevel()
     {
-        if (Application.loadedLevelName != "pi_" + levelName)
+        ChangeLevelIfNeeded(levelName == "mar" ? "rah" : "mar", true);
+        if (Network.isServer)
+            RefreshListedServer();
+    }
+
+    void ChangeLevelIfNeeded(string newLevel, bool force)
+    {
+        if (force || levelName != newLevel)
         {
-            // TODO : Unload level
-            Application.LoadLevelAdditive("pi_" + levelName);
+            Application.LoadLevel("pi_" + newLevel);
+            levelName = newLevel;
         }
     }
 
@@ -403,7 +412,7 @@ public class ServerScript : MonoBehaviour
     {
         connecting = false;
         PeerType = NetworkPeerType.Client;
-        ChangeLevelIfNeeded(chosenServer.LevelName);
+        ChangeLevelIfNeeded(chosenServer.LevelName, false);
     }
 
     void GetWanIP()

@@ -4,20 +4,23 @@ using System.Collections;
 
 public class RoundScript : MonoBehaviour
 {
-    const float RoundDuration = 60 * 5;
-    const float PauseDuration = 25;
+    const float RoundDuration = 5; //60 * 5;
+    const float PauseDuration = 5; // 25;
+    const int SameLevelRounds = 2;
 
     float sinceRoundTransition;
     public bool GameStarted { get; set; }
     public bool RoundStopped { get; private set; }
     float sinceInteround;
     bool said60secWarning, said30secWarning, said10secWarning, said5secWarning;
+    int toLevelChange;
 
     public static RoundScript Instance { get; private set; }
 
     void Start()
     {
         Instance = this;
+        toLevelChange = SameLevelRounds;
     }
 
     void Update() 
@@ -66,9 +69,20 @@ public class RoundScript : MonoBehaviour
                     networkView.RPC("StopRound", RPCMode.All);
                     ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
                                     "Round over!", true, true);
+                    toLevelChange--;
+
+                    if (toLevelChange == 0)
+                        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                                            "Level will change on the next round.", true, true);
                 }
                 else
                 {
+                    if (toLevelChange == 0)
+                    {
+                        networkView.RPC("ChangeLevel", RPCMode.All);
+                        toLevelChange = SameLevelRounds;
+                    }
+
                     networkView.RPC("RestartRound", RPCMode.All);
                     ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
                                     "Game start!", true, true);
@@ -78,6 +92,12 @@ public class RoundScript : MonoBehaviour
             }
 	    }
 	}
+
+    [RPC]
+    public void ChangeLevel()
+    {
+        transform.parent.SendMessage("ChangeLevel");
+    }
 
     [RPC]
     public void StopRound()

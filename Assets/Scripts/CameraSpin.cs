@@ -11,6 +11,8 @@ public class CameraSpin : MonoBehaviour
 
     void Start()
     {
+        DontDestroyOnLoad(gameObject);
+
         camPosOrigin = Camera.main.transform.localPosition;
         transPosOrigin = transform.localPosition;
 
