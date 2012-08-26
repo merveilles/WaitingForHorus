@@ -34,7 +34,7 @@ public class PlayerShootingScript : MonoBehaviour
 	float cooldownLeft = 0;
     int bulletsLeft = BurstCount;
 
-    float cannonChargeCountdown = CannonChargeTime;
+    //float cannonChargeCountdown = CannonChargeTime;
     List<WeaponIndicatorScript.PlayerData> targets;
 
     CameraScript playerCamera;
@@ -92,7 +92,7 @@ public class PlayerShootingScript : MonoBehaviour
                     recoilImpulse.y *= playerScript.controller.isGrounded ? 0.1f : 0.375f;
                     playerScript.AddRecoil(recoilImpulse);
 
-                    cannonChargeCountdown = CannonChargeTime;
+                    //cannonChargeCountdown = CannonChargeTime;
                 }
 
                 // Burst
