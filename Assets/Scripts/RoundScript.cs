@@ -4,9 +4,9 @@ using System.Collections;
 
 public class RoundScript : MonoBehaviour
 {
-    const float RoundDuration = 15; //60 * 5;
-    const float PauseDuration = 5; //25; 
-    const int SameLevelRounds = 1; //3;
+    const float RoundDuration = 60 * 5;
+    const float PauseDuration = 20; 
+    const int SameLevelRounds = 3;
 
     float sinceRoundTransition;
     public bool GameStarted { get; set; }
