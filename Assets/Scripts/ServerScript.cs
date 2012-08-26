@@ -13,7 +13,7 @@ public class ServerScript : MonoBehaviour
     const int MaxPlayers = 6;
     public NetworkPeerType PeerType;
 
-    public bool LocalMode = false;
+    public bool LocalMode;
 
     public GUISkin Skin;
 
@@ -119,7 +119,7 @@ public class ServerScript : MonoBehaviour
                     StartNatDiscovery();
                     GetWanIP();
                 }
-                hostState = HostingState.WaitingForNat;
+                hostState = LocalMode ? HostingState.ReadyToHost : HostingState.WaitingForNat;
                 break;
 
             case HostingState.WaitingForNat:
@@ -410,6 +410,8 @@ public class ServerScript : MonoBehaviour
     void StartNatDiscovery()
     {
         natDiscoveryStarted = true;
+
+        if (LocalMode) return;
 
         NatUtility.DeviceFound += (s, ea) =>
         {

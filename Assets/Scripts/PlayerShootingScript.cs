@@ -70,19 +70,20 @@ public class PlayerShootingScript : MonoBehaviour
                     // find homing target(s)
                     var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime);
 
-                    pepperGunSound.Play();
-
                     var bulletsShot = bulletsLeft;
+                    var first = true;
                     while (bulletsLeft > 0)
                     {
                         if (!aimedAt.Any())
-                            DoHomingShot(ShotgunSpread, null, 0);
+                            DoHomingShot(ShotgunSpread, null, 0, first);
                         else
                         {
                             var chosen = aimedAt.OrderBy(x => Guid.NewGuid()).First();
-                            DoHomingShot(ShotgunSpread, chosen.Script, Mathf.Clamp01(chosen.SinceInCrosshair / AimingTime));
+                            DoHomingShot(ShotgunSpread, chosen.Script, Mathf.Clamp01(chosen.SinceInCrosshair / AimingTime), first);
                         }
                         cooldownLeft += ShotCooldown;
+
+                        first = false;
                     }
                     cooldownLeft += ReloadTime;
 
@@ -97,8 +98,6 @@ public class PlayerShootingScript : MonoBehaviour
                 // Burst
                 else if (Input.GetButton("Fire")) // burst fire
                 {
-                    burstGunSound.Play();
-
                     DoShot(BurstSpread);
                     cooldownLeft += ShotCooldown;
                     if (bulletsLeft <= 0)
@@ -179,7 +178,7 @@ public class PlayerShootingScript : MonoBehaviour
         bulletsLeft = BurstCount;
     }
 
-    void DoHomingShot(float spread, PlayerScript target, float homing)
+    void DoHomingShot(float spread, PlayerScript target, float homing, bool doSound)
     {
         bulletsLeft -= 1;
 
@@ -200,7 +199,7 @@ public class PlayerShootingScript : MonoBehaviour
         }
 
         networkView.RPC("ShootHoming", RPCMode.All,
-            gun.position + gun.forward, gun.rotation * spreadRotation, Network.player, targetOwner, lastKnownPosition, homing);
+            gun.position + gun.forward, gun.rotation * spreadRotation, Network.player, targetOwner, lastKnownPosition, homing, doSound);
     }
 
     [RPC]
@@ -208,10 +207,11 @@ public class PlayerShootingScript : MonoBehaviour
     {
         BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
         bullet.Player = player;
+        burstGunSound.Play();
     }
 
     [RPC]
-    void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, Vector3 lastKnownPosition, float homing)
+    void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, Vector3 lastKnownPosition, float homing, bool doSound)
     {
         BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
         bullet.Player = player;
@@ -221,5 +221,8 @@ public class PlayerShootingScript : MonoBehaviour
         bullet.homing = homing;
         bullet.speed = 400;
         bullet.recoil = 1;
+
+        if (doSound)
+            pepperGunSound.Play();
     }
 }
