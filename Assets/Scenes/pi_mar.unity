@@ -4827,6 +4827,25 @@ Transform:
   - {fileID: 1765740300}
   - {fileID: 1604646849}
   m_Father: {fileID: 0}
+--- !u!114 &1078492026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11400006, guid: 2dd6de682d9c2430d81417f49e0625c4,
+    type: 2}
+  m_PrefabInternal: {fileID: 1993282464}
+  m_GameObject: {fileID: 1078492024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11fcc8a31b3894ba6981d6ae1ad62f1c, type: 1}
+  m_Name: 
+  duration: 150
+  daylightFogColor: {r: .890196085, g: .807843149, b: .572549045, a: 1}
+  daylightCameraColor: {r: .929411769, g: .909803927, b: .650980413, a: 1}
+  daylightMaterialColor: {r: .864217162, g: .830813289, b: .704509258, a: 1}
+  nightlightFogColor: {r: .305882365, g: .380392164, b: .333333343, a: 1}
+  nightlightCameraColor: {r: .423529416, g: .470588237, b: .384313732, a: 1}
+  nightlightMaterialColor: {r: .615686297, g: .490196079, b: .250980407, a: 1}
+  worldTexture: {fileID: 2100000, guid: 35b6e756b86a34e0484cb642e52a7598, type: 2}
 --- !u!114 &1078492027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5772,6 +5791,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 30212c76250404492bd8b09db99558a1, type: 2}
+    - target: {fileID: 100000, guid: 19f885b5ce1e6489881106bef5962bc5, type: 3}
+      propertyPath: m_Name
+      value: water
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 19f885b5ce1e6489881106bef5962bc5, type: 3}
   m_RootGameObject: {fileID: 1466092666}
@@ -6046,7 +6069,7 @@ GameObject:
   - 4: {fileID: 1466092667}
   - 111: {fileID: 1466092668}
   m_Layer: 0
-  m_Name: cylindre
+  m_Name: water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6720,7 +6743,6 @@ Transform:
   - {fileID: 2141624483}
   - {fileID: 169629048}
   - {fileID: 1917126547}
-  - {fileID: 1466092667}
   - {fileID: 1746574010}
   - {fileID: 697646825}
   - {fileID: 166176834}
@@ -6730,6 +6752,7 @@ Transform:
   - {fileID: 404240247}
   - {fileID: 537542927}
   - {fileID: 300824006}
+  - {fileID: 1466092667}
   m_Father: {fileID: 0}
 --- !u!114 &1708131137
 MonoBehaviour:
@@ -7671,39 +7694,39 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightFogColor.r
-      value: .305882365
+      value: .572549045
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightFogColor.g
-      value: .380392164
+      value: .419607848
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightFogColor.b
-      value: .333333343
+      value: .301960796
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightCameraColor.r
-      value: .423529416
+      value: .937254906
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightCameraColor.g
-      value: .470588237
+      value: .862745106
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightCameraColor.b
-      value: .384313732
+      value: .749019623
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightMaterialColor.r
-      value: .615686297
+      value: .250980407
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightMaterialColor.g
-      value: .490196079
+      value: .324941635
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: nightlightMaterialColor.b
-      value: .250980407
+      value: .615686297
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
