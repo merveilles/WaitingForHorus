@@ -28,7 +28,7 @@ GameObject:
   - 4: {fileID: 400002}
   - 111: {fileID: 11100000}
   m_Layer: 0
-  m_Name: vent
+  m_Name: Vent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
