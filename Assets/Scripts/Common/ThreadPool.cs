@@ -36,8 +36,8 @@ public class ThreadPool : MonoBehaviour, IThreadPool
     {
         ActiveThreads++;
         var thread = stack.Count > 0 ? stack.Pop() : CreateThread();
-        Debug.Log("thread is started? " + thread.Started);
-        Debug.Log("thread has worker?" + (thread.CurrentWorker != null));
+        //Debug.Log("thread is started? " + thread.Started);
+        //Debug.Log("thread has worker?" + (thread.CurrentWorker != null));
         new Worker<bool>(this, thread, dummy => task()) { Priority = priority }.Start(false);
     }
 

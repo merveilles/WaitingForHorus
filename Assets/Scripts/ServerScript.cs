@@ -34,6 +34,7 @@ public class ServerScript : MonoBehaviour
     bool couldntCreateServer;
     float sinceStartedDiscovery;
     bool cantNat;
+    string serverLevelName;
 
     GUIStyle TextStyle;
 
@@ -44,6 +45,7 @@ public class ServerScript : MonoBehaviour
         public int PlayerCount;
         public DateTime Timestamp;
         public bool ConnectionFailed;
+        public string LevelName;
     }
 
     public enum HostingState
@@ -219,12 +221,6 @@ public class ServerScript : MonoBehaviour
         }
     }
 
-    void OnConnectedToServer()
-    {
-        connecting = false;
-        PeerType = NetworkPeerType.Client;
-    }
-
     void Login(int windowId)
     {
         switch (PeerType)
@@ -294,10 +290,10 @@ public class ServerScript : MonoBehaviour
                 Debug.Log("Got server list : ");
                 try
                 {
-                    var list = response.Split('\n').Where(x => x.Trim().Length > 0 && x.Trim().Split('_').Length == 4).Select(x =>
+                    var list = response.Split('\n').Where(x => x.Trim().Length > 0 && x.Trim().Split('_').Length == 5).Select(x =>
                     {
                         var y = x.Trim().Split('_');
-                        Debug.Log("Parts : '" + y[0] + "' '" + y[1] + "' '" + y[2] + "' '" + y[3] + "'");
+                        Debug.Log("Parts : '" + y[0] + "' '" + y[1] + "' '" + y[2] + "' '" + y[3] + "' '" + y[4]);
                         var id = int.Parse(y[0]);
                         return new ServerInfo
                         {
@@ -305,6 +301,7 @@ public class ServerScript : MonoBehaviour
                             Ip = y[1],
                             PlayerCount = int.Parse(y[2]),
                             Timestamp = DateTime.FromFileTimeUtc(long.Parse(y[3])),
+                            LevelName = y[4],
                             ConnectionFailed = blackList.Contains(id)
                         };
                     });
@@ -329,7 +326,7 @@ public class ServerScript : MonoBehaviour
         {
             using (var client = new WebClient())
             {
-                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=add&value=" + wanIp.Value + "_1_" + DateTime.UtcNow.ToFileTimeUtc());
+                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=add&value=" + wanIp.Value + "_1_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + serverLevelName);
                 Debug.Log("Added server, got id = " + response);
                 return int.Parse(response);
             }
@@ -342,7 +339,7 @@ public class ServerScript : MonoBehaviour
         ThreadPool.Instance.Fire(() =>
         {
             string uri = "http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value + "&value=" +
-                         wanIp.Value + "_" + (connections + 1) + "_" + DateTime.UtcNow.ToFileTimeUtc();
+                         wanIp.Value + "_" + (connections + 1) + "_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + serverLevelName;
             using (var client = new WebClient())
             {
                 client.DownloadString(uri);
@@ -369,11 +366,23 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer(MaxPlayers, Port, false);
         if (result == NetworkConnectionError.NoError)
         {
+            serverLevelName = RandomHelper.Probability(0.5) ? "rah" : "mar";
+            ChangeLevelIfNeeded(serverLevelName);
+
             //serverIp = ThreadPool.Instance.Evaluate<string>(GetIP);
             return true;
         }
         lastStatus = "Failed.";
         return false;
+    }
+
+    void ChangeLevelIfNeeded(string levelName)
+    {
+        if (Application.loadedLevelName != "pi_" + levelName)
+        {
+            // TODO : Unload level
+            Application.LoadLevelAdditive("pi_" + levelName);
+        }
     }
 
     bool Connect()
@@ -388,6 +397,13 @@ public class ServerScript : MonoBehaviour
         }
         connecting = true;
         return true;
+    }
+
+    void OnConnectedToServer()
+    {
+        connecting = false;
+        PeerType = NetworkPeerType.Client;
+        ChangeLevelIfNeeded(chosenServer.LevelName);
     }
 
     void GetWanIP()
