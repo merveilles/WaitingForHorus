@@ -65,6 +65,13 @@ public class PlayerScript : MonoBehaviour
         characterAnimation.Play("Idle");
 	    textBubble = gameObject.FindChild("TextBubble");
         textBubble.renderer.material.color = new Color(1, 1, 1, 0);
+
+        foreach (var r in GetComponentsInChildren<Renderer>())
+        {
+            if (!r.material.HasProperty("_Color")) continue;
+            if (r.gameObject.name == "TextBubble") continue;
+            r.tag = "PlayerMaterial";
+        }
 	}
 
     void OnNetworkInstantiate(NetworkMessageInfo info)

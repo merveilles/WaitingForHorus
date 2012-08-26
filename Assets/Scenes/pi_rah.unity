@@ -32988,7 +32988,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11fcc8a31b3894ba6981d6ae1ad62f1c, type: 1}
   m_Name: 
-  duration: 100
+  duration: 200
   daylightFogColor: {r: .70588237, g: .866666675, b: .886274517, a: 1}
   daylightCameraColor: {r: .894117653, g: 1, b: .97647059, a: 1}
   daylightMaterialColor: {r: .866666675, g: .831372559, b: .701960802, a: 1}

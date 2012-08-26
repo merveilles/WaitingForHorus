@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -37,6 +38,13 @@ public class ServerScript : MonoBehaviour
     string levelName;
 
     GUIStyle TextStyle;
+
+    static bool isAsyncLoading;
+    public static bool IsAsyncLoading
+    {
+        get { return isAsyncLoading || Application.isLoadingLevel; }
+        private set { isAsyncLoading = value; }
+    }
 
     class ServerInfo
     {
@@ -119,7 +127,7 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.ReadyToDiscoverNat:
-                lastStatus = "Trying to open port...";
+                lastStatus = "Looking for UPnP...";
                 if (!natDiscoveryStarted || !wanIp.HasValue)
                 {
                     Debug.Log("NAT discovery started");
@@ -356,14 +364,12 @@ public class ServerScript : MonoBehaviour
 
     void DeleteServer()
     {
-        ThreadPool.Instance.Fire(() =>
+        using (var client = new WebClient())
         {
-            using (var client = new WebClient())
-            {
-                client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=delete&id=" + thisServerId.Value);
-                Debug.Log("Deleted server " + thisServerId.Value);
-            }
-        });
+            var uri = new Uri("http://api.xxiivv.com/?key=7377&cmd=delete&id=" + thisServerId.Value);
+            client.DownloadStringAsync(uri);
+            Debug.Log("Deleted server " + thisServerId.Value);
+        }
     }
 
     bool CreateServer()
@@ -380,18 +386,23 @@ public class ServerScript : MonoBehaviour
 
     public void ChangeLevel()
     {
-        ChangeLevelIfNeeded(levelName == "mar" ? "rah" : "mar", true);
+        ChangeLevelIfNeeded(levelName == "mar" ? "rah" : "mar", false);
         if (Network.isServer)
             RefreshListedServer();
     }
 
     void ChangeLevelIfNeeded(string newLevel, bool force)
     {
-        if (force || levelName != newLevel)
-        {
+        if (force)
             Application.LoadLevel("pi_" + newLevel);
-            levelName = newLevel;
+        else if (newLevel != levelName)
+        {
+            IsAsyncLoading = true;
+            var asyncOperation = Application.LoadLevelAsync("pi_" + newLevel);
+            TaskManager.Instance.WaitUntil(x => asyncOperation.isDone).Then(() => IsAsyncLoading = false);
         }
+
+        levelName = newLevel;
     }
 
     bool Connect()
@@ -470,12 +481,14 @@ public class ServerScript : MonoBehaviour
         try
         {
             Debug.Log("Mapping port...");
+            lastStatus = "Mapping port...";
 
             udpMapping = new Mapping(Protocol.Udp, Port, Port) { Description = "Horus (UDP)" };
             natDevice.BeginCreatePortMap(udpMapping, state =>
             {
                 if (state.IsCompleted)
                 {
+                    lastStatus = "Testing UDP mapping...";
                     Debug.Log("UDP Mapping complete!");
                     try
                     {
@@ -502,6 +515,7 @@ public class ServerScript : MonoBehaviour
             {
                 if (state.IsCompleted)
                 {
+                    lastStatus = "Testing TCP mapping...";
                     Debug.Log("TCP Mapping complete!");
                     try
                     {

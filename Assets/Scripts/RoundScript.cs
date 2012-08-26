@@ -4,9 +4,9 @@ using System.Collections;
 
 public class RoundScript : MonoBehaviour
 {
-    const float RoundDuration = 20; //60 * 5;
-    const float PauseDuration = 5; // 25;
-    const int SameLevelRounds = 2;
+    const float RoundDuration = 15; //60 * 5;
+    const float PauseDuration = 5; //25; 
+    const int SameLevelRounds = 1; //3;
 
     float sinceRoundTransition;
     public bool GameStarted { get; set; }
@@ -111,11 +111,19 @@ public class RoundScript : MonoBehaviour
     public void RestartRound()
     {
         foreach (var player in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
-        {
-            player.Paused = false;
             if (player.networkView.isMine)
                 player.networkView.RPC("ImmediateRespawn", RPCMode.All);
-        }
+
+        StartCoroutine(WaitAndResume());
+    }
+
+    IEnumerator WaitAndResume()
+    {
+        while (ServerScript.IsAsyncLoading)
+            yield return new WaitForSeconds(1 / 30f);
+
+        foreach (var player in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+           player.Paused = false;
 
         foreach (var entry in NetworkLeaderboard.Instance.Entries)
         {
@@ -125,6 +133,7 @@ public class RoundScript : MonoBehaviour
         }
 
         ChatScript.Instance.ChatLog.ForEach(x => x.Hidden = true);
+
         RoundStopped = false;
     }
 }

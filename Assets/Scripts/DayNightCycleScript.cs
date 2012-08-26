@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class DayNightCycleScript : MonoBehaviour {
-		
+
     public float duration = 2.0F;
 	
 	public Color daylightFogColor  			= new Color(0.75F,0.89F,0.09F);
@@ -15,13 +15,14 @@ public class DayNightCycleScript : MonoBehaviour {
 	
 	public Material worldTexture;
 	
-	void Start () {	
+	void Start()
+    {	
 		//Debug.Log(worldTexture.color);
 	}
-	
-	void Update () {
-	
-		float lerp = Mathf.PingPong((float) Network.time, duration) / duration;
+
+	void Update()
+    {
+		float lerp = Easing.EaseInOut(Mathf.PingPong((float) Network.time, duration) / duration, EasingType.Sine);
 		
 		// Fix Fog
 		RenderSettings.fogColor = Color.Lerp(daylightFogColor, nightlightFogColor, lerp);
@@ -31,6 +32,12 @@ public class DayNightCycleScript : MonoBehaviour {
 		Camera.main.backgroundColor = Color.Lerp(daylightCameraColor, nightlightCameraColor, lerp);
 		
 		// Fix Texture
-		worldTexture.color = Color.Lerp(daylightMaterialColor, nightlightMaterialColor, lerp);
-	}
+	    var newColor = Color.Lerp(daylightMaterialColor, nightlightMaterialColor, lerp);
+	    worldTexture.color = newColor;
+        foreach (var mat in GameObject.FindGameObjectsWithTag("PlayerMaterial"))
+        {
+            var c = mat.renderer.material.color;
+            mat.renderer.material.color = new Color(newColor.r, newColor.g, newColor.b, c.a);
+        }
+    }
 }

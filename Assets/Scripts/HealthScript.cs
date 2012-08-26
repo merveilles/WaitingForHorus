@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using System.Collections;
 
@@ -125,13 +126,22 @@ public class HealthScript : MonoBehaviour
     {
         Hide();
         Instantiate(deathPrefab, transform.position, transform.rotation);
-        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(delegate { Respawn(position);});
+        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() => Respawn(position));
     }
 
     [RPC]
     void ImmediateRespawn()
     {
+        StartCoroutine(WaitAndRespawn());
+    }
+
+    IEnumerator WaitAndRespawn()
+    {
         Hide();
+
+        while (ServerScript.IsAsyncLoading)
+            yield return new WaitForSeconds(1 / 30f);
+
         Respawn(RespawnZone.GetRespawnPoint());
     }
 
