@@ -1,11 +1,8 @@
 fileFormatVersion: 2
-guid: f8978b220bf8f4850a56bb7adb796494
+guid: 3bd22d5c023f8497e936d7e376d7f32c
 ModelImporter:
   fileIDToRecycleName:
-    4300000: Boole
-    4300002: Boole_2
-    4300004: Lathe_NURBS
-    4300006: Tube_1
+    4300000: Cube_Torus-Cube
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -43,53 +40,14 @@ ModelImporter:
     //RootNode:
       data:
         first: 1
-        second: a8860100
-      data:
-        first: 4
-        second: 881a0600
-      data:
-        first: 111
-        second: 605fa900
-    Boole:
-      data:
-        first: 1
         second: a2860100
       data:
         first: 4
         second: 821a0600
       data:
-        first: 23
-        second: 62182300
-      data:
-        first: 33
-        second: a25a3200
-    Boole_2:
-      data:
-        first: 1
-        second: a6860100
-      data:
-        first: 4
-        second: 861a0600
-      data:
-        first: 23
-        second: 66182300
-      data:
-        first: 33
-        second: a65a3200
-    Lathe_NURBS:
-      data:
-        first: 1
-        second: a4860100
-      data:
-        first: 4
-        second: 841a0600
-      data:
-        first: 23
-        second: 64182300
-      data:
-        first: 33
-        second: a45a3200
-    Tube_1:
+        first: 111
+        second: 605fa900
+    Cube_Torus-Cube:
       data:
         first: 1
         second: a0860100
