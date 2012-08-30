@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b90bbdd2a72ee4398b8ae175052720, type: 1}
   m_Name: 
   bulletCasingPrefab: {fileID: 100000, guid: 0c0f4137b2b770140abfda1e828f053f, type: 2}
-  speed: 1500
+  speed: 2000
   damage: 1
   areaOfEffect: 0
   recoil: 0

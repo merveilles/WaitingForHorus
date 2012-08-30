@@ -2778,12 +2778,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a5fadaa09ba07440a408b88109a9996, type: 1}
   m_Name: 
-  speed: 70
+  speed: 60
   mouseSensitivity: 3
   lookAngleLimit: 80
-  gravity: -200
-  jumpVelocity: 120
-  timeBetweenDashes: .300000012
+  gravity: -150
+  jumpVelocity: 80
+  timeBetweenDashes: .5
   dashForwardVelocity: 150
   dashUpwardVelocity: 10
   airVelocityDamping: .0500000007
