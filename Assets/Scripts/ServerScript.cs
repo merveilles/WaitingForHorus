@@ -436,9 +436,9 @@ public class ServerScript : MonoBehaviour
 
     public void ChangeLevel()
     {
-        ChangeLevelIfNeeded(levelName == "pi_mar" ? "pi_rah" : "pi_mar", false);
+        ChangeLevelIfNeeded(levelName == "pi_mar" ? "pi_rah" : "pi_mar");
     }
-
+    void ChangeLevelIfNeeded(string newLevel) { ChangeLevelIfNeeded(newLevel, false); }
     void ChangeLevelIfNeeded(string newLevel, bool force)
     {
         if (force)
@@ -472,7 +472,11 @@ public class ServerScript : MonoBehaviour
     {
         connecting = false;
         PeerType = NetworkPeerType.Client;
-        ChangeLevelIfNeeded(currentServer.Map, false);
+    }
+
+    void OnPlayerConnected(NetworkPlayer player)
+    {
+        RoundScript.Instance.networkView.RPC("SyncLevel", player, levelName);
     }
 
     void GetWanIP()

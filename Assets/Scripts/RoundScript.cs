@@ -100,6 +100,12 @@ public class RoundScript : MonoBehaviour
     }
 
     [RPC]
+    public void SyncLevel(string toLevel)
+    {
+        transform.parent.SendMessage("ChangeLevelIfNeeded", toLevel);
+    }
+
+    [RPC]
     public void StopRound()
     {
         foreach (var player in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())

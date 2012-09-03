@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -55,20 +56,9 @@ public class SpawnScript : MonoBehaviour
             else
                 Debug.Log("Successfully diconnected from the server");
 
-        if (Network.isServer)
-        {
-            foreach (var c in Network.connections)
-            {
-                Network.DestroyPlayerObjects(c);
-                Network.RemoveRPCs(c);
-            }
-            Network.Destroy(PlayerInstance);
-        }
-        else
-        {
-            foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
-                Destroy(p.gameObject);
-        }
+        foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+            Destroy(p.gameObject);
+
 	    PlayerInstance = null;
     }
 	
