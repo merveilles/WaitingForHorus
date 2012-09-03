@@ -16,7 +16,7 @@ using UnityEngine;
 
 public class ServerScript : MonoBehaviour 
 {	
-	public const int Port = 12345;
+	public const int Port = 10000;
     const int MaxPlayers = 6;
     public NetworkPeerType PeerType;
 
@@ -44,8 +44,7 @@ public class ServerScript : MonoBehaviour
     bool couldntCreateServer;
     float sinceStartedDiscovery;
     bool cantNat;
-    string levelName;
-    bool forceHost;
+    string levelName, lastLevelName;
 
     GUIStyle TextStyle;
 
@@ -208,7 +207,7 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.WaitingForIp:
-                lastStatus = "Determining WAN IP...";
+                lastStatus = "Determining IP...";
                 if (wanIp.HasValue)
                     hostState = HostingState.ReadyToHost;
                 break;
@@ -221,6 +220,7 @@ public class ServerScript : MonoBehaviour
                     hostState = HostingState.Hosting;
                     AddServerToList();
                     lastPlayerCount = 0;
+                    lastLevelName = levelName;
                     sinceRefreshedPlayers = 0;
                 }
                 else
@@ -239,12 +239,16 @@ public class ServerScript : MonoBehaviour
                 }
 
                 sinceRefreshedPlayers += Time.deltaTime;
-                if (thisServerId.HasValue && (lastPlayerCount != Network.connections.Length || sinceRefreshedPlayers > 25))
+                if (thisServerId.HasValue && 
+                        (lastPlayerCount != Network.connections.Length || 
+                         lastLevelName != levelName || 
+                         sinceRefreshedPlayers > 60))
                 {
                     Debug.Log("Refreshing...");
                     RefreshListedServer();
                     sinceRefreshedPlayers = 0;
                     lastPlayerCount = Network.connections.Length;
+                    lastLevelName = levelName;
                 }
                 break;
 
@@ -309,13 +313,11 @@ public class ServerScript : MonoBehaviour
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput)
                     {
-                        forceHost = true;
                         GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyForIp;
                     }
                     if (GUILayout.Button("QUICKPLAY") && hostState == HostingState.WaitingForInput)
                     {
-                        forceHost = false;
                         GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyToListServers;
                         lastStatus = "";
@@ -379,7 +381,8 @@ public class ServerScript : MonoBehaviour
 
                 // then add new server
                 var nvc = new NameValueCollection { { "value", result } };
-                var response = Encoding.ASCII.GetString(client.UploadValues("http://api.xxiivv.com/?key=7377&cmd=add", "POST", nvc));
+                var uri = "http://api.xxiivv.com/?key=7377&cmd=add";
+                var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
                 Debug.Log("Added server, got id = " + response);
                 return int.Parse(response);
             }
@@ -388,7 +391,7 @@ public class ServerScript : MonoBehaviour
 
     void RefreshListedServer()
     {
-        var connections = Network.connections.Length;
+        currentServer.Players = 1 + Network.connections.Length;
         ThreadPool.Instance.Fire(() =>
         {
             using (var client = new WebClient())
@@ -397,9 +400,12 @@ public class ServerScript : MonoBehaviour
 
                 Debug.Log("server json : " + result);
 
+                // update!
+                var nvc = new NameValueCollection { { "value", result } };
                 string uri = "http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value;
-                client.UploadString(uri, result);
-                Debug.Log("Refreshed server with connection count to " + (connections + 1));
+                var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
+                Debug.Log(uri);
+                Debug.Log("Refreshed server with connection count to " + currentServer.Players + " and map " + currentServer.Map + ", server said : " + response);
             }
         });
     }
@@ -409,8 +415,9 @@ public class ServerScript : MonoBehaviour
         using (var client = new WebClient())
         {
             var uri = new Uri("http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value);
-            client.UploadString(uri, "0");
-            Debug.Log("Deleted server " + thisServerId.Value);
+            var nvc = new NameValueCollection { { "value", "0" } };
+            var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
+            Debug.Log("Deleted server " + thisServerId.Value + ", server said : " + response);
         }
     }
 
@@ -419,7 +426,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer(MaxPlayers, Port, false);
         if (result == NetworkConnectionError.NoError)
         {
-            currentServer = new ServerInfo { Ip = wanIp.Value, Map = levelName };
+            currentServer = new ServerInfo { Ip = wanIp.Value, Map = levelName, Players = 1 };
             return true;
         }
         lastStatus = "Failed.";
@@ -429,8 +436,6 @@ public class ServerScript : MonoBehaviour
     public void ChangeLevel()
     {
         ChangeLevelIfNeeded(levelName == "pi_mar" ? "pi_rah" : "pi_mar", false);
-        if (Network.isServer)
-            RefreshListedServer();
     }
 
     void ChangeLevelIfNeeded(string newLevel, bool force)
@@ -445,6 +450,7 @@ public class ServerScript : MonoBehaviour
         }
 
         levelName = newLevel;
+        if (currentServer != null) currentServer.Map = levelName;
     }
 
     bool Connect()
