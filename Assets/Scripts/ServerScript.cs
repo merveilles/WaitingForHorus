@@ -1,10 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using JsonFx.Json;
+using JsonFx.Serialization;
+using JsonFx.Serialization.Resolvers;
 using Mono.Nat;
 using UnityEngine;
 
@@ -18,10 +24,13 @@ public class ServerScript : MonoBehaviour
 
     public GUISkin Skin;
 
+    static JsonWriter jsonWriter;
+    static JsonReader jsonReader;
+
     IFuture<string> wanIp;
-    IFuture<ServerInfo[]> serverList;
+    IFuture<ReadResponse> readResponse;
     IFuture<int> thisServerId;
-    ServerInfo chosenServer;
+    ServerInfo currentServer;
     bool connecting;
     string lastStatus;
 	string chosenUsername = "Anon";
@@ -36,6 +45,7 @@ public class ServerScript : MonoBehaviour
     float sinceStartedDiscovery;
     bool cantNat;
     string levelName;
+    bool forceHost;
 
     GUIStyle TextStyle;
 
@@ -46,14 +56,29 @@ public class ServerScript : MonoBehaviour
         private set { isAsyncLoading = value; }
     }
 
+    class ReadResponse
+    {
+        public string Message;
+        public ServerInfo[] Servers;
+    }
+
     class ServerInfo
     {
-        public int Id;
         public string Ip;
-        public int PlayerCount;
-        public DateTime Timestamp;
+        public int Players;
+        public string Map;
+        public int Id;
         public bool ConnectionFailed;
-        public string LevelName;
+
+        public object Packed
+        {
+            get { return new { ip = Ip, players = Players, map = Map }; }
+        }
+
+        public override string ToString()
+        {
+            return jsonWriter.Write(this);
+        }
     }
 
     public enum HostingState
@@ -64,7 +89,9 @@ public class ServerScript : MonoBehaviour
         ReadyToChooseServer,
         ReadyToDiscoverNat,
         ReadyToConnect,
+        ReadyForIp,
         WaitingForNat,
+        WaitingForIp,
         ReadyToHost,
         Hosting,
         Connected
@@ -75,10 +102,13 @@ public class ServerScript : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
+        jsonWriter = new JsonWriter(new DataWriterSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
+        jsonReader = new JsonReader(new DataReaderSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
+
         Application.targetFrameRate = 60;
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
 
-        levelName = RandomHelper.Probability(0.5) ? "rah" : "mar";
+        levelName = RandomHelper.Probability(0.5) ? "pi_rah" : "pi_mar";
         ChangeLevelIfNeeded(levelName, true);
     }
 
@@ -95,10 +125,10 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.WaitingForServers:
-                if (!serverList.HasValue)
+                if (!readResponse.HasValue && !readResponse.InError)
                     break;
 
-                var shouldHost = serverList.Value.Sum(x => MaxPlayers - x.PlayerCount) < MaxPlayers / 2f;
+                var shouldHost = readResponse.Value.Servers.Sum(x => MaxPlayers - x.Players) < MaxPlayers / 2f;
 
                 Debug.Log("Should host? " + shouldHost);
 
@@ -109,13 +139,13 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.ReadyToChooseServer:
-                chosenServer = serverList.Value.OrderBy(x => x.PlayerCount).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.PlayerCount < MaxPlayers);
-                if (chosenServer == null)
+                currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers);
+                if (currentServer == null)
                 {
                     if (couldntCreateServer || cantNat)
                     {
                         Debug.Log("Tried to host, failed, tried to find server, failed. Returning to interactive state.");
-                        serverList = null;
+                        readResponse = null;
                         lastStatus = "No server found.";
                         hostState = HostingState.WaitingForInput;
                     }
@@ -158,7 +188,7 @@ public class ServerScript : MonoBehaviour
                 if (udpMappingSuccess.Value && tcpMappingSuccess.Value)
                 {
                     Debug.Log("Ready to host!");
-                    hostState = HostingState.ReadyToHost;
+                    hostState = HostingState.WaitingForIp;
                 }
                 else
                 {
@@ -169,6 +199,18 @@ public class ServerScript : MonoBehaviour
                     hostState = HostingState.ReadyToListServers;
                     cantNat = true;
                 }
+                break;
+
+            case HostingState.ReadyForIp:
+                if (wanIp == null || !wanIp.HasValue)
+                    GetWanIP();
+                hostState = HostingState.WaitingForIp;
+                break;
+
+            case HostingState.WaitingForIp:
+                lastStatus = "Determining WAN IP...";
+                if (wanIp.HasValue)
+                    hostState = HostingState.ReadyToHost;
                 break;
 
             case HostingState.ReadyToHost:
@@ -212,7 +254,7 @@ public class ServerScript : MonoBehaviour
                     hostState = HostingState.Connected;
                 else
                 {
-                    chosenServer.ConnectionFailed = true;
+                    currentServer.ConnectionFailed = true;
                     Debug.Log("Couldn't connect, will try choosing another server");
                     hostState = HostingState.ReadyToChooseServer;
                 }
@@ -265,13 +307,15 @@ public class ServerScript : MonoBehaviour
                     GUI.enabled = hostState == HostingState.WaitingForInput;
 
                     GUILayout.FlexibleSpace();
-                    if (GUILayout.Button("PRACTICE") && hostState == HostingState.WaitingForInput)
+                    if (GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput)
                     {
+                        forceHost = true;
                         GlobalSoundsScript.PlayButtonPress();
-                        hostState = HostingState.ReadyToHost;
+                        hostState = HostingState.ReadyForIp;
                     }
                     if (GUILayout.Button("QUICKPLAY") && hostState == HostingState.WaitingForInput)
                     {
+                        forceHost = false;
                         GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyToListServers;
                         lastStatus = "";
@@ -289,45 +333,35 @@ public class ServerScript : MonoBehaviour
     void QueryServerList()
     {
         var blackList = new int[0];
-        if (serverList != null && serverList.HasValue)
+        if (readResponse != null && readResponse.HasValue)
         {
-            blackList = serverList.Value.Where(x => x.ConnectionFailed).Select(x => x.Id).ToArray();
-            Debug.Log("blacklisted servers : " + blackList);
+            blackList = readResponse.Value.Servers.Where(x => x.ConnectionFailed).Select(x => x.Id).ToArray();
+            Debug.Log("blacklisted servers : " + blackList.Skip(1).Aggregate(blackList[0].ToString(), (s, i) => s + ", " + i.ToString()));
         }
 
-        serverList = ThreadPool.Instance.Evaluate(() =>
+        readResponse = ThreadPool.Instance.Evaluate(() =>
         {
             using (var client = new WebClient())
             {
-                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=list");
-                Debug.Log("Got server list : ");
+                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=read");
+
+                Debug.Log("Got server list : " + response);
                 try
                 {
-                    var list = response.Split('\n').Where(x => x.Trim().Length > 0 && x.Trim().Split('_').Length == 5).Select(x =>
+                    var data = jsonReader.Read<ReadResponse>(response);
+                    Debug.Log("Message : " + data.Message);
+                    Debug.Log(data.Servers.Length + " servers : ");
+                    foreach (var s in data.Servers)
                     {
-                        var y = x.Trim().Split('_');
-                        Debug.Log("Parts : '" + y[0] + "' '" + y[1] + "' '" + y[2] + "' '" + y[3] + "' '" + y[4]);
-                        var id = int.Parse(y[0]);
-                        return new ServerInfo
-                        {
-                            Id = id,
-                            Ip = y[1],
-                            PlayerCount = int.Parse(y[2]),
-                            Timestamp = DateTime.FromFileTimeUtc(long.Parse(y[3])),
-                            LevelName = y[4],
-                            ConnectionFailed = blackList.Contains(id)
-                        };
-                    });
-
-                    foreach (var s in list)
-                        Debug.Log(s.Id + " is " + (DateTime.UtcNow - s.Timestamp).TotalSeconds + " seconds old");
-
-                    return list.Where(x => (DateTime.UtcNow - x.Timestamp).TotalSeconds < 30).ToArray();
+                        s.ConnectionFailed = blackList.Contains(s.Id);
+                        Debug.Log(s);
+                    }
+                    return data;
                 }
                 catch (Exception ex)
                 {
                     Debug.Log(ex.ToString());
-                    return new ServerInfo[0];
+                    throw ex;
                 }
             }
         });
@@ -339,7 +373,13 @@ public class ServerScript : MonoBehaviour
         {
             using (var client = new WebClient())
             {
-                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=add&value=" + wanIp.Value + "_1_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + levelName);
+                var result = jsonWriter.Write(currentServer.Packed);
+
+                Debug.Log("server json : " + result);
+
+                // then add new server
+                var nvc = new NameValueCollection { { "value", result } };
+                var response = Encoding.ASCII.GetString(client.UploadValues("http://api.xxiivv.com/?key=7377&cmd=add", "POST", nvc));
                 Debug.Log("Added server, got id = " + response);
                 return int.Parse(response);
             }
@@ -351,13 +391,15 @@ public class ServerScript : MonoBehaviour
         var connections = Network.connections.Length;
         ThreadPool.Instance.Fire(() =>
         {
-            string uri = "http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value + "&value=" +
-                         wanIp.Value + "_" + (connections + 1) + "_" + DateTime.UtcNow.ToFileTimeUtc() + "_" + levelName;
             using (var client = new WebClient())
             {
-                client.DownloadString(uri);
-                Debug.Log("Updated timestamp to " + DateTime.UtcNow.ToFileTimeUtc() + " and connection count to " +
-                            (connections + 1));
+                var result = jsonWriter.Write(currentServer.Packed);
+
+                Debug.Log("server json : " + result);
+
+                string uri = "http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value;
+                client.UploadString(uri, result);
+                Debug.Log("Refreshed server with connection count to " + (connections + 1));
             }
         });
     }
@@ -366,8 +408,8 @@ public class ServerScript : MonoBehaviour
     {
         using (var client = new WebClient())
         {
-            var uri = new Uri("http://api.xxiivv.com/?key=7377&cmd=delete&id=" + thisServerId.Value);
-            client.DownloadStringAsync(uri);
+            var uri = new Uri("http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value);
+            client.UploadString(uri, "0");
             Debug.Log("Deleted server " + thisServerId.Value);
         }
     }
@@ -377,7 +419,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer(MaxPlayers, Port, false);
         if (result == NetworkConnectionError.NoError)
         {
-            //serverIp = ThreadPool.Instance.Evaluate<string>(GetIP);
+            currentServer = new ServerInfo { Ip = wanIp.Value, Map = levelName };
             return true;
         }
         lastStatus = "Failed.";
@@ -386,7 +428,7 @@ public class ServerScript : MonoBehaviour
 
     public void ChangeLevel()
     {
-        ChangeLevelIfNeeded(levelName == "mar" ? "rah" : "mar", false);
+        ChangeLevelIfNeeded(levelName == "pi_mar" ? "pi_rah" : "pi_mar", false);
         if (Network.isServer)
             RefreshListedServer();
     }
@@ -394,11 +436,11 @@ public class ServerScript : MonoBehaviour
     void ChangeLevelIfNeeded(string newLevel, bool force)
     {
         if (force)
-            Application.LoadLevel("pi_" + newLevel);
+            Application.LoadLevel(newLevel);
         else if (newLevel != levelName)
         {
             IsAsyncLoading = true;
-            var asyncOperation = Application.LoadLevelAsync("pi_" + newLevel);
+            var asyncOperation = Application.LoadLevelAsync(newLevel);
             TaskManager.Instance.WaitUntil(x => asyncOperation.isDone).Then(() => IsAsyncLoading = false);
         }
 
@@ -408,8 +450,8 @@ public class ServerScript : MonoBehaviour
     bool Connect()
     {
         lastStatus = "Connecting...";
-        Debug.Log("Connecting to " + chosenServer.Ip + " (id = " + chosenServer.Id + ")");
-        var result = Network.Connect(chosenServer.Ip, Port);
+        Debug.Log("Connecting to " + currentServer.Ip + " (id = " + currentServer.Id + ")");
+        var result = Network.Connect(currentServer.Ip, Port);
         if (result != NetworkConnectionError.NoError)
         {
             lastStatus = "Failed.";
@@ -423,7 +465,7 @@ public class ServerScript : MonoBehaviour
     {
         connecting = false;
         PeerType = NetworkPeerType.Client;
-        ChangeLevelIfNeeded(chosenServer.LevelName, false);
+        ChangeLevelIfNeeded(currentServer.Map, false);
     }
 
     void GetWanIP()
@@ -580,7 +622,7 @@ public class ServerScript : MonoBehaviour
         else
             lastStatus = "Failed.";
 
-        chosenServer.ConnectionFailed = true;
+        currentServer.ConnectionFailed = true;
         Debug.Log("Couldn't connect, will try choosing another server");
         hostState = HostingState.ReadyToListServers;
 

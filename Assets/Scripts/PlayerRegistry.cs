@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 class PlayerRegistry : MonoBehaviour
@@ -33,7 +34,14 @@ class PlayerRegistry : MonoBehaviour
     public void RegisterPlayerFull(NetworkPlayer player, string username, float r, float g, float b)
     {
         //Debug.Log(player + " = " + username);
-        For.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b)});
+        try
+        {
+            For.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b) });
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Tried to register player " + player + " but was already registered. Current username : " + For[player].Username + " | wanted username : " + username);
+        }
     }
 
     [RPC]
