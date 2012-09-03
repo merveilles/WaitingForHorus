@@ -16,7 +16,7 @@ using UnityEngine;
 
 public class ServerScript : MonoBehaviour 
 {	
-	public const int Port = 10000;
+	public const int Port = 31415;
     const int MaxPlayers = 6;
     public NetworkPeerType PeerType;
 
@@ -338,7 +338,8 @@ public class ServerScript : MonoBehaviour
         if (readResponse != null && readResponse.HasValue)
         {
             blackList = readResponse.Value.Servers.Where(x => x.ConnectionFailed).Select(x => x.Id).ToArray();
-            Debug.Log("blacklisted servers : " + blackList.Skip(1).Aggregate(blackList[0].ToString(), (s, i) => s + ", " + i.ToString()));
+            if (blackList.Length > 0)
+                Debug.Log("blacklisted servers : " + blackList.Skip(1).Aggregate(blackList[0].ToString(), (s, i) => s + ", " + i.ToString()));
         }
 
         readResponse = ThreadPool.Instance.Evaluate(() =>
