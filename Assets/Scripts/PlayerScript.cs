@@ -101,10 +101,11 @@ public class PlayerScript : MonoBehaviour
         //Debug.Log("added recoil : " + impulse);
     }
 
-    public void ResetRecoil()
+    public void ResetVelocities()
     {
         if (!networkView.isMine) return;
         recoilVelocity = Vector3.zero;
+        fallingVelocity = Vector3.zero;
     }
 
     void Update()

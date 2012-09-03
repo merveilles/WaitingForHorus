@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -26,10 +27,20 @@ public class SpawnScript : MonoBehaviour
 
 	void OnConnectedToServer()
 	{
-	    Spawn();
         ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player, "connected", true, false);
 	}
 	
+    public void WaitAndSpawn()
+    {
+        StartCoroutine(Co_WaitAndSpawn());
+    }
+    IEnumerator Co_WaitAndSpawn()
+    {
+        while (ServerScript.IsAsyncLoading)
+            yield return new WaitForSeconds(1 / 30f);
+        Spawn();
+    }
+
 	void Spawn()
 	{
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));

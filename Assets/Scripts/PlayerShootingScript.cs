@@ -35,7 +35,7 @@ public class PlayerShootingScript : MonoBehaviour
     int bulletsLeft = BurstCount;
 
     //float cannonChargeCountdown = CannonChargeTime;
-    List<WeaponIndicatorScript.PlayerData> targets;
+    public List<WeaponIndicatorScript.PlayerData> targets;
 
     CameraScript playerCamera;
     PlayerScript playerScript;

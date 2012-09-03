@@ -102,7 +102,7 @@ public class RoundScript : MonoBehaviour
     [RPC]
     public void SyncLevel(string toLevel)
     {
-        transform.parent.SendMessage("ChangeLevelIfNeeded", toLevel);
+        transform.parent.SendMessage("SyncAndSpawn", toLevel);
     }
 
     [RPC]

@@ -154,7 +154,11 @@ public class HealthScript : MonoBehaviour
         dead = true;
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = false;
-        foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = false;
+        foreach (var r in GetComponentsInChildren<PlayerShootingScript>())
+        {
+            r.targets.Clear();
+            r.enabled = false;
+        }
     }
     void Respawn(Vector3 position)
     {
@@ -166,7 +170,7 @@ public class HealthScript : MonoBehaviour
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
 
         transform.position = position;
-        GetComponent<PlayerScript>().ResetRecoil();
+        GetComponent<PlayerScript>().ResetVelocities();
         GetComponent<PlayerShootingScript>().InstantReload();
         
         Shield = maxShield;

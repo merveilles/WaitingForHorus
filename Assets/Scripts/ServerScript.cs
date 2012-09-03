@@ -436,9 +436,13 @@ public class ServerScript : MonoBehaviour
 
     public void ChangeLevel()
     {
-        ChangeLevelIfNeeded(levelName == "pi_mar" ? "pi_rah" : "pi_mar");
+        ChangeLevelIfNeeded(levelName == "pi_mar" ? "pi_rah" : "pi_mar", false);
     }
-    void ChangeLevelIfNeeded(string newLevel) { ChangeLevelIfNeeded(newLevel, false); }
+    void SyncAndSpawn(string newLevel)
+    {
+        ChangeLevelIfNeeded(newLevel, false);
+        SpawnScript.Instance.WaitAndSpawn();
+    }
     void ChangeLevelIfNeeded(string newLevel, bool force)
     {
         if (force)
@@ -449,6 +453,8 @@ public class ServerScript : MonoBehaviour
             var asyncOperation = Application.LoadLevelAsync(newLevel);
             TaskManager.Instance.WaitUntil(x => asyncOperation.isDone).Then(() => IsAsyncLoading = false);
         }
+        else
+            IsAsyncLoading = false;
 
         levelName = newLevel;
         if (currentServer != null) currentServer.Map = levelName;
@@ -472,6 +478,7 @@ public class ServerScript : MonoBehaviour
     {
         connecting = false;
         PeerType = NetworkPeerType.Client;
+        IsAsyncLoading = true; // Delays spawn until the loading is done server-side
     }
 
     void OnPlayerConnected(NetworkPlayer player)
