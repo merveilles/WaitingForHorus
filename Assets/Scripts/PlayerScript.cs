@@ -59,10 +59,8 @@ public class PlayerScript : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         controller = GetComponent<CharacterController>();
-        characterAnimation = transform.Find("Graphics").animation;
-        characterAnimation.AddClip(characterAnimation.GetClip("Run"), "Run", 0, 20, true);
-        //characterAnimation.AddClip(characterAnimation.GetClip("Idle"), "Idle", 0, 20, true);
-        characterAnimation.Play("Idle");
+        characterAnimation = transform.Find("Animated Mesh").animation;
+        characterAnimation.Play("idle");
 	    textBubble = gameObject.FindChild("TextBubble");
         textBubble.renderer.material.color = new Color(1, 1, 1, 0);
 
@@ -212,7 +210,8 @@ public class PlayerScript : MonoBehaviour
         PlayerRegistry.PlayerInfo info;
         if (owner.HasValue && PlayerRegistry.For.TryGetValue(owner.Value, out info))
         {
-            transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color = info.Color;
+            // TODO : Remake this work when we have the flag
+            //transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color = info.Color;
 
             if (!networkView.isMine)
                 GetComponentInChildren<TextMesh>().text = info.Username;
@@ -239,7 +238,7 @@ public class PlayerScript : MonoBehaviour
                 justJumped = true;
                 activelyJumping = true;
                 fallingVelocity.y = jumpVelocity;
-                characterAnimation.Play(currentAnim = "Jump");
+                characterAnimation.Play(currentAnim = "jump");
                 playJumpSound = true;
                 jumpSound.Play();
                 sinceNotGrounded = 0.25f;
@@ -250,7 +249,7 @@ public class PlayerScript : MonoBehaviour
                 lastJumpInputTime = -1;
                 dashCooldown = timeBetweenDashes;
 
-                characterAnimation.Play(currentAnim = "Jump");
+                characterAnimation.Play(currentAnim = "jump");
                 playDashSound = true;
                 dashSound.Play();
 
@@ -288,13 +287,39 @@ public class PlayerScript : MonoBehaviour
         {
             if (MathHelper.AlmostEquals(smoothedInputVelocity, Vector3.zero, 0.1f))
             {
-                if (currentAnim != "Idle")
-                    characterAnimation.Play(currentAnim = "Idle");
+                if (currentAnim != "idle")
+                    characterAnimation.Play(currentAnim = "idle");
             }
-            else 
+            else
             {
-                if (currentAnim != "Run")
-                    characterAnimation.Play(currentAnim = "Run");
+                var xDir = Vector3.Dot(smoothedInputVelocity, transform.right);
+                var zDir = Vector3.Dot(smoothedInputVelocity, transform.forward);
+
+                const float epsilon = 5f;
+
+                //Debug.Log("xDir : " + xDir + " | zDir : " + zDir);
+
+                if (zDir > epsilon)
+                {
+                    if (currentAnim != "run")
+                        characterAnimation.Play(currentAnim = "run");
+                }
+                else if (zDir < -epsilon)
+                {
+                    // TODO : backwards running animation
+                    if (currentAnim != "run")
+                        characterAnimation.Play(currentAnim = "run");
+                }
+                else if (xDir > epsilon)
+                {
+                    if (currentAnim != "strafeRight")
+                        characterAnimation.Play(currentAnim = "strafeRight");
+                }
+                else if (xDir < -epsilon)
+                {
+                    if (currentAnim != "strafeLeft")
+                        characterAnimation.Play(currentAnim = "strafeLeft");
+                }
             }
         }
 
