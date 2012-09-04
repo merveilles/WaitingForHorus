@@ -5,6 +5,15 @@ ModelImporter:
     4300000: MECHA_Head001
     7400000: Take 001 //// Horus_animations
     7400002: Take 001 //// Animated Mesh
+    7400004: idle //// Animated Mesh
+    7400006: run //// Animated Mesh
+    7400008: dashForward //// Animated Mesh
+    7400010: dashLeft //// Animated Mesh
+    7400012: dashRight //// Animated Mesh
+    7400014: strafeLeft //// Animated Mesh
+    7400016: strafeRight //// Animated Mesh
+    7400018: jump //// Animated Mesh
+    7400020: land //// Animated Mesh
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -18,8 +27,38 @@ ModelImporter:
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
-    animationWrapMode: 2
-    clipAnimations: []
+    animationWrapMode: 0
+    clipAnimations:
+    - name: idle
+      firstFrame: 81
+      lastFrame: 90
+      wrapMode: 2
+      loop: 1
+    - name: run
+      firstFrame: 1
+      lastFrame: 18
+      wrapMode: 2
+      loop: 1
+    - name: strafeLeft
+      firstFrame: 36
+      lastFrame: 53
+      wrapMode: 2
+      loop: 1
+    - name: strafeRight
+      firstFrame: 19
+      lastFrame: 35
+      wrapMode: 2
+      loop: 1
+    - name: jump
+      firstFrame: 54
+      lastFrame: 72
+      wrapMode: 4
+      loop: 1
+    - name: land
+      firstFrame: 73
+      lastFrame: 80
+      wrapMode: 1
+      loop: 0
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
