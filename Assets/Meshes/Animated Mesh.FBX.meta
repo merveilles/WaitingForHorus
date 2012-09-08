@@ -3,6 +3,17 @@ guid: 85f904165aa9f4b879ffe0f5ed751c47
 ModelImporter:
   fileIDToRecycleName:
     4300000: MECHA_Head001
+    4300002: Cube
+    4300004: Canon
+    4300006: flag_pole
+    4300008: flag_flag
+    4300010: Canon001
+    4300012: Box002
+    4300014: healthsphere_left
+    4300016: healthsphere_right
+    4300018: healthsphere_rear
+    4300020: flag_pole001
+    4300022: flag_flag001
     7400000: Take 001 //// Horus_animations
     7400002: Take 001 //// Animated Mesh
     7400004: idle //// Animated Mesh
@@ -54,11 +65,6 @@ ModelImporter:
       lastFrame: 72
       wrapMode: 4
       loop: 1
-    - name: land
-      firstFrame: 73
-      lastFrame: 80
-      wrapMode: 1
-      loop: 0
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
@@ -95,6 +101,55 @@ ModelImporter:
       data:
         first: 4
         second: b21a0600
+    Box002:
+      data:
+        first: 1
+        second: e0860100
+      data:
+        first: 4
+        second: c01a0600
+      data:
+        first: 23
+        second: 60182300
+      data:
+        first: 33
+        second: a05a3200
+    Canon:
+      data:
+        first: 1
+        second: e8860100
+      data:
+        first: 4
+        second: c81a0600
+      data:
+        first: 23
+        second: 66182300
+      data:
+        first: 33
+        second: a65a3200
+    Canon001:
+      data:
+        first: 1
+        second: e2860100
+      data:
+        first: 4
+        second: c21a0600
+      data:
+        first: 137
+        second: ac0bd100
+    Cube:
+      data:
+        first: 1
+        second: ea860100
+      data:
+        first: 4
+        second: ca1a0600
+      data:
+        first: 23
+        second: 68182300
+      data:
+        first: 33
+        second: a85a3200
     MECHA_CellCarrier_C:
       data:
         first: 1
@@ -273,3 +328,79 @@ ModelImporter:
       data:
         first: 4
         second: 901a0600
+    flag_flag:
+      data:
+        first: 1
+        second: e4860100
+      data:
+        first: 4
+        second: c41a0600
+      data:
+        first: 23
+        second: 62182300
+      data:
+        first: 33
+        second: a25a3200
+    flag_flag001:
+      data:
+        first: 1
+        second: d6860100
+      data:
+        first: 4
+        second: b61a0600
+      data:
+        first: 137
+        second: a20bd100
+    flag_pole:
+      data:
+        first: 1
+        second: e6860100
+      data:
+        first: 4
+        second: c61a0600
+      data:
+        first: 23
+        second: 64182300
+      data:
+        first: 33
+        second: a45a3200
+    flag_pole001:
+      data:
+        first: 1
+        second: d8860100
+      data:
+        first: 4
+        second: b81a0600
+      data:
+        first: 137
+        second: a40bd100
+    healthsphere_left:
+      data:
+        first: 1
+        second: de860100
+      data:
+        first: 4
+        second: be1a0600
+      data:
+        first: 137
+        second: aa0bd100
+    healthsphere_rear:
+      data:
+        first: 1
+        second: da860100
+      data:
+        first: 4
+        second: ba1a0600
+      data:
+        first: 137
+        second: a60bd100
+    healthsphere_right:
+      data:
+        first: 1
+        second: dc860100
+      data:
+        first: 4
+        second: bc1a0600
+      data:
+        first: 137
+        second: a80bd100
