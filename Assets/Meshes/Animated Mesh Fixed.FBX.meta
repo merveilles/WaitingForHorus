@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 85f904165aa9f4b879ffe0f5ed751c47
+guid: 4c621ba13e60b4cb9b913966483cff24
 ModelImporter:
   fileIDToRecycleName:
     4300000: MECHA_Head001
@@ -14,17 +14,13 @@ ModelImporter:
     4300018: healthsphere_rear
     4300020: flag_pole001
     4300022: flag_flag001
-    7400000: Take 001 //// Horus_animations
-    7400002: Take 001 //// Animated Mesh
-    7400004: idle //// Animated Mesh
-    7400006: run //// Animated Mesh
-    7400008: dashForward //// Animated Mesh
-    7400010: dashLeft //// Animated Mesh
-    7400012: dashRight //// Animated Mesh
-    7400014: strafeLeft //// Animated Mesh
-    7400016: strafeRight //// Animated Mesh
-    7400018: jump //// Animated Mesh
-    7400020: land //// Animated Mesh
+    7400000: Take 001 //// Animated Mesh Fixed
+    7400002: idle //// Animated Mesh Fixed
+    7400004: run //// Animated Mesh Fixed
+    7400006: strafeLeft //// Animated Mesh Fixed
+    7400008: strafeRight //// Animated Mesh Fixed
+    7400010: jump //// Animated Mesh Fixed
+    7400012: land //// Animated Mesh Fixed
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -65,6 +61,11 @@ ModelImporter:
       lastFrame: 72
       wrapMode: 4
       loop: 1
+    - name: land
+      firstFrame: 73
+      lastFrame: 80
+      wrapMode: 1
+      loop: 0
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
@@ -97,17 +98,17 @@ ModelImporter:
     Box001:
       data:
         first: 1
-        second: d2860100
+        second: e8860100
       data:
         first: 4
-        second: b21a0600
+        second: c81a0600
     Box002:
       data:
         first: 1
-        second: e0860100
+        second: ac860100
       data:
         first: 4
-        second: c01a0600
+        second: 8c1a0600
       data:
         first: 23
         second: 60182300
@@ -117,10 +118,10 @@ ModelImporter:
     Canon:
       data:
         first: 1
-        second: e8860100
+        second: b4860100
       data:
         first: 4
-        second: c81a0600
+        second: 941a0600
       data:
         first: 23
         second: 66182300
@@ -130,20 +131,20 @@ ModelImporter:
     Canon001:
       data:
         first: 1
-        second: e2860100
+        second: ae860100
       data:
         first: 4
-        second: c21a0600
+        second: 8e1a0600
       data:
         first: 137
-        second: ac0bd100
+        second: aa0bd100
     Cube:
       data:
         first: 1
-        second: ea860100
+        second: b6860100
       data:
         first: 4
-        second: ca1a0600
+        second: 961a0600
       data:
         first: 23
         second: 68182300
@@ -153,188 +154,188 @@ ModelImporter:
     MECHA_CellCarrier_C:
       data:
         first: 1
-        second: b8860100
-      data:
-        first: 4
-        second: 981a0600
-    MECHA_CellCarrier_C_cell_C:
-      data:
-        first: 1
-        second: b6860100
-      data:
-        first: 4
-        second: 961a0600
-    MECHA_CellCarrier_Mini:
-      data:
-        first: 1
-        second: c4860100
-      data:
-        first: 4
-        second: a41a0600
-    MECHA_CellCarrier_Mini002:
-      data:
-        first: 1
-        second: a8860100
-      data:
-        first: 4
-        second: 881a0600
-    MECHA_CellCarrier_Mini_cells_mini:
-      data:
-        first: 1
-        second: c2860100
-      data:
-        first: 4
-        second: a21a0600
-    MECHA_CellCarrier_Mini_cells_mini002:
-      data:
-        first: 1
-        second: a6860100
-      data:
-        first: 4
-        second: 861a0600
-    MECHA_Head:
-      data:
-        first: 1
-        second: d0860100
-      data:
-        first: 4
-        second: b01a0600
-    MECHA_Head001:
-      data:
-        first: 1
-        second: d4860100
-      data:
-        first: 4
-        second: b41a0600
-      data:
-        first: 137
-        second: a00bd100
-    MECHA_Head_Headpiece1:
-      data:
-        first: 1
         second: ce860100
       data:
         first: 4
         second: ae1a0600
-    MECHA_Head_Headpiece2:
+    MECHA_CellCarrier_C_cell_C:
       data:
         first: 1
         second: cc860100
       data:
         first: 4
         second: ac1a0600
-    MECHA_Pipes_022:
+    MECHA_CellCarrier_Mini:
       data:
         first: 1
-        second: a4860100
+        second: da860100
       data:
         first: 4
-        second: 841a0600
-    MECHA_Pipes_023:
-      data:
-        first: 1
-        second: aa860100
-      data:
-        first: 4
-        second: 8a1a0600
-    MECHA_Pipes_2:
-      data:
-        first: 1
-        second: c6860100
-      data:
-        first: 4
-        second: a61a0600
-    MECHA_Pipes_21:
-      data:
-        first: 1
-        second: ca860100
-      data:
-        first: 4
-        second: aa1a0600
-    MECHA_Pipes_21_Tunes:
-      data:
-        first: 1
-        second: c8860100
-      data:
-        first: 4
-        second: a81a0600
-    MECHA_Pipes_21_Tunes001:
-      data:
-        first: 1
-        second: a2860100
-      data:
-        first: 4
-        second: 821a0600
-    MECHA_Shield:
-      data:
-        first: 1
-        second: b4860100
-      data:
-        first: 4
-        second: 941a0600
-    MECHA_Shoulder_BR:
-      data:
-        first: 1
-        second: c0860100
-      data:
-        first: 4
-        second: a01a0600
-    MECHA_Shoulder_BR001:
-      data:
-        first: 1
-        second: ae860100
-      data:
-        first: 4
-        second: 8e1a0600
-    MECHA_Shoulder_BR_Leg_BR:
+        second: ba1a0600
+    MECHA_CellCarrier_Mini002:
       data:
         first: 1
         second: be860100
       data:
         first: 4
         second: 9e1a0600
-    MECHA_Shoulder_BR_Leg_BR001:
+    MECHA_CellCarrier_Mini_cells_mini:
       data:
         first: 1
-        second: ac860100
+        second: d8860100
       data:
         first: 4
-        second: 8c1a0600
-    MECHA_Shoulder_FR:
+        second: b81a0600
+    MECHA_CellCarrier_Mini_cells_mini002:
       data:
         first: 1
         second: bc860100
       data:
         first: 4
         second: 9c1a0600
-    MECHA_Shoulder_FR001:
+    MECHA_Head:
       data:
         first: 1
-        second: b2860100
+        second: e6860100
       data:
         first: 4
-        second: 921a0600
-    MECHA_Shoulder_FR_Leg_FR:
+        second: c61a0600
+    MECHA_Head001:
       data:
         first: 1
-        second: ba860100
+        second: ea860100
       data:
         first: 4
-        second: 9a1a0600
-    MECHA_Shoulder_FR_Leg_FR001:
+        second: ca1a0600
       data:
-        first: 1
-        second: b0860100
-      data:
-        first: 4
-        second: 901a0600
-    flag_flag:
+        first: 137
+        second: ac0bd100
+    MECHA_Head_Headpiece1:
       data:
         first: 1
         second: e4860100
       data:
         first: 4
         second: c41a0600
+    MECHA_Head_Headpiece2:
+      data:
+        first: 1
+        second: e2860100
+      data:
+        first: 4
+        second: c21a0600
+    MECHA_Pipes_022:
+      data:
+        first: 1
+        second: ba860100
+      data:
+        first: 4
+        second: 9a1a0600
+    MECHA_Pipes_023:
+      data:
+        first: 1
+        second: c0860100
+      data:
+        first: 4
+        second: a01a0600
+    MECHA_Pipes_2:
+      data:
+        first: 1
+        second: dc860100
+      data:
+        first: 4
+        second: bc1a0600
+    MECHA_Pipes_21:
+      data:
+        first: 1
+        second: e0860100
+      data:
+        first: 4
+        second: c01a0600
+    MECHA_Pipes_21_Tunes:
+      data:
+        first: 1
+        second: de860100
+      data:
+        first: 4
+        second: be1a0600
+    MECHA_Pipes_21_Tunes001:
+      data:
+        first: 1
+        second: b8860100
+      data:
+        first: 4
+        second: 981a0600
+    MECHA_Shield:
+      data:
+        first: 1
+        second: ca860100
+      data:
+        first: 4
+        second: aa1a0600
+    MECHA_Shoulder_BR:
+      data:
+        first: 1
+        second: d6860100
+      data:
+        first: 4
+        second: b61a0600
+    MECHA_Shoulder_BR001:
+      data:
+        first: 1
+        second: c4860100
+      data:
+        first: 4
+        second: a41a0600
+    MECHA_Shoulder_BR_Leg_BR:
+      data:
+        first: 1
+        second: d4860100
+      data:
+        first: 4
+        second: b41a0600
+    MECHA_Shoulder_BR_Leg_BR001:
+      data:
+        first: 1
+        second: c2860100
+      data:
+        first: 4
+        second: a21a0600
+    MECHA_Shoulder_FR:
+      data:
+        first: 1
+        second: d2860100
+      data:
+        first: 4
+        second: b21a0600
+    MECHA_Shoulder_FR001:
+      data:
+        first: 1
+        second: c8860100
+      data:
+        first: 4
+        second: a81a0600
+    MECHA_Shoulder_FR_Leg_FR:
+      data:
+        first: 1
+        second: d0860100
+      data:
+        first: 4
+        second: b01a0600
+    MECHA_Shoulder_FR_Leg_FR001:
+      data:
+        first: 1
+        second: c6860100
+      data:
+        first: 4
+        second: a61a0600
+    flag_flag:
+      data:
+        first: 1
+        second: b0860100
+      data:
+        first: 4
+        second: 901a0600
       data:
         first: 23
         second: 62182300
@@ -344,20 +345,20 @@ ModelImporter:
     flag_flag001:
       data:
         first: 1
-        second: d6860100
+        second: a2860100
       data:
         first: 4
-        second: b61a0600
+        second: 821a0600
       data:
         first: 137
-        second: a20bd100
+        second: a00bd100
     flag_pole:
       data:
         first: 1
-        second: e6860100
+        second: b2860100
       data:
         first: 4
-        second: c61a0600
+        second: 921a0600
       data:
         first: 23
         second: 64182300
@@ -367,40 +368,40 @@ ModelImporter:
     flag_pole001:
       data:
         first: 1
-        second: d8860100
+        second: a4860100
       data:
         first: 4
-        second: b81a0600
+        second: 841a0600
       data:
         first: 137
-        second: a40bd100
+        second: a20bd100
     healthsphere_left:
       data:
         first: 1
-        second: de860100
+        second: aa860100
       data:
         first: 4
-        second: be1a0600
-      data:
-        first: 137
-        second: aa0bd100
-    healthsphere_rear:
-      data:
-        first: 1
-        second: da860100
-      data:
-        first: 4
-        second: ba1a0600
-      data:
-        first: 137
-        second: a60bd100
-    healthsphere_right:
-      data:
-        first: 1
-        second: dc860100
-      data:
-        first: 4
-        second: bc1a0600
+        second: 8a1a0600
       data:
         first: 137
         second: a80bd100
+    healthsphere_rear:
+      data:
+        first: 1
+        second: a6860100
+      data:
+        first: 4
+        second: 861a0600
+      data:
+        first: 137
+        second: a40bd100
+    healthsphere_right:
+      data:
+        first: 1
+        second: a8860100
+      data:
+        first: 4
+        second: 881a0600
+      data:
+        first: 137
+        second: a60bd100
