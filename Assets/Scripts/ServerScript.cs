@@ -283,11 +283,14 @@ public class ServerScript : MonoBehaviour
 
         if (PeerType == NetworkPeerType.Connecting || PeerType == NetworkPeerType.Disconnected)
         {
+            // Welcome message is now a chat prompt
+            /*
             if (readResponse.HasValue)
             {
                 GUI.Label(new Rect(10, Screen.height - 95, 500, 25), readResponse.Value.Message, WelcomeStyleBg);
                 GUI.Label(new Rect(11, Screen.height - 96, 500, 25), readResponse.Value.Message, WelcomeStyle);
             }
+            */
 
             Screen.showCursor = true;
             GUILayout.Window(0, new Rect(0, Screen.height - 70, 277, 70), Login, string.Empty);
@@ -441,6 +444,13 @@ public class ServerScript : MonoBehaviour
         if (result == NetworkConnectionError.NoError)
         {
             currentServer = new ServerInfo { Ip = wanIp.Value, Map = levelName, Players = 1 };
+
+            TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
+            {
+                if (readResponse.HasValue)
+                    ChatScript.Instance.LogChat(Network.player, readResponse.Value.Message, true, true);
+            });
+
             return true;
         }
         lastStatus = "Failed.";
@@ -459,12 +469,19 @@ public class ServerScript : MonoBehaviour
     void ChangeLevelIfNeeded(string newLevel, bool force)
     {
         if (force)
+        {
             Application.LoadLevel(newLevel);
+            ChatScript.Instance.LogChat(Network.player, "Changed level to " + newLevel + ".", true, true);
+        }
         else if (newLevel != levelName)
         {
             IsAsyncLoading = true;
             var asyncOperation = Application.LoadLevelAsync(newLevel);
-            TaskManager.Instance.WaitUntil(x => asyncOperation.isDone).Then(() => IsAsyncLoading = false);
+            TaskManager.Instance.WaitUntil(x => asyncOperation.isDone).Then(() =>
+            {
+                IsAsyncLoading = false;
+                ChatScript.Instance.LogChat(Network.player, "Changed level to " + newLevel + ".", true, true);
+            });
         }
         else
             IsAsyncLoading = false;
@@ -492,6 +509,12 @@ public class ServerScript : MonoBehaviour
         connecting = false;
         PeerType = NetworkPeerType.Client;
         IsAsyncLoading = true; // Delays spawn until the loading is done server-side
+
+        TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
+        {
+            if (readResponse.HasValue)
+                ChatScript.Instance.LogChat(Network.player, readResponse.Value.Message, true, true);
+        });
     }
 
     void OnPlayerConnected(NetworkPlayer player)
