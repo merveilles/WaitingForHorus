@@ -215,8 +215,7 @@ public class PlayerScript : MonoBehaviour
         PlayerRegistry.PlayerInfo info;
         if (owner.HasValue && PlayerRegistry.For.TryGetValue(owner.Value, out info))
         {
-            // TODO : Remake this work when we have the flag
-            //transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color = info.Color;
+            transform.Find("Animated Mesh Fixed").Find("flag_pole001").Find("flag_flag001").renderer.material.color = info.Color;
 
             if (!networkView.isMine)
                 GetComponentInChildren<TextMesh>().text = info.Username;
