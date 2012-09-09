@@ -166,8 +166,10 @@ public class ChatScript : MonoBehaviour
                             case "/spectate":
                                 if (!ServerScript.Spectating)
                                 {
-                                    foreach (var p in FindObjectsOfType(typeof (PlayerScript)).Cast<PlayerScript>())
-                                        Network.Destroy(p.gameObject);
+                                    foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                                        if (p.networkView != null && p.networkView.isMine)
+                                            Network.Destroy(p.gameObject);
+
                                     ServerScript.Spectating = true;
                                 }
                                 else
