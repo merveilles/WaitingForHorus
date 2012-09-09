@@ -73,6 +73,7 @@ public class PlayerScript : MonoBehaviour
         {
             if (!r.material.HasProperty("_Color")) continue;
             if (r.gameObject.name == "TextBubble") continue;
+            if (r.gameObject.name == "flag_flag001") continue;
             r.tag = "PlayerMaterial";
         }
 	}
