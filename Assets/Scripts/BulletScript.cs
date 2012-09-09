@@ -96,6 +96,9 @@ public class BulletScript : MonoBehaviour
                             Collider[] colliders = Physics.OverlapSphere(hitInfo.point, 15, (1 << LayerMask.NameToLayer("Player Hit")));
                             foreach (Collider c in colliders)
                             {
+                                if (c.gameObject.name != "PlayerHit")
+                                    continue;
+
                                 var t = c.transform;
                                 NetworkView view = t.networkView;
                                 while (view == null)

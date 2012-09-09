@@ -64,6 +64,11 @@ public class PlayerScript : MonoBehaviour
 	    textBubble = gameObject.FindChild("TextBubble");
         textBubble.renderer.material.color = new Color(1, 1, 1, 0);
 
+	    characterAnimation["run"].speed = 1.25f;
+        characterAnimation["backward"].speed = 1.75f;
+        characterAnimation["strafeLeft"].speed = 1.5f;
+        characterAnimation["strafeRight"].speed = 1.5f;
+
         foreach (var r in GetComponentsInChildren<Renderer>())
         {
             if (!r.material.HasProperty("_Color")) continue;
@@ -210,8 +215,7 @@ public class PlayerScript : MonoBehaviour
         PlayerRegistry.PlayerInfo info;
         if (owner.HasValue && PlayerRegistry.For.TryGetValue(owner.Value, out info))
         {
-            // TODO : Remake this work when we have the flag
-            //transform.Find("Graphics").Find("mecha_flag").Find("flag_flag").renderer.material.color = info.Color;
+            transform.Find("Animated Mesh Fixed").Find("flag_pole001").Find("flag_flag001").renderer.material.color = info.Color;
 
             if (!networkView.isMine)
                 GetComponentInChildren<TextMesh>().text = info.Username;
@@ -249,6 +253,8 @@ public class PlayerScript : MonoBehaviour
                 lastJumpInputTime = -1;
                 dashCooldown = timeBetweenDashes;
 
+                if (currentAnim == "jump")
+                    characterAnimation.Rewind("jump");
                 characterAnimation.Play(currentAnim = "jump");
                 playDashSound = true;
                 dashSound.Play();
@@ -295,7 +301,7 @@ public class PlayerScript : MonoBehaviour
                 var xDir = Vector3.Dot(smoothedInputVelocity, transform.right);
                 var zDir = Vector3.Dot(smoothedInputVelocity, transform.forward);
 
-                const float epsilon = 5f;
+                const float epsilon = 15f;
 
                 //Debug.Log("xDir : " + xDir + " | zDir : " + zDir);
 
@@ -306,9 +312,8 @@ public class PlayerScript : MonoBehaviour
                 }
                 else if (zDir < -epsilon)
                 {
-                    // TODO : backwards running animation
-                    if (currentAnim != "run")
-                        characterAnimation.Play(currentAnim = "run");
+                    if (currentAnim != "backward")
+                        characterAnimation.Play(currentAnim = "backward");
                 }
                 else if (xDir > epsilon)
                 {

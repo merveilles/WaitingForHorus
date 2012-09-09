@@ -22,18 +22,17 @@ public class HealthScript : MonoBehaviour
 
     bool invulnerable;
 
-    //Renderer bigCell;
-    //Renderer[] smallCells;
+    Renderer bigCell;
+    Renderer[] smallCells;
 
     void Awake()
     {
         Shield = maxShield;
         Health = maxHealth;
 
-        // TODO : Make this work once we have the submeshes back
-        //var graphics = gameObject.FindChild("Animated Mesh Fixed");
-        //bigCell = graphics.FindChild("MECHA_CellCarrier_C").FindChild("MECHA_CellCarrier_C cell_C").GetComponentInChildren<Renderer>();
-        //smallCells = graphics.FindChild("MECHA_CellCarrier_Mini cells_mini").GetComponentsInChildren<Renderer>();
+        var graphics = gameObject.FindChild("Animated Mesh Fixed");
+        bigCell = graphics.FindChild("healthsphere_rear").GetComponentInChildren<Renderer>();
+        smallCells = new[] { graphics.FindChild("healthsphere_left").GetComponentInChildren<Renderer>(), graphics.FindChild("healthsphere_right").GetComponentInChildren<Renderer>() };
     }
 
     void Update()
@@ -90,9 +89,9 @@ public class HealthScript : MonoBehaviour
     [RPC]
     void SetHealth(int health)
     {
-        //bigCell.enabled = health >= 2;
-        //foreach (var r in smallCells)
-        //    r.enabled = health >= 2;
+        bigCell.enabled = health >= 2;
+        foreach (var r in smallCells)
+            r.enabled = health >= 2;
     }
 
     [RPC]

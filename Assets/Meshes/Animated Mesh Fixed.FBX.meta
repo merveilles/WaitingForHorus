@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 4c621ba13e60b4cb9b913966483cff24
+guid: 4e8507c3ff89947f784b9548914eebdd
 ModelImporter:
   fileIDToRecycleName:
     4300000: MECHA_Head001
@@ -21,6 +21,7 @@ ModelImporter:
     7400008: strafeRight //// Animated Mesh Fixed
     7400010: jump //// Animated Mesh Fixed
     7400012: land //// Animated Mesh Fixed
+    7400014: backward //// Animated Mesh Fixed
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -38,7 +39,7 @@ ModelImporter:
     clipAnimations:
     - name: idle
       firstFrame: 81
-      lastFrame: 90
+      lastFrame: 99
       wrapMode: 2
       loop: 1
     - name: run
@@ -58,14 +59,19 @@ ModelImporter:
       loop: 1
     - name: jump
       firstFrame: 54
-      lastFrame: 72
-      wrapMode: 4
-      loop: 1
+      lastFrame: 65
+      wrapMode: 8
+      loop: 0
     - name: land
       firstFrame: 73
       lastFrame: 80
-      wrapMode: 1
+      wrapMode: 0
       loop: 0
+    - name: backward
+      firstFrame: 101
+      lastFrame: 130
+      wrapMode: 2
+      loop: 1
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
