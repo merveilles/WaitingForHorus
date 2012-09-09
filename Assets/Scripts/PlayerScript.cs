@@ -64,6 +64,11 @@ public class PlayerScript : MonoBehaviour
 	    textBubble = gameObject.FindChild("TextBubble");
         textBubble.renderer.material.color = new Color(1, 1, 1, 0);
 
+	    characterAnimation["run"].speed = 1.25f;
+        characterAnimation["backward"].speed = 1.75f;
+        characterAnimation["strafeLeft"].speed = 1.5f;
+        characterAnimation["strafeRight"].speed = 1.5f;
+
         foreach (var r in GetComponentsInChildren<Renderer>())
         {
             if (!r.material.HasProperty("_Color")) continue;
@@ -249,6 +254,8 @@ public class PlayerScript : MonoBehaviour
                 lastJumpInputTime = -1;
                 dashCooldown = timeBetweenDashes;
 
+                if (currentAnim == "jump")
+                    characterAnimation.Rewind("jump");
                 characterAnimation.Play(currentAnim = "jump");
                 playDashSound = true;
                 dashSound.Play();
@@ -295,7 +302,7 @@ public class PlayerScript : MonoBehaviour
                 var xDir = Vector3.Dot(smoothedInputVelocity, transform.right);
                 var zDir = Vector3.Dot(smoothedInputVelocity, transform.forward);
 
-                const float epsilon = 5f;
+                const float epsilon = 15f;
 
                 //Debug.Log("xDir : " + xDir + " | zDir : " + zDir);
 
@@ -306,9 +313,8 @@ public class PlayerScript : MonoBehaviour
                 }
                 else if (zDir < -epsilon)
                 {
-                    // TODO : backwards running animation
-                    if (currentAnim != "run")
-                        characterAnimation.Play(currentAnim = "run");
+                    if (currentAnim != "backward")
+                        characterAnimation.Play(currentAnim = "backward");
                 }
                 else if (xDir > epsilon)
                 {
