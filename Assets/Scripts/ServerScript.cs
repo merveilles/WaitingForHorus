@@ -447,7 +447,7 @@ public class ServerScript : MonoBehaviour
 
             TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
             {
-                if (readResponse.HasValue)
+                if (readResponse != null && readResponse.HasValue)
                     ChatScript.Instance.LogChat(Network.player, readResponse.Value.Message, true, true);
             });
 

@@ -36,7 +36,7 @@ public class CameraScript : MonoBehaviour
         {
 
             actualCameraRotation = Quaternion.Lerp(transform.rotation, actualCameraRotation,
-                Mathf.Pow(smoothing, Time.deltaTime));
+                Easing.EaseOut(Mathf.Pow(smoothing, Time.deltaTime), EasingType.Quadratic));
 
             Vector3 scaledLocalPosition = Vector3.Scale(transform.localPosition, transform.lossyScale);
             Vector3 direction = actualCameraRotation * scaledLocalPosition;
