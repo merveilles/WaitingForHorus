@@ -46,6 +46,8 @@ public class ServerScript : MonoBehaviour
     bool cantNat;
     string levelName, lastLevelName;
 
+    public static bool Spectating { get; set; }
+
     GUIStyle TextStyle;
     GUIStyle WelcomeStyle, WelcomeStyleBg;
     public Font bigFont;
@@ -322,7 +324,6 @@ public class ServerScript : MonoBehaviour
                     GUILayout.Label(lastStatus, TextStyle);
                     GUI.enabled = hostState == HostingState.WaitingForInput;
 
-                    GUILayout.FlexibleSpace();
                     if (GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput)
                     {
                         GlobalSoundsScript.PlayButtonPress();

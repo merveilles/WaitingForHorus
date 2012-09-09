@@ -10,8 +10,6 @@ public class SpawnScript : MonoBehaviour
 	public GameObject PlayerTemplate;
     public GameObject PlayerRegistryPrefab;
 
-    GameObject PlayerInstance;
-	
 	string chosenUsername;
 	
     void Awake()
@@ -43,8 +41,10 @@ public class SpawnScript : MonoBehaviour
 
 	void Spawn()
 	{
+        if (ServerScript.Spectating) return;
+
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));
-        PlayerInstance = Network.Instantiate(PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0) as GameObject;
+        Network.Instantiate(PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);
     }
 	
 	void OnPlayerDisconnected(NetworkPlayer player) 
@@ -69,8 +69,6 @@ public class SpawnScript : MonoBehaviour
 
         foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
             Destroy(p.gameObject);
-
-	    PlayerInstance = null;
     }
 	
 	public void SetChosenUsername(string chosenUsername) 

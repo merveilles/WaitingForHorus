@@ -177,10 +177,10 @@ MonoBehaviour:
       m_Bottom: 0
     m_Font: {fileID: 0}
     m_ImagePosition: 0
-    m_Alignment: 0
+    m_Alignment: 3
     m_WordWrap: 0
     m_TextClipping: 1
-    m_ContentOffset: {x: 0, y: 0}
+    m_ContentOffset: {x: 3, y: 2}
     m_ClipOffset: {x: 0, y: 0}
     m_FixedWidth: 0
     m_FixedHeight: 0

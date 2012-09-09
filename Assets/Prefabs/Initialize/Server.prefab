@@ -139,6 +139,7 @@ MonoBehaviour:
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
+  bigFont: {fileID: 12800000, guid: 8bcb3b672218942a8bae1877dae4c34c, type: 1}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1

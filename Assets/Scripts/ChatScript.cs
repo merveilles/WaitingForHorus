@@ -157,8 +157,44 @@ public class ChatScript : MonoBehaviour
 
                 if (Event.current.keyCode == KeyCode.Return)
                 {
-                    if (lastMessage.Trim() != string.Empty)
-                        networkView.RPC("LogChat", RPCMode.All, Network.player, lastMessage, false, false);
+                    lastMessage = lastMessage.Trim();
+                    if (lastMessage.StartsWith("/"))
+                    {
+                        // console commands
+                        switch (lastMessage)
+                        {
+                            case "/spectate":
+                                if (!ServerScript.Spectating)
+                                {
+                                    foreach (var p in FindObjectsOfType(typeof (PlayerScript)).Cast<PlayerScript>())
+                                        Network.Destroy(p.gameObject);
+                                    ServerScript.Spectating = true;
+                                }
+                                else
+                                    LogChat(Network.player, "Already spectating!", true, true);
+                                break;
+
+                            case "/join":
+                                if (ServerScript.Spectating)
+                                {
+                                    ServerScript.Spectating = false;
+                                    gameObject.transform.parent.SendMessage("Spawn");
+                                }
+                                else
+                                    LogChat(Network.player, "Already in-game!", true, true);
+                                break;
+
+                            default:
+                                LogChat(Network.player, lastMessage + " command not recognized.", true, true);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (lastMessage.Trim() != string.Empty)
+                            networkView.RPC("LogChat", RPCMode.All, Network.player, lastMessage, false, false);
+                    }
+
                     lastMessage = string.Empty;
                     showChat = false;
                     Event.current.Use();
@@ -179,6 +215,7 @@ public class ChatScript : MonoBehaviour
             {
                 GlobalSoundsScript.PlayButtonPress();
                 Network.Disconnect();
+                ServerScript.Spectating = false;
             }
 
             GUILayout.EndHorizontal();

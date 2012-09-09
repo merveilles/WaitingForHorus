@@ -47,7 +47,7 @@ public class WeaponIndicatorScript : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        if (!RoundScript.Instance.RoundStopped && !ServerScript.IsAsyncLoading)
+        if (!RoundScript.Instance.RoundStopped && !ServerScript.IsAsyncLoading && !ServerScript.Spectating)
         {
             const float Segments = 32;
 

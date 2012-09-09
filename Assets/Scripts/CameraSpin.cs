@@ -8,6 +8,7 @@ public class CameraSpin : MonoBehaviour
 
     Vector3 camPosOrigin, transPosOrigin;
     Quaternion camRotOrigin, transRotOrigin;
+    bool wasSpectating;
 
     void Start()
     {
@@ -26,9 +27,18 @@ public class CameraSpin : MonoBehaviour
         if (transform.localEulerAngles.y < 100) sign *= -1;
 
         transform.Rotate(0, rotateSpeed * Time.deltaTime * sign, 0);
+
+        if (ServerScript.Spectating && !wasSpectating)
+            ResetTransforms();
+        wasSpectating = ServerScript.Spectating;
     }
 
     void OnDisconnectedFromServer()
+    {
+        ResetTransforms();
+    }
+
+    void ResetTransforms()
     {
         Camera.main.transform.localPosition = camPosOrigin;
         transform.localPosition = transPosOrigin;

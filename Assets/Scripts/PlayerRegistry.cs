@@ -28,6 +28,7 @@ class PlayerRegistry : MonoBehaviour
     {
         //Debug.Log(player + " = " + username);
         var color = Color.white;
+        if (For.ContainsKey(player)) For.Remove(player);
         For.Add(player, new PlayerInfo { Username = username, Color = color });
     }
     [RPC]
