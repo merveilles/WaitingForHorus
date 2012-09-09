@@ -47,6 +47,8 @@ public class ServerScript : MonoBehaviour
     string levelName, lastLevelName;
 
     GUIStyle TextStyle;
+    GUIStyle WelcomeStyle, WelcomeStyleBg;
+    public Font bigFont;
 
     static bool isAsyncLoading;
     public static bool IsAsyncLoading
@@ -106,9 +108,13 @@ public class ServerScript : MonoBehaviour
 
         Application.targetFrameRate = 60;
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
+        WelcomeStyle = new GUIStyle { font = bigFont, normal = { textColor = new Color(1.0f, 138 / 255f, 0) } };
+        WelcomeStyleBg = new GUIStyle { font = bigFont, normal = { textColor = new Color(0, 0, 0, 0.75f) } };
 
         levelName = RandomHelper.Probability(0.5) ? "pi_rah" : "pi_mar";
         ChangeLevelIfNeeded(levelName, true);
+
+        QueryServerList();
     }
 
     void Update()
@@ -275,6 +281,12 @@ public class ServerScript : MonoBehaviour
 
         if (PeerType == NetworkPeerType.Connecting || PeerType == NetworkPeerType.Disconnected)
         {
+            if (readResponse.HasValue)
+            {
+                GUI.Label(new Rect(10, Screen.height - 95, 500, 25), readResponse.Value.Message, WelcomeStyleBg);
+                GUI.Label(new Rect(11, Screen.height - 96, 500, 25), readResponse.Value.Message, WelcomeStyle);
+            }
+
             Screen.showCursor = true;
             GUILayout.Window(0, new Rect(0, Screen.height - 70, 277, 70), Login, string.Empty);
         }
