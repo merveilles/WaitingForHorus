@@ -128,7 +128,7 @@ public class PlayerScript : MonoBehaviour
 
             inputVelocity *= speed;
 
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump") && fallingVelocity.y <= 2)
             {
                 lastJumpInputTime = Time.time;
             }
