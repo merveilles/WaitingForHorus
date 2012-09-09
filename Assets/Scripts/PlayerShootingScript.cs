@@ -53,7 +53,6 @@ public class PlayerShootingScript : MonoBehaviour
     void Update()
     {
         gun.LookAt(playerCamera.GetTargetPosition());
-        weaponIndicator.CrosshairPosition = playerCamera.GetCrosshairPosition();
 
         if (playerScript.Paused)
             bulletsLeft = BurstCount;
