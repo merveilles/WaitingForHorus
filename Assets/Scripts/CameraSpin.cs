@@ -33,13 +33,14 @@ public class CameraSpin : MonoBehaviour
         wasSpectating = ServerScript.Spectating;
     }
 
-    void OnDisconnectedFromServer()
+    void OnDisconnectedFromServer(NetworkDisconnection mode)
     {
-        ResetTransforms();
+        TaskManager.Instance.WaitFor(0.25f).Then(ResetTransforms);
     }
 
     void ResetTransforms()
     {
+        // Added a delay, it doesn't seem to work...?
         Camera.main.transform.localPosition = camPosOrigin;
         transform.localPosition = transPosOrigin;
 

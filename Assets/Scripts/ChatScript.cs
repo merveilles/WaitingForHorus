@@ -52,6 +52,9 @@ public class ChatScript : MonoBehaviour
     void Update()
     {
         forceVisible = Input.GetKey(KeyCode.Tab) || RoundScript.Instance.RoundStopped;
+
+        foreach (var log in ChatLog)
+            log.Life += Time.deltaTime;
     }
 
 	void OnGUI()
@@ -84,8 +87,7 @@ public class ChatScript : MonoBehaviour
                 if (!PlayerRegistry.For.ContainsKey(log.Player))
                     continue;
 
-                log.Life += Time.deltaTime;
-                if (log.Life > 15)
+                if (log.Life > 15) 
                     log.Hidden = true;
 
                 if (log.Hidden && !forceVisible)
