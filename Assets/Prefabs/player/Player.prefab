@@ -942,7 +942,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -182.951859, y: 6.48744106, z: -208.313477}
+  m_LocalPosition: {x: -186.996506, y: 7.30044556, z: -212.065704}
   m_LocalScale: {x: 1.79999995, y: 1.79999995, z: 1.79999995}
   m_Children:
   - {fileID: 400002}
@@ -2512,7 +2512,7 @@ MonoBehaviour:
   crosshair: {fileID: 2800000, guid: 6b300b725ca140a45aecc04ef4257555, type: 1}
   collisionRadius: .699999988
   minDistance: 1
-  smoothing: 1.00000002e-25
+  smoothing: 1.00000002e-35
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2789,7 +2789,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 3.0999999
   m_Radius: 1.54999995
-  m_SlopeLimit: 45
+  m_SlopeLimit: 60
   m_StepOffset: .300000012
   m_SkinWidth: .0799999982
   m_MinMoveDistance: 0
