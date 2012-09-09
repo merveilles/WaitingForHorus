@@ -6,10 +6,13 @@ public class CameraScript : MonoBehaviour
     public Texture2D crosshair;
     public float collisionRadius = 0.7f;
     public float minDistance = 1;
+    public float smoothing = 0.1f;
 
     PlayerScript player;
 
     Camera mainCamera;
+
+    Quaternion actualCameraRotation;
 
     void Start()
     {
@@ -31,9 +34,13 @@ public class CameraScript : MonoBehaviour
 
         if(player.networkView.isMine)
         {
-            Vector3 cameraPosition = transform.position;
 
-            Vector3 direction = transform.position - player.transform.position;
+            actualCameraRotation = Quaternion.Lerp(transform.rotation, actualCameraRotation,
+                Mathf.Pow(smoothing, Time.deltaTime));
+
+            Vector3 scaledLocalPosition = Vector3.Scale(transform.localPosition, transform.lossyScale);
+            Vector3 direction = actualCameraRotation * scaledLocalPosition;
+            Vector3 cameraPosition = transform.parent.position + direction;
             float magnitude = direction.magnitude;
             direction /= magnitude;
 
@@ -56,7 +63,11 @@ public class CameraScript : MonoBehaviour
             }
 
             mainCamera.transform.position = cameraPosition;
-            mainCamera.transform.rotation = transform.rotation;
+            mainCamera.transform.rotation = actualCameraRotation;
+
+
+            Camera.main.GetComponent<WeaponIndicatorScript>()
+                .CrosshairPosition = GetCrosshairPosition();
         }
     }
 
@@ -66,9 +77,10 @@ public class CameraScript : MonoBehaviour
         {
             var scale = Screen.height / 1750f;
 
+            Vector2 center = GetCrosshairPosition();
             Rect position = new Rect(
-                Screen.width / 2 - crosshair.width / 2f * scale,
-                Screen.height / 2 - crosshair.width / 2f * scale,
+                center.x - crosshair.width / 2f * scale,
+                Screen.height - center.y - crosshair.height / 2f * scale,
                 crosshair.width * scale,
                 crosshair.height * scale);
 
@@ -91,13 +103,18 @@ public class CameraScript : MonoBehaviour
         }
     }
 
+    public Vector2 GetCrosshairPosition()
+    {
+        return Camera.main.WorldToScreenPoint(GetTargetPosition());
+    }
+
     public Vector3 GetTargetPosition()
     {
         RaycastHit hitInfo;
-        if(Physics.Raycast(transform.position, transform.forward, out hitInfo,
-                           Mathf.Infinity, 1<<LayerMask.NameToLayer("Default")))
-            return hitInfo.point;
-        else
-            return transform.position + transform.forward * 1000;
+        //if(Physics.Raycast(transform.position, transform.forward, out hitInfo,
+        //                   Mathf.Infinity, 1<<LayerMask.NameToLayer("Default")))
+        //    return hitInfo.point;
+        //else
+            return transform.position + transform.forward * 100;
     }
 }

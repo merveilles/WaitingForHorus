@@ -25,6 +25,7 @@ public class WeaponIndicatorScript : MonoBehaviour
     }
 
     public List<PlayerData> Targets { get; private set; }
+    public Vector2 CrosshairPosition { get; set; }
 
     void Start()
     {
@@ -72,7 +73,8 @@ public class WeaponIndicatorScript : MonoBehaviour
             }
             GL.Color(new Color(color.r, color.g, color.b, opacity));
             var radius = new Vector2(130, 130) * Screen.height / 1500f;
-            ssPos = new Vector2(Screen.width, Screen.height) / 2f;
+            ssPos = CrosshairPosition;
+            //ssPos = new Vector2(Screen.width, Screen.height) / 2f;
             for (int i = 0; i < Segments; i++)
             {
                 var eased = Easing.EaseIn(CooldownStep, EasingType.Quadratic);

@@ -942,7 +942,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -84.7887497, y: -93.5422668, z: -21.5713654}
+  m_LocalPosition: {x: -182.951859, y: 6.48744106, z: -208.313477}
   m_LocalScale: {x: 1.79999995, y: 1.79999995, z: 1.79999995}
   m_Children:
   - {fileID: 400116}
@@ -2511,6 +2511,7 @@ MonoBehaviour:
   crosshair: {fileID: 2800000, guid: 6b300b725ca140a45aecc04ef4257555, type: 1}
   collisionRadius: .699999988
   minDistance: 1
+  smoothing: 1.00000002e-25
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2524,6 +2525,7 @@ MonoBehaviour:
   maxShield: 1
   maxHealth: 2
   shieldRegenTime: 5
+  invulnerabilityTime: 2
   deathPrefab: {fileID: 100000, guid: 44f7ec49704fd0f47a7e2a94bd9c0fe2, type: 2}
   shieldRenderer: {fileID: 2300050}
   timeUntilRespawn: 5

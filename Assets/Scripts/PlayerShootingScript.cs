@@ -35,6 +35,8 @@ public class PlayerShootingScript : MonoBehaviour
     int bulletsLeft = BurstCount;
 
     //float cannonChargeCountdown = CannonChargeTime;
+    WeaponIndicatorScript weaponIndicator;
+    // public because HealthScript accesses it :x
     public List<WeaponIndicatorScript.PlayerData> targets;
 
     CameraScript playerCamera;
@@ -43,13 +45,15 @@ public class PlayerShootingScript : MonoBehaviour
     void Awake()
     {
         playerCamera = GetComponentInChildren<CameraScript>();
-        targets = Camera.main.GetComponent<WeaponIndicatorScript>().Targets;
+        weaponIndicator = Camera.main.GetComponent<WeaponIndicatorScript>();
+        targets = weaponIndicator.Targets;
         playerScript = GetComponent<PlayerScript>();
     }
 
     void Update()
     {
         gun.LookAt(playerCamera.GetTargetPosition());
+        weaponIndicator.CrosshairPosition = playerCamera.GetCrosshairPosition();
 
         if (playerScript.Paused)
             bulletsLeft = BurstCount;
@@ -60,7 +64,7 @@ public class PlayerShootingScript : MonoBehaviour
         if (networkView.isMine && Screen.lockCursor && !playerScript.Paused)
 		{
 			cooldownLeft = Mathf.Max(0, cooldownLeft - Time.deltaTime);
-            Camera.main.GetComponent<WeaponIndicatorScript>().CooldownStep = 1 - Math.Min(Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1);
+            weaponIndicator.CooldownStep = 1 - Math.Min(Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1);
 
 		    if(cooldownLeft == 0)
             {
