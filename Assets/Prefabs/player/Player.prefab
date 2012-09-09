@@ -2070,10 +2070,10 @@ AudioSource:
   Mute: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 0
+  MinDistance: 10
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2126,10 +2126,10 @@ AudioSource:
   Mute: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 10
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2182,10 +2182,10 @@ AudioSource:
   Mute: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 10
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2238,10 +2238,10 @@ AudioSource:
   Mute: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 15
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -2294,10 +2294,10 @@ AudioSource:
   Mute: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 15
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   rolloffCustomCurve:
     serializedVersion: 2

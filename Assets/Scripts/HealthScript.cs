@@ -7,6 +7,7 @@ public class HealthScript : MonoBehaviour
     public int maxShield = 1;
     public int maxHealth = 2;
     public float shieldRegenTime = 5;
+    public float invulnerabilityTime = 2;
     public GameObject deathPrefab;
     bool dead;
 
@@ -16,6 +17,10 @@ public class HealthScript : MonoBehaviour
     public Renderer shieldRenderer;
 
     float timeUntilShieldRegen;
+    float timeSinceRespawn;
+    public float timeUntilRespawn = 5;
+
+    bool invulnerable;
 
     //Renderer bigCell;
     //Renderer[] smallCells;
@@ -26,7 +31,7 @@ public class HealthScript : MonoBehaviour
         Health = maxHealth;
 
         // TODO : Make this work once we have the submeshes back
-        //var graphics = gameObject.FindChild("Animated Mesh");
+        //var graphics = gameObject.FindChild("Animated Mesh Fixed");
         //bigCell = graphics.FindChild("MECHA_CellCarrier_C").FindChild("MECHA_CellCarrier_C cell_C").GetComponentInChildren<Renderer>();
         //smallCells = graphics.FindChild("MECHA_CellCarrier_Mini cells_mini").GetComponentsInChildren<Renderer>();
     }
@@ -49,11 +54,18 @@ public class HealthScript : MonoBehaviour
                 Shield += 1;
             }
 
-            //if(Input.GetKeyDown("z"))
-            //{
-            //    DoDamage(1, Network.player);
-            //}
+            if (invulnerable)
+            {
+                timeSinceRespawn += Time.deltaTime;
+                if (timeSinceRespawn > invulnerabilityTime)
+                    invulnerable = false;
+            }
         }
+    }
+
+    void ShotFired()
+    {
+        invulnerable = false;
     }
 
     [RPC]
@@ -91,6 +103,9 @@ public class HealthScript : MonoBehaviour
             //Debug.Log("Got " + damage + " damage");
             //Debug.Log("Before hit : Shield = " + Shield + ", Health = " + Health);
 
+            if (invulnerable)
+                return;
+
             int oldShield = Shield;
             Shield -= damage;
             timeUntilShieldRegen = shieldRegenTime;
@@ -119,8 +134,6 @@ public class HealthScript : MonoBehaviour
             }
         }
     }
-
-    public float timeUntilRespawn = 5;
 
     [RPC]
     void ScheduleRespawn(Vector3 position)
@@ -177,5 +190,7 @@ public class HealthScript : MonoBehaviour
         Shield = maxShield;
         Health = maxHealth;
         dead = false;
+        timeSinceRespawn = 0;
+        invulnerable = true;
     }
 }

@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
 public class MusicScript : MonoBehaviour
 {
+    public AudioClip[] songs;
+
     // hack to work around the fact that TaskManager does a DontDestroyOnLoad
     // on us
     static bool playing = false;
@@ -19,11 +22,17 @@ public class MusicScript : MonoBehaviour
         }
     }
     
-	void Update ()
+	void Update()
     {
 	    if(Input.GetKeyDown("m"))
         {
             audio.mute = !audio.mute;
         }
 	}
+
+    void OnLevelWasLoaded(int levelIndex)
+    {
+        audio.clip = songs[levelIndex];
+        audio.Play();
+    }
 }

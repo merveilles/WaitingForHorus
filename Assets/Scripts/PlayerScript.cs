@@ -59,7 +59,7 @@ public class PlayerScript : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         controller = GetComponent<CharacterController>();
-        characterAnimation = transform.Find("Animated Mesh").animation;
+        characterAnimation = transform.Find("Animated Mesh Fixed").animation;
         characterAnimation.Play("idle");
 	    textBubble = gameObject.FindChild("TextBubble");
         textBubble.renderer.material.color = new Color(1, 1, 1, 0);

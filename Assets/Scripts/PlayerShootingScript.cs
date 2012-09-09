@@ -67,6 +67,8 @@ public class PlayerShootingScript : MonoBehaviour
                 // Shotgun
                 if (Input.GetButton("Alternate Fire"))
                 {
+                    gameObject.SendMessage("ShotFired");
+
                     // find homing target(s)
                     var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime);
 
@@ -98,6 +100,8 @@ public class PlayerShootingScript : MonoBehaviour
                 // Burst
                 else if (Input.GetButton("Fire")) // burst fire
                 {
+                    gameObject.SendMessage("ShotFired");
+
                     DoShot(BurstSpread);
                     cooldownLeft += ShotCooldown;
                     if (bulletsLeft <= 0)

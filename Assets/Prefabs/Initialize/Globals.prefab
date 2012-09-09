@@ -150,7 +150,7 @@ AudioSource:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: bb788739b93e143daaafcac6d19e801a, type: 1}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -264,6 +264,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cacf6fa76c4656a4f9d8c5b02e217eae, type: 1}
   m_Name: 
+  songs:
+  - {fileID: 0}
+  - {fileID: 8300000, guid: 4edb9545d9558475e95f185be870171c, type: 1}
+  - {fileID: 8300000, guid: eae7aa79cd6b5496385d4d94456786df, type: 1}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -296,7 +300,7 @@ MonoBehaviour:
   m_Name: 
   explosionPrefab: {fileID: 100000, guid: b4d7217f2a5f71f4fa566f5dce6c36b3, type: 2}
   explosionHitPrefab: {fileID: 100000, guid: 55246ff3c507476458227ef1615a081f, type: 2}
-  areaExplosionPrefab: {fileID: 100000, guid: 1aa3b4ef5d08ba648bdc957a48c7b97a, type: 2}
+  areaExplosionPrefab: {fileID: 0}
   hitConePrefab: {fileID: 100004, guid: a41ba4945ea359346a14ec46a438c3c3, type: 2}
 --- !u!114 &11400010
 MonoBehaviour:
