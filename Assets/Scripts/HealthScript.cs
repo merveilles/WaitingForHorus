@@ -158,7 +158,7 @@ public class HealthScript : MonoBehaviour
         Respawn(RespawnZone.GetRespawnPoint());
     }
 
-    void Hide()
+    public void Hide()
     {
         if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
             return;
@@ -173,7 +173,7 @@ public class HealthScript : MonoBehaviour
             r.enabled = false;
         }
     }
-    void Respawn(Vector3 position)
+    public void UnHide()
     {
         if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
             return;
@@ -182,14 +182,21 @@ public class HealthScript : MonoBehaviour
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
 
-        transform.position = position;
         GetComponent<PlayerScript>().ResetVelocities();
         GetComponent<PlayerShootingScript>().InstantReload();
-        
+
         Shield = maxShield;
         Health = maxHealth;
         dead = false;
         timeSinceRespawn = 0;
-        invulnerable = true;
+    }
+    public void Respawn(Vector3 position)
+    {
+        if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
+            return;
+
+        UnHide();
+
+        transform.position = position;
     }
 }

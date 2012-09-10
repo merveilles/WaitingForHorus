@@ -170,7 +170,9 @@ public class ChatScript : MonoBehaviour
                                 {
                                     foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
                                         if (p.networkView != null && p.networkView.isMine)
-                                            Network.Destroy(p.gameObject);
+                                        {
+                                            p.GetComponent<HealthScript>().Hide();
+                                        }
 
                                     ServerScript.Spectating = true;
                                 }
@@ -181,8 +183,13 @@ public class ChatScript : MonoBehaviour
                             case "/join":
                                 if (ServerScript.Spectating)
                                 {
+                                    foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                                        if (p.networkView != null && p.networkView.isMine)
+                                        {
+                                            p.GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
+                                        }
+
                                     ServerScript.Spectating = false;
-                                    gameObject.transform.parent.SendMessage("Spawn");
                                 }
                                 else
                                     LogChat(Network.player, "Already in-game!", true, true);

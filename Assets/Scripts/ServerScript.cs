@@ -46,7 +46,7 @@ public class ServerScript : MonoBehaviour
     bool cantNat;
     string levelName, lastLevelName;
 
-    public static bool Spectating { get; set; }
+    public static bool Spectating;
 
     GUIStyle TextStyle;
     GUIStyle WelcomeStyle, WelcomeStyleBg;
