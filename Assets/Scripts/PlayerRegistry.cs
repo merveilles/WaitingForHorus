@@ -32,12 +32,12 @@ class PlayerRegistry : MonoBehaviour
         For.Add(player, new PlayerInfo { Username = username, Color = color });
     }
     [RPC]
-    public void RegisterPlayerFull(NetworkPlayer player, string username, float r, float g, float b)
+    public void RegisterPlayerFull(NetworkPlayer player, string username, float r, float g, float b, bool isSpectating)
     {
         //Debug.Log(player + " = " + username);
         try
         {
-            For.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b) });
+            For.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating });
         }
         catch (Exception ex)
         {
@@ -55,7 +55,7 @@ class PlayerRegistry : MonoBehaviour
     {
         foreach (var otherPlayer in For.Keys)
             if (otherPlayer != player)
-                networkView.RPC("RegisterPlayerFull", player, otherPlayer, For[otherPlayer].Username, For[otherPlayer].Color.r, For[otherPlayer].Color.g, For[otherPlayer].Color.b);
+                networkView.RPC("RegisterPlayerFull", player, otherPlayer, For[otherPlayer].Username, For[otherPlayer].Color.r, For[otherPlayer].Color.g, For[otherPlayer].Color.b, For[otherPlayer].Spectating);
     }
     public void OnPlayerDisconnected(NetworkPlayer player)
     {
@@ -70,5 +70,6 @@ class PlayerRegistry : MonoBehaviour
     {
         public string Username;
         public Color Color;
+        public bool Spectating;
     }
 }

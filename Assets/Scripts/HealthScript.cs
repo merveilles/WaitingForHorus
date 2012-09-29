@@ -190,12 +190,22 @@ public class HealthScript : MonoBehaviour
         dead = false;
         timeSinceRespawn = 0;
     }
+
+    [RPC]
+    public void ToggleSpectate(bool isSpectating)
+    {
+        if (isSpectating)   Hide();
+        else                UnHide();
+
+        PlayerRegistry.For[networkView.owner].Spectating = isSpectating;
+    }
+
     public void Respawn(Vector3 position)
     {
         if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
             return;
 
-        UnHide();
+        networkView.RPC("ToggleSpectate", RPCMode.All, false);
 
         transform.position = position;
     }

@@ -116,9 +116,10 @@ public class RoundScript : MonoBehaviour
     [RPC]
     public void RestartRound()
     {
-        foreach (var player in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
-            if (player.networkView.isMine)
-                player.networkView.RPC("ImmediateRespawn", RPCMode.All);
+        if (!ServerScript.Spectating)
+            foreach (var player in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                if (player.networkView.isMine)
+                    player.networkView.RPC("ImmediateRespawn", RPCMode.All);
 
         StartCoroutine(WaitAndResume());
     }

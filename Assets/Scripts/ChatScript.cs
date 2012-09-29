@@ -170,9 +170,7 @@ public class ChatScript : MonoBehaviour
                                 {
                                     foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
                                         if (p.networkView != null && p.networkView.isMine)
-                                        {
-                                            p.GetComponent<HealthScript>().Hide();
-                                        }
+                                            p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate", RPCMode.All, true);
 
                                     ServerScript.Spectating = true;
                                 }
@@ -185,9 +183,7 @@ public class ChatScript : MonoBehaviour
                                 {
                                     foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
                                         if (p.networkView != null && p.networkView.isMine)
-                                        {
                                             p.GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
-                                        }
 
                                     ServerScript.Spectating = false;
                                 }

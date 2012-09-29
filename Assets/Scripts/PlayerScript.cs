@@ -41,7 +41,6 @@ public class PlayerScript : MonoBehaviour
     bool activelyJumping;
     bool textBubbleVisible;
     bool playJumpSound, playDashSound;
-    bool spectating;
 
     public AudioSource dashSound;
     public AudioSource landingSound;
@@ -378,13 +377,6 @@ public class PlayerScript : MonoBehaviour
         if (stream.isReading)
         {
             //Debug.Log("pPosition = " + pPosition + " / transform.position = " + transform.position);
-            var wasSpectating = spectating;
-            stream.Serialize(ref spectating);
-            if (spectating && !wasSpectating)
-                GetComponent<HealthScript>().Hide();
-            else if (!spectating && wasSpectating)
-                GetComponent<HealthScript>().UnHide();
-
             if (lastNetworkFramePosition == pPosition)
                 transform.position = pPosition;
 
@@ -395,11 +387,6 @@ public class PlayerScript : MonoBehaviour
             if (playJumpSound) jumpSound.Play();
 
             lastNetworkFramePosition = pPosition;
-        }
-        else
-        {
-            spectating = ServerScript.Spectating;
-            stream.Serialize(ref spectating);
         }
 
         playJumpSound = playDashSound = false;

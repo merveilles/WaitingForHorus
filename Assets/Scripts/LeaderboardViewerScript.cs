@@ -53,7 +53,7 @@ class LeaderboardViewerScript : MonoBehaviour
         }
         else
         {
-            var height = Leaderboard.Entries.Count * 32;
+            var height = Leaderboard.Entries.Count(x => PlayerRegistry.For.ContainsKey(x.NetworkPlayer) && PlayerRegistry.For[x.NetworkPlayer].Spectating) * 32;
             GUILayout.Window(2, new Rect(278, Screen.height / 2 - height / 2, /*466*/376, height), BoardWindow, string.Empty, MultiRowWindowStyle);
         }
     }
@@ -84,6 +84,8 @@ class LeaderboardViewerScript : MonoBehaviour
         foreach (var log in Leaderboard.Entries.OrderByDescending(x => x.Kills))
         {
             if (!PlayerRegistry.For.ContainsKey(Network.player))
+                continue;
+            if (!PlayerRegistry.For.ContainsKey(log.NetworkPlayer) || PlayerRegistry.For[log.NetworkPlayer].Spectating)
                 continue;
 
             GUIStyle rowStyle = RowStyle;
