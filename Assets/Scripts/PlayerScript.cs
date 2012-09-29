@@ -144,9 +144,9 @@ public class PlayerScript : MonoBehaviour
 			if (Screen.lockCursor)
 			{
                 float invertMultiplier = invertMouse ? -1 : 1;
-                lookRotationEuler += new Vector3(
-                    Input.GetAxis("Vertical Look") * mouseSensitivity * invertMultiplier,
-                    Input.GetAxis("Horizontal Look") * mouseSensitivity,
+                lookRotationEuler += MouseSensitivityScript.Sensitivity * new Vector3(
+                    Input.GetAxis("Vertical Look") * invertMultiplier,
+                    Input.GetAxis("Horizontal Look"),
                     0);
 			}
 			

@@ -105,6 +105,8 @@ public class ServerScript : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
+        chosenUsername = PlayerPrefs.GetString("username", "Anon");
+
         jsonWriter = new JsonWriter(new DataWriterSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
         jsonReader = new JsonReader(new DataReaderSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
 
@@ -310,6 +312,7 @@ public class ServerScript : MonoBehaviour
 				GUILayout.BeginHorizontal();
                 {
                     chosenUsername = GUILayout.TextField(chosenUsername);
+                    PlayerPrefs.SetString("username", chosenUsername);
                     GUILayout.Label("USERNAME");
 					SendMessage("SetChosenUsername", chosenUsername);
 				}
@@ -329,11 +332,13 @@ public class ServerScript : MonoBehaviour
 
                     if (GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput)
                     {
+                        PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyForIp;
                     }
                     if (GUILayout.Button("QUICKPLAY") && hostState == HostingState.WaitingForInput)
                     {
+                        PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyToListServers;
                         lastStatus = "";
