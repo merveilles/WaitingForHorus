@@ -144,7 +144,7 @@ public class PlayerShootingScript : MonoBehaviour
                 var position = ps.transform.position;
                 var screenPos = Camera.main.WorldToScreenPoint(position);
 
-                if (health.Health > 0 && (screenPos.XY() - screenCenter).magnitude < allowedDistance)
+                if (health.Health > 0 && screenPos.z > 0 && (screenPos.XY() - screenCenter).magnitude < allowedDistance)
                 {
                     WeaponIndicatorScript.PlayerData data;
                     if ((data = targets.FirstOrDefault(x => x.Script == ps)) == null)

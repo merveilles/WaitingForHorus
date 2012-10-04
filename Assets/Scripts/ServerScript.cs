@@ -299,6 +299,15 @@ public class ServerScript : MonoBehaviour
         }
     }
 
+    public static string RemoveSpecialCharacters(string str) 
+    {
+       var sb = new StringBuilder();
+       foreach (char c in str)
+          if (c != '\n' && c != '\r' && sb.Length < 24)
+             sb.Append(c);
+       return sb.ToString();
+    }
+
     void Login(int windowId)
     {
         switch (PeerType)
@@ -311,10 +320,10 @@ public class ServerScript : MonoBehaviour
 
 				GUILayout.BeginHorizontal();
                 {
-                    chosenUsername = GUILayout.TextField(chosenUsername);
-                    PlayerPrefs.SetString("username", chosenUsername);
+                    chosenUsername = RemoveSpecialCharacters(GUILayout.TextField(chosenUsername));
+                    PlayerPrefs.SetString("username", chosenUsername.Trim());
                     GUILayout.Label("USERNAME");
-					SendMessage("SetChosenUsername", chosenUsername);
+					SendMessage("SetChosenUsername", chosenUsername.Trim());
 				}
 				GUILayout.EndHorizontal();
 
@@ -328,7 +337,7 @@ public class ServerScript : MonoBehaviour
                     TextStyle.padding.left = 5;
                     TextStyle.margin.left = 5;
                     GUILayout.Label(lastStatus, TextStyle);
-                    GUI.enabled = hostState == HostingState.WaitingForInput;
+                    GUI.enabled = hostState == HostingState.WaitingForInput && chosenUsername.Trim().Length != 0;
 
                     if (GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput)
                     {
