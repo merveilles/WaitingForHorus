@@ -20,7 +20,7 @@ public class ServerScript : MonoBehaviour
     const int MaxPlayers = 6;
     const string MasterServerUri = "http://api.xxiivv.com/?key=wfh";
 
-    public static readonly string[] AllowedLevels = { "pi_mar", "pi_rah" };
+    public static readonly string[] AllowedLevels = { "pi_mar", "pi_rah", "pi_gho" };
 
     public NetworkPeerType PeerType;
 
@@ -119,7 +119,7 @@ public class ServerScript : MonoBehaviour
         WelcomeStyle = new GUIStyle { font = bigFont, normal = { textColor = new Color(1.0f, 138 / 255f, 0) } };
         WelcomeStyleBg = new GUIStyle { font = bigFont, normal = { textColor = new Color(0, 0, 0, 0.75f) } };
 
-        levelName = RandomHelper.Probability(0.5) ? "pi_rah" : "pi_mar";
+        levelName = RandomHelper.InEnumerable(AllowedLevels);
         ChangeLevelIfNeeded(levelName, true);
 
         QueryServerList();
@@ -477,7 +477,7 @@ public class ServerScript : MonoBehaviour
 
     public void ChangeLevel()
     {
-        ChangeLevelIfNeeded(levelName == "pi_mar" ? "pi_rah" : "pi_mar", false);
+        ChangeLevelIfNeeded(RandomHelper.InEnumerable(AllowedLevels.Except(new [] { levelName })), false);
     }
     void SyncAndSpawn(string newLevel)
     {
