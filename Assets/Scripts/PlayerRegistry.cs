@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 class PlayerRegistry : MonoBehaviour
@@ -55,7 +56,16 @@ class PlayerRegistry : MonoBehaviour
     {
         foreach (var otherPlayer in For.Keys)
             if (otherPlayer != player)
-                networkView.RPC("RegisterPlayerFull", player, otherPlayer, For[otherPlayer].Username, For[otherPlayer].Color.r, For[otherPlayer].Color.g, For[otherPlayer].Color.b, For[otherPlayer].Spectating);
+            {
+                networkView.RPC("RegisterPlayerFull", player, otherPlayer, For[otherPlayer].Username,
+                                For[otherPlayer].Color.r, For[otherPlayer].Color.g, For[otherPlayer].Color.b,
+                                For[otherPlayer].Spectating);
+
+                if (For[otherPlayer].Spectating)
+                    foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                        if (p.networkView.owner == otherPlayer)
+                            p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate", player, true);
+            }
     }
     public void OnPlayerDisconnected(NetworkPlayer player)
     {

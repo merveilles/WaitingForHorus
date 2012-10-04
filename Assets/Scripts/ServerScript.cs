@@ -18,6 +18,8 @@ public class ServerScript : MonoBehaviour
 {	
 	public const int Port = 31415;
     const int MaxPlayers = 6;
+    const string MasterServerUri = "http://api.xxiivv.com/?key=wfh";
+
     public NetworkPeerType PeerType;
 
     public bool LocalMode;
@@ -376,18 +378,17 @@ public class ServerScript : MonoBehaviour
         {
             using (var client = new WebClient())
             {
-                var response = client.DownloadString("http://api.xxiivv.com/?key=7377&cmd=read");
+                var response = client.DownloadString(MasterServerUri + "&cmd=read");
 
-                Debug.Log("Got server list : " + response);
                 try
                 {
                     var data = jsonReader.Read<ReadResponse>(response);
-                    Debug.Log("Message : " + data.Message);
+                    Debug.Log("MOTD : " + data.Message);
                     Debug.Log(data.Servers.Length + " servers : ");
                     foreach (var s in data.Servers)
                     {
                         s.ConnectionFailed = blackList.Contains(s.Id);
-                        Debug.Log(s);
+                        Debug.Log(s + (s.ConnectionFailed ? " (blacklisted)" : ""));
                     }
                     return data;
                 }
@@ -412,7 +413,7 @@ public class ServerScript : MonoBehaviour
 
                 // then add new server
                 var nvc = new NameValueCollection { { "value", result } };
-                var uri = "http://api.xxiivv.com/?key=7377&cmd=add";
+                var uri = MasterServerUri + "&cmd=add";
                 var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
                 Debug.Log("Added server, got id = " + response);
                 return int.Parse(response);
@@ -433,7 +434,7 @@ public class ServerScript : MonoBehaviour
 
                 // update!
                 var nvc = new NameValueCollection { { "value", result } };
-                string uri = "http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value;
+                string uri = MasterServerUri + "&cmd=update&id=" + thisServerId.Value;
                 var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
                 Debug.Log(uri);
                 Debug.Log("Refreshed server with connection count to " + currentServer.Players + " and map " + currentServer.Map + ", server said : " + response);
@@ -445,7 +446,7 @@ public class ServerScript : MonoBehaviour
     {
         using (var client = new WebClient())
         {
-            var uri = new Uri("http://api.xxiivv.com/?key=7377&cmd=update&id=" + thisServerId.Value);
+            var uri = new Uri(MasterServerUri + "&cmd=update&id=" + thisServerId.Value);
             var nvc = new NameValueCollection { { "value", "0" } };
             var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
             Debug.Log("Deleted server " + thisServerId.Value + ", server said : " + response);
