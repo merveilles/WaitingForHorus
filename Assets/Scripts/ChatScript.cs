@@ -168,6 +168,8 @@ public class ChatScript : MonoBehaviour
                         switch (messageParts[0])
                         {
                             case "/map":
+                                if (!Network.isServer)
+                                    LogChat(Network.player, "Map change is only allowed on server.", true, true);
                                 if (messageParts.Length != 2)
                                     LogChat(Network.player, "Invalid arguments, expected : /map map_name", true, true);
                                 else if (Application.loadedLevelName == messageParts[1])
