@@ -162,9 +162,25 @@ public class ChatScript : MonoBehaviour
                     lastMessage = lastMessage.Trim();
                     if (lastMessage.StartsWith("/"))
                     {
+                        var messageParts = lastMessage.Split(' ');
+
                         // console commands
-                        switch (lastMessage)
+                        switch (messageParts[0])
                         {
+                            case "/map":
+                                if (messageParts.Length != 2)
+                                    LogChat(Network.player, "Invalid arguments, expected : /map map_name", true, true);
+                                else if (Application.loadedLevelName == messageParts[1])
+                                    LogChat(Network.player, "You're already in " + messageParts[1] + ", dummy.", true, true);
+                                else if (!ServerScript.AllowedLevels.Contains(messageParts[1]))
+                                    LogChat(Network.player, "Level " + messageParts[1] + " does not exist. " + StringHelper.DeepToString(ServerScript.AllowedLevels), true, true);
+                                else
+                                {
+                                    RoundScript.Instance.networkView.RPC("ChangeLevelTo", RPCMode.All, messageParts[1]);
+                                    RoundScript.Instance.networkView.RPC("RestartRound", RPCMode.All);
+                                }
+                                break;
+
                             case "/spectate":
                                 if (!ServerScript.Spectating)
                                 {
@@ -173,6 +189,8 @@ public class ChatScript : MonoBehaviour
                                             p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate", RPCMode.All, true);
 
                                     ServerScript.Spectating = true;
+
+                                    networkView.RPC("LogChat", RPCMode.All, networkView.owner, "went in spectator mode.", true, false);
                                 }
                                 else
                                     LogChat(Network.player, "Already spectating!", true, true);
@@ -185,6 +203,8 @@ public class ChatScript : MonoBehaviour
                                         if (p.networkView != null && p.networkView.isMine)
                                             p.GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
 
+                                    networkView.RPC("LogChat", RPCMode.All, networkView.owner, "rejoined the game.", true, false);
+
                                     ServerScript.Spectating = false;
                                 }
                                 else
@@ -192,7 +212,7 @@ public class ChatScript : MonoBehaviour
                                 break;
 
                             default:
-                                LogChat(Network.player, lastMessage + " command not recognized.", true, true);
+                                LogChat(Network.player, lastMessage + " command not recognized. (/map, /join, /spectate)", true, true);
                                 break;
                         }
                     }

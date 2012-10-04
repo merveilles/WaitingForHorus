@@ -20,6 +20,8 @@ public class ServerScript : MonoBehaviour
     const int MaxPlayers = 6;
     const string MasterServerUri = "http://api.xxiivv.com/?key=wfh";
 
+    public static readonly string[] AllowedLevels = { "pi_mar", "pi_rah" };
+
     public NetworkPeerType PeerType;
 
     public bool LocalMode;
@@ -77,7 +79,7 @@ public class ServerScript : MonoBehaviour
 
         public object Packed
         {
-            get { return new { ip = Ip, players = Players, map = Map }; }
+            get { return new { id = Id, ip = Ip, players = Players, map = Map }; }
         }
 
         public override string ToString()
@@ -254,7 +256,7 @@ public class ServerScript : MonoBehaviour
                 if (thisServerId.HasValue && 
                         (lastPlayerCount != Network.connections.Length || 
                          lastLevelName != levelName || 
-                         sinceRefreshedPlayers > 60))
+                         sinceRefreshedPlayers > 55))
                 {
                     Debug.Log("Refreshing...");
                     RefreshListedServer();
@@ -416,6 +418,7 @@ public class ServerScript : MonoBehaviour
                 var uri = MasterServerUri + "&cmd=add";
                 var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
                 Debug.Log("Added server, got id = " + response);
+                currentServer.Id = int.Parse(response);
                 return int.Parse(response);
             }
         });
@@ -434,7 +437,7 @@ public class ServerScript : MonoBehaviour
 
                 // update!
                 var nvc = new NameValueCollection { { "value", result } };
-                string uri = MasterServerUri + "&cmd=update&id=" + thisServerId.Value;
+                string uri = MasterServerUri + "&cmd=update";
                 var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
                 Debug.Log(uri);
                 Debug.Log("Refreshed server with connection count to " + currentServer.Players + " and map " + currentServer.Map + ", server said : " + response);
@@ -446,8 +449,8 @@ public class ServerScript : MonoBehaviour
     {
         using (var client = new WebClient())
         {
-            var uri = new Uri(MasterServerUri + "&cmd=update&id=" + thisServerId.Value);
-            var nvc = new NameValueCollection { { "value", "0" } };
+            var uri = new Uri(MasterServerUri + "&cmd=delete&id=" + thisServerId.Value);
+            var nvc = new NameValueCollection { { "", "" } };
             var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
             Debug.Log("Deleted server " + thisServerId.Value + ", server said : " + response);
         }
@@ -481,7 +484,11 @@ public class ServerScript : MonoBehaviour
         ChangeLevelIfNeeded(newLevel, false);
         SpawnScript.Instance.WaitAndSpawn();
     }
-    void ChangeLevelIfNeeded(string newLevel, bool force)
+    public void ChangeLevelIfNeeded(string newLevel)
+    {
+        ChangeLevelIfNeeded(newLevel, false);
+    }
+    public void ChangeLevelIfNeeded(string newLevel, bool force)
     {
         if (force)
         {
