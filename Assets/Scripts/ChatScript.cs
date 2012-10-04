@@ -170,7 +170,7 @@ public class ChatScript : MonoBehaviour
                             case "/map":
                                 if (!Network.isServer)
                                     LogChat(Network.player, "Map change is only allowed on server.", true, true);
-                                if (messageParts.Length != 2)
+                                else if (messageParts.Length != 2)
                                     LogChat(Network.player, "Invalid arguments, expected : /map map_name", true, true);
                                 else if (Application.loadedLevelName == messageParts[1])
                                     LogChat(Network.player, "You're already in " + messageParts[1] + ", dummy.", true, true);
