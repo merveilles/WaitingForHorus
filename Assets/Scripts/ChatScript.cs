@@ -180,6 +180,15 @@ public class ChatScript : MonoBehaviour
                         // console commands
                         switch (messageParts[0])
                         {
+                            case "/leave":
+                                TaskManager.Instance.WaitFor(0.1f).Then(() =>
+                                {
+                                    GlobalSoundsScript.PlayButtonPress();
+                                    Network.Disconnect();
+                                    ServerScript.Spectating = false;
+                                });
+                                break;
+
                             case "/quit":
                                 Application.Quit();
                                 break;
@@ -231,7 +240,7 @@ public class ChatScript : MonoBehaviour
                                 break;
 
                             default:
-                                LogChat(Network.player, lastMessage + " command not recognized. (/map, /join, /spectate)", true, true);
+                                LogChat(Network.player, lastMessage + " command not recognized.", true, true);
                                 break;
                         }
                     }
