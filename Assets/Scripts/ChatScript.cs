@@ -218,7 +218,7 @@ public class ChatScript : MonoBehaviour
 
                                     ServerScript.Spectating = true;
 
-                                    networkView.RPC("LogChat", RPCMode.All, networkView.owner, "went in spectator mode.", true, false);
+                                    networkView.RPC("LogChat", RPCMode.All, Network.player, "went in spectator mode.", true, false);
                                 }
                                 else
                                     LogChat(Network.player, "Already spectating!", true, true);
@@ -231,7 +231,7 @@ public class ChatScript : MonoBehaviour
                                         if (p.networkView != null && p.networkView.isMine)
                                             p.GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
 
-                                    networkView.RPC("LogChat", RPCMode.All, networkView.owner, "rejoined the game.", true, false);
+                                    networkView.RPC("LogChat", RPCMode.All, Network.player, "rejoined the game.", true, false);
 
                                     ServerScript.Spectating = false;
                                 }
