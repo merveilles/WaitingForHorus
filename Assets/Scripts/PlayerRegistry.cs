@@ -5,10 +5,26 @@ using UnityEngine;
 
 class PlayerRegistry : MonoBehaviour
 {
+    readonly Dictionary<NetworkPlayer, PlayerInfo> registry = new Dictionary<NetworkPlayer, PlayerInfo>();
+    bool disposed;
+
     static PlayerRegistry instance;
     public static PlayerRegistry Instance
     {
         get { return instance; }
+    }
+
+    public static PlayerInfo For(NetworkPlayer player)
+    {
+        return Instance.registry[player];
+    }
+    public static bool Has(NetworkPlayer player)
+    {
+        return Instance.registry.ContainsKey(player);
+    }
+    int ConnectedCount()
+    {
+        return registry.Values.Count(x => !x.Disconnected);
     }
 
     void OnNetworkInstantiate(NetworkMessageInfo info)
@@ -17,7 +33,6 @@ class PlayerRegistry : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public static Dictionary<NetworkPlayer, PlayerInfo> For = new Dictionary<NetworkPlayer, PlayerInfo>();
 
     public static void RegisterCurrentPlayer(string username)
     {
@@ -27,41 +42,75 @@ class PlayerRegistry : MonoBehaviour
     [RPC]
     public void RegisterPlayer(NetworkPlayer player, string username)
     {
-        //Debug.Log(player + " = " + username);
+        if (disposed)
+        {
+            Debug.LogError("Should not access disposed object");
+            return;
+        }
+
         var color = Color.white;
-        if (For.ContainsKey(player)) For.Remove(player);
-        For.Add(player, new PlayerInfo { Username = username, Color = color });
+        if (registry.ContainsKey(player))
+        {
+            Debug.Log("Tried to register player " + player + " but was already registered. Current username : " + registry[player].Username + " | wanted username : " + username);
+            registry.Remove(player);
+        }
+        registry.Add(player, new PlayerInfo { Username = username, Color = color });
+        Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
     }
     [RPC]
     public void RegisterPlayerFull(NetworkPlayer player, string username, float r, float g, float b, bool isSpectating)
     {
-        //Debug.Log(player + " = " + username);
-        try
+        if (disposed)
         {
-            For.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating });
+            Debug.LogError("Should not access disposed object");
+            return;
         }
-        catch (Exception ex)
+
+        if (registry.ContainsKey(player))
         {
-            Debug.Log("Tried to register player " + player + " but was already registered. Current username : " + For[player].Username + " | wanted username : " + username);
+            Debug.Log("Tried to register player " + player + " but was already registered. Current username : " + registry[player].Username + " | wanted username : " + username + " (removing...)");
+            registry.Remove(player);
         }
+
+        registry.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating });
+        Debug.Log("Registered other player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
     }
 
     [RPC]
     public void UnregisterPlayer(NetworkPlayer player)
     {
-        For.Remove(player);
+        if (disposed)
+        {
+            Debug.LogError("Should not access disposed object");
+            return;
+        }
+
+        if (!registry.ContainsKey(player))
+        {
+            Debug.Log("Tried to unregister player " + player + " but was not found");
+            return;
+        }
+
+        registry[player].Disconnected = true;
+        Debug.Log("Unregistering player : " + player + " (" + ConnectedCount() + " left)");
     }
 
     public void OnPlayerConnected(NetworkPlayer player)
     {
-        foreach (var otherPlayer in For.Keys)
+        Debug.Log("Propagating player registry to player " + player);
+
+        foreach (var otherPlayer in registry.Keys)
             if (otherPlayer != player)
             {
-                networkView.RPC("RegisterPlayerFull", player, otherPlayer, For[otherPlayer].Username,
-                                For[otherPlayer].Color.r, For[otherPlayer].Color.g, For[otherPlayer].Color.b,
-                                For[otherPlayer].Spectating);
+                var info = registry[otherPlayer];
+                if (info.Disconnected)
+                    continue;
 
-                if (For[otherPlayer].Spectating)
+                networkView.RPC("RegisterPlayerFull", player, otherPlayer, info.Username,
+                                info.Color.r, info.Color.g, info.Color.b,
+                                info.Spectating);
+
+                if (info.Spectating)
                     foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
                         if (p.networkView.owner == otherPlayer)
                             p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate", player, true);
@@ -69,11 +118,13 @@ class PlayerRegistry : MonoBehaviour
     }
     public void OnPlayerDisconnected(NetworkPlayer player)
     {
-        //networkView.RPC("UnregisterPlayer", RPCMode.All, player);
+        networkView.RPC("UnregisterPlayer", RPCMode.All, player);
     }
     public void OnDisconnectedFromServer(NetworkDisconnection info)
     {
-        For.Clear();
+        disposed = true;
+        Destroy(gameObject);
+        instance = null;
     }
 
     public class PlayerInfo
@@ -81,5 +132,6 @@ class PlayerRegistry : MonoBehaviour
         public string Username;
         public Color Color;
         public bool Spectating;
+        public bool Disconnected;
     }
 }

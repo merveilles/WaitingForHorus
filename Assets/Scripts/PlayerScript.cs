@@ -213,9 +213,10 @@ public class PlayerScript : MonoBehaviour
         }
         dashEffectRenderer.material.SetColor("_TintColor", color);
 
-        PlayerRegistry.PlayerInfo info;
-        if (owner.HasValue && PlayerRegistry.For.TryGetValue(owner.Value, out info))
+        if (owner.HasValue && PlayerRegistry.Has(owner.Value))
         {
+            var info = PlayerRegistry.For(owner.Value);
+
             transform.Find("Animated Mesh Fixed").Find("flag_pole001").Find("flag_flag001").renderer.material.color = info.Color;
 
             if (!networkView.isMine)

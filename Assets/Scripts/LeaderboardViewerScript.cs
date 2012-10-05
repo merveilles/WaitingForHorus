@@ -53,7 +53,7 @@ class LeaderboardViewerScript : MonoBehaviour
         }
         else
         {
-            var height = Leaderboard.Entries.Count(x => PlayerRegistry.For.ContainsKey(x.NetworkPlayer) && PlayerRegistry.For[x.NetworkPlayer].Spectating) * 32;
+            var height = Leaderboard.Entries.Count(x => PlayerRegistry.Has(x.NetworkPlayer) && PlayerRegistry.For(x.NetworkPlayer).Spectating) * 32;
             GUILayout.Window(2, new Rect(278, Screen.height / 2 - height / 2, /*466*/376, height), BoardWindow, string.Empty, MultiRowWindowStyle);
         }
     }
@@ -61,13 +61,13 @@ class LeaderboardViewerScript : MonoBehaviour
     void BoardRow(int windowId)
     {
         var log = Leaderboard.Entries.FirstOrDefault(x => x.NetworkPlayer == Network.player);
-        if (log == null || !PlayerRegistry.For.ContainsKey(Network.player)) return;
+        if (log == null || !PlayerRegistry.Has(Network.player)) return;
         {
             GUIStyle rowStyle = RowStyle;
-            rowStyle.normal.textColor = PlayerRegistry.For[log.NetworkPlayer].Color;
+            rowStyle.normal.textColor = PlayerRegistry.For(log.NetworkPlayer).Color;
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label(PlayerRegistry.For[log.NetworkPlayer].Username.ToUpper(), rowStyle, GUILayout.MinWidth(125), GUILayout.MaxWidth(125));
+            GUILayout.Label(PlayerRegistry.For(log.NetworkPlayer).Username.ToUpper(), rowStyle, GUILayout.MinWidth(125), GUILayout.MaxWidth(125));
 
             rowStyle.normal.textColor = Color.white;
 
@@ -83,19 +83,19 @@ class LeaderboardViewerScript : MonoBehaviour
     {
         foreach (var log in Leaderboard.Entries.OrderByDescending(x => x.Kills))
         {
-            if (!PlayerRegistry.For.ContainsKey(Network.player))
+            if (!PlayerRegistry.Has(Network.player))
                 continue;
-            if (!PlayerRegistry.For.ContainsKey(log.NetworkPlayer) || PlayerRegistry.For[log.NetworkPlayer].Spectating)
+            if (!PlayerRegistry.Has(log.NetworkPlayer) || PlayerRegistry.For(log.NetworkPlayer).Spectating)
                 continue;
 
             GUIStyle rowStyle = RowStyle;
             if (log.NetworkPlayer == Network.player)
                 rowStyle = MyRowStyle;
 
-            rowStyle.normal.textColor = PlayerRegistry.For[log.NetworkPlayer].Color;
+            rowStyle.normal.textColor = PlayerRegistry.For(log.NetworkPlayer).Color;
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label(PlayerRegistry.For[log.NetworkPlayer].Username.ToUpper(), rowStyle, GUILayout.MinWidth(125), GUILayout.MaxWidth(125));
+            GUILayout.Label(PlayerRegistry.For(log.NetworkPlayer).Username.ToUpper(), rowStyle, GUILayout.MinWidth(125), GUILayout.MaxWidth(125));
 
             rowStyle.normal.textColor = Color.white;
 

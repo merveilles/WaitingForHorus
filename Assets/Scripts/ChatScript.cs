@@ -93,7 +93,7 @@ public class ChatScript : MonoBehaviour
         {
             foreach (var log in ChatLog)
             {
-                if (!PlayerRegistry.For.ContainsKey(log.Player))
+                if (!PlayerRegistry.Has(log.Player))
                     continue;
 
                 if (log.Life > 15) 
@@ -107,7 +107,7 @@ public class ChatScript : MonoBehaviour
 
                 GUILayout.BeginHorizontal();
                 if (!log.IsSourceless)
-                    rowStyle.normal.textColor = PlayerRegistry.For[log.Player].Color;
+                    rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
                 rowStyle.padding.left = 10;
                 rowStyle.fixedWidth = 0;
                 rowStyle.wordWrap = false;
@@ -117,7 +117,7 @@ public class ChatScript : MonoBehaviour
                     rowStyle.padding.right = 1;
                     if (!log.IsSourceless)
                     {
-                        var playerName = PlayerRegistry.For[log.Player].Username.ToUpper();
+                        var playerName = PlayerRegistry.For(log.Player).Username.ToUpper();
                         rowStyle.fixedWidth = rowStyle.CalcSize(new GUIContent(playerName)).x;
                         GUILayout.Label(playerName, rowStyle);
                     }
@@ -136,7 +136,7 @@ public class ChatScript : MonoBehaviour
                 }
                 else
                 {
-                    GUILayout.Label(PlayerRegistry.For[log.Player].Username.ToUpper() + ":", rowStyle, GUILayout.MinWidth(0), GUILayout.MaxWidth(100));
+                    GUILayout.Label(PlayerRegistry.For(log.Player).Username.ToUpper() + ":", rowStyle, GUILayout.MinWidth(0), GUILayout.MaxWidth(100));
                     rowStyle.normal.textColor = Color.white;
                     rowStyle.padding.left = 5;
                     rowStyle.alignment = TextAnchor.UpperLeft;

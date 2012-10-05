@@ -5,6 +5,7 @@ using UnityEngine;
 class NetworkLeaderboard : MonoBehaviour
 {
     public readonly List<LeaderboardEntry> Entries = new List<LeaderboardEntry>();
+    bool disposed;
 
     static NetworkLeaderboard instance;
     public static NetworkLeaderboard Instance
@@ -28,6 +29,12 @@ class NetworkLeaderboard : MonoBehaviour
 
     void Update()
     {
+        if (disposed)
+        {
+            Debug.Log("Disposed leaderboards still updating...?");
+            return;
+        }
+
         if (Network.isServer)
         {
             foreach (var entry in Entries)
@@ -39,11 +46,11 @@ class NetworkLeaderboard : MonoBehaviour
         var isSecond = false;
         foreach (var entry in Entries.OrderByDescending(x => x.Kills))
         {
-            if (!PlayerRegistry.For.ContainsKey(Network.player) ||
-                !PlayerRegistry.For.ContainsKey(entry.NetworkPlayer))
+            if (!PlayerRegistry.Has(Network.player) ||
+                !PlayerRegistry.Has(entry.NetworkPlayer))
                 continue;
 
-            var player = PlayerRegistry.For[entry.NetworkPlayer];
+            var player = PlayerRegistry.For(entry.NetworkPlayer);
             if (isSecond)
                 player.Color = new Color(114 / 255f, 222 / 255f, 194 / 255f); // cyan
             else if (isFirst)
@@ -63,6 +70,12 @@ class NetworkLeaderboard : MonoBehaviour
 
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
+        if (disposed)
+        {
+            Debug.Log("Trying to serialize disposed leaderboards");
+            return;
+        }
+
         // Sync entry count
         int entryCount = stream.isWriting ? Entries.Count : 0;
         stream.Serialize(ref entryCount);
@@ -123,7 +136,7 @@ class NetworkLeaderboard : MonoBehaviour
         if (victim == shooter)
             ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "commited suicide", true, false);
         else
-            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "killed " + (endedSpree ? "and stopped " : "") + PlayerRegistry.For[victim].Username.ToUpper(), true, false);
+            ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "killed " + (endedSpree ? "and stopped " : "") + PlayerRegistry.For(victim).Username.ToUpper(), true, false);
 
         if (scheduledMessage == 1)
             ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is threatening!", true, false);
@@ -147,7 +160,9 @@ class NetworkLeaderboard : MonoBehaviour
     }
     void OnDisconnectedFromServer(NetworkDisconnection info) 
     {
-        Entries.Clear();
+        Destroy(gameObject);
+        disposed = true;
+        instance = null;
     }
 }
 
