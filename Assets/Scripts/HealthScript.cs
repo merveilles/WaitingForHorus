@@ -207,7 +207,7 @@ public class HealthScript : MonoBehaviour
 
         networkView.RPC("ToggleSpectate", RPCMode.All, false);
 
-        transform.Find("Animated Mesh Fixed").animation.Play("idle");
+        SendMessage("ResetAnimation");
 
         transform.position = position;
     }

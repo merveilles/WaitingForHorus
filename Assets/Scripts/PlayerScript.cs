@@ -357,6 +357,13 @@ public class PlayerScript : MonoBehaviour
             recoilVelocity.y = 0;
     }
 
+    // Used by HealthScript in Respawn
+    public void ResetAnimation()
+    {
+        characterAnimation.Play(currentAnim = "idle");
+        lastInputVelocity = inputVelocity = Vector3.zero;
+    }
+
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
         var pOwner = owner.HasValue ? owner.Value : default(NetworkPlayer);
