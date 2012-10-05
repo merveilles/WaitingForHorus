@@ -35,7 +35,8 @@ public class CameraSpin : MonoBehaviour
 
     void OnDisconnectedFromServer(NetworkDisconnection mode)
     {
-        TaskManager.Instance.WaitFor(0.25f).Then(ResetTransforms);
+        if (TaskManager.Instance != null)
+            TaskManager.Instance.WaitFor(0.25f).Then(ResetTransforms);
     }
 
     void ResetTransforms()

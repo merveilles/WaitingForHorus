@@ -12,7 +12,7 @@ public class ChatScript : MonoBehaviour
 
 	string lastMessage = "";
     public bool showChat;
-    bool ignoreT;
+    bool ignoreT, ignoreReturn;
     bool forceVisible;
 
     public static ChatScript Instance { get; private set; }
@@ -63,19 +63,28 @@ public class ChatScript : MonoBehaviour
 
 	    GUI.skin = Skin;
 
-	    var enteredChat = !showChat && Event.current.keyCode == KeyCode.T;
-	    if (enteredChat)
-	        showChat = true;
+        var enteredChat = !showChat && (Event.current.keyCode == KeyCode.T || (Event.current.keyCode == KeyCode.Return && !ignoreReturn));
+        if (enteredChat)
+        {
+            //Debug.Log("Should enter chat");
+            showChat = true;
+        }
 
 	    var height = 32 + ChatLog.Count(x => !x.Hidden || forceVisible) * 32;
 	    GUILayout.Window(1, new Rect(0, Screen.height - height, 277, height), Chat, string.Empty);
 
-	    if (enteredChat)
-	    {
-	        GUI.FocusWindow(1);
-	        GUI.FocusControl("ChatInput");
-	        ignoreT = true;
-	    }
+        if (enteredChat)
+        {
+            GUI.FocusWindow(1);
+            GUI.FocusControl("ChatInput");
+            ignoreReturn = Event.current.keyCode == KeyCode.Return;
+            ignoreT = Event.current.keyCode == KeyCode.T;
+        }
+        else
+        {
+            if (Event.current.keyCode == KeyCode.Return && Event.current.type == EventType.KeyUp)
+                ignoreReturn = false;
+        }
 	}
 
     void Chat(int windowId)
@@ -157,8 +166,12 @@ public class ChatScript : MonoBehaviour
                     }
                 }
 
-                if (Event.current.keyCode == KeyCode.Return)
+                if (!ignoreReturn && Event.current.keyCode == KeyCode.Return)
                 {
+                    //Debug.Log("Posting chat");
+
+                    ignoreReturn = true;
+
                     lastMessage = lastMessage.Trim();
                     if (lastMessage.StartsWith("/"))
                     {
@@ -167,6 +180,10 @@ public class ChatScript : MonoBehaviour
                         // console commands
                         switch (messageParts[0])
                         {
+                            case "/quit":
+                                Application.Quit();
+                                break;
+
                             case "/map":
                                 if (!Network.isServer)
                                     LogChat(Network.player, "Map change is only allowed on server.", true, true);
@@ -228,6 +245,10 @@ public class ChatScript : MonoBehaviour
                     showChat = false;
                     Event.current.Use();
                 }
+
+                if (Event.current.keyCode == KeyCode.Return && Event.current.type == EventType.KeyUp)
+                    ignoreReturn = false;
+
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
                     lastMessage = string.Empty;
