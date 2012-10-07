@@ -11,6 +11,10 @@ public class HealthScript : MonoBehaviour
     public GameObject deathPrefab;
     bool dead;
 
+    readonly static Color DefaultShieldColor = new Color(110 / 255f, 190 / 255f, 255 / 255f, 30f / 255f);
+    readonly static Color HitShieldColor = new Color(1, 0, 0, 1f);
+    readonly static Color RecoverShieldColor = new Color(1, 1, 1, 1f);
+
     public int Shield { get; private set; }
     public int Health { get; private set; }
 
@@ -21,6 +25,7 @@ public class HealthScript : MonoBehaviour
     public float timeUntilRespawn = 5;
 
     bool invulnerable;
+    bool firstSet;
 
     Renderer bigCell;
     Renderer[] smallCells;
@@ -37,6 +42,12 @@ public class HealthScript : MonoBehaviour
 
     void Update()
     {
+        if (!firstSet && shieldRenderer != null)
+        {
+            shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
+            firstSet = true;
+        }
+
         if(networkView.isMine)
         {
             if(transform.position.y < -104)
@@ -73,6 +84,7 @@ public class HealthScript : MonoBehaviour
         if (immediate)
         {
             shieldRenderer.enabled = on;
+            shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
             return;
         }
 
@@ -80,11 +92,22 @@ public class HealthScript : MonoBehaviour
         {
             if (shieldRenderer == null)
                 return true;
+
             var p = Easing.EaseIn(Mathf.Clamp01(t / 0.75f), EasingType.Quadratic);
             p = on ? p : 1 - p;
+
             shieldRenderer.enabled = RandomHelper.Probability(Mathf.Clamp01(p));
+            shieldRenderer.material.SetColor("_TintColor", on ? Color.Lerp(RecoverShieldColor, DefaultShieldColor, p) : HitShieldColor);
+
             return t >= 1;
-        }).Then(() => { if (shieldRenderer != null) shieldRenderer.enabled = on; });
+        }).Then(() =>
+        {
+            if (shieldRenderer != null)
+            {
+                shieldRenderer.enabled = on;
+                shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
+            }
+        });
     }
     [RPC]
     void SetHealth(int health)
