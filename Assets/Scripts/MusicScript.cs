@@ -32,9 +32,11 @@ public class MusicScript : MonoBehaviour
 
     void OnLevelWasLoaded(int levelIndex)
     {
-        if (songs.Length < levelIndex)
+        var indexInArray = levelIndex - 1;
+
+        if (indexInArray < songs.Length)
         {
-            audio.clip = songs[levelIndex];
+            audio.clip = songs[indexInArray];
             audio.Play();
         }
     }
