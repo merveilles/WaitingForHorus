@@ -878,8 +878,8 @@ Transform:
   - {fileID: 1283098870}
   - {fileID: 390148512}
   - {fileID: 719617596}
-  - {fileID: 1646328609}
   - {fileID: 855333878}
+  - {fileID: 1646328609}
   - {fileID: 1982072258}
   - {fileID: 1255178457}
   - {fileID: 1960974936}
@@ -1154,6 +1154,7 @@ GameObject:
   - 4: {fileID: 249281659}
   - 33: {fileID: 249281661}
   - 23: {fileID: 249281660}
+  - 64: {fileID: 249281662}
   m_Layer: 0
   m_Name: MiniHall
   m_TagString: Untagged
@@ -1198,6 +1199,19 @@ MeshFilter:
     type: 3}
   m_PrefabInternal: {fileID: 1857843860}
   m_GameObject: {fileID: 249281658}
+  m_Mesh: {fileID: 4300034, guid: 073174eae357e443c9d4e7b8c7fb52f1, type: 3}
+--- !u!64 &249281662
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 249281658}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
   m_Mesh: {fileID: 4300034, guid: 073174eae357e443c9d4e7b8c7fb52f1, type: 3}
 --- !u!1 &281308225
 GameObject:
@@ -5353,6 +5367,7 @@ GameObject:
   - 4: {fileID: 1015910835}
   - 33: {fileID: 1015910837}
   - 23: {fileID: 1015910836}
+  - 64: {fileID: 1015910838}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -5397,6 +5412,19 @@ MeshFilter:
     type: 3}
   m_PrefabInternal: {fileID: 1857843860}
   m_GameObject: {fileID: 1015910834}
+  m_Mesh: {fileID: 4300028, guid: 073174eae357e443c9d4e7b8c7fb52f1, type: 3}
+--- !u!64 &1015910838
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1015910834}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
   m_Mesh: {fileID: 4300028, guid: 073174eae357e443c9d4e7b8c7fb52f1, type: 3}
 --- !u!1 &1019649287
 GameObject:
@@ -11298,6 +11326,7 @@ GameObject:
   - 4: {fileID: 2013593646}
   - 33: {fileID: 2013593648}
   - 23: {fileID: 2013593647}
+  - 64: {fileID: 2013593649}
   m_Layer: 0
   m_Name: Dome
   m_TagString: Untagged
@@ -11342,6 +11371,19 @@ MeshFilter:
     type: 3}
   m_PrefabInternal: {fileID: 1857843860}
   m_GameObject: {fileID: 2013593645}
+  m_Mesh: {fileID: 4300024, guid: 073174eae357e443c9d4e7b8c7fb52f1, type: 3}
+--- !u!64 &2013593649
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2013593645}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
   m_Mesh: {fileID: 4300024, guid: 073174eae357e443c9d4e7b8c7fb52f1, type: 3}
 --- !u!1 &2014259007
 GameObject:
