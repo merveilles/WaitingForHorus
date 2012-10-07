@@ -66,6 +66,8 @@ public class ServerScript : MonoBehaviour
     class ReadResponse
     {
         public string Message;
+        public int Connections;
+        public int Activegames;
         public ServerInfo[] Servers;
     }
 
@@ -116,8 +118,8 @@ public class ServerScript : MonoBehaviour
 
         Application.targetFrameRate = 60;
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
-        WelcomeStyle = new GUIStyle { font = bigFont, normal = { textColor = new Color(1.0f, 138 / 255f, 0) } };
-        WelcomeStyleBg = new GUIStyle { font = bigFont, normal = { textColor = new Color(0, 0, 0, 0.75f) } };
+        WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
+        WelcomeStyleBg = new GUIStyle { normal = { textColor = new Color(0, 0, 0, 0.75f) } };
 
         levelName = RandomHelper.InEnumerable(AllowedLevels);
         ChangeLevelIfNeeded(levelName, true);
@@ -290,13 +292,14 @@ public class ServerScript : MonoBehaviour
         if (PeerType == NetworkPeerType.Connecting || PeerType == NetworkPeerType.Disconnected)
         {
             // Welcome message is now a chat prompt
-            /*
             if (readResponse.HasValue)
             {
-                GUI.Label(new Rect(10, Screen.height - 95, 500, 25), readResponse.Value.Message, WelcomeStyleBg);
-                GUI.Label(new Rect(11, Screen.height - 96, 500, 25), readResponse.Value.Message, WelcomeStyle);
+                var message = "Server activity : " + readResponse.Value.Connections + " players in " + readResponse.Value.Activegames + " games.";
+                message = message.ToUpperInvariant();
+
+                GUI.Label(new Rect(10, Screen.height - 90, 500, 25), message, WelcomeStyleBg);
+                GUI.Label(new Rect(11, Screen.height - 91, 500, 25), message, WelcomeStyle);
             }
-            */
 
             Screen.showCursor = true;
             GUILayout.Window(0, new Rect(0, Screen.height - 70, 277, 70), Login, string.Empty);
