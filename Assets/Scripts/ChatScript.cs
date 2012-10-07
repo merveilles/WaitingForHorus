@@ -239,6 +239,22 @@ public class ChatScript : MonoBehaviour
                                     LogChat(Network.player, "Already in-game!", true, true);
                                 break;
 
+                            case "/connect":
+                                if (messageParts.Length != 2)
+                                {
+                                    LogChat(Network.player, "Expected usage : /join 123.23.45.2", true, true);
+                                    break;
+                                }
+
+                                TaskManager.Instance.WaitFor(0.1f).Then(() =>
+                                {
+                                    GlobalSoundsScript.PlayButtonPress();
+                                    Network.Disconnect();
+                                    ServerScript.Spectating = false;
+                                    TaskManager.Instance.WaitFor(0.75f).Then(() => Network.Connect(messageParts[1], ServerScript.Port));
+                                });
+                                break;
+
                             default:
                                 LogChat(Network.player, lastMessage + " command not recognized.", true, true);
                                 break;
