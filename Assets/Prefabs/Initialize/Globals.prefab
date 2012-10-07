@@ -265,9 +265,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cacf6fa76c4656a4f9d8c5b02e217eae, type: 1}
   m_Name: 
   songs:
-  - {fileID: 0}
   - {fileID: 8300000, guid: 4edb9545d9558475e95f185be870171c, type: 1}
   - {fileID: 8300000, guid: eae7aa79cd6b5496385d4d94456786df, type: 1}
+  - {fileID: 8300000, guid: 07f28d2eb73974f818f7786a07d023e4, type: 1}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

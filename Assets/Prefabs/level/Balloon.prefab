@@ -59,7 +59,6 @@ GameObject:
   serializedVersion: 3
   m_Component:
   - 4: {fileID: 400006}
-  - 111: {fileID: 11100000}
   - 135: {fileID: 13500000}
   m_Layer: 0
   m_Name: Balloon
@@ -272,24 +271,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
   m_Mesh: {fileID: 4300006, guid: 36e307e052fcd43bdbeaed5195435c83, type: 3}
---- !u!111 &11100000
-Animation:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100006}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
-  m_UserAABB:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
