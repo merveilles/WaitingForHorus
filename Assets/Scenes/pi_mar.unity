@@ -84,7 +84,7 @@ GameObject:
   - 4: {fileID: 11737522}
   - 33: {fileID: 11737524}
   - 23: {fileID: 11737523}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: hologram
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1278,7 +1278,7 @@ GameObject:
   - 4: {fileID: 191095854}
   - 33: {fileID: 191095856}
   - 23: {fileID: 191095855}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: hologram
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1936,7 +1936,7 @@ GameObject:
   - 4: {fileID: 308720469}
   - 33: {fileID: 308720471}
   - 23: {fileID: 308720470}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: handles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2635,7 +2635,7 @@ GameObject:
   - 4: {fileID: 408423730}
   - 111: {fileID: 408423731}
   - 135: {fileID: 408423732}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Balloon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2667,8 +2667,9 @@ Animation:
   m_GameObject: {fileID: 408423729}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations: []
+  m_Animation: {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
@@ -2685,7 +2686,7 @@ SphereCollider:
   m_GameObject: {fileID: 408423729}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 1.88
   m_Center: {x: 0, y: 7.17000008, z: 0}
@@ -3891,7 +3892,7 @@ GameObject:
   - 4: {fileID: 581349257}
   - 33: {fileID: 581349259}
   - 23: {fileID: 581349258}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: hologram
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4163,7 +4164,7 @@ GameObject:
   - 4: {fileID: 669321646}
   - 33: {fileID: 669321648}
   - 23: {fileID: 669321647}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: handles_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4218,7 +4219,7 @@ GameObject:
   - 4: {fileID: 674055747}
   - 33: {fileID: 674055749}
   - 23: {fileID: 674055748}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: handles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4527,7 +4528,7 @@ GameObject:
   - 4: {fileID: 734785585}
   - 33: {fileID: 734785587}
   - 23: {fileID: 734785586}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: handles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7310,7 +7311,7 @@ GameObject:
   - 4: {fileID: 1008201362}
   - 111: {fileID: 1008201363}
   - 135: {fileID: 1008201364}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Balloon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7342,8 +7343,9 @@ Animation:
   m_GameObject: {fileID: 1008201361}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations: []
+  m_Animation: {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
@@ -7360,7 +7362,7 @@ SphereCollider:
   m_GameObject: {fileID: 1008201361}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 1.88
   m_Center: {x: 0, y: 7.17000008, z: 0}
@@ -7459,7 +7461,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1040043448}
   - 114: {fileID: 1040043449}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: RespawnZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7544,7 +7546,7 @@ GameObject:
   - 4: {fileID: 1065611646}
   - 33: {fileID: 1065611648}
   - 23: {fileID: 1065611647}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7737,7 +7739,7 @@ GameObject:
   - 4: {fileID: 1126547740}
   - 33: {fileID: 1126547742}
   - 23: {fileID: 1126547741}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: handles_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8503,7 +8505,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1307114787}
   - 114: {fileID: 1307114788}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: RespawnZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9367,7 +9369,7 @@ GameObject:
   - 4: {fileID: 1414353628}
   - 33: {fileID: 1414353630}
   - 23: {fileID: 1414353629}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12239,7 +12241,7 @@ GameObject:
   - 4: {fileID: 1748943416}
   - 33: {fileID: 1748943418}
   - 23: {fileID: 1748943417}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: handles_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13324,7 +13326,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1940015857}
   - 114: {fileID: 1940015858}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: RespawnZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14120,7 +14122,7 @@ GameObject:
   - 4: {fileID: 2092818247}
   - 33: {fileID: 2092818249}
   - 23: {fileID: 2092818248}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14789,7 +14791,7 @@ GameObject:
   - 4: {fileID: 2141624483}
   - 111: {fileID: 2141624484}
   - 135: {fileID: 2141624485}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Balloon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14821,8 +14823,9 @@ Animation:
   m_GameObject: {fileID: 2141624482}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations: []
+  m_Animation: {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: afae5bb1fdffe4a6fbd33ca55b03ff65, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
@@ -14839,7 +14842,7 @@ SphereCollider:
   m_GameObject: {fileID: 2141624482}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 1.88
   m_Center: {x: 0, y: 7.17000008, z: 0}

@@ -18,6 +18,9 @@ ModelImporter:
     4300026: Hall
     4300028: Terrain
     4300030: Water
+    4300032: Terrain-Cube
+    4300034: MiniHall
+    4300036: Water_WaterSave
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -88,6 +91,19 @@ ModelImporter:
       data:
         first: 33
         second: a45a3200
+    MiniHall:
+      data:
+        first: 1
+        second: aa860100
+      data:
+        first: 4
+        second: 8a1a0600
+      data:
+        first: 23
+        second: 6a182300
+      data:
+        first: 33
+        second: aa5a3200
     Terrain:
       data:
         first: 1
@@ -114,3 +130,16 @@ ModelImporter:
       data:
         first: 33
         second: a25a3200
+    Water_WaterSave:
+      data:
+        first: 1
+        second: a8860100
+      data:
+        first: 4
+        second: 881a0600
+      data:
+        first: 23
+        second: 68182300
+      data:
+        first: 33
+        second: a85a3200
