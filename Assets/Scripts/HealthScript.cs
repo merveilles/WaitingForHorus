@@ -12,7 +12,7 @@ public class HealthScript : MonoBehaviour
     bool dead;
 
     readonly static Color DefaultShieldColor = new Color(110 / 255f, 190 / 255f, 255 / 255f, 30f / 255f);
-    readonly static Color HitShieldColor = new Color(1, 0, 0, 1f);
+    readonly static Color HitShieldColor = new Color(1, 1, 1, 1f); // new Color(1, 0, 0, 1f);
     readonly static Color RecoverShieldColor = new Color(1, 1, 1, 1f);
 
     public int Shield { get; private set; }
