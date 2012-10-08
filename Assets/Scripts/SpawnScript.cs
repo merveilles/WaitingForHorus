@@ -41,7 +41,7 @@ public class SpawnScript : MonoBehaviour
 
 	void Spawn()
 	{
-        if (ServerScript.Spectating) return;
+        if (ServerScript.Spectating || !RoundScript.Instance.GameStarted) return;
 
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));
         Network.Instantiate(PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);

@@ -162,7 +162,11 @@ public class HealthScript : MonoBehaviour
     {
         Hide();
         Instantiate(deathPrefab, transform.position, transform.rotation);
-        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() => Respawn(position));
+        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() =>
+        {
+            if (!ServerScript.Spectating && RoundScript.Instance.GameStarted)
+                Respawn(position);
+        });
     }
 
     [RPC]
