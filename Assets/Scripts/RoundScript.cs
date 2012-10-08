@@ -9,7 +9,6 @@ public class RoundScript : MonoBehaviour
     const int SameLevelRounds = 3;
 
     float sinceRoundTransition;
-    public bool GameStarted { get; set; }
     public bool RoundStopped { get; private set; }
     public string CurrentLevel { get; set; }
     float sinceInteround;

@@ -157,14 +157,18 @@ public class HealthScript : MonoBehaviour
         }
     }
 
+    object respawnLock;
+
     [RPC]
     void ScheduleRespawn(Vector3 position)
     {
         Hide();
         Instantiate(deathPrefab, transform.position, transform.rotation);
+        var thisLock = new object();
+        respawnLock = thisLock;
         TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() =>
         {
-            if (!ServerScript.Spectating && RoundScript.Instance.GameStarted)
+            if (respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
                 Respawn(position);
         });
     }

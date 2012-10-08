@@ -152,6 +152,12 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.ReadyToChooseServer:
+                if (readResponse == null)
+                {
+                    hostState = HostingState.ReadyToListServers;
+                    return;
+                }
+
                 currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers);
                 if (currentServer == null)
                 {
@@ -290,7 +296,7 @@ public class ServerScript : MonoBehaviour
         if (PeerType == NetworkPeerType.Connecting || PeerType == NetworkPeerType.Disconnected)
         {
             // Welcome message is now a chat prompt
-            if (readResponse.HasValue)
+            if (readResponse != null && readResponse.HasValue)
             {
                 var message = "Server activity : " + readResponse.Value.Connections + " players in " + readResponse.Value.Activegames + " games.";
                 message = message.ToUpperInvariant();
