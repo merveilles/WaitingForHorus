@@ -168,7 +168,7 @@ public class HealthScript : MonoBehaviour
         TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() =>
         {
             //Debug.Log("Spectating? " + ServerScript.Spectating);
-            if (gameObject != null && respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
+            if (this != null && respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
                 Respawn(position);
         });
     }
