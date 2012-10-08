@@ -11,13 +11,14 @@ public class RoundScript : MonoBehaviour
     float sinceRoundTransition;
     public bool GameStarted { get; set; }
     public bool RoundStopped { get; private set; }
+    public string CurrentLevel { get; set; }
     float sinceInteround;
     bool said60secWarning, said30secWarning, said10secWarning, said5secWarning;
     int toLevelChange;
 
     public static RoundScript Instance { get; private set; }
 
-    void Start()
+    void Awake()
     {
         Instance = this;
         toLevelChange = SameLevelRounds;
@@ -80,7 +81,8 @@ public class RoundScript : MonoBehaviour
                     if (toLevelChange == 0)
                     {
                         ChangeLevel();
-                        networkView.RPC("ChangeLevelTo", RPCMode.Others, Application.loadedLevelName);
+                        Debug.Log("Loaded level is now " + CurrentLevel);
+                        networkView.RPC("ChangeLevelTo", RPCMode.Others, CurrentLevel);
                     }
 
                     networkView.RPC("RestartRound", RPCMode.All);

@@ -48,7 +48,7 @@ public class ServerScript : MonoBehaviour
     bool couldntCreateServer;
     float sinceStartedDiscovery;
     bool cantNat;
-    string levelName, lastLevelName;
+    string lastLevelName;
 
     public static bool Spectating;
 
@@ -119,8 +119,8 @@ public class ServerScript : MonoBehaviour
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
         WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
 
-        levelName = RandomHelper.InEnumerable(AllowedLevels);
-        ChangeLevelIfNeeded(levelName, true);
+        RoundScript.Instance.CurrentLevel = RandomHelper.InEnumerable(AllowedLevels);
+        ChangeLevelIfNeeded(RoundScript.Instance.CurrentLevel, true);
 
         QueryServerList();
     }
@@ -234,7 +234,7 @@ public class ServerScript : MonoBehaviour
                     hostState = HostingState.Hosting;
                     AddServerToList();
                     lastPlayerCount = 0;
-                    lastLevelName = levelName;
+                    lastLevelName = RoundScript.Instance.CurrentLevel;
                     sinceRefreshedPlayers = 0;
                 }
                 else
@@ -254,15 +254,15 @@ public class ServerScript : MonoBehaviour
 
                 sinceRefreshedPlayers += Time.deltaTime;
                 if (thisServerId.HasValue && 
-                        (lastPlayerCount != Network.connections.Length || 
-                         lastLevelName != levelName || 
+                        (lastPlayerCount != Network.connections.Length ||
+                         lastLevelName != RoundScript.Instance.CurrentLevel || 
                          sinceRefreshedPlayers > 55))
                 {
                     Debug.Log("Refreshing...");
                     RefreshListedServer();
                     sinceRefreshedPlayers = 0;
                     lastPlayerCount = Network.connections.Length;
-                    lastLevelName = levelName;
+                    lastLevelName = RoundScript.Instance.CurrentLevel;
                 }
                 break;
 
@@ -464,7 +464,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer(MaxPlayers, Port, false);
         if (result == NetworkConnectionError.NoError)
         {
-            currentServer = new ServerInfo { Ip = wanIp.Value, Map = levelName, Players = 1 };
+            currentServer = new ServerInfo { Ip = wanIp.Value, Map = RoundScript.Instance.CurrentLevel, Players = 1 };
 
             TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
             {
@@ -480,7 +480,7 @@ public class ServerScript : MonoBehaviour
 
     public void ChangeLevel()
     {
-        ChangeLevelIfNeeded(RandomHelper.InEnumerable(AllowedLevels.Except(new [] { levelName })), false);
+        ChangeLevelIfNeeded(RandomHelper.InEnumerable(AllowedLevels.Except(new[] { RoundScript.Instance.CurrentLevel })), false);
     }
     void SyncAndSpawn(string newLevel)
     {
@@ -498,7 +498,7 @@ public class ServerScript : MonoBehaviour
             Application.LoadLevel(newLevel);
             ChatScript.Instance.LogChat(Network.player, "Changed level to " + newLevel + ".", true, true);
         }
-        else if (newLevel != levelName)
+        else if (newLevel != RoundScript.Instance.CurrentLevel)
         {
             IsAsyncLoading = true;
             var asyncOperation = Application.LoadLevelAsync(newLevel);
@@ -511,8 +511,8 @@ public class ServerScript : MonoBehaviour
         else
             IsAsyncLoading = false;
 
-        levelName = newLevel;
-        if (currentServer != null) currentServer.Map = levelName;
+        RoundScript.Instance.CurrentLevel = newLevel;
+        if (currentServer != null) currentServer.Map = RoundScript.Instance.CurrentLevel;
     }
 
     bool Connect()
@@ -544,7 +544,7 @@ public class ServerScript : MonoBehaviour
 
     void OnPlayerConnected(NetworkPlayer player)
     {
-        RoundScript.Instance.networkView.RPC("SyncLevel", player, levelName);
+        RoundScript.Instance.networkView.RPC("SyncLevel", player, RoundScript.Instance.CurrentLevel);
     }
 
     void GetWanIP()
