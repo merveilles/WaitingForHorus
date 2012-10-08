@@ -42,6 +42,11 @@ public class ChatScript : MonoBehaviour
     {
         CleanUp();
     }
+    void OnDisconnectedFromServer()
+    {
+        Screen.lockCursor = false;
+    }
+
     void CleanUp()
     {
         ChatLog.Clear();
