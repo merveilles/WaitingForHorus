@@ -406,6 +406,8 @@ public class ServerScript : MonoBehaviour
     {
         thisServerId = ThreadPool.Instance.Evaluate(() =>
         {
+            if (LocalMode) return 0;
+
             using (var client = new WebClient())
             {
                 var result = jsonWriter.Write(currentServer.Packed);
@@ -428,6 +430,7 @@ public class ServerScript : MonoBehaviour
         currentServer.Players = 1 + Network.connections.Length;
         ThreadPool.Instance.Fire(() =>
         {
+            if (LocalMode) return;
             using (var client = new WebClient())
             {
                 var result = jsonWriter.Write(currentServer.Packed);
@@ -446,6 +449,7 @@ public class ServerScript : MonoBehaviour
 
     void DeleteServer()
     {
+        if (LocalMode) return;
         using (var client = new WebClient())
         {
             var uri = new Uri(MasterServerUri + "&cmd=delete&id=" + thisServerId.Value);

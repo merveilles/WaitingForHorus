@@ -12,7 +12,7 @@ public class ChatScript : MonoBehaviour
 
 	string lastMessage = "";
     public bool showChat;
-    bool ignoreT, ignoreReturn;
+    bool ignoreT;
     bool forceVisible;
 
     public static ChatScript Instance { get; private set; }
@@ -63,7 +63,7 @@ public class ChatScript : MonoBehaviour
 
 	    GUI.skin = Skin;
 
-        var enteredChat = !showChat && (Event.current.keyCode == KeyCode.T || (Event.current.keyCode == KeyCode.Return && !ignoreReturn));
+        var enteredChat = !showChat && (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.T);
         if (enteredChat)
         {
             //Debug.Log("Should enter chat");
@@ -77,13 +77,7 @@ public class ChatScript : MonoBehaviour
         {
             GUI.FocusWindow(1);
             GUI.FocusControl("ChatInput");
-            ignoreReturn = Event.current.keyCode == KeyCode.Return;
             ignoreT = Event.current.keyCode == KeyCode.T;
-        }
-        else
-        {
-            if (Event.current.keyCode == KeyCode.Return && Event.current.type == EventType.KeyUp)
-                ignoreReturn = false;
         }
 	}
 
@@ -166,12 +160,8 @@ public class ChatScript : MonoBehaviour
                     }
                 }
 
-                if (!ignoreReturn && Event.current.keyCode == KeyCode.Return)
+                if (Event.current.keyCode == KeyCode.Return && (Event.current.type == EventType.KeyDown || Event.current.type == EventType.Layout))
                 {
-                    //Debug.Log("Posting chat");
-
-                    ignoreReturn = true;
-
                     lastMessage = lastMessage.Trim();
                     if (lastMessage.StartsWith("/"))
                     {
@@ -197,14 +187,19 @@ public class ChatScript : MonoBehaviour
                                 if (!Network.isServer)
                                     LogChat(Network.player, "Map change is only allowed on server.", true, true);
                                 else if (messageParts.Length != 2)
-                                    LogChat(Network.player, "Invalid arguments, expected : /map map_name", true, true);
+                                    LogChat(Network.player, "Invalid arguments, expected : /map map_name", true,
+                                            true);
                                 else if (Application.loadedLevelName == messageParts[1])
-                                    LogChat(Network.player, "You're already in " + messageParts[1] + ", dummy.", true, true);
+                                    LogChat(Network.player, "You're already in " + messageParts[1] + ", dummy.",
+                                            true, true);
                                 else if (!ServerScript.AllowedLevels.Contains(messageParts[1]))
-                                    LogChat(Network.player, "Level " + messageParts[1] + " does not exist. " + StringHelper.DeepToString(ServerScript.AllowedLevels), true, true);
+                                    LogChat(Network.player,
+                                            "Level " + messageParts[1] + " does not exist. " +
+                                            StringHelper.DeepToString(ServerScript.AllowedLevels), true, true);
                                 else
                                 {
-                                    RoundScript.Instance.networkView.RPC("ChangeLevelTo", RPCMode.All, messageParts[1]);
+                                    RoundScript.Instance.networkView.RPC("ChangeLevelTo", RPCMode.All,
+                                                                            messageParts[1]);
                                     RoundScript.Instance.networkView.RPC("RestartRound", RPCMode.All);
                                 }
                                 break;
@@ -214,11 +209,13 @@ public class ChatScript : MonoBehaviour
                                 {
                                     foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
                                         if (p.networkView != null && p.networkView.isMine)
-                                            p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate", RPCMode.All, true);
+                                            p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate",
+                                                                                            RPCMode.All, true);
 
                                     ServerScript.Spectating = true;
 
-                                    networkView.RPC("LogChat", RPCMode.All, Network.player, "went in spectator mode.", true, false);
+                                    networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                                    "went in spectator mode.", true, false);
                                 }
                                 else
                                     LogChat(Network.player, "Already spectating!", true, true);
@@ -231,7 +228,8 @@ public class ChatScript : MonoBehaviour
                                         if (p.networkView != null && p.networkView.isMine)
                                             p.GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
 
-                                    networkView.RPC("LogChat", RPCMode.All, Network.player, "rejoined the game.", true, false);
+                                    networkView.RPC("LogChat", RPCMode.All, Network.player, "rejoined the game.",
+                                                    true, false);
 
                                     ServerScript.Spectating = false;
                                 }
@@ -251,7 +249,8 @@ public class ChatScript : MonoBehaviour
                                     GlobalSoundsScript.PlayButtonPress();
                                     Network.Disconnect();
                                     ServerScript.Spectating = false;
-                                    TaskManager.Instance.WaitFor(0.75f).Then(() => Network.Connect(messageParts[1], ServerScript.Port));
+                                    TaskManager.Instance.WaitFor(0.75f).Then(
+                                        () => Network.Connect(messageParts[1], ServerScript.Port));
                                 });
                                 break;
 
@@ -268,11 +267,7 @@ public class ChatScript : MonoBehaviour
 
                     lastMessage = string.Empty;
                     showChat = false;
-                    Event.current.Use();
                 }
-
-                if (Event.current.keyCode == KeyCode.Return && Event.current.type == EventType.KeyUp)
-                    ignoreReturn = false;
 
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
