@@ -78,7 +78,10 @@ public class RoundScript : MonoBehaviour
                 else
                 {
                     if (toLevelChange == 0)
-                        networkView.RPC("ChangeLevel", RPCMode.All);
+                    {
+                        ChangeLevel();
+                        networkView.RPC("ChangeLevelTo", RPCMode.Others, Application.loadedLevelName);
+                    }
 
                     networkView.RPC("RestartRound", RPCMode.All);
                     ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
