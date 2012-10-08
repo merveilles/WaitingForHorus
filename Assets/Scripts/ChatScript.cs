@@ -207,6 +207,7 @@ public class ChatScript : MonoBehaviour
                             case "/spectate":
                                 if (!ServerScript.Spectating)
                                 {
+                                    bool isDead = false;
                                     foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
                                         if (p.networkView != null && p.networkView.isMine)
                                         {
@@ -214,6 +215,7 @@ public class ChatScript : MonoBehaviour
                                             if (h.Health == 0)
                                             {
                                                 LogChat(Network.player, "Wait until you respawned to spectate", true, true);
+                                                isDead = true;
                                                 break;
                                             }
 
@@ -221,10 +223,12 @@ public class ChatScript : MonoBehaviour
                                                                                            RPCMode.All, true);
                                         }
 
-                                    ServerScript.Spectating = true;
-
-                                    networkView.RPC("LogChat", RPCMode.All, Network.player,
-                                                    "went in spectator mode.", true, false);
+                                    if (!isDead)
+                                    {
+                                        ServerScript.Spectating = true;
+                                        networkView.RPC("LogChat", RPCMode.All, Network.player,
+                                                        "went in spectator mode.", true, false);
+                                    }
                                 }
                                 else
                                     LogChat(Network.player, "Already spectating!", true, true);
