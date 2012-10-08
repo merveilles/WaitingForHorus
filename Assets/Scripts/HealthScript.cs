@@ -158,7 +158,6 @@ public class HealthScript : MonoBehaviour
     }
 
     object respawnLock;
-
     [RPC]
     void ScheduleRespawn(Vector3 position)
     {
@@ -168,6 +167,7 @@ public class HealthScript : MonoBehaviour
         respawnLock = thisLock;
         TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() =>
         {
+            //Debug.Log("Spectating? " + ServerScript.Spectating);
             if (respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
                 Respawn(position);
         });
@@ -185,6 +185,8 @@ public class HealthScript : MonoBehaviour
 
         while (ServerScript.IsAsyncLoading)
             yield return new WaitForSeconds(1 / 30f);
+
+        //Debug.Log("WaitAndRespawned");
 
         Respawn(RespawnZone.GetRespawnPoint());
     }
@@ -209,6 +211,8 @@ public class HealthScript : MonoBehaviour
         if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
             return;
 
+        //Debug.Log("UnHid");
+
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
@@ -225,6 +229,8 @@ public class HealthScript : MonoBehaviour
     [RPC]
     public void ToggleSpectate(bool isSpectating)
     {
+        //Debug.Log("Toggled spectate to " + isSpectating);
+
         if (isSpectating)   Hide();
         else                UnHide();
 
@@ -235,6 +241,8 @@ public class HealthScript : MonoBehaviour
     {
         if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))
             return;
+
+        //Debug.Log("Respawned");
 
         networkView.RPC("ToggleSpectate", RPCMode.All, false);
 

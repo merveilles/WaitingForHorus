@@ -222,8 +222,15 @@ public class PlayerShootingScript : MonoBehaviour
     {
         BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
         bullet.Player = player;
-        var targetScript = FindSceneObjectsOfType(typeof (PlayerScript)).Cast<PlayerScript>().Where(
-            x => x.owner == target).OrderBy(x => Vector3.Distance(x.transform.position, lastKnownPosition)).First();
+
+        PlayerScript targetScript;
+        try
+        {
+            targetScript = FindSceneObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>().Where(
+                x => x.owner == target).OrderBy(x => Vector3.Distance(x.transform.position, lastKnownPosition)).FirstOrDefault();
+        }
+        catch (Exception) { targetScript = null; }
+
         bullet.target = targetScript == null ? null : targetScript.transform;
         bullet.homing = homing;
         bullet.speed = 400;

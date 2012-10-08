@@ -209,8 +209,17 @@ public class ChatScript : MonoBehaviour
                                 {
                                     foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
                                         if (p.networkView != null && p.networkView.isMine)
+                                        {
+                                            var h = p.GetComponent<HealthScript>();
+                                            if (h.Health == 0)
+                                            {
+                                                LogChat(Network.player, "Wait until you respawned to spectate", true, true);
+                                                break;
+                                            }
+
                                             p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate",
-                                                                                            RPCMode.All, true);
+                                                                                           RPCMode.All, true);
+                                        }
 
                                     ServerScript.Spectating = true;
 
