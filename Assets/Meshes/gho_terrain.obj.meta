@@ -22,6 +22,7 @@ ModelImporter:
     4300034: MiniHall
     4300036: Water_WaterSave
     4300038: Boole_1
+    4300040: LandPad
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -66,19 +67,6 @@ ModelImporter:
       data:
         first: 111
         second: 605fa900
-    Boole_1:
-      data:
-        first: 1
-        second: a0860100
-      data:
-        first: 4
-        second: 801a0600
-      data:
-        first: 23
-        second: 60182300
-      data:
-        first: 33
-        second: a05a3200
     Dome:
       data:
         first: 1
@@ -105,6 +93,19 @@ ModelImporter:
       data:
         first: 33
         second: a45a3200
+    LandPad:
+      data:
+        first: 1
+        second: a8860100
+      data:
+        first: 4
+        second: 881a0600
+      data:
+        first: 23
+        second: 68182300
+      data:
+        first: 33
+        second: a85a3200
     MiniHall:
       data:
         first: 1
@@ -118,6 +119,19 @@ ModelImporter:
       data:
         first: 33
         second: aa5a3200
+    Terrain:
+      data:
+        first: 1
+        second: a0860100
+      data:
+        first: 4
+        second: 801a0600
+      data:
+        first: 23
+        second: 60182300
+      data:
+        first: 33
+        second: a05a3200
     Water:
       data:
         first: 1
