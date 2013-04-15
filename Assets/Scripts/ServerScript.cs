@@ -349,7 +349,7 @@ public class ServerScript : MonoBehaviour
                     GUILayout.Label(lastStatus, TextStyle);
                     GUI.enabled = hostState == HostingState.WaitingForInput && chosenUsername.Trim().Length != 0;
 				
-					chosenIP = GUILayout.TextField("127.0.0.1");
+					chosenIP = GUILayout.TextField(chosenIP);
 					//currentServer.Ip = chosenIP;
 					//GUILayout.Label("IP");
 				
