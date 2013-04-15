@@ -1,7 +1,74 @@
 fileFormatVersion: 2
 guid: 98d70bc40196143628d971251ee673e9
 ModelImporter:
+  serializedVersion: 15
   fileIDToRecycleName:
+    100000: Null_Object_Spinme Disc_9
+    100002: Null_Object_Spinme Disc_8
+    100004: Null_Object_Spinme Disc_7
+    100006: Null_Object_Spinme Disc_6
+    100008: Null_Object_Spinme Disc_5
+    100010: Null_Object_Spinme Disc_4
+    100012: Null_Object_Spinme Disc_3
+    100014: Null_Object_Spinme Disc_2
+    100016: Null_Object_Spinme Disc_10
+    100018: Null_Object_Spinme Disc_1
+    100020: Null_Object_Spinme Disc
+    100022: Null_Object_Plane_3
+    100024: Null_Object_Plane_2
+    100026: Null_Object_Plane_1
+    100028: Null_Object_Plane
+    100030: Null_Object_Plane_4
+    100032: //RootNode
+    400000: Null_Object_Spinme Disc_9
+    400002: Null_Object_Spinme Disc_8
+    400004: Null_Object_Spinme Disc_7
+    400006: Null_Object_Spinme Disc_6
+    400008: Null_Object_Spinme Disc_5
+    400010: Null_Object_Spinme Disc_4
+    400012: Null_Object_Spinme Disc_3
+    400014: Null_Object_Spinme Disc_2
+    400016: Null_Object_Spinme Disc_10
+    400018: Null_Object_Spinme Disc_1
+    400020: Null_Object_Spinme Disc
+    400022: Null_Object_Plane_3
+    400024: Null_Object_Plane_2
+    400026: Null_Object_Plane_1
+    400028: Null_Object_Plane
+    400030: Null_Object_Plane_4
+    400032: //RootNode
+    2300000: Null_Object_Spinme Disc_9
+    2300002: Null_Object_Spinme Disc_8
+    2300004: Null_Object_Spinme Disc_7
+    2300006: Null_Object_Spinme Disc_6
+    2300008: Null_Object_Spinme Disc_5
+    2300010: Null_Object_Spinme Disc_4
+    2300012: Null_Object_Spinme Disc_3
+    2300014: Null_Object_Spinme Disc_2
+    2300016: Null_Object_Spinme Disc_10
+    2300018: Null_Object_Spinme Disc_1
+    2300020: Null_Object_Spinme Disc
+    2300022: Null_Object_Plane_3
+    2300024: Null_Object_Plane_2
+    2300026: Null_Object_Plane_1
+    2300028: Null_Object_Plane
+    2300030: Null_Object_Plane_4
+    3300000: Null_Object_Spinme Disc_9
+    3300002: Null_Object_Spinme Disc_8
+    3300004: Null_Object_Spinme Disc_7
+    3300006: Null_Object_Spinme Disc_6
+    3300008: Null_Object_Spinme Disc_5
+    3300010: Null_Object_Spinme Disc_4
+    3300012: Null_Object_Spinme Disc_3
+    3300014: Null_Object_Spinme Disc_2
+    3300016: Null_Object_Spinme Disc_10
+    3300018: Null_Object_Spinme Disc_1
+    3300020: Null_Object_Spinme Disc
+    3300022: Null_Object_Plane_3
+    3300024: Null_Object_Plane_2
+    3300026: Null_Object_Plane_1
+    3300028: Null_Object_Plane
+    3300030: Null_Object_Plane_4
     4300000: Null_Object_Plane
     4300002: Null_Object_Plane_1
     4300004: Null_Object_Plane_2
@@ -18,30 +85,30 @@ ModelImporter:
     4300026: Null_Object_Spinme Disc_7
     4300028: Null_Object_Spinme Disc_8
     4300030: Null_Object_Spinme Disc_9
-  serializedVersion: 10
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
-    generateAnimations: 3
+    legacyGenerateAnimations: 3
     bakeSimulation: 0
-    splitAnimations: 1
     animationCompression: 1
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
     clipAnimations: []
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
-    optimizeMesh: 0
+    optimizeMeshForGPU: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -51,222 +118,21 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  textMetaNamesToFileIDs:
-    //RootNode:
-      data:
-        first: 1
-        second: c0860100
-      data:
-        first: 4
-        second: a01a0600
-      data:
-        first: 111
-        second: 605fa900
-    Null_Object_Plane:
-      data:
-        first: 1
-        second: bc860100
-      data:
-        first: 4
-        second: 9c1a0600
-      data:
-        first: 23
-        second: 7c182300
-      data:
-        first: 33
-        second: bc5a3200
-    Null_Object_Plane_1:
-      data:
-        first: 1
-        second: ba860100
-      data:
-        first: 4
-        second: 9a1a0600
-      data:
-        first: 23
-        second: 7a182300
-      data:
-        first: 33
-        second: ba5a3200
-    Null_Object_Plane_2:
-      data:
-        first: 1
-        second: b8860100
-      data:
-        first: 4
-        second: 981a0600
-      data:
-        first: 23
-        second: 78182300
-      data:
-        first: 33
-        second: b85a3200
-    Null_Object_Plane_3:
-      data:
-        first: 1
-        second: b6860100
-      data:
-        first: 4
-        second: 961a0600
-      data:
-        first: 23
-        second: 76182300
-      data:
-        first: 33
-        second: b65a3200
-    Null_Object_Plane_4:
-      data:
-        first: 1
-        second: be860100
-      data:
-        first: 4
-        second: 9e1a0600
-      data:
-        first: 23
-        second: 7e182300
-      data:
-        first: 33
-        second: be5a3200
-    Null_Object_Spinme Disc:
-      data:
-        first: 1
-        second: b4860100
-      data:
-        first: 4
-        second: 941a0600
-      data:
-        first: 23
-        second: 74182300
-      data:
-        first: 33
-        second: b45a3200
-    Null_Object_Spinme Disc_1:
-      data:
-        first: 1
-        second: b2860100
-      data:
-        first: 4
-        second: 921a0600
-      data:
-        first: 23
-        second: 72182300
-      data:
-        first: 33
-        second: b25a3200
-    Null_Object_Spinme Disc_10:
-      data:
-        first: 1
-        second: b0860100
-      data:
-        first: 4
-        second: 901a0600
-      data:
-        first: 23
-        second: 70182300
-      data:
-        first: 33
-        second: b05a3200
-    Null_Object_Spinme Disc_2:
-      data:
-        first: 1
-        second: ae860100
-      data:
-        first: 4
-        second: 8e1a0600
-      data:
-        first: 23
-        second: 6e182300
-      data:
-        first: 33
-        second: ae5a3200
-    Null_Object_Spinme Disc_3:
-      data:
-        first: 1
-        second: ac860100
-      data:
-        first: 4
-        second: 8c1a0600
-      data:
-        first: 23
-        second: 6c182300
-      data:
-        first: 33
-        second: ac5a3200
-    Null_Object_Spinme Disc_4:
-      data:
-        first: 1
-        second: aa860100
-      data:
-        first: 4
-        second: 8a1a0600
-      data:
-        first: 23
-        second: 6a182300
-      data:
-        first: 33
-        second: aa5a3200
-    Null_Object_Spinme Disc_5:
-      data:
-        first: 1
-        second: a8860100
-      data:
-        first: 4
-        second: 881a0600
-      data:
-        first: 23
-        second: 68182300
-      data:
-        first: 33
-        second: a85a3200
-    Null_Object_Spinme Disc_6:
-      data:
-        first: 1
-        second: a6860100
-      data:
-        first: 4
-        second: 861a0600
-      data:
-        first: 23
-        second: 66182300
-      data:
-        first: 33
-        second: a65a3200
-    Null_Object_Spinme Disc_7:
-      data:
-        first: 1
-        second: a4860100
-      data:
-        first: 4
-        second: 841a0600
-      data:
-        first: 23
-        second: 64182300
-      data:
-        first: 33
-        second: a45a3200
-    Null_Object_Spinme Disc_8:
-      data:
-        first: 1
-        second: a2860100
-      data:
-        first: 4
-        second: 821a0600
-      data:
-        first: 23
-        second: 62182300
-      data:
-        first: 33
-        second: a25a3200
-    Null_Object_Spinme Disc_9:
-      data:
-        first: 1
-        second: a0860100
-      data:
-        first: 4
-        second: 801a0600
-      data:
-        first: 23
-        second: 60182300
-      data:
-        first: 33
-        second: a05a3200
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

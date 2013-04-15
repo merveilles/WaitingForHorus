@@ -52,7 +52,7 @@ public class CameraScript : MonoBehaviour
                     direction * Mathf.Max(minDistance, hitInfo.distance);
             }
 
-            var distance = Vector3.Distance(cameraPosition, player.transform.position);
+            /*var distance = Vector3.Distance(cameraPosition, player.transform.position);
             var o = Mathf.Clamp01((distance - 2) / 8);
             foreach (var r in player.GetComponentsInChildren<Renderer>())
             {
@@ -60,7 +60,7 @@ public class CameraScript : MonoBehaviour
                 if (r.gameObject.name == "TextBubble") continue;
                 var c = r.material.color;
                 r.material.color = new Color(c.r, c.g, c.b, o);
-            }
+            }*/
 
             mainCamera.transform.position = cameraPosition;
             mainCamera.transform.rotation = actualCameraRotation;

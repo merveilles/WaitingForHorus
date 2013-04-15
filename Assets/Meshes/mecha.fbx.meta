@@ -1,7 +1,86 @@
 fileFormatVersion: 2
 guid: 234593498be114eec8e1d6d581a1cc20
 ModelImporter:
+  serializedVersion: 15
   fileIDToRecycleName:
+    100000: cell_C
+    100002: CellCarrier_C
+    100004: cells_mini
+    100006: CellCarrier_Mini
+    100008: Headpiece2
+    100010: Headpiece1
+    100012: Head
+    100014: Leg_BL
+    100016: Shoulder_BL
+    100018: Leg_BR
+    100020: Shoulder_BR
+    100022: Leg_FL
+    100024: Shoulder_FL
+    100026: Leg_FR
+    100028: Shoulder_FR
+    100030: Shield
+    100032: Tunes
+    100034: Pipes_2.2
+    100036: Pipes_2
+    100038: //RootNode
+    400000: cell_C
+    400002: CellCarrier_C
+    400004: cells_mini
+    400006: CellCarrier_Mini
+    400008: Headpiece2
+    400010: Headpiece1
+    400012: Head
+    400014: Leg_BL
+    400016: Shoulder_BL
+    400018: Leg_BR
+    400020: Shoulder_BR
+    400022: Leg_FL
+    400024: Shoulder_FL
+    400026: Leg_FR
+    400028: Shoulder_FR
+    400030: Shield
+    400032: Tunes
+    400034: Pipes_2.2
+    400036: Pipes_2
+    400038: //RootNode
+    2300000: cell_C
+    2300002: CellCarrier_C
+    2300004: cells_mini
+    2300006: CellCarrier_Mini
+    2300008: Headpiece2
+    2300010: Headpiece1
+    2300012: Head
+    2300014: Leg_BL
+    2300016: Shoulder_BL
+    2300018: Leg_BR
+    2300020: Shoulder_BR
+    2300022: Leg_FL
+    2300024: Shoulder_FL
+    2300026: Leg_FR
+    2300028: Shoulder_FR
+    2300030: Shield
+    2300032: Tunes
+    2300034: Pipes_2.2
+    2300036: Pipes_2
+    3300000: cell_C
+    3300002: CellCarrier_C
+    3300004: cells_mini
+    3300006: CellCarrier_Mini
+    3300008: Headpiece2
+    3300010: Headpiece1
+    3300012: Head
+    3300014: Leg_BL
+    3300016: Shoulder_BL
+    3300018: Leg_BR
+    3300020: Shoulder_BR
+    3300022: Leg_FL
+    3300024: Shoulder_FL
+    3300026: Leg_FR
+    3300028: Shoulder_FR
+    3300030: Shield
+    3300032: Tunes
+    3300034: Pipes_2.2
+    3300036: Pipes_2
     4300000: Pipes_2
     4300002: Pipes_2.2
     4300004: Tunes
@@ -21,30 +100,30 @@ ModelImporter:
     4300032: cells_mini
     4300034: CellCarrier_C
     4300036: cell_C
-  serializedVersion: 10
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 1
     materialSearch: 1
   animations:
-    generateAnimations: 3
+    legacyGenerateAnimations: 3
     bakeSimulation: 0
-    splitAnimations: 1
     animationCompression: 1
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
     clipAnimations: []
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
     meshCompression: 0
     addColliders: 0
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
-    optimizeMesh: 0
+    optimizeMeshForGPU: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -54,261 +133,21 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  textMetaNamesToFileIDs:
-    //RootNode:
-      data:
-        first: 1
-        second: c6860100
-      data:
-        first: 4
-        second: a61a0600
-      data:
-        first: 111
-        second: 605fa900
-    CellCarrier_C:
-      data:
-        first: 1
-        second: a2860100
-      data:
-        first: 4
-        second: 821a0600
-      data:
-        first: 23
-        second: 62182300
-      data:
-        first: 33
-        second: a25a3200
-    CellCarrier_Mini:
-      data:
-        first: 1
-        second: a6860100
-      data:
-        first: 4
-        second: 861a0600
-      data:
-        first: 23
-        second: 66182300
-      data:
-        first: 33
-        second: a65a3200
-    Head:
-      data:
-        first: 1
-        second: ac860100
-      data:
-        first: 4
-        second: 8c1a0600
-      data:
-        first: 23
-        second: 6c182300
-      data:
-        first: 33
-        second: ac5a3200
-    Headpiece1:
-      data:
-        first: 1
-        second: aa860100
-      data:
-        first: 4
-        second: 8a1a0600
-      data:
-        first: 23
-        second: 6a182300
-      data:
-        first: 33
-        second: aa5a3200
-    Headpiece2:
-      data:
-        first: 1
-        second: a8860100
-      data:
-        first: 4
-        second: 881a0600
-      data:
-        first: 23
-        second: 68182300
-      data:
-        first: 33
-        second: a85a3200
-    Leg_BL:
-      data:
-        first: 1
-        second: ae860100
-      data:
-        first: 4
-        second: 8e1a0600
-      data:
-        first: 23
-        second: 6e182300
-      data:
-        first: 33
-        second: ae5a3200
-    Leg_BR:
-      data:
-        first: 1
-        second: b2860100
-      data:
-        first: 4
-        second: 921a0600
-      data:
-        first: 23
-        second: 72182300
-      data:
-        first: 33
-        second: b25a3200
-    Leg_FL:
-      data:
-        first: 1
-        second: b6860100
-      data:
-        first: 4
-        second: 961a0600
-      data:
-        first: 23
-        second: 76182300
-      data:
-        first: 33
-        second: b65a3200
-    Leg_FR:
-      data:
-        first: 1
-        second: ba860100
-      data:
-        first: 4
-        second: 9a1a0600
-      data:
-        first: 23
-        second: 7a182300
-      data:
-        first: 33
-        second: ba5a3200
-    Pipes_2:
-      data:
-        first: 1
-        second: c4860100
-      data:
-        first: 4
-        second: a41a0600
-      data:
-        first: 23
-        second: 84182300
-      data:
-        first: 33
-        second: c45a3200
-    Pipes_2.2:
-      data:
-        first: 1
-        second: c2860100
-      data:
-        first: 4
-        second: a21a0600
-      data:
-        first: 23
-        second: 82182300
-      data:
-        first: 33
-        second: c25a3200
-    Shield:
-      data:
-        first: 1
-        second: be860100
-      data:
-        first: 4
-        second: 9e1a0600
-      data:
-        first: 23
-        second: 7e182300
-      data:
-        first: 33
-        second: be5a3200
-    Shoulder_BL:
-      data:
-        first: 1
-        second: b0860100
-      data:
-        first: 4
-        second: 901a0600
-      data:
-        first: 23
-        second: 70182300
-      data:
-        first: 33
-        second: b05a3200
-    Shoulder_BR:
-      data:
-        first: 1
-        second: b4860100
-      data:
-        first: 4
-        second: 941a0600
-      data:
-        first: 23
-        second: 74182300
-      data:
-        first: 33
-        second: b45a3200
-    Shoulder_FL:
-      data:
-        first: 1
-        second: b8860100
-      data:
-        first: 4
-        second: 981a0600
-      data:
-        first: 23
-        second: 78182300
-      data:
-        first: 33
-        second: b85a3200
-    Shoulder_FR:
-      data:
-        first: 1
-        second: bc860100
-      data:
-        first: 4
-        second: 9c1a0600
-      data:
-        first: 23
-        second: 7c182300
-      data:
-        first: 33
-        second: bc5a3200
-    Tunes:
-      data:
-        first: 1
-        second: c0860100
-      data:
-        first: 4
-        second: a01a0600
-      data:
-        first: 23
-        second: 80182300
-      data:
-        first: 33
-        second: c05a3200
-    cell_C:
-      data:
-        first: 1
-        second: a0860100
-      data:
-        first: 4
-        second: 801a0600
-      data:
-        first: 23
-        second: 60182300
-      data:
-        first: 33
-        second: a05a3200
-    cells_mini:
-      data:
-        first: 1
-        second: a4860100
-      data:
-        first: 4
-        second: 841a0600
-      data:
-        first: 23
-        second: 64182300
-      data:
-        first: 33
-        second: a45a3200
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 
