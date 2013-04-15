@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: character
-  m_Shader: {fileID: 4800000, guid: 963bf76ee51062049954072cfab279e3, type: 1}
+  m_Shader: {fileID: 4800000, guid: 963bf76ee51062049954072cfab279e3, type: 3}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -15,7 +15,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 1}
+          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -29,14 +29,14 @@ Material:
         first:
           name: _RampTex
         second:
-          m_Texture: {fileID: 2800000, guid: 9f0b68b94f3a74248bbbdac83fce1181, type: 1}
+          m_Texture: {fileID: 2800000, guid: 9f0b68b94f3a74248bbbdac83fce1181, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Illum
         second:
-          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 1}
+          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -50,21 +50,21 @@ Material:
         first:
           name: _RimLightRamp
         second:
-          m_Texture: {fileID: 2800000, guid: 9f0b68b94f3a74248bbbdac83fce1181, type: 1}
+          m_Texture: {fileID: 2800000, guid: 9f0b68b94f3a74248bbbdac83fce1181, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Normals
         second:
-          m_Texture: {fileID: 2800000, guid: 3515c6cb71cff4f909109d386687ef4f, type: 1}
+          m_Texture: {fileID: 2800000, guid: 3515c6cb71cff4f909109d386687ef4f, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Lights
         second:
-          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 1}
+          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -100,7 +100,11 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .647868395, g: .571203411, b: .590540469, a: 1}
+        second: {r: .571914792, g: .594784319, b: .659993649, a: 1}
+      data:
+        first:
+          name: _RimColor
+        second: {r: .0298507214, g: .0298507214, b: .0298507214, a: 1}
       data:
         first:
           name: _SpecColor
@@ -109,10 +113,6 @@ Material:
         first:
           name: _Emission
         second: {r: 0, g: .0642939433, b: .119403005, a: 0}
-      data:
-        first:
-          name: _RimColor
-        second: {r: .0298507214, g: .0298507214, b: .0298507214, a: 1}
       data:
         first:
           name: _Spec

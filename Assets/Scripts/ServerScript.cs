@@ -38,6 +38,7 @@ public class ServerScript : MonoBehaviour
     bool connecting;
     string lastStatus;
 	string chosenUsername = "Anon";
+	string chosenIP = "127.0.0.1";
 
     INatDevice natDevice;
     Mapping udpMapping, tcpMapping;
@@ -347,18 +348,22 @@ public class ServerScript : MonoBehaviour
                     TextStyle.margin.left = 5;
                     GUILayout.Label(lastStatus, TextStyle);
                     GUI.enabled = hostState == HostingState.WaitingForInput && chosenUsername.Trim().Length != 0;
-
+				
+					chosenIP = GUILayout.TextField("127.0.0.1");
+					//currentServer.Ip = chosenIP;
+					//GUILayout.Label("IP");
+				
                     if (GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput)
                     {
                         PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
-                        hostState = HostingState.ReadyForIp;
+                        hostState = HostingState.ReadyToHost;
                     }
-                    if (GUILayout.Button("QUICKPLAY") && hostState == HostingState.WaitingForInput)
+                    if (GUILayout.Button("JOIN") && hostState == HostingState.WaitingForInput)
                     {
                         PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
-                        hostState = HostingState.ReadyToListServers;
+                        hostState = HostingState.ReadyToConnect;
                         lastStatus = "";
                     }
                     GUI.enabled = true;
@@ -470,7 +475,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer(MaxPlayers, Port, false);
         if (result == NetworkConnectionError.NoError)
         {
-            currentServer = new ServerInfo { Ip = wanIp.Value, Map = RoundScript.Instance.CurrentLevel, Players = 1 };
+            currentServer = new ServerInfo { Ip = "127.0.0.1", Map = RoundScript.Instance.CurrentLevel, Players = 1 }; //wanIp.Value
 
             TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
             {
@@ -524,8 +529,8 @@ public class ServerScript : MonoBehaviour
     bool Connect()
     {
         lastStatus = "Connecting...";
-        Debug.Log("Connecting to " + currentServer.Ip + " (id = " + currentServer.Id + ")");
-        var result = Network.Connect(currentServer.Ip, Port);
+        Debug.Log("Connecting to " + chosenIP + " (id = " + chosenIP + ")");
+        var result = Network.Connect(chosenIP, Port);
         if (result != NetworkConnectionError.NoError)
         {
             lastStatus = "Failed.";
