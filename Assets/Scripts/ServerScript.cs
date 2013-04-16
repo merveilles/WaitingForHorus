@@ -349,7 +349,7 @@ public class ServerScript : MonoBehaviour
                     GUILayout.Label(lastStatus, TextStyle);
                     GUI.enabled = hostState == HostingState.WaitingForInput && chosenUsername.Trim().Length != 0;
 				
-					chosenIP = GUILayout.TextField(chosenIP);
+					chosenIP = GUILayout.TextField( chosenIP );
 					//currentServer.Ip = chosenIP;
 					//GUILayout.Label("IP");
 				
@@ -472,7 +472,7 @@ public class ServerScript : MonoBehaviour
 
     bool CreateServer()
     {
-        var result = Network.InitializeServer(MaxPlayers, Port, false);
+        var result = Network.InitializeServer( MaxPlayers, Port, true );
         if (result == NetworkConnectionError.NoError)
         {
             currentServer = new ServerInfo { Ip = "127.0.0.1", Map = RoundScript.Instance.CurrentLevel, Players = 1 }; //wanIp.Value
@@ -530,7 +530,7 @@ public class ServerScript : MonoBehaviour
     {
         lastStatus = "Connecting...";
         Debug.Log("Connecting to " + chosenIP + " (id = " + chosenIP + ")");
-        var result = Network.Connect(chosenIP, Port);
+        var result = Network.Connect( chosenIP );
         if (result != NetworkConnectionError.NoError)
         {
             lastStatus = "Failed.";
@@ -676,6 +676,12 @@ public class ServerScript : MonoBehaviour
             udpMappingSuccess = false;
         }
     }
+	
+	void OnServerInitialized()
+	{
+		Debug.Log("==> GUID is " + Network.player.guid + ". Use this on clients to connect with NAT punchthrough.");
+		Debug.Log("==> Local IP/port is " + Network.player.ipAddress + "/" + Network.player.port + ". Use this on clients to connect directly.");
+	}
 
     void OnApplicationQuit()
     {

@@ -44,13 +44,14 @@ public class MouseSensitivityScript : MonoBehaviour
     {
         GUI.skin = skin;
         GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-        GUILayout.Label("-", GUILayout.ExpandWidth(false));
+        /*GUILayout.Label("-", GUILayout.ExpandWidth(false));
         GUILayout.HorizontalSlider(sensitivityPercentage, 0, 100,
             skin.FindStyle("Sensitivity Slider"),
             skin.FindStyle("Sensitivity Slider Thumb"),
             GUILayout.ExpandWidth(true));
         GUILayout.Label(string.Format("+ {0:d2}", sensitivityPercentage),
-            GUILayout.ExpandWidth(false));
+            GUILayout.ExpandWidth(false));*/
+		GUILayout.TextField( Network.player.guid );
         GUILayout.EndHorizontal();
     }
 }
