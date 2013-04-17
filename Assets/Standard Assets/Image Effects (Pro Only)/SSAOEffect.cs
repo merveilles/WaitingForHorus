@@ -12,7 +12,7 @@ public class SSAOEffect : MonoBehaviour
 	}
 	
 	public float m_Radius = 0.4f;
-	public SSAOSamples m_SampleCount = SSAOSamples.Medium;
+	public int m_SampleCount = 2;
 	public float m_OcclusionIntensity = 1.5f;
 	public int m_Blur = 2;
 	public int m_Downsampling = 2;
@@ -51,11 +51,13 @@ public class SSAOEffect : MonoBehaviour
 	
 	void Start()
 	{
+		if( QualitySettings.GetQualityLevel() == 0 ) Destroy ( this );
+		
 		if (!SystemInfo.supportsImageEffects || !SystemInfo.SupportsRenderTextureFormat (RenderTextureFormat.Depth))
 		{
 			m_Supported = false;
 			enabled = false;
-			return;
+			return; 
 		}
 		
 		CreateMaterials ();
@@ -122,7 +124,7 @@ public class SSAOEffect : MonoBehaviour
 			m_OcclusionIntensity));
 			
 		bool doBlur = m_Blur > 0;
-		Graphics.Blit (doBlur ? null : source, rtAO, m_SSAOMaterial, (int)m_SampleCount);
+		Graphics.Blit (doBlur ? null : source, rtAO, m_SSAOMaterial, m_SampleCount);
 
 		if (doBlur)
 		{
