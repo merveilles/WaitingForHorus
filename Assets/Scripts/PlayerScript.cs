@@ -99,7 +99,7 @@ public class PlayerScript : MonoBehaviour
     [RPC]
     public void Targeted()
     {
-        if( networkView.isMine ) return;
+        if( !networkView.isMine ) return;
 		warningSound.Play();
     }
 

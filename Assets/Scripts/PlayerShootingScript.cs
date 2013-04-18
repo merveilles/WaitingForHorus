@@ -162,7 +162,7 @@ public class PlayerShootingScript : MonoBehaviour
                     if ( !wasLocked && data.Locked ) // Send target notification
 					{
                         targetSound.Play();
-						data.Script.Targeted();
+						data.Script.networkView.RPC( "Targeted", RPCMode.All );
 					}
                 }
             }
