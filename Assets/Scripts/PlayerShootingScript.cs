@@ -61,8 +61,7 @@ public class PlayerShootingScript : MonoBehaviour
 	WeaponIndicatorScript.PlayerData GetFirstTarget()
 	{
 		var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime );
-		var chosen = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
-		return chosen;
+		return aimedAt.OrderBy( x => Guid.NewGuid() ).First();
 	}
 
     void FixedUpdate()
@@ -80,16 +79,19 @@ public class PlayerShootingScript : MonoBehaviour
                     gameObject.SendMessage("ShotFired");
 
                     // find homing target(s)
-                    var aimedAt = GetFirstTarget();
+					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime );
 
-                    var bulletsShot = bulletsLeft;
+					var bulletsShot = bulletsLeft;
                     var first = true;
                     while( bulletsLeft > 0 )
                     {
-                        if( aimedAt == null )
+                        if( !aimedAt.Any() )
                             DoHomingShot( ShotgunSpread, null, 0, first );
                         else
-                            DoHomingShot( ShotgunSpread, aimedAt.Script, Mathf.Clamp01( aimedAt.SinceInCrosshair / AimingTime ), first );
+						{
+							var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
+                            DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ), first );
+						}
 						
                         cooldownLeft += ShotCooldown;
                         first = false;
