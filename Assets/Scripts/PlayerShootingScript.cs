@@ -169,15 +169,15 @@ public class PlayerShootingScript : MonoBehaviour
 
             if( targets.Count > 0 )
 			{
-				foreach( WeaponIndicatorScript.PlayerData target in targets )
+				for( int i = 0; i < targets.Count; i++ )
 				{
-               		if( !target.Found ) // Is player in target list dead, or unseen?
+               		if( !targets[i].Found ) // Is player in target list dead, or unseen?
 					{
-						target.Script.networkView.RPC( "Untargeted", RPCMode.All );
+						targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All );
 					} 
-					else if ( !target.Script == null ) continue; 
+					else if ( !targets[i].Script == null ) continue; 
 					
-					targets.Remove( target );
+					targets.RemoveAt(i);
 				}
 			}
 		}
