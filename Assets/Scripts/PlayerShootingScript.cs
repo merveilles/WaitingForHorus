@@ -174,10 +174,9 @@ public class PlayerShootingScript : MonoBehaviour
                		if( !targets[i].Found ) // Is player in target list dead, or unseen?
 					{
 						targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All );
+						targets.RemoveAt(i);
 					} 
-					else if ( !targets[i].Script == null ) continue; 
-					
-					targets.RemoveAt(i);
+					if ( !targets[i].Script == null ) targets.RemoveAt(i);; 
 				}
 			}
 		}
