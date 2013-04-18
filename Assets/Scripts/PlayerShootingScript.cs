@@ -162,7 +162,7 @@ public class PlayerShootingScript : MonoBehaviour
                     if ( !wasLocked && data.Locked ) // Send target notification
 					{
                         targetSound.Play();
-						data.Script.networkView.RPC( "Targeted", RPCMode.All );
+						data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.GetComponent<PlayerScript>().owner );
 					}
                 }
             }
@@ -173,10 +173,10 @@ public class PlayerShootingScript : MonoBehaviour
 				{
                		if( !targets[i].Found ) // Is player in target list dead, or unseen?
 					{
-						targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All );
+						targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.GetComponent<PlayerScript>().owner );
 						targets.RemoveAt(i);
 					} 
-					if ( !targets[i].Script == null ) targets.RemoveAt(i);; 
+					if ( !targets[i].Script == null ) targets.RemoveAt(i);
 				}
 			}
 		}

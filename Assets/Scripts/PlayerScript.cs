@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerScript : MonoBehaviour
@@ -23,6 +25,7 @@ public class PlayerScript : MonoBehaviour
     public Transform dashEffectPivot;
     public Renderer dashEffectRenderer;
     public CharacterController controller;
+	public GameObject warningSphereFab;
     GameObject textBubble;
 
     Vector3 fallingVelocity;
@@ -54,9 +57,13 @@ public class PlayerScript : MonoBehaviour
     Vector3 lastNetworkFramePosition;
     Quaternion smoothLookRotation;
     float smoothYaw;
+	List<NetworkPlayer> targetedBy { get; set; }
+	List<GameObject> warningSpheres { get; set; }
 
 	void Awake() 
 	{
+		targetedBy = new List<NetworkPlayer>();
+		
         DontDestroyOnLoad(gameObject);
 
         controller = GetComponent<CharacterController>();
@@ -97,17 +104,25 @@ public class PlayerScript : MonoBehaviour
     }
 	
     [RPC]
-    public void Targeted()
+    public void Targeted( NetworkPlayer aggressor )
     {
         if( !networkView.isMine ) return;
 		warningSound.Play();
+		
+		GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
+		
+		targetedBy.Add( aggressor );
+		warningSpheres.Add( sphere );
     }
 	
     [RPC]
-    public void Untargeted()
+    public void Untargeted( NetworkPlayer aggressor )
     {
         if( !networkView.isMine ) return;
-		dashSound.Play();
+		
+		int id = targetedBy.FindIndex( a => a == aggressor );
+		Destroy( warningSpheres[id] );
+		targetedBy.RemoveAt( id );
     }
 
     [RPC]
