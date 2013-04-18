@@ -96,10 +96,10 @@ public class PlayerScript : MonoBehaviour
         }
     }
 	
-    //[RPC]
+    [RPC]
     public void Targeted()
     {
-        //if( !networkView.isMine ) return;
+        if( !networkView.isMine ) return;
 		warningSound.Play();
     }
 
