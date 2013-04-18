@@ -1,31 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ServerScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\ServerScript.cs" Line="119" Column="41" />
-      <File FileName="Assets\Shaders\AEON_Base_Texture.shader" Line="1" Column="1" />
-      <File FileName="Assets\Shaders\Horus_Base.shader" Line="1" Column="1" />
-      <File FileName="Assets\Shaders\RimLight.shader" Line="1" Column="1" />
-      <File FileName="Assets\Shaders\VertexLitWithZ.shader" Line="1" Column="1" />
-      <File FileName="Assets\Shaders\NoFog.shader" Line="1" Column="1" />
-      <File FileName="Assets\Shaders\Depth-Aware Text.shader" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\DayNightCycleScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CameraScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CameraSpin.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SpawnScript.cs" Line="19" Column="2" />
-      <File FileName="Assets\Scripts\GlobalSoundsScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HealthScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HitConeScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\LeaderboardViewerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\MouseSensitivityScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\MusicScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\NetworkLeaderboard.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ParticleSystemAutoDestructScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerDeathScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerRegistry.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\AutoDestructScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Billboard.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\SpawnScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ServerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerScript.cs" Line="102" Column="11" />
+      <File FileName="Assets\Scripts\BulletScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerShootingScript.cs" Line="102" Column="43" />
+      <File FileName="Assets\Scripts\WeaponIndicatorScript.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

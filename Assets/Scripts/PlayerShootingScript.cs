@@ -57,6 +57,13 @@ public class PlayerShootingScript : MonoBehaviour
         if (playerScript.Paused)
             bulletsLeft = BurstCount;
     }
+	
+	WeaponIndicatorScript.PlayerData GetFirstTarget()
+	{
+		var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime );
+		var chosen = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
+		return chosen;
+	}
 
     void FixedUpdate()
     {
@@ -73,21 +80,18 @@ public class PlayerShootingScript : MonoBehaviour
                     gameObject.SendMessage("ShotFired");
 
                     // find homing target(s)
-                    var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime);
+                    var aimedAt = GetFirstTarget();
 
                     var bulletsShot = bulletsLeft;
                     var first = true;
-                    while (bulletsLeft > 0)
+                    while( bulletsLeft > 0 )
                     {
-                        if (!aimedAt.Any())
-                            DoHomingShot(ShotgunSpread, null, 0, first);
+                        if( aimedAt == null )
+                            DoHomingShot( ShotgunSpread, null, 0, first );
                         else
-                        {
-                            var chosen = aimedAt.OrderBy(x => Guid.NewGuid()).First();
-                            DoHomingShot(ShotgunSpread, chosen.Script, Mathf.Clamp01(chosen.SinceInCrosshair / AimingTime), first);
-                        }
+                            DoHomingShot( ShotgunSpread, aimedAt.Script, Mathf.Clamp01( aimedAt.SinceInCrosshair / AimingTime ), first );
+						
                         cooldownLeft += ShotCooldown;
-
                         first = false;
                     }
                     cooldownLeft += ReloadTime;
@@ -128,35 +132,36 @@ public class PlayerShootingScript : MonoBehaviour
 		    var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
             var allowedDistance = 130 * Screen.height / 1500f;
 
-            foreach (var v in targets) v.Found = false;
+            foreach ( var v in targets ) v.Found = false;
             //Debug.Log(targets.Values.Count + " targets to find");
 
             // Test for players in crosshair
             foreach (var p in FindSceneObjectsOfType(typeof(PlayerScript)))
             {
                 var ps = p as PlayerScript;
-
-                if (p == gameObject.GetComponent<PlayerScript>())
+                if( p == gameObject.GetComponent<PlayerScript>() ) // Is targeting self?
                     continue;
 
                 var health = ps.gameObject.GetComponent<HealthScript>();
-
                 var position = ps.transform.position;
                 var screenPos = Camera.main.WorldToScreenPoint(position);
 
-                if (health.Health > 0 && screenPos.z > 0 && (screenPos.XY() - screenCenter).magnitude < allowedDistance)
+                if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
                 {
                     WeaponIndicatorScript.PlayerData data;
-                    if ((data = targets.FirstOrDefault(x => x.Script == ps)) == null)
-                        targets.Add(data = new WeaponIndicatorScript.PlayerData { Script = ps });
+                    if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null)
+                        targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps } );
 
                     data.ScreenPosition = screenPos.XY();
                     var wasLocked = data.Locked;
                     data.SinceInCrosshair += Time.deltaTime;
                     data.Found = true;
-                    if (!wasLocked && data.Locked)
+					
+                    if ( !wasLocked && data.Locked ) // Send target notification
+					{
                         targetSound.Play();
-                    //Debug.Log("Found target at " + data.ScreenPosition);
+						data.Script.Targeted();
+					}
                 }
             }
 
@@ -223,7 +228,7 @@ public class PlayerShootingScript : MonoBehaviour
         BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
         bullet.Player = player;
 
-        PlayerScript targetScript;
+		PlayerScript targetScript;
         try
         {
             targetScript = FindSceneObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>().Where(
@@ -236,7 +241,6 @@ public class PlayerShootingScript : MonoBehaviour
         bullet.speed = 400;
         bullet.recoil = 1;
 
-        if (doSound)
-            pepperGunSound.Play();
+        if (doSound) pepperGunSound.Play();
     }
 }

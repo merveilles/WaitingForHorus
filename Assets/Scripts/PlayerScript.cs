@@ -41,7 +41,8 @@ public class PlayerScript : MonoBehaviour
     bool activelyJumping;
     bool textBubbleVisible;
     bool playJumpSound, playDashSound;
-
+	
+    public AudioSource warningSound;
     public AudioSource dashSound;
     public AudioSource landingSound;
     public AudioSource jumpSound;
@@ -93,6 +94,13 @@ public class PlayerScript : MonoBehaviour
         {
             Screen.lockCursor = false;
         }
+    }
+	
+    //[RPC]
+    public void Targeted()
+    {
+        //if( !networkView.isMine ) return;
+		warningSound.Play();
     }
 
     [RPC]
