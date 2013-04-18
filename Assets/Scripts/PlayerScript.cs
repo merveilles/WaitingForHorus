@@ -102,6 +102,13 @@ public class PlayerScript : MonoBehaviour
         if( !networkView.isMine ) return;
 		warningSound.Play();
     }
+	
+    [RPC]
+    public void Untargeted()
+    {
+        if( !networkView.isMine ) return;
+		dashSound.Play();
+    }
 
     [RPC]
     public void AddRecoil(Vector3 impulse)

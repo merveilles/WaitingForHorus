@@ -167,8 +167,19 @@ public class PlayerShootingScript : MonoBehaviour
                 }
             }
 
-            if (targets.Count > 0)
-                targets.RemoveAll(x => x.Script == null || !x.Found);
+            if( targets.Count > 0 )
+			{
+				foreach( WeaponIndicatorScript.PlayerData target in targets )
+				{
+               		if( !target.Found ) // Is player in target list dead, or unseen?
+					{
+						target.Script.networkView.RPC( "Untargeted", RPCMode.All );
+					} 
+					else if ( !target.Script == null ) continue; 
+					
+					targets.Remove( target );
+				}
+			}
 		}
     }
 
