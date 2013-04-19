@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -38,13 +39,23 @@ public class SpawnScript : MonoBehaviour
             yield return new WaitForSeconds(1 / 30f);
         Spawn();
     }
+	
+	public GameObject FindPlayer( string GUID )
+	{
+		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player") )
+		{
+			//print ( p.networkView.owner.guid );
+			if( p.networkView.owner.guid == GUID ) return p;
+		}
+		return null;
+	}
 
 	void Spawn()
 	{
         if (ServerScript.Spectating) return;
-
+		
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));
-        Network.Instantiate(PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);
+        Network.Instantiate( PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0 );
     }
 	
 	void OnPlayerDisconnected(NetworkPlayer player) 

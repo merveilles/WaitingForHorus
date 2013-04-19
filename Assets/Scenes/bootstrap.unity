@@ -225,6 +225,7 @@ MonoBehaviour:
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
+  chosenIP: 
 --- !u!114 &502558920
 MonoBehaviour:
   m_ObjectHideFlags: 0

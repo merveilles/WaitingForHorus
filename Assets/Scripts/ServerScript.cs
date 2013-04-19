@@ -16,6 +16,8 @@ using UnityEngine;
 
 public class ServerScript : MonoBehaviour 
 {	
+    public static ServerScript Instance { get; private set; }
+	
 	public const int Port = 31415;
     const int MaxPlayers = 6;
     const string MasterServerUri = "http://api.xxiivv.com/?key=wfh";
@@ -38,7 +40,7 @@ public class ServerScript : MonoBehaviour
     bool connecting;
     string lastStatus;
 	string chosenUsername = "Anon";
-	string chosenIP = "127.0.0.1";
+	public string chosenIP = "127.0.0.1";
 
     INatDevice natDevice;
     Mapping udpMapping, tcpMapping;
@@ -106,7 +108,12 @@ public class ServerScript : MonoBehaviour
         Connected
     }
     public static HostingState hostState = HostingState.WaitingForInput;
-
+	
+    void Awake()
+    {
+        Instance = this;
+    }
+	
     void Start()
     {
         DontDestroyOnLoad(gameObject);

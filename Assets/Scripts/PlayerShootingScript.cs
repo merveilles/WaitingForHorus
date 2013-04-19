@@ -66,12 +66,12 @@ public class PlayerShootingScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (networkView.isMine && Screen.lockCursor && !playerScript.Paused)
+        if ( networkView.isMine && Screen.lockCursor && !playerScript.Paused )
 		{
 			cooldownLeft = Mathf.Max(0, cooldownLeft - Time.deltaTime);
             weaponIndicator.CooldownStep = 1 - Math.Min(Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1);
 
-		    if(cooldownLeft == 0)
+		    if( cooldownLeft == 0 )
             {
                 // Shotgun
                 if (Input.GetButton("Alternate Fire"))
@@ -155,33 +155,43 @@ public class PlayerShootingScript : MonoBehaviour
                         targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps } );
 
                     data.ScreenPosition = screenPos.XY();
-                    var wasLocked = data.Locked;
+                    var wasLocked = data.Locked; 
                     data.SinceInCrosshair += Time.deltaTime;
                     data.Found = true;
 					
                     if ( !wasLocked && data.Locked ) // Send target notification
 					{
                         targetSound.Play();
-						data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.GetComponent<PlayerScript>().owner );
+						data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.networkView.owner );
 					}
                 }
             }
-
-            if( targets.Count > 0 )
-			{
-				for( int i = 0; i < targets.Count; i++ )
-				{
-               		if( !targets[i].Found ) // Is player in target list dead, or unseen?
-					{
-						targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.GetComponent<PlayerScript>().owner );
-						targets.RemoveAt(i);
-					} 
-					if ( !targets[i].Script == null ) targets.RemoveAt(i);
-				}
-			}
+			
+			CheckTargets();
 		}
     }
-
+	
+    void OnApplicationQuit()
+    {
+		CheckTargets();
+	}
+	
+	public void CheckTargets()
+	{
+        if( targets.Count > 0 )
+		{
+			for( int i = 0; i < targets.Count; i++ )
+			{
+           		if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 ) // Is player in target list dead, or unseen? Am I dead?
+				{
+					targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.networkView.owner );
+					targets.RemoveAt(i);
+				} 
+				if ( !targets[i].Script == null ) targets.RemoveAt(i);
+			}
+		}	
+	}
+	
     void DoShot(float spread)
     {
         bulletsLeft -= 1;

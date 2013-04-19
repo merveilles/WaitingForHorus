@@ -202,7 +202,8 @@ public class HealthScript : MonoBehaviour
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = false;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>())
         {
-            r.targets.Clear();
+            r.CheckTargets();
+			r.targets.Clear();
             r.enabled = false;
         }
     }
@@ -215,7 +216,7 @@ public class HealthScript : MonoBehaviour
 
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = true;
-        foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
+        //foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
 
         GetComponent<PlayerScript>().ResetVelocities();
         GetComponent<PlayerShootingScript>().InstantReload();
@@ -247,6 +248,7 @@ public class HealthScript : MonoBehaviour
         networkView.RPC("ToggleSpectate", RPCMode.All, false);
 
         SendMessage("ResetAnimation");
+		SendMessage("ResetWarnings");
 
         transform.position = position;
     }

@@ -63,6 +63,7 @@ public class PlayerScript : MonoBehaviour
 	void Awake() 
 	{
 		targetedBy = new List<NetworkPlayer>();
+		warningSpheres = new List<GameObject>();
 		
         DontDestroyOnLoad(gameObject);
 
@@ -107,9 +108,14 @@ public class PlayerScript : MonoBehaviour
     public void Targeted( NetworkPlayer aggressor )
     {
         if( !networkView.isMine ) return;
-		warningSound.Play();
+		warningSound.Play(); 
+		
+		//string aggressorFixed = ( aggressor.guid != "" ) ? aggressor.guid : ServerScript.Instance.chosenIP;
+		print ( "Targeted by: " + aggressor.guid );
 		
 		GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
+		sphere.transform.parent = gameObject.transform;
+		sphere.GetComponent<Billboard>().target = SpawnScript.Instance.FindPlayer( aggressor.guid ).transform;
 		
 		targetedBy.Add( aggressor );
 		warningSpheres.Add( sphere );
@@ -122,7 +128,18 @@ public class PlayerScript : MonoBehaviour
 		
 		int id = targetedBy.FindIndex( a => a == aggressor );
 		Destroy( warningSpheres[id] );
+		warningSpheres.RemoveAt( id );
 		targetedBy.RemoveAt( id );
+    }
+	
+    public void ResetWarnings()
+    {
+        if( !networkView.isMine ) return;
+		
+		for( int i = 0; i < warningSpheres.Count; i++ ) Destroy( warningSpheres[i] );
+		
+		targetedBy.Clear();
+		warningSpheres.Clear();
     }
 
     [RPC]
