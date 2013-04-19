@@ -26,7 +26,7 @@ public class DayNightCycleScript : MonoBehaviour {
 		
 		// Fix Fog
 		RenderSettings.fogColor = Color.Lerp(daylightFogColor, nightlightFogColor, lerp);
-		RenderSettings.fogDensity = Mathf.Lerp(0.002F, 0.006F, lerp);
+		RenderSettings.fogDensity = Mathf.Lerp(0.00175F, 0.00275F, lerp);
 		
 		// Fix Camera
 		Camera.main.backgroundColor = Color.Lerp(daylightCameraColor, nightlightCameraColor, lerp);

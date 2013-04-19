@@ -22,7 +22,7 @@ Shader "Horus_Base"
         ZTest LEqual
 
 		CGPROGRAM
-		#pragma target 3.0 
+		//#pragma target 3.0 
 		#pragma surface surf Simple
         sampler2D _MainTex;
         
@@ -50,7 +50,7 @@ Shader "Horus_Base"
 		void surf( Input IN, inout SurfaceOutput o ) 
 		{
 			float3 tex = lerp( tex2D( _MainTex, IN.uv_MainTex ).rgb, 1.0, _TexAmount );
-			o.Albedo = tex + _DiffuseAmount;
+			o.Albedo = _Color * tex + _DiffuseAmount;
 		}
 	
 		ENDCG

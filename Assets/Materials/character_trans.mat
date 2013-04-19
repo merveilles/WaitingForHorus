@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: character_trans
-  m_Shader: {fileID: 4800000, guid: 963bf76ee51062049954072cfab279e3, type: 1}
+  m_Shader: {fileID: 4800000, guid: ba30d7897889d90408b9c37484f0708b, type: 3}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -15,7 +15,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 1}
+          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -23,6 +23,14 @@ Material:
         first:
           name: _Shininess
         second: .699999988
+      data:
+        first:
+          name: _DiffuseAmount
+        second: .25
+      data:
+        first:
+          name: _TexAmount
+        second: .25
     m_Colors:
       data:
         first:

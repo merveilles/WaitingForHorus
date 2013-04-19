@@ -137,7 +137,7 @@ public class ServerScript : MonoBehaviour
     {
         // Automatic host/connect logic follows
 
-        switch (hostState)
+        switch( hostState )
         {
             case HostingState.ReadyToListServers:
                 lastStatus = "Listing servers...";
@@ -146,16 +146,16 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.WaitingForServers:
-                if (!readResponse.HasValue && !readResponse.InError)
+                if( !readResponse.HasValue && !readResponse.InError )
                     break;
 
-                var shouldHost = readResponse.Value.Servers.Sum(x => MaxPlayers - x.Players) < MaxPlayers / 2f;
+                var shouldHost = readResponse.Value.Servers.Sum( x => MaxPlayers - x.Players ) < MaxPlayers / 2f;
 
-                Debug.Log("Should host? " + shouldHost);
+                /*Debug.Log("Should host? " + shouldHost);
 
                 if (shouldHost && !cantNat && !couldntCreateServer)
                     hostState = HostingState.ReadyToDiscoverNat;
-                else
+                else*/
                     hostState = HostingState.ReadyToChooseServer;
                 break;
 
@@ -167,23 +167,23 @@ public class ServerScript : MonoBehaviour
                 }
 
                 currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers);
-                if (currentServer == null)
+                if( currentServer == null )
                 {
-                    if (couldntCreateServer || cantNat)
-                    {
-                        Debug.Log("Tried to host, failed, tried to find server, failed. Returning to interactive state.");
+                    //if( couldntCreateServer ) //|| cantNat
+                    //{
+                        Debug.Log( "Tried to find server, failed. Returning to interactive state." );
                         readResponse = null;
                         lastStatus = "No server found.";
                         hostState = HostingState.WaitingForInput;
-                    }
-                    else
-                        hostState = HostingState.ReadyToDiscoverNat;
+                    //}
+                   // else
+                    //    hostState = HostingState.ReadyToDiscoverNat;
                 }
                 else
                     hostState = HostingState.ReadyToConnect;
                 break;
 
-            case HostingState.ReadyToDiscoverNat:
+            /*case HostingState.ReadyToDiscoverNat:
                 lastStatus = "Looking for UPnP...";
                 if (!natDiscoveryStarted || !wanIp.HasValue)
                 {
@@ -238,7 +238,7 @@ public class ServerScript : MonoBehaviour
                 lastStatus = "Determining IP...";
                 if (wanIp.HasValue)
                     hostState = HostingState.ReadyToHost;
-                break;
+                break;*/
 
             case HostingState.ReadyToHost:
                 lastStatus = "Creating server...";
@@ -260,7 +260,7 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.Hosting:
-                if (!Network.isServer)
+                if( !Network.isServer )
                 {
                     Debug.Log("Hosting but is not the server...?");
                     break;
@@ -282,7 +282,7 @@ public class ServerScript : MonoBehaviour
 
             case HostingState.ReadyToConnect:
                 lastStatus = "Connecting...";
-                if (Connect())
+                if( Connect() )
                     hostState = HostingState.Connected;
                 else
                 {
@@ -356,7 +356,7 @@ public class ServerScript : MonoBehaviour
                     GUILayout.Label(lastStatus, TextStyle);
                     GUI.enabled = hostState == HostingState.WaitingForInput && chosenUsername.Trim().Length != 0;
 				
-					chosenIP = GUILayout.TextField( chosenIP );
+					//chosenIP = GUILayout.TextField( chosenIP );
 					//currentServer.Ip = chosenIP;
 					//GUILayout.Label("IP");
 				
@@ -370,7 +370,7 @@ public class ServerScript : MonoBehaviour
                     {
                         PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
-                        hostState = HostingState.ReadyToConnect;
+                        hostState = HostingState.ReadyToListServers;
                         lastStatus = "";
                     }
                     GUI.enabled = true;
@@ -482,7 +482,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer( MaxPlayers, Port, true );
         if (result == NetworkConnectionError.NoError)
         {
-            currentServer = new ServerInfo { Ip = "127.0.0.1", Map = RoundScript.Instance.CurrentLevel, Players = 1 }; //wanIp.Value
+            currentServer = new ServerInfo { Ip = Network.player.guid, Map = RoundScript.Instance.CurrentLevel, Players = 1 }; //wanIp.Value
 
             TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
             {
@@ -536,8 +536,8 @@ public class ServerScript : MonoBehaviour
     bool Connect()
     {
         lastStatus = "Connecting...";
-        Debug.Log("Connecting to " + chosenIP + " (id = " + chosenIP + ")");
-        var result = Network.Connect( chosenIP );
+        Debug.Log("Connecting to " + currentServer.Ip + " (id = " + currentServer.Id + ")"); //chosenIP
+        var result = Network.Connect( currentServer.Ip );
         if (result != NetworkConnectionError.NoError)
         {
             lastStatus = "Failed.";
