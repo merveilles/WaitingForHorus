@@ -22,7 +22,7 @@ public class ServerScript : MonoBehaviour
     const int MaxPlayers = 6;
     const string MasterServerUri = "http://api.xxiivv.com/?key=wfh";
 
-    public static readonly string[] AllowedLevels = { "pi_mar", "pi_rah" }; //, "pi_gho"
+    public static readonly string[] AllowedLevels = { "pi_mar", "pi_rah", "pi_gho" };
 
     public NetworkPeerType PeerType;
 

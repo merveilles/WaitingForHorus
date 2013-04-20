@@ -216,7 +216,7 @@ public class HealthScript : MonoBehaviour
 
         foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = true;
-        //foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
+        foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
 
         GetComponent<PlayerScript>().ResetVelocities();
         GetComponent<PlayerShootingScript>().InstantReload();
