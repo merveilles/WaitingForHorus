@@ -8,6 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: World
   m_Shader: {fileID: 4800000, guid: ba30d7897889d90408b9c37484f0708b, type: 3}
+  m_ShaderKeywords: []
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -88,4 +89,4 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .972549021, g: .901497543, b: .850503623, a: 1}
+        second: {r: .944344342, g: .815518737, b: .7811566, a: 1}
