@@ -27,9 +27,10 @@ ModelImporter:
     4300002: Cube
     4300004: Cube.4+Tube+Boole+Cylinder-Null+Cylinder.3
     4300006: Terrain
+    6400000: //RootNode
     9500000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
@@ -47,12 +48,10 @@ ModelImporter:
     globalScale: .0599999987
     meshCompression: 0
     addColliders: 0
-    importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
-    weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
