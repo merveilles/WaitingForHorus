@@ -14,7 +14,7 @@ public class EffectsScript : MonoBehaviour
     public GameObject explosionHitPrefab;
     public GameObject areaExplosionPrefab;
     public GameObject hitConePrefab;
-
+	
     void Awake()
     {
         Instance = this;
@@ -28,7 +28,10 @@ public class EffectsScript : MonoBehaviour
     [RPC]
     void Explosion(Vector3 position, Quaternion rotation)
     {
-        Instantiate(explosionPrefab, position, rotation);
+        GameObject exp = (GameObject) Instantiate(explosionPrefab, position, rotation);
+			
+			//sounds disabled? don't play this one then
+		exp.GetComponent<AudioSource>().mute = !GlobalSoundsScript.soundEnabled;
 
         var count = RandomHelper.Random.Next(1, 4);
         for (int i = 0; i < count; i++)

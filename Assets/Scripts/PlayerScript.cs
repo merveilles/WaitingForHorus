@@ -108,7 +108,10 @@ public class PlayerScript : MonoBehaviour
     public void Targeted( NetworkPlayer aggressor )
     {
         if( !networkView.isMine ) return;
-		warningSound.Play(); 
+		
+		if(GlobalSoundsScript.soundEnabled) {
+		   warningSound.Play(); 
+		}
 		
 		//string aggressorFixed = ( aggressor.guid != "" ) ? aggressor.guid : ServerScript.Instance.chosenIP;
 		print ( "Targeted by: " + aggressor.guid );
@@ -293,7 +296,11 @@ public class PlayerScript : MonoBehaviour
                 fallingVelocity.y = jumpVelocity;
                 characterAnimation.Play(currentAnim = "jump");
                 playJumpSound = true;
-                jumpSound.Play();
+				
+				if(GlobalSoundsScript.soundEnabled) {
+	                jumpSound.Play();
+				}
+				
                 sinceNotGrounded = 0.25f;
             }
             else if(dashCooldown <= 0)
@@ -306,7 +313,10 @@ public class PlayerScript : MonoBehaviour
                     characterAnimation.Rewind("jump");
                 characterAnimation.Play(currentAnim = "jump");
                 playDashSound = true;
-                dashSound.Play();
+				
+				if(GlobalSoundsScript.soundEnabled) {
+                	dashSound.Play();
+				}
 
                 var dashDirection = inputVelocity.normalized;
                 if (dashDirection == Vector3.zero)
@@ -397,8 +407,11 @@ public class PlayerScript : MonoBehaviour
         // move!
         controller.Move((smoothFallingVelocity + smoothedInputVelocity + recoilVelocity) * Time.deltaTime);
 
-        if (sinceNotGrounded > 0.25f && controller.isGrounded)
-            landingSound.Play();
+        if (sinceNotGrounded > 0.25f && controller.isGrounded) {
+			if(GlobalSoundsScript.soundEnabled) {
+            	landingSound.Play();
+			}
+		}
 
         if (controller.isGrounded)
             recoilVelocity.y = 0;
@@ -438,8 +451,8 @@ public class PlayerScript : MonoBehaviour
             if (!iPosition.Start(pPosition - transform.position))
                 transform.position = pPosition;
 
-            if (playDashSound) dashSound.Play();
-            if (playJumpSound) jumpSound.Play();
+            if (playDashSound && GlobalSoundsScript.soundEnabled) dashSound.Play();
+            if (playJumpSound && GlobalSoundsScript.soundEnabled) jumpSound.Play();
 
             lastNetworkFramePosition = pPosition;
         }

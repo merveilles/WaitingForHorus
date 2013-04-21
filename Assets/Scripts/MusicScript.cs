@@ -28,6 +28,13 @@ public class MusicScript : MonoBehaviour
         {
             audio.mute = !audio.mute;
         }
+		
+		if(Input.GetKeyDown("n"))
+        {
+            GlobalSoundsScript.soundEnabled = !GlobalSoundsScript.soundEnabled;
+        }
+		
+		
 	}
 
     void OnLevelWasLoaded(int levelIndex)

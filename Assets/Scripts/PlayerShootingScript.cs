@@ -120,7 +120,11 @@ public class PlayerShootingScript : MonoBehaviour
                 if (bulletsLeft != BurstCount && Input.GetButton("Reload"))
                 {
                     bulletsLeft = BurstCount;
-                    reloadSound.Play();
+					
+					if(GlobalSoundsScript.soundEnabled) {
+                    	reloadSound.Play();
+					}
+					
                     cooldownLeft += ReloadTime;
                 }
             }
@@ -128,7 +132,10 @@ public class PlayerShootingScript : MonoBehaviour
             if (bulletsLeft <= 0) 
             {
                 bulletsLeft = BurstCount;
-                reloadSound.Play();
+				
+				if(GlobalSoundsScript.soundEnabled) {
+                	reloadSound.Play();
+				}
             }
 
 		    var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
@@ -160,8 +167,11 @@ public class PlayerShootingScript : MonoBehaviour
                     data.Found = true;
 					
                     if ( !wasLocked && data.Locked ) // Send target notification
-					{
-                        targetSound.Play();
+					{	
+						if(GlobalSoundsScript.soundEnabled) {
+                        	targetSound.Play();
+						}
+						
 						data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.networkView.owner );
 					}
                 }
@@ -241,7 +251,10 @@ public class PlayerShootingScript : MonoBehaviour
     {
         BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
         bullet.Player = player;
-        burstGunSound.Play();
+		
+		if(GlobalSoundsScript.soundEnabled) {
+        	burstGunSound.Play();
+		}
     }
 
     [RPC]
@@ -263,6 +276,10 @@ public class PlayerShootingScript : MonoBehaviour
         bullet.speed = 400;
         bullet.recoil = 1;
 
-        if (doSound) pepperGunSound.Play();
+        if (doSound) {
+			if(GlobalSoundsScript.soundEnabled) {
+				pepperGunSound.Play();
+			}
+		}
     }
 }

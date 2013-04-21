@@ -4,6 +4,8 @@ using System.Collections;
 public class GlobalSoundsScript : MonoBehaviour 
 {
     static GlobalSoundsScript Instance;
+	
+	public static bool soundEnabled = true;
 
     public AudioSource buttonPressSound;
 
@@ -16,4 +18,5 @@ public class GlobalSoundsScript : MonoBehaviour
     {
         Instance.buttonPressSound.Play();
     }
+	
 }
