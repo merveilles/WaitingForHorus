@@ -121,9 +121,8 @@ public class PlayerShootingScript : MonoBehaviour
                 {
                     bulletsLeft = BurstCount;
 					
-					if(GlobalSoundsScript.soundEnabled) {
+					if( GlobalSoundsScript.soundEnabled )
                     	reloadSound.Play();
-					}
 					
                     cooldownLeft += ReloadTime;
                 }
@@ -168,9 +167,8 @@ public class PlayerShootingScript : MonoBehaviour
 					
                     if ( !wasLocked && data.Locked ) // Send target notification
 					{	
-						if(GlobalSoundsScript.soundEnabled) {
+						if( GlobalSoundsScript.soundEnabled )
                         	targetSound.Play();
-						}
 						
 						data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.networkView.owner );
 					}

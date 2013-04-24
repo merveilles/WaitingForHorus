@@ -22,13 +22,14 @@ public class ServerScript : MonoBehaviour
     const int MaxPlayers = 6;
     const string MasterServerUri = "http://api.xxiivv.com/?key=wfh";
 
-    public static readonly string[] AllowedLevels = { "pi_set" }; //"pi_mar", "pi_rah", "pi_gho", 
+    public static readonly string[] AllowedLevels = { "pi_mar", "pi_rah", "pi_set" }; //"pi_mar", "pi_rah", "pi_gho", 
 
     public NetworkPeerType PeerType;
 
     public bool LocalMode;
 
     public GUISkin Skin;
+	public string BuildVersion;
 
     static JsonWriter jsonWriter;
     static JsonReader jsonReader;
@@ -80,10 +81,11 @@ public class ServerScript : MonoBehaviour
         public string Map;
         public int Id;
         public bool ConnectionFailed;
+		public string BuildVer;
 
         public object Packed
         {
-            get { return new { id = Id, ip = Ip, players = Players, map = Map }; }
+            get { return new { id = Id, ip = Ip, players = Players, map = Map, v = BuildVer }; }
         }
 
         public override string ToString()
@@ -166,7 +168,7 @@ public class ServerScript : MonoBehaviour
                     return;
                 }
 
-                currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers);
+                currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers ); //&& x.BuildVer == BuildVersion
                 if( currentServer == null )
                 {
                     //if( couldntCreateServer ) //|| cantNat
@@ -428,9 +430,8 @@ public class ServerScript : MonoBehaviour
 
             using (var client = new WebClient())
             {
-                var result = jsonWriter.Write(currentServer.Packed);
-
-                Debug.Log("server json : " + result);
+                var result = jsonWriter.Write( currentServer.Packed );
+                Debug.Log( "server json : " + result );
 
                 // then add new server
                 var nvc = new NameValueCollection { { "value", result } };
@@ -482,7 +483,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer( MaxPlayers, Port, true );
         if (result == NetworkConnectionError.NoError)
         {
-            currentServer = new ServerInfo { Ip = Network.player.guid, Map = RoundScript.Instance.CurrentLevel, Players = 1 }; //wanIp.Value
+            currentServer = new ServerInfo { Ip = Network.player.guid, Map = RoundScript.Instance.CurrentLevel, Players = 1, BuildVer = BuildVersion }; //wanIp.Value
 
             TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
             {

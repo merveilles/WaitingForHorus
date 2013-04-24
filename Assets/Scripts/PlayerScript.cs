@@ -107,18 +107,19 @@ public class PlayerScript : MonoBehaviour
     [RPC]
     public void Targeted( NetworkPlayer aggressor )
     {
-        if( !networkView.isMine ) return;
+        if( !networkView.isMine || aggressor == null ) return;
 		
-		if(GlobalSoundsScript.soundEnabled) {
+		if( GlobalSoundsScript.soundEnabled )
 		   warningSound.Play(); 
-		}
 		
-		//string aggressorFixed = ( aggressor.guid != "" ) ? aggressor.guid : ServerScript.Instance.chosenIP;
-		print ( "Targeted by: " + aggressor.guid );
+		string aggressorFixed = ( aggressor.guid != "" || ServerScript.Instance.chosenIP != "0" ) ? aggressor.guid : ServerScript.Instance.chosenIP;
+		print ( "Targeted by: " + aggressorFixed );
 		
 		GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
 		sphere.transform.parent = gameObject.transform;
-		sphere.GetComponent<Billboard>().target = SpawnScript.Instance.FindPlayer( aggressor.guid ).transform;
+		
+		Transform aggressorTransform = SpawnScript.Instance.FindPlayer( aggressorFixed ).transform;
+		if( aggressorTransform != null ) sphere.GetComponent<Billboard>().target = SpawnScript.Instance.FindPlayer( aggressorFixed ).transform;
 		
 		targetedBy.Add( aggressor );
 		warningSpheres.Add( sphere );

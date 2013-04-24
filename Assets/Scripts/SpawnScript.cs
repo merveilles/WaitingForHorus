@@ -42,17 +42,17 @@ public class SpawnScript : MonoBehaviour
 	
 	public GameObject FindPlayer( string GUID )
 	{
-		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player") )
+		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
 		{
-			//print ( p.networkView.owner.guid );
-			if( p.networkView.owner.guid == GUID ) return p;
+			string aggressorFixed = ( p.networkView.owner.guid != "" ) ? p.networkView.owner.guid : ServerScript.Instance.chosenIP;
+			if( aggressorFixed == GUID ) return p;
 		}
 		return null;
 	}
 
 	void Spawn()
 	{
-        if (ServerScript.Spectating) return;
+        if( ServerScript.Spectating ) return;
 		
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));
         Network.Instantiate( PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0 );

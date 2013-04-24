@@ -81,6 +81,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 11400010, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: songs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -121,7 +125,20 @@ Prefab:
       propertyPath: areaExplosionPrefab
       value: 
       objectReference: {fileID: 100000, guid: 1aa3b4ef5d08ba648bdc957a48c7b97a, type: 2}
-    m_RemovedComponents: []
+    - target: {fileID: 11400010, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: songs.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 07f28d2eb73974f818f7786a07d023e4, type: 3}
+    - target: {fileID: 11400010, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: songs.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: eae7aa79cd6b5496385d4d94456786df, type: 3}
+    - target: {fileID: 11400010, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: songs.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 4edb9545d9558475e95f185be870171c, type: 3}
+    m_RemovedComponents:
+    - {fileID: 11400000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
   m_RootGameObject: {fileID: 210913190}
   m_IsPrefabParent: 0
@@ -225,6 +242,7 @@ MonoBehaviour:
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
+  BuildVersion: b9
   chosenIP: 
 --- !u!114 &502558920
 MonoBehaviour:
@@ -747,7 +765,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 1155878595}
   - 82: {fileID: 1155878596}
-  - 114: {fileID: 1155878597}
   m_Layer: 0
   m_Name: Music
   m_TagString: Untagged
@@ -823,21 +840,6 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
---- !u!114 &1155878597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400000, guid: 2dd6de682d9c2430d81417f49e0625c4,
-    type: 2}
-  m_PrefabInternal: {fileID: 77963818}
-  m_GameObject: {fileID: 1155878594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cacf6fa76c4656a4f9d8c5b02e217eae, type: 3}
-  m_Name: 
-  songs:
-  - {fileID: 8300000, guid: 4edb9545d9558475e95f185be870171c, type: 3}
-  - {fileID: 8300000, guid: eae7aa79cd6b5496385d4d94456786df, type: 3}
-  - {fileID: 8300000, guid: 07f28d2eb73974f818f7786a07d023e4, type: 3}
 --- !u!1 &1198184569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,6 +1182,10 @@ Prefab:
       propertyPath: m_ViewID.m_Type
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: BuildVersion
+      value: b9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
   m_RootGameObject: {fileID: 502558917}
@@ -1248,6 +1254,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 2049539268}
   - 114: {fileID: 2049539269}
+  - 82: {fileID: 2049539270}
   m_Layer: 0
   m_Name: Global Sounds
   m_TagString: Untagged
@@ -1279,6 +1286,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c6e7fc93ef3f3489c5dd2e4ff57774, type: 3}
   m_Name: 
   buttonPressSound: {fileID: 1271378267}
+  songs:
+  - {fileID: 8300000, guid: 07f28d2eb73974f818f7786a07d023e4, type: 3}
+  - {fileID: 8300000, guid: eae7aa79cd6b5496385d4d94456786df, type: 3}
+  - {fileID: 8300000, guid: 4edb9545d9558475e95f185be870171c, type: 3}
+--- !u!82 &2049539270
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2049539267}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
 --- !u!1 &2109275702
 GameObject:
   m_ObjectHideFlags: 0
