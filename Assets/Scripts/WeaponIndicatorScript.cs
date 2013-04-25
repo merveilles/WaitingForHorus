@@ -17,6 +17,7 @@ public class WeaponIndicatorScript : MonoBehaviour
         public Vector2 ScreenPosition;
         public float SinceInCrosshair;
         public bool Found;
+        public bool WasLocked;
     
         public bool Locked
         {

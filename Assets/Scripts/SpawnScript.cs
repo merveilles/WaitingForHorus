@@ -39,16 +39,6 @@ public class SpawnScript : MonoBehaviour
             yield return new WaitForSeconds(1 / 30f);
         Spawn();
     }
-	
-	public GameObject FindPlayer( string GUID )
-	{
-		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
-		{
-			string aggressorFixed = ( p.networkView.owner.guid != "" ) ? p.networkView.owner.guid : ServerScript.Instance.chosenIP;
-			if( aggressorFixed == GUID ) return p;
-		}
-		return null;
-	}
 
 	void Spawn()
 	{

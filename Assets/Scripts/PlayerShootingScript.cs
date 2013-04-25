@@ -157,15 +157,14 @@ public class PlayerShootingScript : MonoBehaviour
                 if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
                 {
                     WeaponIndicatorScript.PlayerData data;
-                    if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null)
-                        targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps } );
+                    if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null )
+                        targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps, WasLocked = false } );
 
                     data.ScreenPosition = screenPos.XY();
-                    var wasLocked = data.Locked; 
                     data.SinceInCrosshair += Time.deltaTime;
                     data.Found = true;
 					
-                    if ( !wasLocked && data.Locked ) // Send target notification
+                    if ( !data.WasLocked && data.Locked ) // Send target notification
 					{	
 						if( GlobalSoundsScript.soundEnabled )
                         	targetSound.Play();
@@ -190,12 +189,12 @@ public class PlayerShootingScript : MonoBehaviour
 		{
 			for( int i = 0; i < targets.Count; i++ )
 			{
-           		if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 ) // Is player in target list dead, or unseen? Am I dead?
-				{
+				if( targets[i].WasLocked && !targets[i].Found ) 
 					targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.networkView.owner );
+				targets[i].WasLocked = targets[i].Locked;
+				
+           		if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 || targets[i].Script == null ) // Is player in target list dead, or unseen? Am I dead?
 					targets.RemoveAt(i);
-				} 
-				if ( !targets[i].Script == null ) targets.RemoveAt(i);
 			}
 		}	
 	}

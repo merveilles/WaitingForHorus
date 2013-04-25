@@ -112,28 +112,28 @@ public class PlayerScript : MonoBehaviour
 		if( GlobalSoundsScript.soundEnabled )
 		   warningSound.Play(); 
 		
-		string aggressorFixed = ( aggressor.guid != "" || ServerScript.Instance.chosenIP != "0" ) ? aggressor.guid : ServerScript.Instance.chosenIP;
-		print ( "Targeted by: " + aggressorFixed );
+		print( "Targeted by:" + PlayerRegistry.For( aggressor ).Username );
 		
 		GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
 		sphere.transform.parent = gameObject.transform;
+		sphere.GetComponent<Billboard>().target = PlayerRegistry.For( aggressor ).Location;
 		
-		Transform aggressorTransform = SpawnScript.Instance.FindPlayer( aggressorFixed ).transform;
-		if( aggressorTransform != null ) sphere.GetComponent<Billboard>().target = SpawnScript.Instance.FindPlayer( aggressorFixed ).transform;
-		
-		targetedBy.Add( aggressor );
 		warningSpheres.Add( sphere );
     }
 	
     [RPC]
     public void Untargeted( NetworkPlayer aggressor )
     {
-        if( !networkView.isMine ) return;
+        if( !networkView.isMine || aggressor == null  ) return;
 		
-		int id = targetedBy.FindIndex( a => a == aggressor );
+		print( "Untargeted by:" + PlayerRegistry.For( aggressor ).Username );
+		
+		int id = -1;
+		id = warningSpheres.FindIndex( a => a.networkView.owner == aggressor );
+		if( id == -1 ) return;
+		
 		Destroy( warningSpheres[id] );
 		warningSpheres.RemoveAt( id );
-		targetedBy.RemoveAt( id );
     }
 	
     public void ResetWarnings()
@@ -141,8 +141,6 @@ public class PlayerScript : MonoBehaviour
         if( !networkView.isMine ) return;
 		
 		for( int i = 0; i < warningSpheres.Count; i++ ) Destroy( warningSpheres[i] );
-		
-		targetedBy.Clear();
 		warningSpheres.Clear();
     }
 
