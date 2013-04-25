@@ -112,7 +112,7 @@ public class PlayerScript : MonoBehaviour
 		if( GlobalSoundsScript.soundEnabled )
 		   warningSound.Play(); 
 		
-		print( "Targeted by:" + PlayerRegistry.For( aggressor ).Username );
+		print( "Targeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
 		GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
 		sphere.transform.parent = gameObject.transform;
@@ -126,10 +126,10 @@ public class PlayerScript : MonoBehaviour
     {
         if( !networkView.isMine || aggressor == null  ) return;
 		
-		print( "Untargeted by:" + PlayerRegistry.For( aggressor ).Username );
+		print( "Untargeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
 		int id = -1;
-		id = warningSpheres.FindIndex( a => a.networkView.owner == aggressor );
+		id = warningSpheres.FindIndex( a => a.GetComponent<Billboard>().target == PlayerRegistry.For( aggressor ).Location );
 		if( id == -1 ) return;
 		
 		Destroy( warningSpheres[id] );
@@ -138,7 +138,7 @@ public class PlayerScript : MonoBehaviour
 	
     public void ResetWarnings()
     {
-        if( !networkView.isMine ) return;
+        if( !networkView.isMine ) return; 
 		
 		for( int i = 0; i < warningSpheres.Count; i++ ) Destroy( warningSpheres[i] );
 		warningSpheres.Clear();

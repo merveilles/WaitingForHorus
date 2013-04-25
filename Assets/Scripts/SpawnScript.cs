@@ -20,7 +20,7 @@ public class SpawnScript : MonoBehaviour
 
 	void OnServerInitialized() 
     {
-        Network.Instantiate(PlayerRegistryPrefab, Vector3.zero, Quaternion.identity, 0);
+        Network.Instantiate( PlayerRegistryPrefab, Vector3.zero, Quaternion.identity, 0 );
 		Spawn();
 	}
 
@@ -44,8 +44,9 @@ public class SpawnScript : MonoBehaviour
 	{
         if( ServerScript.Spectating ) return;
 		
-        TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer(chosenUsername));
         Network.Instantiate( PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0 );
+        TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer( chosenUsername ) );
+		//player.name = GameObject player =
     }
 	
 	void OnPlayerDisconnected(NetworkPlayer player) 

@@ -76,8 +76,12 @@ class PlayerRegistry : MonoBehaviour
             Debug.Log("Tried to register player " + player + " but was already registered. Current username : " + registry[player].Username + " | wanted username : " + username + " (removing...)");
             registry.Remove(player);
         }
+		
+		Transform location = null;
+		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
+			if( p.networkView.owner == player ) location = p.transform;
 
-        registry.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating });
+        registry.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating, Location = location });
         Debug.Log("Registered other player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
     }
 
