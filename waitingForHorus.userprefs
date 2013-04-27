@@ -1,17 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerRegistry.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ServerScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\ServerScript.cs" Line="154" Column="1" />
-      <File FileName="Assets\Scripts\PlayerRegistry.cs" Line="84" Column="142" />
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="129" Column="26" />
-      <File FileName="Assets\Scripts\SpawnScript.cs" Line="48" Column="142" />
+      <File FileName="Assets\Scripts\ServerScript.cs" Line="25" Column="62" />
+      <File FileName="..\..\..\..\..\Atelier\Assets\Scripts\Heart.cs" Line="19" Column="2" />
+      <File FileName="Assets\Scripts\PlayerRegistry.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\SpawnScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\PlayerShootingScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\HealthScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GlobalSoundsScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ChatScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\WeaponIndicatorScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Billboard.cs" Line="1" Column="1" />
+      <File FileName="..\..\..\..\..\Atelier\Assets\Scripts\Predation.cs" Line="34" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

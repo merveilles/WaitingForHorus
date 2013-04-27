@@ -43,11 +43,11 @@ Material:
       data:
         first:
           name: _DiffuseAmount
-        second: .0507246368
+        second: .152173907
       data:
         first:
           name: _TexAmount
-        second: .275362313
+        second: .304347843
       data:
         first:
           name: _SpecBoost
@@ -88,4 +88,4 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .941555083, b: .829978108, a: 1}
+        second: {r: 1, g: .920916796, b: .850778639, a: 1}
