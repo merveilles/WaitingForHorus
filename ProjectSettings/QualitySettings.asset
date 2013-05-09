@@ -51,7 +51,7 @@ QualitySettings:
     shadowResolution: 0
     shadowProjection: 1
     shadowCascades: 1
-    shadowDistance: 500
+    shadowDistance: 400
     blendWeights: 4
     textureQuality: 0
     anisotropicTextures: 2
@@ -67,10 +67,10 @@ QualitySettings:
     name: Horus
     pixelLightCount: 4
     shadows: 2
-    shadowResolution: 1
+    shadowResolution: 2
     shadowProjection: 1
     shadowCascades: 4
-    shadowDistance: 750
+    shadowDistance: 400
     blendWeights: 4
     textureQuality: 0
     anisotropicTextures: 2

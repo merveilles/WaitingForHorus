@@ -1,8 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ServerScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ChatScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\ServerScript.cs" Line="25" Column="63" />
+      <File FileName="Assets\Scripts\ServerScript.cs" Line="25" Column="11" />
+      <File FileName="Assets\Scripts\ChatScript.cs" Line="196" Column="51" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
