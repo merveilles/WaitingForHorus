@@ -1,9 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ChatScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader">
     <Files>
-      <File FileName="Assets\Scripts\ServerScript.cs" Line="25" Column="11" />
-      <File FileName="Assets\Scripts\ChatScript.cs" Line="196" Column="51" />
+      <File FileName="Assets\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" Line="10" Column="70" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

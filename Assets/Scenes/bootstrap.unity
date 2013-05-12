@@ -1196,6 +1196,14 @@ Prefab:
       propertyPath: AllowedLevels.Array.data[0]
       value: pi_ven
       objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: AllowedLevels.Array.data[1]
+      value: pi_set
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: AllowedLevels.Array.data[2]
+      value: pi_mar
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
   m_RootGameObject: {fileID: 502558917}
