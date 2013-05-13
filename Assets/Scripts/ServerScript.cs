@@ -125,7 +125,7 @@ public class ServerScript : MonoBehaviour
         jsonWriter = new JsonWriter(new DataWriterSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
         jsonReader = new JsonReader(new DataReaderSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
 
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = -1;
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
         WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
 

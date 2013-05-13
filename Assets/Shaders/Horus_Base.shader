@@ -19,7 +19,7 @@ Shader "Horus_Base"
 
         Cull Back
         ZWrite On
-        ZTest LEqual
+        ZTest LEqual   
 
 		CGPROGRAM
 		//#pragma target 3.0 
@@ -54,7 +54,7 @@ Shader "Horus_Base"
 		}
 	
 		ENDCG
-	} 
-	    
+	}
+	
 	Fallback "Diffuse"
 }

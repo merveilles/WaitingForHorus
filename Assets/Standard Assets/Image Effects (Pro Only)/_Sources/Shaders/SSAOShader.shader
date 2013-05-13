@@ -270,7 +270,7 @@ half4 frag( v2f i ) : COLOR
 	half4 c = tex2D (_MainTex, i.uv[0]);
 	half ao = tex2D (_SSAO, i.uv[1]).r;
 	ao = pow (ao, _Params.w);
-	c.rgb *= ao;
+	c.rgb = ao;
 	return c;
 }
 ENDCG

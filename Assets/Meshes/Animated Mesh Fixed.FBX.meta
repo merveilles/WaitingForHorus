@@ -1,7 +1,94 @@
 fileFormatVersion: 2
 guid: 4e8507c3ff89947f784b9548914eebdd
 ModelImporter:
+  serializedVersion: 15
   fileIDToRecycleName:
+    100000: //RootNode
+    100002: flag_flag001
+    100004: flag_pole001
+    100006: healthsphere_rear
+    100008: healthsphere_right
+    100010: healthsphere_left
+    100012: Box002
+    100014: Canon001
+    100016: flag_flag
+    100018: flag_pole
+    100020: Canon
+    100022: Cube
+    100024: MECHA_Pipes_21_Tunes001
+    100026: MECHA_Pipes_022
+    100028: MECHA_CellCarrier_Mini_cells_mini002
+    100030: MECHA_CellCarrier_Mini002
+    100032: MECHA_Pipes_023
+    100034: MECHA_Shoulder_BR_Leg_BR001
+    100036: MECHA_Shoulder_BR001
+    100038: MECHA_Shoulder_FR_Leg_FR001
+    100040: MECHA_Shoulder_FR001
+    100042: MECHA_Shield
+    100044: MECHA_CellCarrier_C_cell_C
+    100046: MECHA_CellCarrier_C
+    100048: MECHA_Shoulder_FR_Leg_FR
+    100050: MECHA_Shoulder_FR
+    100052: MECHA_Shoulder_BR_Leg_BR
+    100054: MECHA_Shoulder_BR
+    100056: MECHA_CellCarrier_Mini_cells_mini
+    100058: MECHA_CellCarrier_Mini
+    100060: MECHA_Pipes_2
+    100062: MECHA_Pipes_21_Tunes
+    100064: MECHA_Pipes_21
+    100066: MECHA_Head_Headpiece2
+    100068: MECHA_Head_Headpiece1
+    100070: MECHA_Head
+    100072: Box001
+    100074: MECHA_Head001
+    400000: //RootNode
+    400002: flag_flag001
+    400004: flag_pole001
+    400006: healthsphere_rear
+    400008: healthsphere_right
+    400010: healthsphere_left
+    400012: Box002
+    400014: Canon001
+    400016: flag_flag
+    400018: flag_pole
+    400020: Canon
+    400022: Cube
+    400024: MECHA_Pipes_21_Tunes001
+    400026: MECHA_Pipes_022
+    400028: MECHA_CellCarrier_Mini_cells_mini002
+    400030: MECHA_CellCarrier_Mini002
+    400032: MECHA_Pipes_023
+    400034: MECHA_Shoulder_BR_Leg_BR001
+    400036: MECHA_Shoulder_BR001
+    400038: MECHA_Shoulder_FR_Leg_FR001
+    400040: MECHA_Shoulder_FR001
+    400042: MECHA_Shield
+    400044: MECHA_CellCarrier_C_cell_C
+    400046: MECHA_CellCarrier_C
+    400048: MECHA_Shoulder_FR_Leg_FR
+    400050: MECHA_Shoulder_FR
+    400052: MECHA_Shoulder_BR_Leg_BR
+    400054: MECHA_Shoulder_BR
+    400056: MECHA_CellCarrier_Mini_cells_mini
+    400058: MECHA_CellCarrier_Mini
+    400060: MECHA_Pipes_2
+    400062: MECHA_Pipes_21_Tunes
+    400064: MECHA_Pipes_21
+    400066: MECHA_Head_Headpiece2
+    400068: MECHA_Head_Headpiece1
+    400070: MECHA_Head
+    400072: Box001
+    400074: MECHA_Head001
+    2300000: Box002
+    2300002: flag_flag
+    2300004: flag_pole
+    2300006: Canon
+    2300008: Cube
+    3300000: Box002
+    3300002: flag_flag
+    3300004: flag_pole
+    3300006: Canon
+    3300008: Cube
     4300000: MECHA_Head001
     4300002: Cube
     4300004: Canon
@@ -14,64 +101,191 @@ ModelImporter:
     4300018: healthsphere_rear
     4300020: flag_pole001
     4300022: flag_flag001
-    7400000: Take 001 //// Animated Mesh Fixed
-    7400002: idle //// Animated Mesh Fixed
-    7400004: run //// Animated Mesh Fixed
-    7400006: strafeLeft //// Animated Mesh Fixed
-    7400008: strafeRight //// Animated Mesh Fixed
-    7400010: jump //// Animated Mesh Fixed
-    7400012: land //// Animated Mesh Fixed
-    7400014: backward //// Animated Mesh Fixed
-  serializedVersion: 10
+    7400000: Take 001
+    7400002: idle
+    7400004: run
+    7400006: strafeLeft
+    7400008: strafeRight
+    7400010: jump
+    7400012: land
+    7400014: backward
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: flag_flag001
+    13700002: flag_pole001
+    13700004: healthsphere_rear
+    13700006: healthsphere_right
+    13700008: healthsphere_left
+    13700010: Canon001
+    13700012: MECHA_Head001
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
-    generateAnimations: 3
+    legacyGenerateAnimations: 4
     bakeSimulation: 0
-    splitAnimations: 1
-    animationCompression: 1
+    animationCompression: 0
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
     clipAnimations:
     - name: idle
+      takeName: 
       firstFrame: 81
       lastFrame: 99
       wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
       loop: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      keepAdditionalBonesAnimation: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      skeletonMaskElements: []
     - name: run
+      takeName: 
       firstFrame: 1
       lastFrame: 18
       wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
       loop: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      keepAdditionalBonesAnimation: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      skeletonMaskElements: []
     - name: strafeLeft
+      takeName: 
       firstFrame: 36
       lastFrame: 53
       wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
       loop: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      keepAdditionalBonesAnimation: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      skeletonMaskElements: []
     - name: strafeRight
+      takeName: 
       firstFrame: 19
       lastFrame: 35
       wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
       loop: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      keepAdditionalBonesAnimation: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      skeletonMaskElements: []
     - name: jump
+      takeName: 
       firstFrame: 54
       lastFrame: 65
       wrapMode: 8
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
       loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      keepAdditionalBonesAnimation: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      skeletonMaskElements: []
     - name: land
+      takeName: 
       firstFrame: 73
       lastFrame: 80
       wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
       loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      keepAdditionalBonesAnimation: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      skeletonMaskElements: []
     - name: backward
+      takeName: 
       firstFrame: 101
       lastFrame: 130
       wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
       loop: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      keepAdditionalBonesAnimation: 1
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      skeletonMaskElements: []
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
@@ -80,334 +294,31 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMesh: 0
+    optimizeMeshForGPU: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
   tangentSpace:
-    normalSmoothAngle: 0
+    normalSmoothAngle: 25
     splitTangentsAcrossUV: 1
     normalImportMode: 1
     tangentImportMode: 1
-  textMetaNamesToFileIDs:
-    //RootNode:
-      data:
-        first: 1
-        second: a0860100
-      data:
-        first: 4
-        second: 801a0600
-      data:
-        first: 111
-        second: 605fa900
-    Box001:
-      data:
-        first: 1
-        second: e8860100
-      data:
-        first: 4
-        second: c81a0600
-    Box002:
-      data:
-        first: 1
-        second: ac860100
-      data:
-        first: 4
-        second: 8c1a0600
-      data:
-        first: 23
-        second: 60182300
-      data:
-        first: 33
-        second: a05a3200
-    Canon:
-      data:
-        first: 1
-        second: b4860100
-      data:
-        first: 4
-        second: 941a0600
-      data:
-        first: 23
-        second: 66182300
-      data:
-        first: 33
-        second: a65a3200
-    Canon001:
-      data:
-        first: 1
-        second: ae860100
-      data:
-        first: 4
-        second: 8e1a0600
-      data:
-        first: 137
-        second: aa0bd100
-    Cube:
-      data:
-        first: 1
-        second: b6860100
-      data:
-        first: 4
-        second: 961a0600
-      data:
-        first: 23
-        second: 68182300
-      data:
-        first: 33
-        second: a85a3200
-    MECHA_CellCarrier_C:
-      data:
-        first: 1
-        second: ce860100
-      data:
-        first: 4
-        second: ae1a0600
-    MECHA_CellCarrier_C_cell_C:
-      data:
-        first: 1
-        second: cc860100
-      data:
-        first: 4
-        second: ac1a0600
-    MECHA_CellCarrier_Mini:
-      data:
-        first: 1
-        second: da860100
-      data:
-        first: 4
-        second: ba1a0600
-    MECHA_CellCarrier_Mini002:
-      data:
-        first: 1
-        second: be860100
-      data:
-        first: 4
-        second: 9e1a0600
-    MECHA_CellCarrier_Mini_cells_mini:
-      data:
-        first: 1
-        second: d8860100
-      data:
-        first: 4
-        second: b81a0600
-    MECHA_CellCarrier_Mini_cells_mini002:
-      data:
-        first: 1
-        second: bc860100
-      data:
-        first: 4
-        second: 9c1a0600
-    MECHA_Head:
-      data:
-        first: 1
-        second: e6860100
-      data:
-        first: 4
-        second: c61a0600
-    MECHA_Head001:
-      data:
-        first: 1
-        second: ea860100
-      data:
-        first: 4
-        second: ca1a0600
-      data:
-        first: 137
-        second: ac0bd100
-    MECHA_Head_Headpiece1:
-      data:
-        first: 1
-        second: e4860100
-      data:
-        first: 4
-        second: c41a0600
-    MECHA_Head_Headpiece2:
-      data:
-        first: 1
-        second: e2860100
-      data:
-        first: 4
-        second: c21a0600
-    MECHA_Pipes_022:
-      data:
-        first: 1
-        second: ba860100
-      data:
-        first: 4
-        second: 9a1a0600
-    MECHA_Pipes_023:
-      data:
-        first: 1
-        second: c0860100
-      data:
-        first: 4
-        second: a01a0600
-    MECHA_Pipes_2:
-      data:
-        first: 1
-        second: dc860100
-      data:
-        first: 4
-        second: bc1a0600
-    MECHA_Pipes_21:
-      data:
-        first: 1
-        second: e0860100
-      data:
-        first: 4
-        second: c01a0600
-    MECHA_Pipes_21_Tunes:
-      data:
-        first: 1
-        second: de860100
-      data:
-        first: 4
-        second: be1a0600
-    MECHA_Pipes_21_Tunes001:
-      data:
-        first: 1
-        second: b8860100
-      data:
-        first: 4
-        second: 981a0600
-    MECHA_Shield:
-      data:
-        first: 1
-        second: ca860100
-      data:
-        first: 4
-        second: aa1a0600
-    MECHA_Shoulder_BR:
-      data:
-        first: 1
-        second: d6860100
-      data:
-        first: 4
-        second: b61a0600
-    MECHA_Shoulder_BR001:
-      data:
-        first: 1
-        second: c4860100
-      data:
-        first: 4
-        second: a41a0600
-    MECHA_Shoulder_BR_Leg_BR:
-      data:
-        first: 1
-        second: d4860100
-      data:
-        first: 4
-        second: b41a0600
-    MECHA_Shoulder_BR_Leg_BR001:
-      data:
-        first: 1
-        second: c2860100
-      data:
-        first: 4
-        second: a21a0600
-    MECHA_Shoulder_FR:
-      data:
-        first: 1
-        second: d2860100
-      data:
-        first: 4
-        second: b21a0600
-    MECHA_Shoulder_FR001:
-      data:
-        first: 1
-        second: c8860100
-      data:
-        first: 4
-        second: a81a0600
-    MECHA_Shoulder_FR_Leg_FR:
-      data:
-        first: 1
-        second: d0860100
-      data:
-        first: 4
-        second: b01a0600
-    MECHA_Shoulder_FR_Leg_FR001:
-      data:
-        first: 1
-        second: c6860100
-      data:
-        first: 4
-        second: a61a0600
-    flag_flag:
-      data:
-        first: 1
-        second: b0860100
-      data:
-        first: 4
-        second: 901a0600
-      data:
-        first: 23
-        second: 62182300
-      data:
-        first: 33
-        second: a25a3200
-    flag_flag001:
-      data:
-        first: 1
-        second: a2860100
-      data:
-        first: 4
-        second: 821a0600
-      data:
-        first: 137
-        second: a00bd100
-    flag_pole:
-      data:
-        first: 1
-        second: b2860100
-      data:
-        first: 4
-        second: 921a0600
-      data:
-        first: 23
-        second: 64182300
-      data:
-        first: 33
-        second: a45a3200
-    flag_pole001:
-      data:
-        first: 1
-        second: a4860100
-      data:
-        first: 4
-        second: 841a0600
-      data:
-        first: 137
-        second: a20bd100
-    healthsphere_left:
-      data:
-        first: 1
-        second: aa860100
-      data:
-        first: 4
-        second: 8a1a0600
-      data:
-        first: 137
-        second: a80bd100
-    healthsphere_rear:
-      data:
-        first: 1
-        second: a6860100
-      data:
-        first: 4
-        second: 861a0600
-      data:
-        first: 137
-        second: a40bd100
-    healthsphere_right:
-      data:
-        first: 1
-        second: a8860100
-      data:
-        first: 4
-        second: 881a0600
-      data:
-        first: 137
-        second: a60bd100
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: Box001
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

@@ -4225,6 +4225,7 @@ GameObject:
   - 4: {fileID: 190969019}
   - 33: {fileID: 190969021}
   - 23: {fileID: 190969020}
+  - 64: {fileID: 190969023}
   - 64: {fileID: 190969022}
   m_Layer: 0
   m_Name: Cube_3_Boole_1
@@ -4276,6 +4277,20 @@ MeshCollider:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 190969018}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: 4fcb8064a4bbb458cae9e5fa05532f00, type: 3}
+--- !u!64 &190969023
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 6400000, guid: 4fcb8064a4bbb458cae9e5fa05532f00,
+    type: 3}
+  m_PrefabInternal: {fileID: 771058044}
   m_GameObject: {fileID: 190969018}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -35390,6 +35405,7 @@ GameObject:
   - 4: {fileID: 1332717084}
   - 33: {fileID: 1332717086}
   - 23: {fileID: 1332717085}
+  - 64: {fileID: 1332717088}
   - 64: {fileID: 1332717087}
   m_Layer: 0
   m_Name: Cube_3_Boole_1
@@ -35441,6 +35457,20 @@ MeshCollider:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1332717083}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: 4fcb8064a4bbb458cae9e5fa05532f00, type: 3}
+--- !u!64 &1332717088
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 6400000, guid: 4fcb8064a4bbb458cae9e5fa05532f00,
+    type: 3}
+  m_PrefabInternal: {fileID: 1566493584}
   m_GameObject: {fileID: 1332717083}
   m_Material: {fileID: 0}
   m_IsTrigger: 0

@@ -7,7 +7,8 @@ public class CameraScript : MonoBehaviour
     public float collisionRadius = 0.7f;
     public float minDistance = 1;
     public float smoothing = 0.1f;
-
+	
+	bool aimingAtPlayer;
     PlayerScript player;
 
     Camera mainCamera;
@@ -22,6 +23,20 @@ public class CameraScript : MonoBehaviour
             mainCamera = Camera.main;
         }
     }
+	
+	void FixedUpdate()
+	{
+        RaycastHit hitInfo;
+
+        player.gameObject.FindChild("PlayerHit").collider.enabled = false;
+
+        aimingAtPlayer = Physics.Raycast(transform.position, transform.forward, out hitInfo,
+                                             Mathf.Infinity, (1 << LayerMask.NameToLayer("Default")) |
+                                                             (1 << LayerMask.NameToLayer("Player Hit"))) &&
+                             hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Player Hit");
+
+        player.gameObject.FindChild("PlayerHit").collider.enabled = true;	
+	}
 
     void LateUpdate()
     {
@@ -44,13 +59,13 @@ public class CameraScript : MonoBehaviour
             float magnitude = direction.magnitude;
             direction /= magnitude;
 
-            RaycastHit hitInfo;
+            /*RaycastHit hitInfo;
             if(Physics.SphereCast(player.transform.position, collisionRadius,
                                   direction, out hitInfo, magnitude))
             {
                 cameraPosition = player.transform.position +
                     direction * Mathf.Max(minDistance, hitInfo.distance);
-            }
+            }*/
 
             /*var distance = Vector3.Distance(cameraPosition, player.transform.position);
             var o = Mathf.Clamp01((distance - 2) / 8);
@@ -84,22 +99,11 @@ public class CameraScript : MonoBehaviour
                 crosshair.width * scale,
                 crosshair.height * scale);
 
-            RaycastHit hitInfo;
-
-            player.gameObject.FindChild("PlayerHit").collider.enabled = false;
-
-            var aimingAtPlayer = Physics.Raycast(transform.position, transform.forward, out hitInfo,
-                                                 Mathf.Infinity, (1 << LayerMask.NameToLayer("Default")) |
-                                                                 (1 << LayerMask.NameToLayer("Player Hit"))) &&
-                                 hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Player Hit");
-
             if (aimingAtPlayer)
                 GUI.color = Color.red;
             GUI.DrawTexture(position, crosshair);
             if (aimingAtPlayer)
                 GUI.color = Color.white;
-
-            player.gameObject.FindChild("PlayerHit").collider.enabled = true;
         }
     }
 

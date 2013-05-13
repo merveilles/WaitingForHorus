@@ -20,6 +20,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _MainMap
         second:
           m_Texture: {fileID: 0}
@@ -39,15 +46,26 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
+          name: _Shininess
+        second: .0169956405
+      data:
+        first:
           name: _DiffuseAmount
-        second: .152173907
+        second: .159420297
       data:
         first:
           name: _TexAmount
-        second: .318840563
+        second: .318840593
       data:
         first:
           name: _SpecBoost
@@ -84,8 +102,20 @@ Material:
         first:
           name: _Gloss
         second: 1.73913038
+      data:
+        first:
+          name: _Parallax
+        second: .0199999996
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .92079246, b: .850903928, a: 1}
+        second: {r: 1, g: .920829892, b: .850866199, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Emission
+        second: {r: 0, g: 0, b: 0, a: 0}
