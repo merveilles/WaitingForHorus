@@ -9,13 +9,16 @@ public class PlayerShootingScript : MonoBehaviour
 {
     public const float AimingTime = 0.75f;
 
-	const int BurstCount = 8;
-	const float ShotCooldown = 0.045f;
-	const float ReloadTime = 0.45f;
-    const float BurstSpread = 1.5f;
-    const float ShotgunSpread = 10;
-    const float CannonChargeTime = 0.5f;
-
+	public int BurstCount = 8;
+	public float ShotCooldown = 0.045f;
+	public float ReloadTime = 0.45f;
+    public float BurstSpread = 1.5f;
+    public float ShotgunSpreadBase = 0.375f;
+    public float ShotgunSpread = 10;
+    public float ShotgunBulletSpeedMultiplier = 0.25f;
+    public float CannonChargeTime = 0.5f;
+    public float HeatAccuracyFudge = 0.5f;
+	
     public AudioSource reloadSound;
     public AudioSource targetSound;
     public AudioSource pepperGunSound;
@@ -30,9 +33,10 @@ public class PlayerShootingScript : MonoBehaviour
     public AnimationCurve cannonInnerScale;
 
     Material mat;
-
-	float cooldownLeft = 0;
-    int bulletsLeft = BurstCount;
+	
+	public float heat = 0.0f;
+	float cooldownLeft = 0.0f;
+    int bulletsLeft;
 
     //float cannonChargeCountdown = CannonChargeTime;
     WeaponIndicatorScript weaponIndicator;
@@ -44,19 +48,20 @@ public class PlayerShootingScript : MonoBehaviour
 
     void Awake()
     {
+		bulletsLeft = BurstCount;
         playerCamera = GetComponentInChildren<CameraScript>();
         weaponIndicator = Camera.main.GetComponent<WeaponIndicatorScript>();
         targets = weaponIndicator.Targets;
         playerScript = GetComponent<PlayerScript>();
     }
 
-    void Update()
+    /*void Update()
     {
         gun.LookAt(playerCamera.GetTargetPosition());
 
         if (playerScript.Paused)
             bulletsLeft = BurstCount;
-    }
+    }*/
 	
 	WeaponIndicatorScript.PlayerData GetFirstTarget()
 	{
@@ -64,17 +69,23 @@ public class PlayerShootingScript : MonoBehaviour
 		return aimedAt.OrderBy( x => Guid.NewGuid() ).First();
 	}
 
-    void FixedUpdate()
+    void Update()
     {
+        gun.LookAt(playerCamera.GetTargetPosition());
+
+        if (playerScript.Paused)
+            bulletsLeft = BurstCount;
+		
         if ( networkView.isMine && Screen.lockCursor && !playerScript.Paused )
 		{
-			cooldownLeft = Mathf.Max(0, cooldownLeft - Time.deltaTime);
-            weaponIndicator.CooldownStep = 1 - Math.Min(Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1);
+			cooldownLeft = Mathf.Max( 0, cooldownLeft - Time.deltaTime );
+			heat = Mathf.Clamp01( heat - Time.deltaTime );
+            weaponIndicator.CooldownStep = 1 - Math.Min( Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1 );
 
 		    if( cooldownLeft == 0 )
             {
                 // Shotgun
-                if (Input.GetButton("Alternate Fire"))
+                if( Input.GetButton( "Alternate Fire") )
                 {
                     gameObject.SendMessage("ShotFired");
 
@@ -111,9 +122,9 @@ public class PlayerShootingScript : MonoBehaviour
                 {
                     gameObject.SendMessage("ShotFired");
 
-                    DoShot(BurstSpread);
+                    DoShot( BurstSpread );
                     cooldownLeft += ShotCooldown;
-                    if (bulletsLeft <= 0)
+                    if( bulletsLeft <= 0 )
                         cooldownLeft += ReloadTime;
                 }
 
@@ -202,12 +213,14 @@ public class PlayerShootingScript : MonoBehaviour
     void DoShot(float spread)
     {
         bulletsLeft -= 1;
+		spread += heat * HeatAccuracyFudge;
+		heat += 0.25f;
 
         float roll = Random.value * 360;
         Quaternion spreadRotation =
-            Quaternion.Euler(0, 0, roll) *
-            Quaternion.Euler(Random.value * spread, 0, 0) *
-            Quaternion.Euler(0, 0, -roll);
+            Quaternion.Euler( 0, 0, roll ) *
+            Quaternion.Euler( Random.value * spread, 0, 0 ) *
+            Quaternion.Euler( 0, 0, -roll );
 
         networkView.RPC("Shoot", RPCMode.All,
             gun.position + gun.forward, gun.rotation * spreadRotation,
@@ -223,7 +236,7 @@ public class PlayerShootingScript : MonoBehaviour
     {
         bulletsLeft -= 1;
 
-        spread *= (1 + homing * 2);
+        spread *= (ShotgunSpreadBase + homing * 2);
 
         float roll = RandomHelper.Between(homing * 90, 360 - homing * 90);
         Quaternion spreadRotation =
@@ -270,7 +283,7 @@ public class PlayerShootingScript : MonoBehaviour
 
         bullet.target = targetScript == null ? null : targetScript.transform;
         bullet.homing = homing;
-        bullet.speed = 400;
+        bullet.speed *= ShotgunBulletSpeedMultiplier;
         bullet.recoil = 1;
 
         if (doSound) {

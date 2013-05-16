@@ -8,7 +8,7 @@ SceneSettings:
   m_PVSObjectsArray: []
   m_PVSPortalsArray: []
   m_OcclusionBakeSettings:
-    viewCellSize: 4
+    viewCellSize: 10
     bakeMode: 0
     memoryUsage: 10485760
 --- !u!104 &2
@@ -47,7 +47,7 @@ LightmapSettings:
     m_SkyLightColor: {r: .860000014, g: .930000007, b: 1, a: 1}
     m_SkyLightIntensity: 0
     m_Quality: 0
-    m_Bounces: 1
+    m_Bounces: 0
     m_FinalGatherRays: 1000
     m_FinalGatherContrastThreshold: .0500000007
     m_FinalGatherGradientThreshold: 0
@@ -240,7 +240,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ca73633617af3843b5c4b80f9d3dd87, type: 3}
   m_Name: 
   AllowedLevels:
-  - pi_ven
+  - pi_rah
+  - pi_set
+  - pi_mar
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
@@ -293,6 +295,10 @@ Prefab:
     - target: {fileID: 400008, guid: c96dbb7712a004beb84ace25193b3eae, type: 2}
       propertyPath: m_LocalRotation.w
       value: .49999997
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: c96dbb7712a004beb84ace25193b3eae, type: 2}
+      propertyPath: far clip plane
+      value: 1500
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c96dbb7712a004beb84ace25193b3eae, type: 2}
@@ -913,7 +919,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: m_LocalPosition.x
@@ -965,7 +971,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[0]
-      value: pi_ven
+      value: pi_rah
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[1]

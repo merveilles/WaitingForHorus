@@ -1,11 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DayNightCycleScript.cs">
     <Files>
-      <File FileName="Assets\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" Line="19" Column="33" />
-      <File FileName="Assets\Standard Assets\Water (Pro Only)\Sources\Scripts\Water.cs" Line="188" Column="1" />
-      <File FileName="Assets\Shaders\Horus_PerVertex.shader" Line="18" Column="28" />
-      <File FileName="Assets\Shaders\Horus_Base.shader" Line="38" Column="4" />
+      <File FileName="Assets\Scripts\DayNightCycleScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerShootingScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" Line="1" Column="1" />
+      <File FileName="Assets\Standard Assets\Water (Pro Only)\Sources\Scripts\Water.cs" Line="1" Column="1" />
+      <File FileName="Assets\Shaders\Horus_PerVertex.shader" Line="1" Column="1" />
+      <File FileName="Assets\Shaders\Horus_Base.shader" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ServerScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\SpawnScript.cs" Line="1" Column="1" />
       <File FileName="..\Aeon\Assets\Shaders\Rimlight_Transparent_Base.shader" Line="21" Column="24" />
@@ -13,7 +15,10 @@
       <File FileName="Assets\Scripts\CameraSpin.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CameraScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Shaders\RimLight.shader" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\DisableShadows.cs" Line="10" Column="8" />
+      <File FileName="Assets\Scripts\DisableShadows.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\BulletScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerDeathScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\HealthScript.cs" Line="217" Column="145" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

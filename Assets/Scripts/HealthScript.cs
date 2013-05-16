@@ -214,7 +214,7 @@ public class HealthScript : MonoBehaviour
 
         //Debug.Log("UnHid");
 
-        foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = true;
+        foreach (var r in GetComponentsInChildren<Renderer>()) if( r.name != "Canon" && r.name != "flag_flag" && r.name != "Cube" && r.name != "flag_pole" ) r.enabled = true; // Reenable non glitched renderers
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = true;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>()) r.enabled = true;
 

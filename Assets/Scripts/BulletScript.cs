@@ -19,8 +19,10 @@ public class BulletScript : MonoBehaviour
     public float areaOfEffect = 0;
     public float recoil = 0;
     public float homing = 0;
+	public float accelerationSpeed = 0.1f;
     public Transform target;
     bool dead;
+	float acceleration = 1.0f;
 
     public NetworkPlayer Player { get; set; }
 
@@ -60,7 +62,9 @@ public class BulletScript : MonoBehaviour
     {
         if (!dead)
         {
+			acceleration += accelerationSpeed * Time.deltaTime;
             float distance = speed * Time.deltaTime;
+			distance *= acceleration;
 
             RaycastHit hitInfo;
             Physics.Raycast(transform.position, transform.forward, out hitInfo,

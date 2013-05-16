@@ -449,7 +449,7 @@ GameObject:
   - 33: {fileID: 3300044}
   - 23: {fileID: 2300046}
   m_Layer: 0
-  m_Name: Canon
+  m_Name: Canonz
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2543,6 +2543,15 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c751b7c547ae2d949942c16c46f5a529, type: 3}
   m_Name: 
+  BurstCount: 8
+  ShotCooldown: .0450000018
+  ReloadTime: .449999988
+  BurstSpread: .5
+  ShotgunSpreadBase: .5
+  ShotgunSpread: 10
+  ShotgunBulletSpeedMultiplier: .425000012
+  CannonChargeTime: .5
+  HeatAccuracyFudge: 6.25
   reloadSound: {fileID: 8200000}
   targetSound: {fileID: 8200002}
   pepperGunSound: {fileID: 8200010}
@@ -2586,6 +2595,7 @@ MonoBehaviour:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+  heat: 0
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
