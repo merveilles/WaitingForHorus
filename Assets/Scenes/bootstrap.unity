@@ -241,8 +241,6 @@ MonoBehaviour:
   m_Name: 
   AllowedLevels:
   - pi_rah
-  - pi_set
-  - pi_mar
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
@@ -919,7 +917,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: m_LocalPosition.x
