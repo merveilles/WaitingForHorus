@@ -914,7 +914,7 @@ GameObject:
   - 82: {fileID: 8200016}
   - 114: {fileID: 11400010}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Footstep test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -975,7 +975,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -99.6131287, y: -72.2835159, z: 68.9555588}
+  m_LocalPosition: {x: -52.921814, y: -44.7034988, z: -29.7973938}
   m_LocalScale: {x: 1.79999995, y: 1.79999995, z: 1.79999995}
   m_Children:
   - {fileID: 400118}
@@ -2455,7 +2455,7 @@ AudioSource:
   m_GameObject: {fileID: 100114}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: 6bfcf6489e12491489c85fbc842c8b45, type: 3}
+  m_audioClip: {fileID: 8300000, guid: ad5676be29e67dc4dad54fee2872d11c, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2730,9 +2730,12 @@ MonoBehaviour:
   StepVolume: .25
   StepPitch: .125
   SoundsNormal:
-  - {fileID: 8300000, guid: 6bfcf6489e12491489c85fbc842c8b45, type: 3}
+  - {fileID: 8300000, guid: ad5676be29e67dc4dad54fee2872d11c, type: 3}
+  - {fileID: 8300000, guid: 5577c1f8cf20905409ea0b9d67bf8ca5, type: 3}
+  - {fileID: 8300000, guid: 99bb5b7e0d79dd34b8c25f32a985bc8e, type: 3}
+  - {fileID: 8300000, guid: 6f28b783b566809479e4dcea2e1b135d, type: 3}
   SoundsWater:
-  - {fileID: 8300000, guid: 6bfcf6489e12491489c85fbc842c8b45, type: 3}
+  - {fileID: 0}
   AudioSources: []
   WaterHeight: -1.45000005
   IsMoving: 0
