@@ -2460,7 +2460,7 @@ AudioSource:
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
-  Mute: 0
+  Mute: 1
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
@@ -2632,9 +2632,10 @@ MonoBehaviour:
   ShotCooldown: .0450000018
   ReloadTime: .449999988
   BurstSpread: .5
-  ShotgunSpreadBase: .5
+  ShotgunSpreadBase: .574999988
   ShotgunSpread: 10
-  ShotgunBulletSpeedMultiplier: .425000012
+  ShotgunBulletSpeedMultiplier: .400000006
+  ShotgunHomingSpeed: .675000012
   CannonChargeTime: .5
   HeatAccuracyFudge: 6.25
   reloadSound: {fileID: 8200000}

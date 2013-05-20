@@ -16,6 +16,7 @@ public class PlayerShootingScript : MonoBehaviour
     public float ShotgunSpreadBase = 0.375f;
     public float ShotgunSpread = 10;
     public float ShotgunBulletSpeedMultiplier = 0.25f;
+    public float ShotgunHomingSpeed = 0.675f;
     public float CannonChargeTime = 0.5f;
     public float HeatAccuracyFudge = 0.5f;
 	
@@ -101,7 +102,7 @@ public class PlayerShootingScript : MonoBehaviour
                         else
 						{
 							var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
-                            DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ), first );
+                            DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ) * ShotgunHomingSpeed, first );
 						}
 						
                         cooldownLeft += ShotCooldown;
@@ -236,7 +237,7 @@ public class PlayerShootingScript : MonoBehaviour
     {
         bulletsLeft -= 1;
 
-        spread *= (ShotgunSpreadBase + homing * 2);
+        spread *= ( ShotgunSpreadBase + homing * 5 );
 
         float roll = RandomHelper.Between(homing * 90, 360 - homing * 90);
         Quaternion spreadRotation =

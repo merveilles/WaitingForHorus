@@ -29,7 +29,7 @@ public class ServerScript : MonoBehaviour
     public bool LocalMode;
 
     public GUISkin Skin;
-	public string BuildVersion;
+	public int BuildVersion;
 
     static JsonWriter jsonWriter;
     static JsonReader jsonReader;
@@ -81,11 +81,11 @@ public class ServerScript : MonoBehaviour
         public string Map;
         public int Id;
         public bool ConnectionFailed;
-		public string BuildVer;
+		public int Version;
 
         public object Packed
         {
-            get { return new { id = Id, ip = Ip, players = Players, map = Map, v = BuildVer }; }
+            get { return new { id = Id, ip = Ip, players = Players, map = Map, version = Version }; }
         }
 
         public override string ToString()
@@ -168,7 +168,7 @@ public class ServerScript : MonoBehaviour
                     return;
                 }
 
-                currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers ); //&& x.BuildVer == BuildVersion
+                currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers && x.Version == BuildVersion ); //&& x.BuildVer == BuildVersion
                 if( currentServer == null )
                 {
                     //if( couldntCreateServer ) //|| cantNat
@@ -483,7 +483,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer( MaxPlayers, Port, true );
         if (result == NetworkConnectionError.NoError)
         {
-            currentServer = new ServerInfo { Ip = Network.player.guid, Map = RoundScript.Instance.CurrentLevel, Players = 1, BuildVer = BuildVersion }; //wanIp.Value
+            currentServer = new ServerInfo { Ip = Network.player.guid, Map = RoundScript.Instance.CurrentLevel, Players = 1, Version = BuildVersion }; //wanIp.Value
 
             TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
             {
