@@ -10,41 +10,40 @@ public class Footsteps : MonoBehaviour
 	public float StepVolume = 0.25f;
 	public float StepPitch = 0.125f;
 	public AudioClip[] SoundsNormal;
-	public AudioClip[] SoundsWater;
 	public AudioSource[] AudioSources;
-	public float WaterHeight = -1.45f;
-	public bool IsMoving = false;
-	public bool PlayerStep = true;
 	
 	private int currentAudioSource = 0;
+	private bool Walking = false;
 	
-	void Start() 
+	bool CheckStep()
 	{
-		StartCoroutine("Step");
+		return ( Input.GetAxis( "Strafe" ) != 0.0f || Input.GetAxis( "Thrust" ) != 0.0f ) && Physics.Raycast( transform.position, Vector3.down, StepHeight );
+	}
+	
+	void Update()
+	{
+		if( CheckStep() && !Walking )
+			StartCoroutine( "Step" );
 	}
 	
 	IEnumerator Step()
 	{
-		while( true )
+		Walking = true;
+		while( CheckStep() )
 		{
-			if( PlayerStep && ( Input.GetAxis( "Strafe" ) != 0.0f || Input.GetAxis( "Thrust" ) != 0.0f ) || IsMoving )
-			{
-				if( Physics.Raycast( transform.position, Vector3.down, StepHeight ) ) 
-				{
-					AudioClip[] sounds = SoundsNormal; 
-					if( transform.position.y < WaterHeight) sounds = SoundsWater;
-					
-			        currentAudioSource++;
-			        if( currentAudioSource > AudioSources.Length - 1 )
-			            currentAudioSource = 0;
-					
-					AudioSources[currentAudioSource].volume = Volume - Random.value * StepVolume;
-					AudioSources[currentAudioSource].pitch = 1.0f - Random.value * StepPitch;
-					AudioSources[currentAudioSource].PlayOneShot( sounds[(int)(Random.value * sounds.Length)] );
-				}
-			}
+			AudioClip[] sounds = SoundsNormal; 
+			//if( transform.position.y < WaterHeight) sounds = SoundsWater;
 			
+	        currentAudioSource++;
+	        if( currentAudioSource > AudioSources.Length - 1 )
+	            currentAudioSource = 0;
+			
+			AudioSources[currentAudioSource].volume = 1.0f - Random.value * StepVolume;
+			AudioSources[currentAudioSource].pitch = 1.0f - Random.value * StepPitch;
+			AudioSources[currentAudioSource].PlayOneShot( SoundsNormal[(int)(Random.value * sounds.Length)] );
+
 			yield return new WaitForSeconds( StepOffset + Random.value * StepDelay );
 		}
+		Walking = false;
 	}
 }

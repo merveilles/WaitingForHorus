@@ -51,6 +51,7 @@ public class BulletScript : MonoBehaviour
 
         if(health != null)
         {
+			audio.Play();
             health.networkView.RPC(
                 "DoDamage", RPCMode.Others, damage, Network.player);
             return true;

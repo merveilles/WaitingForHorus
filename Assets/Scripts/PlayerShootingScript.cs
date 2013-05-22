@@ -263,9 +263,8 @@ public class PlayerShootingScript : MonoBehaviour
         BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
         bullet.Player = player;
 		
-		if(GlobalSoundsScript.soundEnabled) {
+		if( GlobalSoundsScript.soundEnabled )
         	burstGunSound.Play();
-		}
     }
 
     [RPC]
