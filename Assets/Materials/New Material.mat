@@ -22,7 +22,7 @@ Material:
       data:
         first:
           name: _DiffuseAmount
-        second: .0289855078
+        second: .0507246368
       data:
         first:
           name: _TexAmount

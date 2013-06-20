@@ -2007,7 +2007,7 @@ AudioSource:
   m_GameObject: {fileID: 100068}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: 168b456f0d6d340f78da98f62cbe7066, type: 3}
+  m_audioClip: {fileID: 8300000, guid: d1cd7daf8bca7a544be7193cd4a51e74, type: 3}
   m_PlayOnAwake: 0
   m_Volume: .600000024
   m_Pitch: 1
@@ -2632,10 +2632,10 @@ MonoBehaviour:
   ShotCooldown: .0450000018
   ReloadTime: .449999988
   BurstSpread: .5
-  ShotgunSpreadBase: .574999988
+  ShotgunSpreadBase: .649999976
   ShotgunSpread: 10
-  ShotgunBulletSpeedMultiplier: .400000006
-  ShotgunHomingSpeed: .675000012
+  ShotgunBulletSpeedMultiplier: .425000012
+  ShotgunHomingSpeed: .875
   CannonChargeTime: .5
   HeatAccuracyFudge: 6.25
   reloadSound: {fileID: 8200000}
@@ -2734,12 +2734,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5577c1f8cf20905409ea0b9d67bf8ca5, type: 3}
   - {fileID: 8300000, guid: 99bb5b7e0d79dd34b8c25f32a985bc8e, type: 3}
   - {fileID: 8300000, guid: 6f28b783b566809479e4dcea2e1b135d, type: 3}
-  SoundsWater:
-  - {fileID: 0}
   AudioSources: []
-  WaterHeight: -1.45000005
-  IsMoving: 0
-  PlayerStep: 1
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1

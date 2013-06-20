@@ -8,7 +8,6 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: World
   m_Shader: {fileID: 4800000, guid: ba30d7897889d90408b9c37484f0708b, type: 3}
-  m_ShaderKeywords: []
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -62,11 +61,11 @@ Material:
       data:
         first:
           name: _DiffuseAmount
-        second: .137681171
+        second: .144927546
       data:
         first:
           name: _TexAmount
-        second: .275362343
+        second: .289855093
       data:
         first:
           name: _SpecBoost
@@ -111,7 +110,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .927369416, b: .844275236, a: 1}
+        second: {r: 1, g: .95879519, b: .807889223, a: 1}
       data:
         first:
           name: _SpecColor

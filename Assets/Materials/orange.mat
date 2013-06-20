@@ -46,7 +46,7 @@ Material:
       data:
         first:
           name: _Emission
-        second: {r: .525490224, g: .373924941, b: .18752788, a: 0}
+        second: {r: .501960814, g: .357182026, b: .179131106, a: 0}
       data:
         first:
           name: _RimColor

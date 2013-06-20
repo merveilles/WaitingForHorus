@@ -27,7 +27,7 @@ RenderSettings:
   m_SpotCookie: {fileID: 0}
   m_ObjectHideFlags: 0
 --- !u!127 &3
-LevelGameManager:
+GameManager:
   m_ObjectHideFlags: 0
 --- !u!157 &4
 LightmapSettings:
@@ -206,6 +206,7 @@ GameObject:
   - 4: {fileID: 502558918}
   - 114: {fileID: 502558920}
   - 114: {fileID: 502558919}
+  - 148: {fileID: 502558921}
   m_Layer: 0
   m_Name: Server
   m_TagString: Untagged
@@ -240,14 +241,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ca73633617af3843b5c4b80f9d3dd87, type: 3}
   m_Name: 
   AllowedLevels:
-  - pi_rah
-  - pi_set
-  - pi_mar
+  - pi_ven
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
-  BuildVersion: 1
+  BuildVersion: 2
   chosenIP: 
+  ResumingSavedGame: 0
 --- !u!114 &502558920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,6 +261,18 @@ MonoBehaviour:
   m_Name: 
   PlayerTemplate: {fileID: 100000, guid: 11a4e5f239d167a44bfaf435661ccd48, type: 2}
   PlayerRegistryPrefab: {fileID: 100000, guid: 9f79dcc20d27bcb48a621f4e6b8e2300, type: 2}
+--- !u!148 &502558921
+NetworkView:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 502558917}
+  m_Enabled: 1
+  m_StateSynchronization: 0
+  m_Observed: {fileID: 0}
+  m_ViewID:
+    m_ID: 4
+    m_Type: 1
 --- !u!1001 &643781064
 Prefab:
   m_ObjectHideFlags: 0
@@ -923,7 +935,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: m_LocalPosition.x
@@ -971,15 +983,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: BuildVersion
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[0]
-      value: pi_rah
+      value: pi_ven
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[1]
-      value: pi_set
+      value: pi_rah
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[2]
