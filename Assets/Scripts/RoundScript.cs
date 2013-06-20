@@ -6,7 +6,7 @@ public class RoundScript : MonoBehaviour
 {
     const float RoundDuration = 60 * 5;
     const float PauseDuration = 20;
-    const int SameLevelRounds = 3;
+    const int SameLevelRounds = 2;
 
     float sinceRoundTransition;
     public bool RoundStopped { get; private set; }

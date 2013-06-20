@@ -53,6 +53,9 @@ public class ServerScript : MonoBehaviour
     float sinceStartedDiscovery;
     bool cantNat;
     string lastLevelName;
+	
+	public bool ResumingSavedGame = false;
+	public List<LeaderboardEntry> SavedLeaderboardEntries = new List<LeaderboardEntry>();
 
     public static bool Spectating;
 
@@ -182,7 +185,10 @@ public class ServerScript : MonoBehaviour
                     //    hostState = HostingState.ReadyToDiscoverNat;
                 }
                 else
+				{	
+					chosenIP = currentServer.Ip;
                     hostState = HostingState.ReadyToConnect;
+				}
                 break;
 
             /*case HostingState.ReadyToDiscoverNat:
@@ -537,8 +543,8 @@ public class ServerScript : MonoBehaviour
     bool Connect()
     {
         lastStatus = "Connecting...";
-        Debug.Log("Connecting to " + currentServer.Ip + " (id = " + currentServer.Id + ")"); //chosenIP
-        var result = Network.Connect( currentServer.Ip );
+        Debug.Log("Connecting to " + chosenIP ); //chosenIP
+        var result = Network.Connect( chosenIP );
         if (result != NetworkConnectionError.NoError)
         {
             lastStatus = "Failed.";
@@ -735,12 +741,37 @@ public class ServerScript : MonoBehaviour
 
     void OnDisconnectedFromServer(NetworkDisconnection info)
     {
-        if (Network.isServer)
+       	hostState = HostingState.WaitingForInput;
+       	lastStatus = "";
+		
+        if( Network.isServer )
         {
-            if (thisServerId.HasValue)
+            if( thisServerId.HasValue )
                 DeleteServer();
-        }
-        hostState = HostingState.WaitingForInput;
-        lastStatus = "";
+        } 
+		else // If I'm not hosting and have lowest guid, then host!
+		{
+			ResumingSavedGame = true;
+			SavedLeaderboardEntries = NetworkLeaderboard.Instance.Entries; // Save Leaderboard
+			
+			string lowestGUID = PlayerRegistry.GetLowestGUID();
+			if( lowestGUID == networkView.owner.guid )
+				hostState = HostingState.ReadyToHost;
+			else if( lowestGUID != "" )
+			{
+				chosenIP = lowestGUID;
+				StartCoroutine( "DelayedJoin" ); // Give the server a second to register
+			}
+		}
+		
+		PlayerRegistry.Instance.Clear(); // Clear registrys now we're finished
+		NetworkLeaderboard.Instance.Clear(); // Clear registry now we're finished
     }
+	
+	IEnumerator DelayedJoin()
+	{
+		yield return new WaitForSeconds( 1.0f );
+		
+		hostState = HostingState.ReadyToConnect;
+	}
 }

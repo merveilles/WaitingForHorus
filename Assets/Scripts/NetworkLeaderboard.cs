@@ -2,9 +2,18 @@
 using System.Linq;
 using UnityEngine;
 
+public class LeaderboardEntry
+{
+    public NetworkPlayer NetworkPlayer;
+    public int Kills;
+    public int Deaths;
+    public int Ping;
+    public int ConsecutiveKills;
+}
+
 class NetworkLeaderboard : MonoBehaviour
 {
-    public readonly List<LeaderboardEntry> Entries = new List<LeaderboardEntry>();
+    public List<LeaderboardEntry> Entries = new List<LeaderboardEntry>();
     bool disposed;
 
     static NetworkLeaderboard instance;
@@ -18,13 +27,21 @@ class NetworkLeaderboard : MonoBehaviour
         instance = this;
 
         DontDestroyOnLoad(gameObject);
-
-        if (Network.isServer)
-            Entries.Add(new LeaderboardEntry
-            {
-                Ping = Network.GetLastPing(Network.player),
-                NetworkPlayer = Network.player
-            });
+		
+		if( !ServerScript.Instance.ResumingSavedGame )
+		{
+	        if( Network.isServer ) 
+				Entries.Add( new LeaderboardEntry
+	            {
+	                Ping = Network.GetLastPing(Network.player),
+	                NetworkPlayer = Network.player
+	            });
+		} 
+		else
+		{
+			Entries = ServerScript.Instance.SavedLeaderboardEntries;
+			ServerScript.Instance.ResumingSavedGame = false;
+		}
     }
 
     void Update()
@@ -158,19 +175,10 @@ class NetworkLeaderboard : MonoBehaviour
     {
         Entries.RemoveAll(x => x.NetworkPlayer == player);
     }
-    void OnDisconnectedFromServer(NetworkDisconnection info) 
+    public void Clear()
     {
-        Destroy(gameObject);
         disposed = true;
+        Destroy( gameObject );
         instance = null;
     }
-}
-
-class LeaderboardEntry
-{
-    public NetworkPlayer NetworkPlayer;
-    public int Kills;
-    public int Deaths;
-    public int Ping;
-    public int ConsecutiveKills;
 }

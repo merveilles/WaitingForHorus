@@ -13,15 +13,17 @@ class PlayerRegistry : MonoBehaviour
     {
         get { return instance; }
     }
-
+	
     public static PlayerInfo For(NetworkPlayer player)
     {
         return Instance.registry[player];
     }
+	
     public static bool Has(NetworkPlayer player)
     {
         return Instance.registry.ContainsKey(player);
     }
+	
     int ConnectedCount()
     {
         return registry.Values.Count(x => !x.Disconnected);
@@ -33,14 +35,13 @@ class PlayerRegistry : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-
-    public static void RegisterCurrentPlayer(string username)
+    public static void RegisterCurrentPlayer( string username, string guid )
     {
-        Instance.networkView.RPC("RegisterPlayer", RPCMode.All, Network.player, username);
+        Instance.networkView.RPC("RegisterPlayer", RPCMode.All, Network.player, username, guid );
     }
 
     [RPC]
-    public void RegisterPlayer(NetworkPlayer player, string username)
+    public void RegisterPlayer(NetworkPlayer player, string username, string guid )
     {
         if (disposed)
         {
@@ -59,11 +60,11 @@ class PlayerRegistry : MonoBehaviour
 		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
 			if( p.networkView.owner == player ) location = p.transform;
 		
-        registry.Add( player, new PlayerInfo { Username = username, Color = color, Location = location } );
+        registry.Add( player, new PlayerInfo { Username = username, Color = color, Location = location, GUID = guid } );
         Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
     }
     [RPC]
-    public void RegisterPlayerFull(NetworkPlayer player, string username, float r, float g, float b, bool isSpectating)
+    public void RegisterPlayerFull(NetworkPlayer player, string username, string guid , float r, float g, float b, bool isSpectating)
     {
         if (disposed)
         {
@@ -81,7 +82,7 @@ class PlayerRegistry : MonoBehaviour
 		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
 			if( p.networkView.owner == player ) location = p.transform;
 
-        registry.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating, Location = location });
+        registry.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating, Location = location, GUID = guid });
         Debug.Log("Registered other player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
     }
 
@@ -115,7 +116,7 @@ class PlayerRegistry : MonoBehaviour
                 if (info.Disconnected)
                     continue;
 
-                networkView.RPC("RegisterPlayerFull", player, otherPlayer, info.Username,
+                networkView.RPC("RegisterPlayerFull", player, otherPlayer, info.Username, info.GUID,
                                 info.Color.r, info.Color.g, info.Color.b,
                                 info.Spectating);
 
@@ -125,20 +126,41 @@ class PlayerRegistry : MonoBehaviour
                             p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate", player, true);
             }
     }
+	
+   	public static string GetLowestGUID()
+    {
+		string lowestGUID = "";
+		long lowestGUIDValue = 1000000000000000;
+		
+        foreach( var otherPlayer in PlayerRegistry.Instance.registry.Keys )
+		{
+			long guidValue = otherPlayer.guid.Sum( c => c - '0' );
+			if( lowestGUIDValue > guidValue )
+			{
+				lowestGUIDValue = guidValue;
+				lowestGUID = otherPlayer.guid;
+			}
+		}
+		
+		return lowestGUID;
+    }
+	
     public void OnPlayerDisconnected(NetworkPlayer player)
     {
         networkView.RPC("UnregisterPlayer", RPCMode.All, player);
     }
-    public void OnDisconnectedFromServer(NetworkDisconnection info)
+	
+    public void Clear()
     {
         disposed = true;
-        Destroy(gameObject);
+        Destroy( gameObject );
         instance = null;
     }
 
     public class PlayerInfo
     {
         public string Username;
+        public string GUID;
         public Color Color;
         public bool Spectating;
         public bool Disconnected;

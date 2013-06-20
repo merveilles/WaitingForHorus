@@ -201,12 +201,19 @@ public class PlayerShootingScript : MonoBehaviour
 		{
 			for( int i = 0; i < targets.Count; i++ )
 			{
-				if( targets[i].WasLocked && !targets[i].Found ) 
-					targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.networkView.owner );
-				targets[i].WasLocked = targets[i].Locked;
-				
-           		if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 || targets[i].Script == null ) // Is player in target list dead, or unseen? Am I dead?
-					targets.RemoveAt(i);
+				if( targets[i].Script != null )
+				{
+					if( targets[i].WasLocked && !targets[i].Found ) 
+						targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.networkView.owner );
+					targets[i].WasLocked = targets[i].Locked;
+					
+	           		if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 || targets[i].Script == null ) // Is player in target list dead, or unseen? Am I dead?
+						targets.RemoveAt(i);
+				}
+				else 
+				{
+					targets.RemoveAt( i );
+				}
 			}
 		}	
 	}

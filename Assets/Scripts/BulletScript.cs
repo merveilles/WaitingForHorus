@@ -159,7 +159,7 @@ public class BulletScript : MonoBehaviour
                 //Debug.Log("Is homing @ " + homing);
                 var lookVec = (target.position - transform.position).normalized;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookVec),
-                                                      Mathf.Clamp01(homing * Time.deltaTime * 6));
+                                                      Mathf.Clamp01(homing * Time.deltaTime * 9));
             }
         }
 
