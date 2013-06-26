@@ -44,6 +44,7 @@ public class PlayerScript : MonoBehaviour
     bool activelyJumping;
     bool textBubbleVisible;
     bool playJumpSound, playDashSound;
+	int jumpsSinceGrounded = 0;
 	
     public AudioSource warningSound;
     public AudioSource dashSound;
@@ -178,8 +179,9 @@ public class PlayerScript : MonoBehaviour
 
             inputVelocity *= speed;
 
-            if (Input.GetButtonDown("Jump") && fallingVelocity.y <= 2)
+            if (Input.GetButtonDown("Jump") && fallingVelocity.y <= 2 && !(sinceNotGrounded > 0 && jumpsSinceGrounded > 1 ) )
             {
+				jumpsSinceGrounded++;
                 lastJumpInputTime = Time.time;
             }
 
@@ -283,7 +285,7 @@ public class PlayerScript : MonoBehaviour
 
         // jump and dash
         dashCooldown -= Time.deltaTime;
-        bool justJumped = false;
+	 	bool justJumped = false;
         if(networkView.isMine && Time.time - lastJumpInputTime <= JumpInputQueueTime)
         {
             if ((controller.isGrounded || sinceNotGrounded < 0.25f) && recoilVelocity.y <= 0)
@@ -332,7 +334,10 @@ public class PlayerScript : MonoBehaviour
         if(controller.isGrounded)
         {
             if (!justJumped)
+			{
                 sinceNotGrounded = 0;
+				jumpsSinceGrounded = 0;
+			}
             // infinite friction
             if (fallingVelocity.y <= 0)
                 fallingVelocity = Vector3.up * gravity * Time.deltaTime;

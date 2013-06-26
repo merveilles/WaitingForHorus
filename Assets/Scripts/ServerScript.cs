@@ -744,7 +744,7 @@ public class ServerScript : MonoBehaviour
        	hostState = HostingState.WaitingForInput;
        	lastStatus = "";
 		
-        if( Network.isServer )
+        /*if( Network.isServer )
         {
             if( thisServerId.HasValue )
                 DeleteServer();
@@ -765,7 +765,7 @@ public class ServerScript : MonoBehaviour
 		}
 		
 		PlayerRegistry.Instance.Clear(); // Clear registrys now we're finished
-		NetworkLeaderboard.Instance.Clear(); // Clear registry now we're finished
+		NetworkLeaderboard.Instance.Clear(); // Clear registry now we're finished*/
     }
 	
 	IEnumerator DelayedJoin()

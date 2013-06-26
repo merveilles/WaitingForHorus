@@ -2631,13 +2631,13 @@ MonoBehaviour:
   BurstCount: 8
   ShotCooldown: .0450000018
   ReloadTime: .449999988
-  BurstSpread: .5
+  BurstSpread: .375
   ShotgunSpreadBase: .649999976
   ShotgunSpread: 10
-  ShotgunBulletSpeedMultiplier: .425000012
-  ShotgunHomingSpeed: .875
+  ShotgunBulletSpeedMultiplier: .574999988
+  ShotgunHomingSpeed: .75
   CannonChargeTime: .5
-  HeatAccuracyFudge: 6.25
+  HeatAccuracyFudge: 4
   reloadSound: {fileID: 8200000}
   targetSound: {fileID: 8200002}
   pepperGunSound: {fileID: 8200010}

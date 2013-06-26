@@ -241,7 +241,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ca73633617af3843b5c4b80f9d3dd87, type: 3}
   m_Name: 
   AllowedLevels:
+  - pi_rah
   - pi_ven
+  - pi_set
+  - pi_mar
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
@@ -935,7 +938,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.size
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: m_LocalPosition.x
@@ -987,15 +990,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[0]
-      value: pi_ven
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
-      propertyPath: AllowedLevels.Array.data[1]
       value: pi_rah
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: AllowedLevels.Array.data[1]
+      value: pi_ven
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[2]
-      value: pi_mar
+      value: pi_set
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[3]
