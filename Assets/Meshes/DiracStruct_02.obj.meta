@@ -1,0 +1,117 @@
+fileFormatVersion: 2
+guid: 3bbb8efc295454848bf538cc3ea5caed
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: '#3f3f3f'
+    100002: '#3f3f3f_MeshPart0'
+    100004: '#3f3f3f_MeshPart1'
+    100006: '#7f7f7f'
+    100008: '#ffffff'
+    100010: '#ffffff_MeshPart0'
+    100012: '#ffffff_MeshPart1'
+    100014: '#ffffff_MeshPart2'
+    100016: '#ffffff_MeshPart3'
+    100018: '#ffffff_MeshPart4'
+    100020: '#ffffff_MeshPart5'
+    100022: '#ffffff_MeshPart6'
+    100024: '#ffffff_MeshPart7'
+    100026: //RootNode
+    400000: '#3f3f3f'
+    400002: '#3f3f3f_MeshPart0'
+    400004: '#3f3f3f_MeshPart1'
+    400006: '#7f7f7f'
+    400008: '#ffffff'
+    400010: '#ffffff_MeshPart0'
+    400012: '#ffffff_MeshPart1'
+    400014: '#ffffff_MeshPart2'
+    400016: '#ffffff_MeshPart3'
+    400018: '#ffffff_MeshPart4'
+    400020: '#ffffff_MeshPart5'
+    400022: '#ffffff_MeshPart6'
+    400024: '#ffffff_MeshPart7'
+    400026: //RootNode
+    2300000: '#3f3f3f_MeshPart0'
+    2300002: '#3f3f3f_MeshPart1'
+    2300004: '#7f7f7f'
+    2300006: '#ffffff_MeshPart0'
+    2300008: '#ffffff_MeshPart1'
+    2300010: '#ffffff_MeshPart2'
+    2300012: '#ffffff_MeshPart3'
+    2300014: '#ffffff_MeshPart4'
+    2300016: '#ffffff_MeshPart5'
+    2300018: '#ffffff_MeshPart6'
+    2300020: '#ffffff_MeshPart7'
+    3300000: '#3f3f3f_MeshPart0'
+    3300002: '#3f3f3f_MeshPart1'
+    3300004: '#7f7f7f'
+    3300006: '#ffffff_MeshPart0'
+    3300008: '#ffffff_MeshPart1'
+    3300010: '#ffffff_MeshPart2'
+    3300012: '#ffffff_MeshPart3'
+    3300014: '#ffffff_MeshPart4'
+    3300016: '#ffffff_MeshPart5'
+    3300018: '#ffffff_MeshPart6'
+    3300020: '#ffffff_MeshPart7'
+    4300000: '#3f3f3f_MeshPart0'
+    4300002: '#3f3f3f_MeshPart1'
+    4300004: '#7f7f7f'
+    4300006: '#ffffff_MeshPart0'
+    4300008: '#ffffff_MeshPart1'
+    4300010: '#ffffff_MeshPart2'
+    4300012: '#ffffff_MeshPart3'
+    4300014: '#ffffff_MeshPart4'
+    4300016: '#ffffff_MeshPart5'
+    4300018: '#ffffff_MeshPart6'
+    4300020: '#ffffff_MeshPart7'
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 2
+  userData: 

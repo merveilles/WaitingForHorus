@@ -1,0 +1,78 @@
+fileFormatVersion: 2
+guid: db6fc67a6c94843b2980c52021b92a37
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Vent_Cube_1
+    100002: Vent_Cube_21
+    100004: Vent
+    100006: //RootNode
+    100008: Vent_Cube_2
+    400000: Vent_Cube_1
+    400002: Vent_Cube_21
+    400004: Vent
+    400006: //RootNode
+    400008: Vent_Cube_2
+    2300000: Vent_Cube_1
+    2300002: Vent_Cube_21
+    2300004: Vent
+    2300006: Vent_Cube_2
+    3300000: Vent_Cube_1
+    3300002: Vent_Cube_21
+    3300004: Vent
+    3300006: Vent_Cube_2
+    4300000: Vent
+    4300002: Vent_Cube_1
+    4300004: Vent_Cube_2
+    4300006: Vent_Cube_21
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

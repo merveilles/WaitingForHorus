@@ -15,7 +15,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 4c79adccc00934cc3aa8a8ad83f9dc5a, type: 3}
+          m_Texture: {fileID: 2800000, guid: 17b13e372f57a4449b6ba78f9b5b32d2, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -61,11 +61,11 @@ Material:
       data:
         first:
           name: _DiffuseAmount
-        second: .289855063
+        second: .159420282
       data:
         first:
           name: _TexAmount
-        second: .0724637657
+        second: 0
       data:
         first:
           name: _SpecBoost
@@ -106,11 +106,23 @@ Material:
         first:
           name: _Parallax
         second: .0199999996
+      data:
+        first:
+          name: _Contrast
+        second: 1.09057975
+      data:
+        first:
+          name: _Saturation
+        second: 1.0471015
+      data:
+        first:
+          name: _Brightness
+        second: .999999881
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .921090424, b: .85060364, a: 1}
+        second: {r: 1, g: .990172684, b: .983119667, a: 1}
       data:
         first:
           name: _SpecColor

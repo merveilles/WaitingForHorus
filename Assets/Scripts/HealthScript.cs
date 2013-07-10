@@ -117,10 +117,10 @@ public class HealthScript : MonoBehaviour
             r.enabled = health >= 2;
     }
 
-    [RPC]
-    void DoDamage(int damage, NetworkPlayer shootingPlayer)
+    //[RPC]
+    public void DoDamage(int damage, NetworkPlayer shootingPlayer)
     {
-        if (networkView.isMine && !dead)
+        if ( !dead)  //networkView.isMine &&
         {
             //Debug.Log("Got " + damage + " damage");
             //Debug.Log("Before hit : Shield = " + Shield + ", Health = " + Health);
@@ -138,7 +138,7 @@ public class HealthScript : MonoBehaviour
             }
             if(Health <= 0)
             {
-                NetworkLeaderboard.Instance.networkView.RPC("RegisterKill", RPCMode.All, shootingPlayer, Network.player);
+                NetworkLeaderboard.Instance.networkView.RPC("RegisterKill", RPCMode.All, shootingPlayer, networkView.owner);
                 networkView.RPC("ScheduleRespawn", RPCMode.All,
                         RespawnZone.GetRespawnPoint());
                 Health = 0;

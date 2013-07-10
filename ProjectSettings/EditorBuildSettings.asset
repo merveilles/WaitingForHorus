@@ -8,12 +8,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/bootstrap.unity
   - enabled: 1
-    path: Assets/Scenes/pi_rah.unity
-  - enabled: 1
+    path: Assets/Scenes/pi_jsf.unity
+  - enabled: 0
     path: Assets/Scenes/pi_mar.unity
   - enabled: 0
     path: Assets/Scenes/pi_gho.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/pi_set.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/pi_ven.unity
+  - enabled: 1
+    path: Assets/Scenes/pi_rah.unity
