@@ -24,6 +24,17 @@ class PlayerRegistry : MonoBehaviour
         return Instance.registry.ContainsKey(player);
     }
 	
+   	public static NetworkPlayer For(Transform player)
+    {
+        for( int i = 0; i < PlayerRegistry.Instance.registry.Count; i++ )
+		{
+			var otherPlayer = PlayerRegistry.Instance.registry.ElementAt( i ).Value; 
+			if( otherPlayer.Location == player ) return PlayerRegistry.Instance.registry.ElementAt( i ).Key;
+		}
+		
+		return PlayerRegistry.Instance.registry.ElementAt( 0 ).Key; // SHOULD NEVER HAPPEN!!!
+    }
+	
     int ConnectedCount()
     {
         return registry.Values.Count(x => !x.Disconnected);

@@ -20,6 +20,8 @@ public class PlayerScript : MonoBehaviour
     // air velocity damping: 0.05f -> speed drops to 5% in one second
     public float airVelocityDamping = 0.05f;
     public float recoilDamping = 0.0005f;
+	
+	public float IdleTransitionFadeLength = 1.0f;
 
     public Transform cameraPivot;
     public Transform dashEffectPivot;
@@ -172,8 +174,8 @@ public class PlayerScript : MonoBehaviour
             textBubbleVisible = ChatScript.Instance.showChat;
 
             inputVelocity =
-                Input.GetAxisRaw("Strafe") * transform.right +
-                Input.GetAxisRaw("Thrust") * transform.forward;
+                Input.GetAxis("Strafe") * transform.right +
+                Input.GetAxis("Thrust") * transform.forward;
             if(inputVelocity.sqrMagnitude > 1)
                 inputVelocity.Normalize();
 
@@ -295,12 +297,11 @@ public class PlayerScript : MonoBehaviour
                 justJumped = true;
                 activelyJumping = true;
                 fallingVelocity.y = jumpVelocity;
-                characterAnimation.Play(currentAnim = "jump");
+                characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
                 playJumpSound = true;
 				
-				if(GlobalSoundsScript.soundEnabled) {
+				if( GlobalSoundsScript.soundEnabled )
 	                jumpSound.Play();
-				}
 				
                 sinceNotGrounded = 0.25f;
             }
@@ -312,7 +313,7 @@ public class PlayerScript : MonoBehaviour
 
                 if (currentAnim == "jump")
                     characterAnimation.Rewind("jump");
-                characterAnimation.Play(currentAnim = "jump");
+                characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
                 playDashSound = true;
 				
 				if(GlobalSoundsScript.soundEnabled) {
@@ -352,17 +353,14 @@ public class PlayerScript : MonoBehaviour
         }
 
         // Update running animation
-        if (controller.isGrounded && !justJumped)
+        if( controller.isGrounded && !justJumped )
         {
-            if (MathHelper.AlmostEquals(smoothedInputVelocity, Vector3.zero, 0.1f))
-            {
-                if (currentAnim != "idle")
-                    characterAnimation.Play(currentAnim = "idle");
-            }
+            if( MathHelper.AlmostEquals( smoothedInputVelocity, Vector3.zero, 0.1f ) && currentAnim != "idle" )
+                    characterAnimation.CrossFade( currentAnim = "idle", IdleTransitionFadeLength );
             else
             {
-                var xDir = Vector3.Dot(smoothedInputVelocity, transform.right);
-                var zDir = Vector3.Dot(smoothedInputVelocity, transform.forward);
+                var xDir = Vector3.Dot( smoothedInputVelocity, transform.right );
+                var zDir = Vector3.Dot( smoothedInputVelocity, transform.forward );
 
                 const float epsilon = 15f;
 
@@ -371,22 +369,22 @@ public class PlayerScript : MonoBehaviour
                 if (zDir > epsilon)
                 {
                     if (currentAnim != "run")
-                        characterAnimation.Play(currentAnim = "run");
+                        characterAnimation.CrossFade(currentAnim = "run", IdleTransitionFadeLength );
                 }
                 else if (zDir < -epsilon)
                 {
                     if (currentAnim != "backward")
-                        characterAnimation.Play(currentAnim = "backward");
+                        characterAnimation.CrossFade(currentAnim = "backward", IdleTransitionFadeLength );
                 }
                 else if (xDir > epsilon)
                 {
                     if (currentAnim != "strafeRight")
-                        characterAnimation.Play(currentAnim = "strafeRight");
+                        characterAnimation.CrossFade(currentAnim = "strafeRight", IdleTransitionFadeLength );
                 }
                 else if (xDir < -epsilon)
                 {
                     if (currentAnim != "strafeLeft")
-                        characterAnimation.Play(currentAnim = "strafeLeft");
+                        characterAnimation.CrossFade(currentAnim = "strafeLeft", IdleTransitionFadeLength );
                 }
             }
         }

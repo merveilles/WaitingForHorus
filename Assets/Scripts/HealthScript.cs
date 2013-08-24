@@ -42,6 +42,11 @@ public class HealthScript : MonoBehaviour
 
     void Update()
     {
+        if( networkView.isMine && transform.position.y < -104 )
+        {
+            DoDamage( 1, (NetworkPlayer)GetComponent<PlayerScript>().owner );
+        }
+		
         if (!firstSet && shieldRenderer != null)
         {
             shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
@@ -50,11 +55,6 @@ public class HealthScript : MonoBehaviour
 
         if(networkView.isMine)
         {
-            if(transform.position.y < -104)
-            {
-                DoDamage(1, Network.player);
-            }
-
             timeUntilShieldRegen -= Time.deltaTime;
             if(timeUntilShieldRegen < 0 && Shield < maxShield)
             {
@@ -118,9 +118,9 @@ public class HealthScript : MonoBehaviour
     }
 
     //[RPC]
-    public void DoDamage(int damage, NetworkPlayer shootingPlayer)
+    public void DoDamage( int damage, NetworkPlayer shootingPlayer ) //, NetworkPlayer hitPlayer 
     {
-        if ( !dead)  //networkView.isMine &&
+        if ( !dead )  //!networkView.isMine &&
         {
             //Debug.Log("Got " + damage + " damage");
             //Debug.Log("Before hit : Shield = " + Shield + ", Health = " + Health);
@@ -138,7 +138,7 @@ public class HealthScript : MonoBehaviour
             }
             if(Health <= 0)
             {
-                NetworkLeaderboard.Instance.networkView.RPC("RegisterKill", RPCMode.All, shootingPlayer, networkView.owner);
+                NetworkLeaderboard.Instance.networkView.RPC( "RegisterKill", RPCMode.All, shootingPlayer, GetComponent<PlayerScript>().owner );
                 networkView.RPC("ScheduleRespawn", RPCMode.All,
                         RespawnZone.GetRespawnPoint());
                 Health = 0;

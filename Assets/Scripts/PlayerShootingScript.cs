@@ -140,13 +140,11 @@ public class PlayerShootingScript : MonoBehaviour
                 }
             }
 
-            if (bulletsLeft <= 0) 
+            if( bulletsLeft <= 0 ) 
             {
                 bulletsLeft = BurstCount;
-				
-				if(GlobalSoundsScript.soundEnabled) {
+				if( GlobalSoundsScript.soundEnabled )
                 	reloadSound.Play();
-				}
             }
 
 		    var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
@@ -230,8 +228,8 @@ public class PlayerShootingScript : MonoBehaviour
             Quaternion.Euler( Random.value * spread, 0, 0 ) *
             Quaternion.Euler( 0, 0, -roll );
 
-        networkView.RPC("Shoot", RPCMode.All,
-            gun.position + gun.forward, gun.rotation * spreadRotation,
+       // networkView.RPC("Shoot", RPCMode.All,
+		Shoot( gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation,
             Network.player);
     }
 
@@ -254,30 +252,31 @@ public class PlayerShootingScript : MonoBehaviour
 
         var lastKnownPosition = Vector3.zero;
         NetworkPlayer targetOwner = Network.player;
-        if (target != null)
+        if( target != null )
         {
             targetOwner = target.owner ?? Network.player;
             lastKnownPosition = target.transform.position;
         }
 
-        networkView.RPC("ShootHoming", RPCMode.All,
-            gun.position + gun.forward, gun.rotation * spreadRotation, Network.player, targetOwner, lastKnownPosition, homing, doSound);
+        //networkView.RPC("ShootHoming", RPCMode.All,
+		ShootHoming( gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation, 
+			Network.player, targetOwner, lastKnownPosition, homing, doSound );
     }
 
-    [RPC]
+    //[RPC]
     void Shoot(Vector3 position, Quaternion rotation, NetworkPlayer player)
     {
-        BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
+        BulletScript bullet = (BulletScript)Network.Instantiate( bulletPrefab, position, rotation, 0 );
         bullet.Player = player;
 		
 		if( GlobalSoundsScript.soundEnabled )
         	burstGunSound.Play();
     }
 
-    [RPC]
+    //[RPC]
     void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, Vector3 lastKnownPosition, float homing, bool doSound)
     {
-        BulletScript bullet = (BulletScript) Instantiate(bulletPrefab, position, rotation);
+        BulletScript bullet = (BulletScript)Network.Instantiate( bulletPrefab, position, rotation, 0 );
         bullet.Player = player;
 
 		PlayerScript targetScript;
@@ -293,10 +292,8 @@ public class PlayerShootingScript : MonoBehaviour
         bullet.speed *= ShotgunBulletSpeedMultiplier;
         bullet.recoil = 1;
 
-        if (doSound) {
-			if(GlobalSoundsScript.soundEnabled) {
+        if( doSound )
+			if( GlobalSoundsScript.soundEnabled )
 				pepperGunSound.Play();
-			}
-		}
     }
 }
