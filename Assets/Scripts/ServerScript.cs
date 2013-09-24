@@ -43,15 +43,20 @@ public class ServerScript : MonoBehaviour
 	string chosenUsername = "Anon";
 	public string chosenIP = "127.0.0.1";
 
-    INatDevice natDevice;
-    Mapping udpMapping, tcpMapping;
-    bool? udpMappingSuccess, tcpMappingSuccess;
+    enum MappingStatus { InProgress, Success, Failure }
+    class MappingResult
+    {
+        public INatDevice Device;
+        public MappingStatus Status = MappingStatus.InProgress;
+        public Mapping Mapping;
+    }
+    List<MappingResult> mappingResults = new List<MappingResult>();
+
     bool natDiscoveryStarted;
     float sinceRefreshedPlayers;
     int lastPlayerCount;
     bool couldntCreateServer;
     float sinceStartedDiscovery;
-    bool cantNat;
     string lastLevelName;
 	
 	public bool ResumingSavedGame = false;
@@ -105,9 +110,9 @@ public class ServerScript : MonoBehaviour
         ReadyToChooseServer,
         ReadyToDiscoverNat,
         ReadyToConnect,
-        ReadyForIp,
+//        ReadyForIp,
         WaitingForNat,
-        WaitingForIp,
+//        WaitingForIp,
         ReadyToHost,
         Hosting,
         Connected
@@ -191,13 +196,13 @@ public class ServerScript : MonoBehaviour
 				}
                 break;
 
-            /*case HostingState.ReadyToDiscoverNat:
+            case HostingState.ReadyToDiscoverNat:
                 lastStatus = "Looking for UPnP...";
-                if (!natDiscoveryStarted || !wanIp.HasValue)
+                if (!natDiscoveryStarted /*|| !wanIp.HasValue*/)
                 {
                     Debug.Log("NAT discovery started");
                     StartNatDiscovery();
-                    GetWanIP();
+//                    GetWanIP();
                 }
                 hostState = LocalMode ? HostingState.ReadyToHost : HostingState.WaitingForNat;
                 break;
@@ -207,46 +212,47 @@ public class ServerScript : MonoBehaviour
                 if (sinceStartedDiscovery > 10)
                 {
                     NatUtility.StopDiscovery();
-                    natDevice = null;
+                    mappingResults.Clear();
                     sinceStartedDiscovery = 0;
-                    cantNat = true;
 
-                    Debug.Log("No uPnP despite needing to host, will try to choose server");
-                    hostState = HostingState.ReadyToChooseServer;
+                    if (mappingResults.Any(x => x.Status == MappingStatus.Success))
+                        Debug.Log("Some mapping attempts failed, but will proceed with hosting anyway");
+                    else
+                        Debug.Log("Can't map UPnP ports, but will proceed with hosting anyway");
+                    hostState = HostingState.ReadyToHost;
                 }
 
-                if (!udpMappingSuccess.HasValue || !tcpMappingSuccess.HasValue || !wanIp.HasValue)
+                if (mappingResults.Count == 0 || mappingResults.Any(x => x.Status == MappingStatus.InProgress))
                     break;
 
                 sinceStartedDiscovery = 0;
 
-                if (udpMappingSuccess.Value && tcpMappingSuccess.Value)
+                if (mappingResults.All(x => x.Status == MappingStatus.Success))
                 {
                     Debug.Log("Ready to host!");
-                    hostState = HostingState.WaitingForIp;
+                    hostState = HostingState.ReadyToHost;
                 }
                 else
                 {
-                    NatUtility.StopDiscovery();
-                    natDevice = null;
-
-                    Debug.Log("No uPnP despite needing to host, will re-list servers");
-                    hostState = HostingState.ReadyToListServers;
-                    cantNat = true;
+                    if (mappingResults.Any(x => x.Status == MappingStatus.Success))
+                        Debug.Log("Some mapping attempts failed, but will proceed with hosting anyway");
+                    else
+                        Debug.Log("Can't map UPnP ports, but will proceed with hosting anyway");
+                    hostState = HostingState.ReadyToHost;
                 }
                 break;
 
-            case HostingState.ReadyForIp:
-                if (wanIp == null || !wanIp.HasValue)
-                    GetWanIP();
-                hostState = HostingState.WaitingForIp;
-                break;
-
-            case HostingState.WaitingForIp:
-                lastStatus = "Determining IP...";
-                if (wanIp.HasValue)
-                    hostState = HostingState.ReadyToHost;
-                break;*/
+//            case HostingState.ReadyForIp:
+//                if (wanIp == null || !wanIp.HasValue)
+//                    GetWanIP();
+//                hostState = HostingState.WaitingForIp;
+//                break;
+//
+//            case HostingState.WaitingForIp:
+//                lastStatus = "Determining IP...";
+//                if (wanIp.HasValue)
+//                    hostState = HostingState.ReadyToHost;
+//                break;
 
             case HostingState.ReadyToHost:
                 lastStatus = "Creating server...";
@@ -372,7 +378,7 @@ public class ServerScript : MonoBehaviour
                     {
                         PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
-                        hostState = HostingState.ReadyToHost;
+                        hostState = HostingState.ReadyToDiscoverNat;
                     }
                     if (GUILayout.Button("JOIN") && hostState == HostingState.WaitingForInput)
                     {
@@ -572,22 +578,22 @@ public class ServerScript : MonoBehaviour
         RoundScript.Instance.networkView.RPC("SyncLevel", player, RoundScript.Instance.CurrentLevel);
     }
 
-    void GetWanIP()
-    {
-        wanIp = ThreadPool.Instance.Evaluate(() =>
-        {
-            if (LocalMode)
-                return "127.0.0.1";
-
-            using (var client = new WebClient())
-            {
-                var response = client.DownloadString("http://checkip.dyndns.org");
-                var ip = (new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Match(response).Value;
-                Debug.Log("Got IP : " + ip);
-                return ip;
-            }
-        });
-    }
+//    void GetWanIP()
+//    {
+//        wanIp = ThreadPool.Instance.Evaluate(() =>
+//        {
+//            if (LocalMode)
+//                return "127.0.0.1";
+//
+//            using (var client = new WebClient())
+//            {
+//                var response = client.DownloadString("http://checkip.dyndns.org");
+//                var ip = (new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Match(response).Value;
+//                Debug.Log("Got IP : " + ip);
+//                return ip;
+//            }
+//        });
+//    }
 
     void StartNatDiscovery()
     {
@@ -597,8 +603,9 @@ public class ServerScript : MonoBehaviour
 
         NatUtility.DeviceFound += (s, ea) =>
         {
-            natDevice = ea.Device;
-            MapPort();
+            Debug.Log("Mapping port for device : " + ea.Device.ToString());
+
+            mappingResults.AddRange(MapPort(ea.Device));
 
             // -- This is probably useless
             //string externalIp;
@@ -618,77 +625,71 @@ public class ServerScript : MonoBehaviour
             //    WanIP = externalIp;
             //}
         };
-        NatUtility.DeviceLost += (s, ea) => { natDevice = null; };
+        NatUtility.DeviceLost += (s, ea) => { mappingResults.RemoveAll(x => x.Device == ea.Device); };
         NatUtility.StartDiscovery();
     }
 
-    void MapPort()
+    IEnumerable<MappingResult> MapPort(INatDevice device)
     {
-        try
+        lastStatus = "Mapping port...";
+
+        var udpMapping = new Mapping(Protocol.Udp, Port, Port) { Description = "Horus (UDP)" };
+        var udpResult = new MappingResult { Device = device, Mapping = udpMapping };
+
+        device.BeginCreatePortMap(udpMapping, state =>
         {
-            Debug.Log("Mapping port...");
-            lastStatus = "Mapping port...";
-
-            udpMapping = new Mapping(Protocol.Udp, Port, Port) { Description = "Horus (UDP)" };
-            natDevice.BeginCreatePortMap(udpMapping, state =>
+            if (state.IsCompleted)
             {
-                if (state.IsCompleted)
+                lastStatus = "Testing UDP mapping...";
+                Debug.Log("Mapping complete for : " + udpMapping.ToString());
+                try
                 {
-                    lastStatus = "Testing UDP mapping...";
-                    Debug.Log("UDP Mapping complete!");
-                    try
-                    {
-                        var m = natDevice.GetSpecificMapping(Protocol.Udp, Port);
-                        if (m == null)
-                            throw new InvalidOperationException("Mapping not found");
-                        if (m.PrivatePort != Port || m.PublicPort != Port)
-                            throw new InvalidOperationException("Mapping invalid");
+                    var m = device.GetSpecificMapping(Protocol.Udp, Port);
+                    if (m == null)
+                        throw new InvalidOperationException("Mapping not found");
+                    if (m.PrivatePort != Port || m.PublicPort != Port)
+                        throw new InvalidOperationException("Mapping invalid");
 
-                        Debug.Log("Success!");
-                        udpMappingSuccess = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.Log("Failed to validate UDP mapping :\n" + ex.ToString());
-                        udpMappingSuccess = false;
-                    }
-                    //udpMappingSuccess = true;
+                    udpResult.Status = MappingStatus.Success;
                 }
-            }, null);
-
-            tcpMapping = new Mapping(Protocol.Tcp, Port, Port) { Description = "Horus (TCP)" };
-            natDevice.BeginCreatePortMap(tcpMapping, state =>
-            {
-                if (state.IsCompleted)
+                catch (Exception ex)
                 {
-                    lastStatus = "Testing TCP mapping...";
-                    Debug.Log("TCP Mapping complete!");
-                    try
-                    {
-                        var m = natDevice.GetSpecificMapping(Protocol.Tcp, Port);
-                        if (m == null)
-                            throw new InvalidOperationException("Mapping not found");
-                        if (m.PrivatePort != Port || m.PublicPort != Port)
-                            throw new InvalidOperationException("Mapping invalid");
-
-                        Debug.Log("Success!");
-                        tcpMappingSuccess = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.Log("Failed to validate TCP mapping :\n" + ex.ToString());
-                        tcpMappingSuccess = false;
-                    }
-                    //tcpMappingSuccess = true;
+                    Debug.Log("Failed to validate mapping :\n" + ex.ToString());
+                    udpResult.Status = MappingStatus.Failure;
                 }
-            }, null);
-        }
-        catch (Exception ex)
+            }
+        }, null);
+
+        yield return udpResult;
+
+        var tcpMapping = new Mapping(Protocol.Tcp, Port, Port) { Description = "Horus (TCP)" };
+        var tcpResult = new MappingResult { Device = device, Mapping = tcpMapping };
+
+        device.BeginCreatePortMap(tcpMapping, state =>
         {
-            Debug.Log("Failed to map port :\n" + ex.ToString());
-            tcpMappingSuccess = false;
-            udpMappingSuccess = false;
-        }
+            if (state.IsCompleted)
+            {
+                lastStatus = "Testing TCP mapping...";
+                Debug.Log("Mapping complete for : " + tcpMapping.ToString());
+                try
+                {
+                    var m = device.GetSpecificMapping(Protocol.Tcp, Port);
+                    if (m == null)
+                        throw new InvalidOperationException("Mapping not found");
+                    if (m.PrivatePort != Port || m.PublicPort != Port)
+                        throw new InvalidOperationException("Mapping invalid");
+
+                    tcpResult.Status = MappingStatus.Success;
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log("Failed to validate mapping :\n" + ex.ToString());
+                    tcpResult.Status = MappingStatus.Failure;
+                }
+            }
+        }, null);
+
+        yield return tcpResult;
     }
 	
 	void OnServerInitialized()
@@ -699,30 +700,30 @@ public class ServerScript : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        if (natDevice != null)
+        foreach (var mr in mappingResults)
         {
-            try
-            {
-                if (udpMapping != null)
-                    natDevice.DeletePortMap(udpMapping);
-                if (tcpMapping != null)
-                    natDevice.DeletePortMap(tcpMapping);
-                tcpMapping = udpMapping = null;
-                Debug.Log("Deleted port mapping");
-            }
-            catch (Exception)
-            {
-                Debug.Log("Failed to delete port mapping");
-            }
+            if (mr.Device != null && mr.Mapping != null)
+                try
+                {
+                    mr.Device.DeletePortMap(mr.Mapping);
+                    Debug.Log("Deleted port mapping : " + mr.Mapping);
+                }
+                catch (Exception)
+                {
+                    if (mr.Status == MappingStatus.Failure)
+                        Debug.Log("Tried to delete invalid port mapping and failed -- that's probably fine");
+                    else 
+                        Debug.Log("Failed to delete port mapping : " + mr.Mapping);
+                }
         }
+        mappingResults.Clear();
+
         if (natDiscoveryStarted)
             NatUtility.StopDiscovery();
 
         Network.Disconnect();
 
         natDiscoveryStarted = false;
-        natDevice = null;
-        tcpMappingSuccess = udpMappingSuccess = null;
     }
 
     void OnFailedToConnect(NetworkConnectionError error)
