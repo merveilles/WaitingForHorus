@@ -162,8 +162,8 @@ public class BulletScript : MonoBehaviour
     {
         if( !dead )
         {
-			acceleration += accelerationSpeed * Time.fixedDeltaTime;
-            float distance = speed * Time.fixedDeltaTime;
+			acceleration += accelerationSpeed * Time.deltaTime;
+            float distance = speed * Time.deltaTime;
 			distance *= acceleration;
 
             transform.position += transform.forward * distance;
