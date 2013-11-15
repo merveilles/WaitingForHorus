@@ -59,7 +59,7 @@ public class CameraScript : MonoBehaviour
             float magnitude = direction.magnitude;
             direction /= magnitude;
 
-            /*RaycastHit hitInfo;
+           /* RaycastHit hitInfo;
             if(Physics.SphereCast(player.transform.position, collisionRadius,
                                   direction, out hitInfo, magnitude))
             {
@@ -85,25 +85,31 @@ public class CameraScript : MonoBehaviour
                 .CrosshairPosition = GetCrosshairPosition();
         }
     }
+	
+	void Render( float size, Color color )
+	{
+        var scale = ( Screen.height / 1750f ) * size;
+
+        Vector2 center = GetCrosshairPosition();
+        Rect position = new Rect(
+            center.x - crosshair.width / 2f * scale,
+            Screen.height - center.y - crosshair.height / 2f * scale,
+            crosshair.width * scale,
+            crosshair.height * scale);
+		
+		GUI.color = color;
+		GUI.DrawTexture(position, crosshair);
+	}
 
     void OnGUI()
     {
         if(player.networkView.isMine)
         {
-            var scale = Screen.height / 1750f;
-
-            Vector2 center = GetCrosshairPosition();
-            Rect position = new Rect(
-                center.x - crosshair.width / 2f * scale,
-                Screen.height - center.y - crosshair.height / 2f * scale,
-                crosshair.width * scale,
-                crosshair.height * scale);
-
-            if (aimingAtPlayer)
-                GUI.color = Color.red;
-            GUI.DrawTexture(position, crosshair);
-            if (aimingAtPlayer)
-                GUI.color = Color.white;
+			var color = Color.white;
+	        if( aimingAtPlayer )
+	            GUI.color = Color.red;
+			Render( 1.0f, color );
+			Render( 0.75f, Color.black );
         }
     }
 

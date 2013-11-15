@@ -136,8 +136,10 @@ public class BulletScript : MonoBehaviour
 		if( recoil > 0 ) 
 			DoRecoil( point, playerWasHit );
 		
-        EffectsScript.DoEffect( playerWasHit ? "ExplosionHit" : "Explosion", point, 
-			Quaternion.LookRotation( normal ) );
+        if( playerWasHit )
+			EffectsScript.ExplosionHit( point, Quaternion.LookRotation( normal ) );
+        else
+			EffectsScript.Explosion( point, Quaternion.LookRotation( normal ) );
 
 		dead = true;
 		Destroy( rigidbody );
@@ -184,7 +186,13 @@ public class BulletScript : MonoBehaviour
 	    // max lifetime
 		lifetime -= Time.deltaTime;
 		if( lifetime <= 0 )
-			Destroy(gameObject);
+		{
+			if( networkView.isMine )
+			{
+				Network.RemoveRPCs( networkView.viewID );
+				Network.Destroy( gameObject );
+			}
+		}
 	}
 
 	void FixedUpdate() 

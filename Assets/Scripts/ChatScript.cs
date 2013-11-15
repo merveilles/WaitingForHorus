@@ -75,8 +75,8 @@ public class ChatScript : MonoBehaviour
             showChat = true;
         }
 
-	    var height = 32 + ChatLog.Count(x => !x.Hidden || forceVisible) * 32;
-	    GUILayout.Window(1, new Rect(0, Screen.height - height, 277, height), Chat, string.Empty);
+	    var height = 36 + ChatLog.Count(x => !x.Hidden || forceVisible) * 36;
+	    GUILayout.Window(1, new Rect(35, Screen.height - height, 247, height), Chat, string.Empty);
 
         if (enteredChat)
         {
@@ -101,24 +101,23 @@ public class ChatScript : MonoBehaviour
                 if (log.Hidden && !forceVisible)
                     continue;
 
-                GUIStyle rowStyle = ChatStyle;
-                if (log.Player == Network.player && !log.IsSystem) rowStyle = MyChatStyle;
+                GUIStyle rowStyle = new GUIStyle( Skin.box ) { fixedWidth = 200 };
+                //if (log.Player == Network.player && !log.IsSystem) rowStyle = MyChatStyle;
 
                 GUILayout.BeginHorizontal();
-                if (!log.IsSourceless)
+				
+                if( !log.IsSourceless )
                     rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
-                rowStyle.padding.left = 10;
-                rowStyle.fixedWidth = 0;
-                rowStyle.wordWrap = false;
-                if (log.IsSystem)
+				
+				String message = ( log.IsSourceless ? "" : ( PlayerRegistry.For( log.Player ).Username.ToUpper() + ": " ) ) + log.Message;
+				
+                /*if( log.IsSystem )
                 {
-                    //rowStyle.fontStyle = FontStyle.Italic;
-                    rowStyle.padding.right = 1;
-                    if (!log.IsSourceless)
+                    if( !log.IsSourceless )
                     {
                         var playerName = PlayerRegistry.For(log.Player).Username.ToUpper();
-                        rowStyle.fixedWidth = rowStyle.CalcSize(new GUIContent(playerName)).x;
-                        GUILayout.Label(playerName, rowStyle);
+                        //rowStyle.fixedWidth = rowStyle.CalcSize(new GUIContent(playerName)).x;
+                        GUILayout.Box( playerName, rowStyle );
                     }
                     else
                     {
@@ -126,35 +125,27 @@ public class ChatScript : MonoBehaviour
                         rowStyle.padding.left = 0;
                         GUILayout.Label(" ", rowStyle);
                     }
-                    rowStyle.fixedWidth = 0;
-                    rowStyle.padding.left = 0;
-                    rowStyle.normal.textColor = Color.white;
-                    GUILayout.Label(" " + log.Message, rowStyle);
-                    rowStyle.padding.right = 10;
-                    rowStyle.fontStyle = FontStyle.Normal;
+					
+                    GUILayout.Box( " " + log.Message, rowStyle );
                 }
                 else
                 {
-                    GUILayout.Label(PlayerRegistry.For(log.Player).Username.ToUpper() + ":", rowStyle, GUILayout.MinWidth(0), GUILayout.MaxWidth(100));
-                    rowStyle.normal.textColor = Color.white;
-                    rowStyle.padding.left = 5;
-                    rowStyle.alignment = TextAnchor.UpperLeft;
-                    rowStyle.wordWrap = true;
-                    GUILayout.Label(log.Message, rowStyle, GUILayout.MaxWidth(225)); 
-                }
+                    GUILayout.Box( PlayerRegistry.For(log.Player).Username.ToUpper() + ":", rowStyle );
+                    GUILayout.Box( log.Message, rowStyle, GUILayout.MaxWidth(225)); 
+                }*/
+				GUILayout.Box( message );
                 
                 GUILayout.EndHorizontal();
             }
-
-            GUILayout.HorizontalSlider(0, 0, 1, GUILayout.ExpandWidth(true));
-
+			
             GUILayout.BeginHorizontal();
 
             if (showChat)
             {
                 GUI.SetNextControlName("ChatInput");
-
-                lastMessage = GUILayout.TextField(lastMessage);
+				
+				GUIStyle sty = new GUIStyle( Skin.textField ) { fixedWidth = 180 };
+                lastMessage = GUILayout.TextField(lastMessage, sty);
 
                 if (ignoreT)
                 {
@@ -296,10 +287,11 @@ public class ChatScript : MonoBehaviour
 
                 GUI.FocusControl("ChatInput");
             }
-
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button(" DISCONNECT "))
+			
+			GUILayout.Box( "", new GUIStyle( Skin.box ) { fixedWidth = showChat ? 1 : 184 } );
+			
+			GUIStyle bsty = new GUIStyle( Skin.button ) { fixedWidth = 92 };
+            if (GUILayout.Button("Disconnect"))
             {
                 GlobalSoundsScript.PlayButtonPress();
                 Network.Disconnect();

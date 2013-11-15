@@ -68,6 +68,18 @@ Material:
         second: 0
       data:
         first:
+          name: _Contrast
+        second: 1.09057975
+      data:
+        first:
+          name: _Saturation
+        second: 1.0471015
+      data:
+        first:
+          name: _Brightness
+        second: .999999881
+      data:
+        first:
           name: _SpecBoost
         second: 1
       data:
@@ -106,23 +118,11 @@ Material:
         first:
           name: _Parallax
         second: .0199999996
-      data:
-        first:
-          name: _Contrast
-        second: 1.09057975
-      data:
-        first:
-          name: _Saturation
-        second: 1.0471015
-      data:
-        first:
-          name: _Brightness
-        second: .999999881
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .9592278, b: .809906125, a: 1}
+        second: {r: 1, g: .950417995, b: .821045518, a: 1}
       data:
         first:
           name: _SpecColor

@@ -33,6 +33,8 @@ public class ServerScript : MonoBehaviour
 
     static JsonWriter jsonWriter;
     static JsonReader jsonReader;
+	
+	public Texture Multiply;
 
     IFuture<string> wanIp;
     IFuture<ReadResponse> readResponse;
@@ -209,7 +211,7 @@ public class ServerScript : MonoBehaviour
 
             case HostingState.WaitingForNat:
                 sinceStartedDiscovery += Time.deltaTime;
-                if (sinceStartedDiscovery > 10)
+                if (sinceStartedDiscovery > 0.5f)
                 {
                     NatUtility.StopDiscovery();
                     mappingResults.Clear();
@@ -322,11 +324,12 @@ public class ServerScript : MonoBehaviour
             {
                 var message = "Server activity : " + readResponse.Value.Connections + " players in " + readResponse.Value.Activegames + " games.";
                 message = message.ToUpperInvariant();
-                GUI.Label(new Rect(11, Screen.height - 91, 500, 25), message, WelcomeStyle);
+                
+                GUI.Box( new Rect( ( Screen.width / 2 ) - 122, Screen.height - 145, 248, 35), message );
             }
 
             Screen.showCursor = true;
-            GUILayout.Window(0, new Rect(0, Screen.height - 70, 277, 70), Login, string.Empty);
+            GUILayout.Window(0, new Rect( ( Screen.width / 2 ) - 122, Screen.height - 110, 77, 35), Login, string.Empty);
         }
     }
 
@@ -346,41 +349,23 @@ public class ServerScript : MonoBehaviour
             case NetworkPeerType.Disconnected:
             case NetworkPeerType.Connecting:
                 GUI.enabled = hostState == HostingState.WaitingForInput;
-
-                GUILayout.Space(7);
-
 				GUILayout.BeginHorizontal();
                 {
                     chosenUsername = RemoveSpecialCharacters(GUILayout.TextField(chosenUsername));
                     PlayerPrefs.SetString("username", chosenUsername.Trim());
-                    GUILayout.Label("USERNAME");
 					SendMessage("SetChosenUsername", chosenUsername.Trim());
-				}
-				GUILayout.EndHorizontal();
-
-                GUILayout.HorizontalSlider(0, 0, 1);
-
-                GUILayout.Space(3);
-
-                GUILayout.BeginHorizontal();
-                {
+				
                     GUI.enabled = true;
-                    TextStyle.padding.left = 5;
-                    TextStyle.margin.left = 5;
-                    GUILayout.Label(lastStatus, TextStyle);
                     GUI.enabled = hostState == HostingState.WaitingForInput && chosenUsername.Trim().Length != 0;
-				
-					//chosenIP = GUILayout.TextField( chosenIP );
-					//currentServer.Ip = chosenIP;
-					//GUILayout.Label("IP");
-				
-                    if (GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput)
+					GUILayout.Box( "", new GUIStyle( Skin.box ) { fixedWidth = 1 } );
+                    if( GUILayout.Button("HOST") && hostState == HostingState.WaitingForInput )
                     {
                         PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyToDiscoverNat;
                     }
-                    if (GUILayout.Button("JOIN") && hostState == HostingState.WaitingForInput)
+					GUILayout.Box( "", new GUIStyle( Skin.box ) { fixedWidth = 1 } );
+                    if( GUILayout.Button("JOIN") && hostState == HostingState.WaitingForInput )
                     {
                         PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
@@ -389,7 +374,6 @@ public class ServerScript : MonoBehaviour
                     }
                     GUI.enabled = true;
                 }
-
                 GUILayout.EndHorizontal();
 
                 GUI.enabled = true;

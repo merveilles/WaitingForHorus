@@ -228,8 +228,8 @@ public class PlayerShootingScript : MonoBehaviour
             Quaternion.Euler( Random.value * spread, 0, 0 ) *
             Quaternion.Euler( 0, 0, -roll );
 
-       // networkView.RPC("Shoot", RPCMode.All,
-		Shoot( gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation,
+        networkView.RPC("Shoot", RPCMode.All,
+			gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation,
             Network.player);
     }
 
@@ -258,25 +258,25 @@ public class PlayerShootingScript : MonoBehaviour
             lastKnownPosition = target.transform.position;
         }
 
-        //networkView.RPC("ShootHoming", RPCMode.All,
-		ShootHoming( gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation, 
+        networkView.RPC("ShootHoming", RPCMode.All,
+			gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation, 
 			Network.player, targetOwner, lastKnownPosition, homing, doSound );
     }
 
-    //[RPC]
+    [RPC]
     void Shoot(Vector3 position, Quaternion rotation, NetworkPlayer player)
     {
-        BulletScript bullet = (BulletScript)Network.Instantiate( bulletPrefab, position, rotation, 0 );
+        BulletScript bullet = (BulletScript)Instantiate( bulletPrefab, position, rotation );
         bullet.Player = player;
 		
 		if( GlobalSoundsScript.soundEnabled )
         	burstGunSound.Play();
     }
 
-    //[RPC]
+    [RPC]
     void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, Vector3 lastKnownPosition, float homing, bool doSound)
     {
-        BulletScript bullet = (BulletScript)Network.Instantiate( bulletPrefab, position, rotation, 0 );
+        BulletScript bullet = (BulletScript)Instantiate( bulletPrefab, position, rotation );
         bullet.Player = player;
 
 		PlayerScript targetScript;

@@ -70,7 +70,7 @@ class PlayerRegistry : MonoBehaviour
 		Transform location = null;
 		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
 			if( p.networkView.owner == player ) location = p.transform;
-		
+	
         registry.Add( player, new PlayerInfo { Username = username, Color = color, Location = location, GUID = guid } );
         Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
     }

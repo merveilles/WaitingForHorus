@@ -95,7 +95,10 @@ public class PlayerScript : MonoBehaviour
         if (!networkView.isMine)
             iPosition = new VectorInterpolator();
         else
+		{
             owner = networkView.owner;
+			gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
+		}
     }
 
     void OnGUI()

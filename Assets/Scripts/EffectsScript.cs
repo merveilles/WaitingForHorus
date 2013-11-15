@@ -25,37 +25,37 @@ public class EffectsScript : MonoBehaviour
         
     }
 
-    [RPC]
-    void Explosion(Vector3 position, Quaternion rotation)
+   // [RPC]
+    public static void Explosion(Vector3 position, Quaternion rotation)
     {
-        GameObject exp = (GameObject) Instantiate(explosionPrefab, position, rotation);
+        GameObject exp = (GameObject) Instantiate(Instance.explosionPrefab, position, rotation);
 			
 			//sounds disabled? don't play this one then
 		exp.GetComponent<AudioSource>().mute = !GlobalSoundsScript.soundEnabled;
 
         var count = RandomHelper.Random.Next(1, 4);
         for (int i = 0; i < count; i++)
-            Instantiate(hitConePrefab, position, rotation);
+            Instantiate(Instance.hitConePrefab, position, rotation);
     }
 
-    [RPC]
-    void ExplosionHit(Vector3 position, Quaternion rotation)
+   // [RPC]
+    public static  void ExplosionHit(Vector3 position, Quaternion rotation)
     {
-        Instantiate(explosionHitPrefab, position, rotation);
+        Instantiate(Instance.explosionHitPrefab, position, rotation);
 
         var count = RandomHelper.Random.Next(1, 4);
         for (int i = 0; i < count; i++)
-            Instantiate(hitConePrefab, position, rotation);
+            Instantiate(Instance.hitConePrefab, position, rotation);
     }
 
-    [RPC]
-    void ExplosionArea(Vector3 position, Quaternion rotation)
+    //[RPC]
+    public static void ExplosionArea(Vector3 position, Quaternion rotation)
     {
-        Instantiate(areaExplosionPrefab, position, rotation);
+        Instantiate(Instance.areaExplosionPrefab, position, rotation);
     }
 
-    [RPC]
-    void ExplosionHitArea(Vector3 position, Quaternion rotation)
+    //[RPC]
+    public static void ExplosionHitArea(Vector3 position, Quaternion rotation)
     {
         ExplosionArea(position, rotation);
     }

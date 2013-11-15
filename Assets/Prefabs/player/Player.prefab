@@ -960,7 +960,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -332.849335, y: -39.3597946, z: -203.489136}
+  m_LocalPosition: {x: 62.966011, y: 0, z: 305.063843}
   m_LocalScale: {x: 1.79999995, y: 1.79999995, z: 1.79999995}
   m_Children:
   - {fileID: 400118}
@@ -2626,8 +2626,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3e48cda0c6830d4594790251a521b55, type: 3}
   m_Name: 
   crosshair: {fileID: 2800000, guid: 6b300b725ca140a45aecc04ef4257555, type: 3}
-  collisionRadius: .699999988
-  minDistance: 1
+  collisionRadius: 4
+  minDistance: 2
   smoothing: 1.00000002e-35
 --- !u!114 &11400008
 MonoBehaviour:
@@ -2658,8 +2658,8 @@ MonoBehaviour:
   m_Name: 
   layerMask:
     serializedVersion: 2
-    m_Bits: 4294963711
-  skinWidth: 8
+    m_Bits: 4294959615
+  skinWidth: 4
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1

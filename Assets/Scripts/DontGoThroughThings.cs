@@ -23,7 +23,7 @@ public class DontGoThroughThings : MonoBehaviour
 	   sqrMinimumExtent = minimumExtent * minimumExtent; 
 	} 
  
-	void FixedUpdate() 
+	void Update() 
 	{ 
 	   //have we moved more than our minimum extent? 
 	   Vector3 movementThisStep = myRigidbody.position - previousPosition; 
