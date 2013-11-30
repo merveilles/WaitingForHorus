@@ -7,7 +7,9 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: No Name
-  m_Shader: {fileID: 7, guid: 0000000000000000e000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: ba30d7897889d90408b9c37484f0708b, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -18,9 +20,29 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-    m_Floats: {}
+    m_Floats:
+      data:
+        first:
+          name: _DiffuseAmount
+        second: .5
+      data:
+        first:
+          name: _TexAmount
+        second: 1
+      data:
+        first:
+          name: _Contrast
+        second: 1.0625
+      data:
+        first:
+          name: _Saturation
+        second: 1.16964281
+      data:
+        first:
+          name: _Brightness
+        second: 1.03124988
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: .996078432, g: .891198874, b: .67967701, a: 1}

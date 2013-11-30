@@ -8,6 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: character
   m_Shader: {fileID: 4800000, guid: ba30d7897889d90408b9c37484f0708b, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -44,7 +46,7 @@ Material:
       data:
         first:
           name: _DiffuseAmount
-        second: .340579718
+        second: .295936882
       data:
         first:
           name: _TexAmount
@@ -52,11 +54,11 @@ Material:
       data:
         first:
           name: _Contrast
-        second: 1.12681162
+        second: 1.25
       data:
         first:
           name: _Saturation
-        second: .945652127
+        second: 1.01708066
       data:
         first:
           name: _Brightness
@@ -69,7 +71,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: 1, g: .978078663, b: .962345719, a: 1}
       data:
         first:
           name: _SpecColor

@@ -1690,6 +1690,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300002
 Renderer:
   m_ObjectHideFlags: 1
@@ -1702,12 +1705,15 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300004
 Renderer:
   m_ObjectHideFlags: 1
@@ -1720,12 +1726,15 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300006
 Renderer:
   m_ObjectHideFlags: 1
@@ -1744,6 +1753,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300008
 Renderer:
   m_ObjectHideFlags: 1
@@ -1756,12 +1768,15 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300038
 Renderer:
   m_ObjectHideFlags: 1
@@ -1780,6 +1795,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300040
 Renderer:
   m_ObjectHideFlags: 1
@@ -1798,6 +1816,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300042
 Renderer:
   m_ObjectHideFlags: 1
@@ -1816,6 +1837,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300044
 Renderer:
   m_ObjectHideFlags: 1
@@ -1834,6 +1858,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300046
 Renderer:
   m_ObjectHideFlags: 1
@@ -1852,6 +1879,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300048
 Renderer:
   m_ObjectHideFlags: 1
@@ -1870,6 +1900,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300062
 Renderer:
   m_ObjectHideFlags: 1
@@ -1888,6 +1921,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!33 &3300000
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -2008,6 +2044,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2064,6 +2102,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2120,6 +2160,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2176,6 +2218,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2232,6 +2276,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2288,6 +2334,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2344,6 +2392,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2400,6 +2450,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -2453,6 +2505,9 @@ TextMesh:
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: 8bcb3b672218942a8bae1877dae4c34c, type: 3}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
 --- !u!111 &11100000
 Animation:
   m_ObjectHideFlags: 1
@@ -2474,9 +2529,6 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 1
-  m_UserAABB:
-    m_Center: {x: -.0015433142, y: .0282605421, z: .00391513482}
-    m_Extent: {x: .0294031054, y: .0384045765, z: .0328625403}
 --- !u!111 &11100002
 Animation:
   m_ObjectHideFlags: 1
@@ -2491,9 +2543,6 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
-  m_UserAABB:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!111 &11100004
 Animation:
   m_ObjectHideFlags: 1
@@ -2508,9 +2557,6 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
-  m_UserAABB:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2521,6 +2567,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a5fadaa09ba07440a408b88109a9996, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   speed: 60
   mouseSensitivity: 3
   lookAngleLimit: 80
@@ -2551,6 +2598,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ffaa4359fcf49e5a55f844b0992ce9, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2561,6 +2609,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c751b7c547ae2d949942c16c46f5a529, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   BurstCount: 8
   ShotCooldown: .0450000018
   ReloadTime: .449999988
@@ -2625,6 +2674,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3e48cda0c6830d4594790251a521b55, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   crosshair: {fileID: 2800000, guid: 6b300b725ca140a45aecc04ef4257555, type: 3}
   collisionRadius: 4
   minDistance: 2
@@ -2639,6 +2689,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 298e49c89bef139449fc81eeac50ee98, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   maxShield: 1
   maxHealth: 2
   shieldRegenTime: 5
@@ -2656,6 +2707,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: daf87cd8ab7d6be4287e86362567bb8a, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   layerMask:
     serializedVersion: 2
     m_Bits: 4294959615
@@ -2691,6 +2743,9 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
@@ -2731,6 +2786,7 @@ SkinnedMeshRenderer:
   - {fileID: 400106}
   - {fileID: 400108}
   - {fileID: 400030}
+  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400116}
   m_AABB:
     m_Center: {x: -.000362137333, y: .000412395224, z: .00225185137}
@@ -2754,12 +2810,16 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_Mesh: {fileID: 4300016, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   m_Bones:
   - {fileID: 400022}
+  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400022}
   m_AABB:
     m_Center: {x: 0, y: 5.82076609e-11, z: 1.08910608e-05}
@@ -2783,12 +2843,16 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_Mesh: {fileID: 4300018, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   m_Bones:
   - {fileID: 400030}
+  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400030}
   m_AABB:
     m_Center: {x: 0, y: 3.49245965e-10, z: 1.08873937e-05}
@@ -2812,12 +2876,16 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_Mesh: {fileID: 4300014, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   m_Bones:
   - {fileID: 400012}
+  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400012}
   m_AABB:
     m_Center: {x: -5.23868948e-10, y: -9.31322575e-10, z: -2.21189111e-09}
@@ -2841,12 +2909,16 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_Mesh: {fileID: 4300022, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   m_Bones:
   - {fileID: 400032}
+  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400032}
   m_AABB:
     m_Center: {x: -2.86148861e-07, y: 3.57627869e-07, z: 0}
@@ -2870,12 +2942,16 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_Mesh: {fileID: 4300020, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   m_Bones:
   - {fileID: 400082}
+  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400082}
   m_AABB:
     m_Center: {x: 4.76837158e-07, y: .517679513, z: .612884521}
@@ -2899,12 +2975,16 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_Mesh: {fileID: 4300010, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   m_Bones:
   - {fileID: 400102}
+  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400102}
   m_AABB:
     m_Center: {x: .0016988751, y: -.0124081336, z: .00077483576}

@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: World - Copy
+  m_Shader: {fileID: 4800000, guid: ba30d7897889d90408b9c37484f0708b, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 17b13e372f57a4449b6ba78f9b5b32d2, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MainMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normalmap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Specmap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Shininess
+        second: .0169956405
+      data:
+        first:
+          name: _DiffuseAmount
+        second: .419642866
+      data:
+        first:
+          name: _TexAmount
+        second: 0
+      data:
+        first:
+          name: _Contrast
+        second: 1.02807975
+      data:
+        first:
+          name: _Saturation
+        second: .904244363
+      data:
+        first:
+          name: _Brightness
+        second: 1.13392842
+      data:
+        first:
+          name: _SpecBoost
+        second: 1
+      data:
+        first:
+          name: _SpecTexAmount
+        second: .25
+      data:
+        first:
+          name: _AmbientRim
+        second: 1
+      data:
+        first:
+          name: _FresnelPower
+        second: .579710245
+      data:
+        first:
+          name: _FresnelMult
+        second: 5
+      data:
+        first:
+          name: _FresnelDilute
+        second: 5
+      data:
+        first:
+          name: _PrimaryBlob
+        second: 1
+      data:
+        first:
+          name: _SecondaryBlob
+        second: 1
+      data:
+        first:
+          name: _Gloss
+        second: 1.73913038
+      data:
+        first:
+          name: _Parallax
+        second: .0199999996
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: .925841868, b: .845814884, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Emission
+        second: {r: 0, g: 0, b: 0, a: 0}

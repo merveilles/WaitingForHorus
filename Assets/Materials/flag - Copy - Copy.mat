@@ -7,7 +7,9 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: flag - Copy - Copy
-  m_Shader: {fileID: 10, guid: 0000000000000000e000000000000000, type: 0}
+  m_Shader: {fileID: 10, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -38,7 +40,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .396770477, g: .451465547, b: .470588237, a: 1}
+        second: {r: .470588237, g: .442418218, b: .396770477, a: 1}
       data:
         first:
           name: _SpecColor

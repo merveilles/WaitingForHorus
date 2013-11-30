@@ -33,6 +33,9 @@ public class ServerScript : MonoBehaviour
 
     static JsonWriter jsonWriter;
     static JsonReader jsonReader;
+
+    public int connectionFacilitatorPort; 
+    public string connectionFacilitatorIPAddress;
 	
 	public Texture Multiply;
 
@@ -129,6 +132,8 @@ public class ServerScript : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+
+        Network.natFacilitatorPort = connectionFacilitatorPort; Network.natFacilitatorIP = connectionFacilitatorIPAddress;
 
         chosenUsername = PlayerPrefs.GetString("username", "Anon");
 
