@@ -32,17 +32,17 @@ Material:
       data:
         first:
           name: _Contrast
-        second: .955357075
+        second: .866071403
       data:
         first:
           name: _Saturation
-        second: 1.25
+        second: 1.09821439
       data:
         first:
           name: _Brightness
-        second: 1.05357146
+        second: 1.13839293
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: .839215696, g: .533333361, b: .34117648, a: 1}
+        second: {r: 1, g: .401114225, b: 0, a: 1}

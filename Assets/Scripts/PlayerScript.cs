@@ -92,13 +92,24 @@ public class PlayerScript : MonoBehaviour
 
     void OnNetworkInstantiate(NetworkMessageInfo info)
     {
-        if (!networkView.isMine)
-            iPosition = new VectorInterpolator();
-        else
-		{
+        if( Network.isServer )
+        {
+            foreach( NetworkView nv in GetComponents<NetworkView>() )
+                foreach( NetworkPlayer np in Network.connections )
+                    nv.SetScope( np, true );
+        }
+
+        if( !networkView.isMine )
+        {
             owner = networkView.owner;
-			gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
-		}
+            iPosition = new VectorInterpolator();
+            enabled = false;
+        }
+        else
+        {
+            owner = Network.player;
+            gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
+        }
     }
 
     void OnGUI()
@@ -269,7 +280,7 @@ public class PlayerScript : MonoBehaviour
         }
         dashEffectRenderer.material.SetColor("_TintColor", color);
 
-        if (owner.HasValue && PlayerRegistry.Has(owner.Value))
+        /*if (owner.HasValue && PlayerRegistry.Has(owner.Value))
         {
             var info = PlayerRegistry.For(owner.Value);
 
@@ -277,7 +288,7 @@ public class PlayerScript : MonoBehaviour
 
             if (!networkView.isMine)
                 GetComponentInChildren<TextMesh>().text = info.Username;
-        }
+        }*/
     }
 
     void FixedUpdate()

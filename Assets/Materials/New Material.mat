@@ -8,6 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: New Material
   m_Shader: {fileID: 4800000, guid: ba30d7897889d90408b9c37484f0708b, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -27,8 +29,20 @@ Material:
         first:
           name: _TexAmount
         second: 1
+      data:
+        first:
+          name: _Contrast
+        second: 1.25
+      data:
+        first:
+          name: _Saturation
+        second: 1.25
+      data:
+        first:
+          name: _Brightness
+        second: .964285672
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .843115389, b: .662745118, a: 1}
+        second: {r: .996078432, g: .861918747, b: .644521356, a: 1}

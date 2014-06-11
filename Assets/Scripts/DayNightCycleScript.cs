@@ -4,6 +4,8 @@ using System.Collections;
 public class DayNightCycleScript : MonoBehaviour {
 
     public float duration = 2.0F;
+    public float MinDensity = 0.00175f;
+    public float MaxDensity = 0.00275F;
 	
 	public Color daylightFogColor  			= new Color(0.75F,0.89F,0.09F);
 	public Color daylightCameraColor  		= new Color(0.92F,1.00F,0.98F);
@@ -14,19 +16,30 @@ public class DayNightCycleScript : MonoBehaviour {
 	public Color nightlightMaterialColor 	= new Color(0.92F,1.00F,0.98F);
 	
 	public Material worldTexture;
+    private GameObject[] playerMaterials;
+
+    void RecapturePlayerMaterials()
+    {
+        playerMaterials = GameObject.FindGameObjectsWithTag( "PlayerMaterial" );
+    }
 	
 	void Start()
     {	
-		//Debug.Log(worldTexture.color);
+        RecapturePlayerMaterials();
 	}
+
+    void OnPlayerConnected( )
+    {
+        RecapturePlayerMaterials();
+    }
 
 	void Update()
     {
 		float lerp = Easing.EaseInOut(Mathf.PingPong((float) Network.time, duration) / duration, EasingType.Sine);
 		
 		// Fix Fog
-		RenderSettings.fogColor = Color.Lerp(daylightFogColor, nightlightFogColor, lerp);
-		RenderSettings.fogDensity = Mathf.Lerp(0.00175F, 0.00275F, lerp);
+		RenderSettings.fogColor = Color.Lerp( daylightFogColor, nightlightFogColor, lerp );
+        RenderSettings.fogDensity = Mathf.Lerp( MinDensity, MaxDensity, lerp );
 		
 		// Fix Camera
 		Camera.main.backgroundColor = Color.Lerp(daylightCameraColor, nightlightCameraColor, lerp);
@@ -34,10 +47,10 @@ public class DayNightCycleScript : MonoBehaviour {
 		// Fix Texture
 	    var newColor = Color.Lerp(daylightMaterialColor, nightlightMaterialColor, lerp);
 	    worldTexture.color = newColor;
-        foreach (var mat in GameObject.FindGameObjectsWithTag("PlayerMaterial"))
+        foreach( var player in playerMaterials )
         {
-            var c = mat.renderer.material.color;
-            mat.renderer.material.color = new Color(newColor.r, newColor.g, newColor.b, c.a);
+            var c = player.renderer.material.color;
+            player.renderer.material.color = new Color( newColor.r, newColor.g, newColor.b, c.a );
         }
     }
 }

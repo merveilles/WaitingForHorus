@@ -63,7 +63,7 @@ Material:
       data:
         first:
           name: _DiffuseAmount
-        second: .159420282
+        second: .177277431
       data:
         first:
           name: _TexAmount
@@ -124,7 +124,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .920722723, b: .850974202, a: 1}
+        second: {r: 1, g: .986292064, b: .976453841, a: 1}
       data:
         first:
           name: _SpecColor

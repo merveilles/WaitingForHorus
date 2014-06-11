@@ -19,6 +19,8 @@ public class CameraSpin : MonoBehaviour
 
         camRotOrigin = Camera.main.transform.localRotation;
         transRotOrigin = transform.localRotation;
+
+        Camera.main.depthTextureMode = DepthTextureMode.DepthNormals;
     }
 
     void Update()

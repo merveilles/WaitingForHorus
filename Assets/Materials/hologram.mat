@@ -7,7 +7,9 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: hologram
-  m_Shader: {fileID: 203, guid: 0000000000000000e000000000000000, type: 0}
+  m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -31,4 +33,4 @@ Material:
       data:
         first:
           name: _TintColor
-        second: {r: .396355242, g: .835294127, b: .765601873, a: .180392161}
+        second: {r: .334179133, g: .80392158, b: .533067405, a: .286274523}

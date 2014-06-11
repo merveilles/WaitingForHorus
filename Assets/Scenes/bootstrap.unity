@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AllowedLevels:
-  - pi_ven
+  - pi_rah
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
@@ -322,6 +322,10 @@ Prefab:
     - target: {fileID: 11400002, guid: c96dbb7712a004beb84ace25193b3eae, type: 2}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: c96dbb7712a004beb84ace25193b3eae, type: 2}
+      propertyPath: intensity
+      value: -.75
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400006, guid: c96dbb7712a004beb84ace25193b3eae, type: 2}
@@ -416,6 +420,9 @@ GameObject:
   - 81: {fileID: 656731831}
   - 114: {fileID: 656731835}
   - 114: {fileID: 656731834}
+  - 114: {fileID: 656731836}
+  - 114: {fileID: 656731838}
+  - 114: {fileID: 656731837}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -512,7 +519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bef3d242a13c447ac90c2d2dc213b1ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: -1.04999995
+  intensity: -.75
   chromaticAberration: 3
   blur: 0
   blurSpread: 0
@@ -520,6 +527,49 @@ MonoBehaviour:
   separableBlurShader: {fileID: 4800000, guid: e97c14fbb5ea04c3a902cc533d7fc5d1, type: 3}
   chromAberrationShader: {fileID: 4800000, guid: 2b4f29398d9484ccfa9fd220449f5eee,
     type: 3}
+--- !u!114 &656731836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 656731828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57378565f2adf4d3fbe949ebe1453f09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 0
+  sensitivityDepth: 1
+  sensitivityNormals: 1
+  edgesOnly: .100000001
+  edgesOnlyBgColor: {r: 1, g: 1, b: 1, a: 1}
+  edgeDetectShader: {fileID: 4800000, guid: 0d1644bdf064147baa97f235fc5b4903, type: 3}
+--- !u!114 &656731837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 656731828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0787313688133448bc318d5cefc567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MinimumMode: 2
+  Target: {fileID: 656731836}
+--- !u!114 &656731838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 656731828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0787313688133448bc318d5cefc567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MinimumMode: 1
+  Target: {fileID: 656731835}
 --- !u!1 &1036526807
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,23 +1039,23 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[0]
-      value: pi_ven
+      value: pi_rah
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[1]
-      value: pi_ven
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
-      propertyPath: AllowedLevels.Array.data[2]
       value: pi_set
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: AllowedLevels.Array.data[2]
+      value: pi_rah
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[3]
-      value: pi_ven
+      value: pi_jsf
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[4]
-      value: pi_jsf
+      value: pi_set
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: connectionFacilitatorPort

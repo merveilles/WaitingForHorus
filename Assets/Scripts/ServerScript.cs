@@ -133,14 +133,14 @@ public class ServerScript : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
-        Network.natFacilitatorPort = connectionFacilitatorPort; Network.natFacilitatorIP = connectionFacilitatorIPAddress;
+        //Network.natFacilitatorPort = connectionFacilitatorPort; Network.natFacilitatorIP = connectionFacilitatorIPAddress;
 
         chosenUsername = PlayerPrefs.GetString("username", "Anon");
 
         jsonWriter = new JsonWriter(new DataWriterSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
         jsonReader = new JsonReader(new DataReaderSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
 
-        Application.targetFrameRate = -1;
+        Application.targetFrameRate = 60;
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
         WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
 
@@ -291,7 +291,7 @@ public class ServerScript : MonoBehaviour
                 if (thisServerId.HasValue && 
                         (lastPlayerCount != Network.connections.Length ||
                          lastLevelName != RoundScript.Instance.CurrentLevel || 
-                         sinceRefreshedPlayers > 55))
+                         sinceRefreshedPlayers > 25))
                 {
                     Debug.Log("Refreshing...");
                     RefreshListedServer();

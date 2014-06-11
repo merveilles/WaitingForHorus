@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,11 +9,7 @@ class PlayerRegistry : MonoBehaviour
     readonly Dictionary<NetworkPlayer, PlayerInfo> registry = new Dictionary<NetworkPlayer, PlayerInfo>();
     bool disposed;
 
-    static PlayerRegistry instance;
-    public static PlayerRegistry Instance
-    {
-        get { return instance; }
-    }
+    public static PlayerRegistry Instance;
 	
     public static PlayerInfo For(NetworkPlayer player)
     {
@@ -22,6 +19,11 @@ class PlayerRegistry : MonoBehaviour
     public static bool Has(NetworkPlayer player)
     {
         return Instance.registry.ContainsKey(player);
+    }
+
+    void Awake()
+    {
+        Instance = this;
     }
 	
    	public static NetworkPlayer For(Transform player)
@@ -42,7 +44,6 @@ class PlayerRegistry : MonoBehaviour
 
     void OnNetworkInstantiate(NetworkMessageInfo info)
     {
-        instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -66,10 +67,12 @@ class PlayerRegistry : MonoBehaviour
             Debug.Log("Tried to register player " + player + " but was already registered. Current username : " + registry[player].Username + " | wanted username : " + username);
             registry.Remove(player);
         }
-		
-		Transform location = null;
-		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
-			if( p.networkView.owner == player ) location = p.transform;
+
+        PlayerScript playerData = null;
+        foreach( PlayerScript p in FindObjectsOfType( typeof( PlayerScript ) ) as PlayerScript[] )
+            if( p.owner == player ) playerData = p;
+        playerData.enabled = true;
+        Transform location = playerData.transform;
 	
         registry.Add( player, new PlayerInfo { Username = username, Color = color, Location = location, GUID = guid } );
         Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
@@ -88,10 +91,12 @@ class PlayerRegistry : MonoBehaviour
             Debug.Log("Tried to register player " + player + " but was already registered. Current username : " + registry[player].Username + " | wanted username : " + username + " (removing...)");
             registry.Remove(player);
         }
-		
-		Transform location = null;
-		foreach( GameObject p in GameObject.FindGameObjectsWithTag( "Player" ) )
-			if( p.networkView.owner == player ) location = p.transform;
+
+        PlayerScript playerData = null;
+        foreach( PlayerScript p in FindObjectsOfType( typeof( PlayerScript ) ) as PlayerScript[] )
+            if( p.owner.Value == player ) playerData = p;
+        playerData.enabled = true;
+        Transform location = playerData.transform;
 
         registry.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating, Location = location, GUID = guid });
         Debug.Log("Registered other player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
@@ -120,6 +125,11 @@ class PlayerRegistry : MonoBehaviour
     {
         Debug.Log("Propagating player registry to player " + player);
 
+        /*while( !Has( player ) )
+        {
+            yield return new WaitForSeconds( 0.02f );
+        }*/ // IEnumerator
+
         foreach (var otherPlayer in registry.Keys)
             if (otherPlayer != player)
             {
@@ -138,7 +148,7 @@ class PlayerRegistry : MonoBehaviour
             }
     }
 	
-   	public static string GetLowestGUID()
+   	/*public static string GetLowestGUID()
     {
 		string lowestGUID = "";
 		long lowestGUIDValue = 1000000000000000;
@@ -154,7 +164,7 @@ class PlayerRegistry : MonoBehaviour
 		}
 		
 		return lowestGUID;
-    }
+    }*/
 	
     public void OnPlayerDisconnected(NetworkPlayer player)
     {
@@ -165,7 +175,7 @@ class PlayerRegistry : MonoBehaviour
     {
         disposed = true;
         Destroy( gameObject );
-        instance = null;
+        Instance = null;
     }
 
     public class PlayerInfo

@@ -58,11 +58,11 @@ Material:
       data:
         first:
           name: _Saturation
-        second: 1.01708066
+        second: 1.25
       data:
         first:
           name: _Brightness
-        second: 1.08695662
+        second: 1.12713516
       data:
         first:
           name: _EmissionLM
@@ -71,7 +71,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: .978078663, b: .962345719, a: 1}
+        second: {r: 1, g: .990176976, b: .983127058, a: 1}
       data:
         first:
           name: _SpecColor
