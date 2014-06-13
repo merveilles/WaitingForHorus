@@ -21,7 +21,7 @@ public class SpawnScript : MonoBehaviour
 	void OnServerInitialized() 
     {
         Network.Instantiate( PlayerRegistryPrefab, Vector3.zero, Quaternion.identity, 0 );
-		Spawn();
+        RegisterSpawn();
 	}
 
 	void OnConnectedToServer()
@@ -37,16 +37,19 @@ public class SpawnScript : MonoBehaviour
     {
         while (ServerScript.IsAsyncLoading)
             yield return new WaitForSeconds(1 / 30f);
-        Spawn();
+        RegisterSpawn();
     }
 
-	void Spawn()
+	void RegisterSpawn()
 	{
-        if( ServerScript.Spectating ) return;
-		
-        Network.Instantiate( PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0 );
         TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer( chosenUsername, networkView.owner.guid ) );
 		//player.name = GameObject player =
+    }
+
+    public void FinishSpawn()
+    {
+        if( ServerScript.Spectating ) return;
+        Network.Instantiate( PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0 );
     }
 	
 	void OnPlayerDisconnected(NetworkPlayer player) 

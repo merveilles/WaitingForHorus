@@ -68,15 +68,27 @@ class PlayerRegistry : MonoBehaviour
             registry.Remove(player);
         }
 
-        PlayerScript playerData = null;
+        /*PlayerScript playerData = null;
         foreach( PlayerScript p in FindObjectsOfType( typeof( PlayerScript ) ) as PlayerScript[] )
             if( p.owner == player ) playerData = p;
-        playerData.enabled = true;
-        Transform location = playerData.transform;
+        playerData.enabled = true;*/
+       // Transform location = playerData.transform;
 	
-        registry.Add( player, new PlayerInfo { Username = username, Color = color, Location = location, GUID = guid } );
+        registry.Add( player, new PlayerInfo { Username = username, Color = color, Location = null, GUID = guid } );
         Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
+
+        if( Network.isServer )
+            Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, player );
     }
+
+    [RPC]
+    public void RegisteredHandshake( NetworkPlayer player )
+    {
+        if( Network.player != player ) return;
+        SpawnScript.Instance.FinishSpawn();
+        Debug.Log( "Handshake Successfull, Spawning" );
+    }
+
     [RPC]
     public void RegisterPlayerFull(NetworkPlayer player, string username, string guid , float r, float g, float b, bool isSpectating)
     {
@@ -92,13 +104,13 @@ class PlayerRegistry : MonoBehaviour
             registry.Remove(player);
         }
 
-        PlayerScript playerData = null;
+        /*PlayerScript playerData = null;
         foreach( PlayerScript p in FindObjectsOfType( typeof( PlayerScript ) ) as PlayerScript[] )
             if( p.owner.Value == player ) playerData = p;
         playerData.enabled = true;
-        Transform location = playerData.transform;
+        Transform location = playerData.transform;*/
 
-        registry.Add(player, new PlayerInfo { Username = username, Color = new Color(r, g, b), Spectating = isSpectating, Location = location, GUID = guid });
+        registry.Add( player, new PlayerInfo { Username = username, Color = new Color( r, g, b ), Spectating = isSpectating, Location = null, GUID = guid } );
         Debug.Log("Registered other player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
     }
 

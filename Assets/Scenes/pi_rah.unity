@@ -17222,7 +17222,7 @@ ParticleSystemRenderer:
   m_VelocityScale: 0
   m_LengthScale: 2
   m_SortingFudge: 0
-  m_NormalDirection: 6.0255834e-44
+  m_NormalDirection: 0
   m_SortMode: 0
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}
@@ -35994,8 +35994,8 @@ Transform:
   - {fileID: 819743001}
   - {fileID: 965530351}
   - {fileID: 918691349}
-  - {fileID: 181761926}
   - {fileID: 117786291}
+  - {fileID: 181761926}
   - {fileID: 1116832696}
   - {fileID: 1122072357}
   m_Father: {fileID: 0}
@@ -36011,6 +36011,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 20
+  MinDensity: .00175000005
+  MaxDensity: .00274999999
   daylightFogColor: {r: .996078432, g: .968627453, b: .949019611, a: 1}
   daylightCameraColor: {r: .996078432, g: .968627453, b: .949019611, a: 1}
   daylightMaterialColor: {r: 1, g: .972603619, b: .952941179, a: 1}

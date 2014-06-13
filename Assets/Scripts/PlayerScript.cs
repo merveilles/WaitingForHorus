@@ -103,7 +103,7 @@ public class PlayerScript : MonoBehaviour
         {
             owner = networkView.owner;
             iPosition = new VectorInterpolator();
-            enabled = false;
+            //enabled = false;
         }
         else
         {
