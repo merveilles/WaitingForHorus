@@ -88,6 +88,9 @@ public class ChatScript : MonoBehaviour
 
     void Chat(int windowId)
     {
+        if( !PlayerRegistry.Propagated )
+            return ;
+
         try
         {
             foreach (var log in ChatLog)

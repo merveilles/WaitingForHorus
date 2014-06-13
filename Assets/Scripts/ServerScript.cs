@@ -140,7 +140,10 @@ public class ServerScript : MonoBehaviour
         jsonWriter = new JsonWriter(new DataWriterSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
         jsonReader = new JsonReader(new DataReaderSettings(new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase)));
 
+
         Application.targetFrameRate = 60;
+        Network.minimumAllocatableViewIDs = 500;
+
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
         WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
 
@@ -505,7 +508,6 @@ public class ServerScript : MonoBehaviour
     void SyncAndSpawn(string newLevel)
     {
         ChangeLevelIfNeeded(newLevel, false);
-        SpawnScript.Instance.WaitAndSpawn();
     }
     public void ChangeLevelIfNeeded(string newLevel)
     {
@@ -517,22 +519,30 @@ public class ServerScript : MonoBehaviour
         {
             Application.LoadLevel(newLevel);
             ChatScript.Instance.LogChat(Network.player, "Changed level to " + newLevel + ".", true, true);
+
+            RoundScript.Instance.CurrentLevel = newLevel;
+            if (currentServer != null) currentServer.Map = RoundScript.Instance.CurrentLevel;
         }
-        else if (newLevel != RoundScript.Instance.CurrentLevel)
+        else if( newLevel != RoundScript.Instance.CurrentLevel )
         {
-            IsAsyncLoading = true;
-            var asyncOperation = Application.LoadLevelAsync(newLevel);
-            TaskManager.Instance.WaitUntil(x => asyncOperation.isDone).Then(() =>
-            {
-                IsAsyncLoading = false;
-                ChatScript.Instance.LogChat(Network.player, "Changed level to " + newLevel + ".", true, true);
-            });
+            TaskManager.Instance.WaitFor( 1.0f ).Then( ( ) => { ChangeLevelAsync( newLevel ); } );
         }
         else
             IsAsyncLoading = false;
+    }
+
+    void ChangeLevelAsync(string newLevel)
+    {
+        IsAsyncLoading = true;
+        var asyncOperation = Application.LoadLevelAsync( newLevel );
+        TaskManager.Instance.WaitUntil( x => asyncOperation.isDone ).Then( ( ) =>
+        {
+            IsAsyncLoading = false;
+            ChatScript.Instance.LogChat( Network.player, "Changed level to " + newLevel + ".", true, true );
+        } );
 
         RoundScript.Instance.CurrentLevel = newLevel;
-        if (currentServer != null) currentServer.Map = RoundScript.Instance.CurrentLevel;
+        if( currentServer != null ) currentServer.Map = RoundScript.Instance.CurrentLevel;
     }
 
     bool Connect()

@@ -52,6 +52,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!33 &3300000
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -95,6 +98,8 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -148,6 +153,9 @@ TrailRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   m_Time: 2
   m_StartWidth: 1
   m_EndWidth: .5
@@ -179,8 +187,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26b90bbdd2a72ee4398b8ae175052720, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   bulletCasingPrefab: {fileID: 100000, guid: 0c0f4137b2b770140abfda1e828f053f, type: 2}
-  speed: 7
+  speed: 7.75
   lifetime: 1
   damage: 1
   areaOfEffect: 0

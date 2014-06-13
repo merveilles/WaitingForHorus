@@ -10,6 +10,7 @@ class PlayerRegistry : MonoBehaviour
     bool disposed;
 
     public static PlayerRegistry Instance;
+    public static bool Propagated = false;
 	
     public static PlayerInfo For(NetworkPlayer player)
     {
@@ -21,11 +22,6 @@ class PlayerRegistry : MonoBehaviour
         return Instance.registry.ContainsKey(player);
     }
 
-    void Awake()
-    {
-        Instance = this;
-    }
-	
    	public static NetworkPlayer For(Transform player)
     {
         for( int i = 0; i < PlayerRegistry.Instance.registry.Count; i++ )
@@ -44,7 +40,10 @@ class PlayerRegistry : MonoBehaviour
 
     void OnNetworkInstantiate(NetworkMessageInfo info)
     {
+        Instance = this;
         DontDestroyOnLoad(gameObject);
+        Propagated = true;
+        RegisterCurrentPlayer( SpawnScript.Instance.chosenUsername, networkView.owner.guid );
     }
 
     public static void RegisterCurrentPlayer( string username, string guid )
@@ -85,7 +84,7 @@ class PlayerRegistry : MonoBehaviour
     public void RegisteredHandshake( NetworkPlayer player )
     {
         if( Network.player != player ) return;
-        SpawnScript.Instance.FinishSpawn();
+        SpawnScript.Instance.WaitAndSpawn();
         Debug.Log( "Handshake Successfull, Spawning" );
     }
 

@@ -2616,7 +2616,7 @@ MonoBehaviour:
   BurstSpread: .375
   ShotgunSpreadBase: .649999976
   ShotgunSpread: 10
-  ShotgunBulletSpeedMultiplier: .375
+  ShotgunBulletSpeedMultiplier: .349999994
   ShotgunHomingSpeed: .75
   CannonChargeTime: .5
   HeatAccuracyFudge: 4

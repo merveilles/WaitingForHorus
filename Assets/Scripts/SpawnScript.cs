@@ -10,8 +10,10 @@ public class SpawnScript : MonoBehaviour
 
 	public GameObject PlayerTemplate;
     public GameObject PlayerRegistryPrefab;
+    public GameObject LeaderboardViewerPrefab;
+    //public GameObject ChatScriptPrefab;
 
-	string chosenUsername;
+	public string chosenUsername;
 	
     void Awake()
     {
@@ -20,13 +22,7 @@ public class SpawnScript : MonoBehaviour
 
 	void OnServerInitialized() 
     {
-        Network.Instantiate( PlayerRegistryPrefab, Vector3.zero, Quaternion.identity, 0 );
-        RegisterSpawn();
-	}
-
-	void OnConnectedToServer()
-	{
-        ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player, "connected", true, false);
+        RegistrySpawn();
 	}
 	
     public void WaitAndSpawn()
@@ -37,12 +33,15 @@ public class SpawnScript : MonoBehaviour
     {
         while (ServerScript.IsAsyncLoading)
             yield return new WaitForSeconds(1 / 30f);
-        RegisterSpawn();
+        FinishSpawn();
     }
 
-	void RegisterSpawn()
+    void RegistrySpawn( )
 	{
-        TaskManager.Instance.WaitUntil(_ => PlayerRegistry.Instance != null).Then(() => PlayerRegistry.RegisterCurrentPlayer( chosenUsername, networkView.owner.guid ) );
+        Network.Instantiate( PlayerRegistryPrefab, Vector3.zero, Quaternion.identity, 0 );
+        Network.Instantiate( LeaderboardViewerPrefab, Vector3.zero, Quaternion.identity, 0 );
+       // Network.Instantiate( ChatScriptPrefab, Vector3.zero, Quaternion.identity, 0 );
+        //TaskManager.Instance.WaitUntil( _ => PlayerRegistry.Propagated ).Then( ( ) => PlayerRegistry.RegisterCurrentPlayer( chosenUsername, networkView.owner.guid ) );
 		//player.name = GameObject player =
     }
 
@@ -50,6 +49,7 @@ public class SpawnScript : MonoBehaviour
     {
         if( ServerScript.Spectating ) return;
         Network.Instantiate( PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0 );
+        ChatScript.Instance.networkView.RPC( "LogChat", RPCMode.All, Network.player, "connected", true, false );
     }
 	
 	void OnPlayerDisconnected(NetworkPlayer player) 

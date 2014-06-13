@@ -21,12 +21,10 @@ class LeaderboardViewerScript : MonoBehaviour
         MultiRowWindowStyle = new GUIStyle(Skin.window) { padding = { bottom = 0 } };
         RowStyle = new GUIStyle(Skin.box) {};
         MyRowStyle = new GUIStyle(Skin.box) {};
+        if( Network.isServer ) 
+            Network.Instantiate( LeaderboardPrefab, Vector3.zero, Quaternion.identity, 0 );
     }
 
-    void OnServerInitialized()
-    {
-        Network.Instantiate(LeaderboardPrefab, Vector3.zero, Quaternion.identity, 0);
-    }
     void OnDisconnectedFromServer(NetworkDisconnection info) 
     {
         Leaderboard = null;
