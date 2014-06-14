@@ -17,6 +17,7 @@ class LeaderboardViewerScript : MonoBehaviour
 
     void Awake()
     {
+        DontDestroyOnLoad( gameObject );
         SingleRowWindowStyle = new GUIStyle(Skin.window) { };
         MultiRowWindowStyle = new GUIStyle(Skin.window) { padding = { bottom = 0 } };
         RowStyle = new GUIStyle(Skin.box) {};

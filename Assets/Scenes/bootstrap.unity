@@ -251,7 +251,7 @@ MonoBehaviour:
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
-  BuildVersion: 15
+  BuildVersion: 17
   connectionFacilitatorPort: 5007
   connectionFacilitatorIPAddress: 208.88.124.45
   Multiply: {fileID: 0}
@@ -271,6 +271,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerTemplate: {fileID: 100000, guid: 11a4e5f239d167a44bfaf435661ccd48, type: 2}
   PlayerRegistryPrefab: {fileID: 100000, guid: 9f79dcc20d27bcb48a621f4e6b8e2300, type: 2}
+  LeaderboardViewerPrefab: {fileID: 100000, guid: 0d756867282f2f24ca2592552c1eb342,
+    type: 2}
+  chosenUsername: 
 --- !u!148 &502558921
 NetworkView:
   m_ObjectHideFlags: 0
@@ -1038,7 +1041,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: BuildVersion
-      value: 15
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[0]
@@ -1068,6 +1071,10 @@ Prefab:
       propertyPath: connectionFacilitatorIPAddress
       value: 208.88.124.45
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: LeaderboardViewerPrefab
+      value: 
+      objectReference: {fileID: 100000, guid: 0d756867282f2f24ca2592552c1eb342, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
   m_RootGameObject: {fileID: 502558917}
