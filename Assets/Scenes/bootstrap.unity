@@ -249,7 +249,7 @@ MonoBehaviour:
   PeerType: 0
   LocalMode: 0
   Skin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
-  BuildVersion: 17
+  BuildVersion: 18
   connectionFacilitatorPort: 5007
   connectionFacilitatorIPAddress: 208.88.124.45
   Multiply: {fileID: 0}
@@ -965,8 +965,8 @@ NetworkView:
   m_PrefabInternal: {fileID: 1813065797}
   m_GameObject: {fileID: 1568228815}
   m_Enabled: 1
-  m_StateSynchronization: 0
-  m_Observed: {fileID: 0}
+  m_StateSynchronization: 1
+  m_Observed: {fileID: 1568228818}
   m_ViewID:
     m_ID: 2
     m_Type: 1
@@ -1039,7 +1039,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: BuildVersion
-      value: 17
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
       propertyPath: AllowedLevels.Array.data[0]
@@ -1073,6 +1073,18 @@ Prefab:
       propertyPath: LeaderboardViewerPrefab
       value: 
       objectReference: {fileID: 100000, guid: 0d756867282f2f24ca2592552c1eb342, type: 2}
+    - target: {fileID: 14800002, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: m_StateSynchronization
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 14800000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: m_StateSynchronization
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 14800000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
+      propertyPath: m_Observed
+      value: 
+      objectReference: {fileID: 1568228818}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff89fcabd0e884d56b548dada8d9a600, type: 2}
   m_RootGameObject: {fileID: 502558917}
@@ -1114,7 +1126,7 @@ NetworkView:
   m_PrefabInternal: {fileID: 1813065797}
   m_GameObject: {fileID: 1834919049}
   m_Enabled: 1
-  m_StateSynchronization: 0
+  m_StateSynchronization: 1
   m_Observed: {fileID: 0}
   m_ViewID:
     m_ID: 3

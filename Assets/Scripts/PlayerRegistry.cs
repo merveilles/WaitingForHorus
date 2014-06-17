@@ -48,7 +48,8 @@ class PlayerRegistry : MonoBehaviour
 
     public static void RegisterCurrentPlayer( string username, string guid )
     {
-        Instance.networkView.RPC("RegisterPlayer", RPCMode.All, Network.player, username, guid );
+        Instance.networkView.RPC( "RegisterPlayer", RPCMode.OthersBuffered, Network.player, username, guid );
+        Instance.RegisterPlayer( Network.player, username, guid );
     }
 
     [RPC]
@@ -84,7 +85,7 @@ class PlayerRegistry : MonoBehaviour
     public void RegisteredHandshake( NetworkPlayer player )
     {
         if( Network.player != player ) return;
-        SpawnScript.Instance.WaitAndSpawn();
+        SpawnScript.Instance.FinishSpawn();
         Debug.Log( "Handshake Successfull, Spawning" );
     }
 

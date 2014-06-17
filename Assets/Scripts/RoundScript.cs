@@ -79,7 +79,9 @@ public class RoundScript : MonoBehaviour
                 {
                     if (toLevelChange == 0)
                     {
-                        ChangeLevel();
+                        CurrentLevel = RandomHelper.InEnumerable( ServerScript.Instance.AllowedLevels );
+                        ServerScript.Instance.ChangeLevel( CurrentLevel );
+
                         Debug.Log("Loaded level is now " + CurrentLevel);
                         networkView.RPC("ChangeLevelTo", RPCMode.Others, CurrentLevel);
                     }
@@ -94,25 +96,6 @@ public class RoundScript : MonoBehaviour
 	    }
 	}
 
-    [RPC]
-    public void ChangeLevel()
-    {
-        transform.parent.SendMessage("ChangeLevel");
-        toLevelChange = SameLevelRounds;
-    }
-
-    [RPC]
-    public void ChangeLevelTo(string levelName)
-    {
-        transform.parent.SendMessage("ChangeLevelIfNeeded", levelName);
-        toLevelChange = SameLevelRounds;
-    }
-
-    [RPC]
-    public void SyncLevel(string toLevel)
-    {
-        transform.parent.SendMessage("SyncAndSpawn", toLevel);
-    }
 
     [RPC]
     public void StopRound()

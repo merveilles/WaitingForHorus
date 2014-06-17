@@ -475,6 +475,11 @@ public class PlayerScript : MonoBehaviour
 
         playJumpSound = playDashSound = false;
     }
+
+    void OnDestroy( )
+    {
+        Network.RemoveRPCs( networkView.viewID );
+    }
 }
 
 abstract class Interpolator<T>

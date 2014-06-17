@@ -69,6 +69,7 @@ public class ServerScript : MonoBehaviour
 
     public static bool Spectating;
 
+    int lastLevelPrefix = 0;
     GUIStyle TextStyle;
     GUIStyle WelcomeStyle;
 
@@ -147,8 +148,8 @@ public class ServerScript : MonoBehaviour
         TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
         WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
 
-        RoundScript.Instance.CurrentLevel = RandomHelper.InEnumerable(AllowedLevels);
-        ChangeLevelIfNeeded(RoundScript.Instance.CurrentLevel, true);
+        RoundScript.Instance.CurrentLevel = RandomHelper.InEnumerable( AllowedLevels );
+        ChangeLevel( RoundScript.Instance.CurrentLevel, true );
 
         QueryServerList();
     }
@@ -501,21 +502,18 @@ public class ServerScript : MonoBehaviour
         return false;
     }
 
-    public void ChangeLevel()
+    public void ChangeLevel( string toLevelName, bool force = false )
     {
-        ChangeLevelIfNeeded(RandomHelper.InEnumerable(AllowedLevels.Except(new[] { RoundScript.Instance.CurrentLevel })), false);
-    }
-    void SyncAndSpawn(string newLevel)
-    {
-        ChangeLevelIfNeeded(newLevel, false);
-    }
-    public void ChangeLevelIfNeeded(string newLevel)
-    {
-        ChangeLevelIfNeeded(newLevel, false);
+        Network.RemoveRPCsInGroup( 0 );
+        Network.RemoveRPCsInGroup( 1 ); 
+        
+        if( Network.isServer )
+            networkView.RPC( "ChangeLevelRPC", RPCMode.OthersBuffered, toLevelName, force, lastLevelPrefix + 1 );
+        ChangeLevelRPC( toLevelName, force, lastLevelPrefix + 1 );
     }
 
-    int lastLevelPrefix = 0;
-    public void ChangeLevelIfNeeded(string newLevel, bool force)
+    [RPC]
+    public void ChangeLevelRPC( string newLevel, bool force, int prefix )
     {
         if( newLevel == Application.loadedLevelName )
         {
@@ -523,42 +521,46 @@ public class ServerScript : MonoBehaviour
             return;
         }
 
-        Network.SetLevelPrefix( lastLevelPrefix );
-        lastLevelPrefix += 1;
+        ChangeLevelAsync( newLevel, force, prefix );
+    }
+
+    void ChangeLevelAsync( string newLevel, bool force = false, int prefix = 0 )
+    {
+        lastLevelPrefix = prefix;
+
+        Network.RemoveRPCs( Network.player );
+        Network.SetSendingEnabled( 0, false );
+        Network.isMessageQueueRunning = false;
+        Network.SetLevelPrefix( prefix );
 
         force = true;
-        if( force )
+        if( !force )
         {
-            Network.isMessageQueueRunning = false;
-            Application.LoadLevel( newLevel );
-            Network.isMessageQueueRunning = true;
-
-            ChatScript.Instance.LogChat( Network.player, "Changed level to " + newLevel + ".", true, true );
-
-            RoundScript.Instance.CurrentLevel = newLevel;
-            if( currentServer != null ) 
-                currentServer.Map = RoundScript.Instance.CurrentLevel;
+            IsAsyncLoading = true;
+            var asyncOperation = Application.LoadLevelAsync( newLevel );
+            TaskManager.Instance.WaitUntil( x => asyncOperation.isDone ).Then( ( ) =>
+            {
+                IsAsyncLoading = false;
+            } );
         }
         else
         {
-            ChangeLevelAsync( newLevel );
+            Application.LoadLevel( newLevel );
         }
+
+        ChatScript.Instance.LogChat( Network.player, "Changing level to " + newLevel + ".", true, true );
     }
 
-    void ChangeLevelAsync(string newLevel)
+    void OnLevelWasLoaded( int id )
     {
-        IsAsyncLoading = true;
-        Network.isMessageQueueRunning = false;
-        var asyncOperation = Application.LoadLevelAsync( newLevel );
-        TaskManager.Instance.WaitUntil( x => asyncOperation.isDone ).Then( ( ) =>
-        {
-            Network.isMessageQueueRunning = true;
-            IsAsyncLoading = false;
-            ChatScript.Instance.LogChat( Network.player, "Changed level to " + newLevel + ".", true, true );
-        } );
+        // Turn networking back on
+        Network.isMessageQueueRunning = true;
+        Network.SetSendingEnabled( 0, true );
 
-        RoundScript.Instance.CurrentLevel = newLevel;
-        if( currentServer != null ) currentServer.Map = RoundScript.Instance.CurrentLevel;
+        // Notify and change
+        ChatScript.Instance.LogChat( Network.player, "Changed level to " + Application.loadedLevelName + ".", true, true );
+        if( currentServer != null )
+            currentServer.Map = RoundScript.Instance.CurrentLevel;
     }
 
     bool Connect()
@@ -588,9 +590,9 @@ public class ServerScript : MonoBehaviour
         });
     }
 
-    void OnPlayerConnected(NetworkPlayer player)
+    void OnPlayerConnected( NetworkPlayer player )
     {
-        RoundScript.Instance.networkView.RPC("SyncLevel", player, RoundScript.Instance.CurrentLevel);
+        networkView.RPC( "ChangeLevelRPC", player, RoundScript.Instance.CurrentLevel, false, lastLevelPrefix );
     }
 
 //    void GetWanIP()
