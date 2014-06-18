@@ -228,9 +228,10 @@ public class PlayerShootingScript : MonoBehaviour
             Quaternion.Euler( Random.value * spread, 0, 0 ) *
             Quaternion.Euler( 0, 0, -roll );
 
-        networkView.RPC("Shoot", RPCMode.All,
-			gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation,
-            Network.player);
+        networkView.RPC("Shoot", RPCMode.Others,
+            gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation,
+            Network.player );
+        Shoot( gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation, Network.player );
     }
 
     public void InstantReload()
@@ -258,9 +259,12 @@ public class PlayerShootingScript : MonoBehaviour
             lastKnownPosition = target.transform.position;
         }
 
-        networkView.RPC("ShootHoming", RPCMode.All,
+        networkView.RPC("ShootHoming", RPCMode.Others,
 			gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation, 
 			Network.player, targetOwner, lastKnownPosition, homing, doSound );
+        ShootHoming(
+            gun.position + gun.forward * 4.0f, gun.rotation * spreadRotation,
+            Network.player, targetOwner, lastKnownPosition, homing, doSound );
     }
 
     [RPC]

@@ -39,12 +39,12 @@ public class BulletScript : MonoBehaviour
 	
     void OnNetworkInstantiate( NetworkMessageInfo info )
     {
-		if( Network.isServer )
+		/*if( Network.isServer )
 		{
 			foreach( NetworkView nv in GetComponents<NetworkView>() )
 				foreach( NetworkPlayer np in Network.connections )
 			   	 nv.SetScope( np, true );
-		}
+		}*/
 		
 		randomBrightness = RandomHelper.Between( 0.125f, 1.0f );
     }
@@ -126,7 +126,8 @@ public class BulletScript : MonoBehaviour
             if( playerWasHit ) // && hitInfo.transform == c.transform
                 impulse *= 10;
 
-            view.RPC( "AddRecoil", RPCMode.All, impulse );
+            if( Network.isServer )
+                view.RPC( "AddRecoil", RPCMode.All, impulse );
         }
 	}
 	
@@ -189,7 +190,7 @@ public class BulletScript : MonoBehaviour
 		{
 			if( networkView.isMine )
 			{
-				Network.RemoveRPCs( networkView.viewID );
+				//Network.RemoveRPCs( networkView.viewID );
 				Network.Destroy( gameObject );
 			}
 		}
