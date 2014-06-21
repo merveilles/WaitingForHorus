@@ -135,7 +135,7 @@ public class ServerScript : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         networkView.group = 1;
 
-        //Network.natFacilitatorPort = connectionFacilitatorPort; Network.natFacilitatorIP = connectionFacilitatorIPAddress;
+        Network.natFacilitatorPort = connectionFacilitatorPort; Network.natFacilitatorIP = connectionFacilitatorIPAddress;
 
         chosenUsername = PlayerPrefs.GetString("username", "Anon");
 
