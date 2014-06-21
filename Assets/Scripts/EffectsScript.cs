@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class EffectsScript : MonoBehaviour 
 {
@@ -14,21 +13,16 @@ public class EffectsScript : MonoBehaviour
     public GameObject explosionHitPrefab;
     public GameObject areaExplosionPrefab;
     public GameObject hitConePrefab;
-	
-    void Awake()
+
+    public void Awake()
     {
         Instance = this;
-    }
-
-    void Update()
-    {
-        
     }
 
    // [RPC]
     public static void Explosion(Vector3 position, Quaternion rotation)
     {
-        GameObject exp = (GameObject) Instantiate(Instance.explosionPrefab, position, rotation);
+        var exp = (GameObject) Instantiate(Instance.explosionPrefab, position, rotation);
 			
 			//sounds disabled? don't play this one then
 		exp.GetComponent<AudioSource>().mute = !GlobalSoundsScript.soundEnabled;
