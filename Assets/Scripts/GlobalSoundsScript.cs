@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class GlobalSoundsScript : MonoBehaviour 
 {
@@ -9,14 +8,14 @@ public class GlobalSoundsScript : MonoBehaviour
     static GlobalSoundsScript Instance;
     static bool playing = false; //work around the fact that TaskManager does a DontDestroyOnLoad
 
-	void Start () 
+    public void Start () 
     {
         Instance = this;
 	}
 	
     public AudioClip[] songs;
 
-    void Awake()
+    public void Awake()
     {
         if( !playing )
         {
@@ -30,17 +29,17 @@ public class GlobalSoundsScript : MonoBehaviour
     {
         Instance.buttonPressSound.Play();
     }
-	
-	void Update()
+
+    public void Update()
     {
 	    if( Input.GetKeyDown("m") )
             audio.mute = !audio.mute; // Disable music
 		
 		if( Input.GetKeyDown("n") )
-            GlobalSoundsScript.soundEnabled = !GlobalSoundsScript.soundEnabled;
+            soundEnabled = !soundEnabled;
 	}
-	
-    void OnLevelWasLoaded( int levelIndex )
+
+    public void OnLevelWasLoaded( int levelIndex )
     {
         var indexInArray = levelIndex - 1;
 
