@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 class LeaderboardViewerScript : MonoBehaviour
 {
     #pragma warning disable 0649
     public GUISkin Skin;
-    GUIStyle RowStyle, MyRowStyle, SingleRowWindowStyle, MultiRowWindowStyle;
+    GUIStyle RowStyle, MyRowStyle, MultiRowWindowStyle;
 
     public GameObject LeaderboardPrefab;
     NetworkLeaderboard Leaderboard;
@@ -15,28 +13,27 @@ class LeaderboardViewerScript : MonoBehaviour
 
     bool visible;
 
-    void Awake()
+    public void Awake()
     {
         DontDestroyOnLoad( gameObject );
-        SingleRowWindowStyle = new GUIStyle(Skin.window) { };
         MultiRowWindowStyle = new GUIStyle(Skin.window) { padding = { bottom = 0 } };
-        RowStyle = new GUIStyle(Skin.box) {};
-        MyRowStyle = new GUIStyle(Skin.box) {};
+        RowStyle = new GUIStyle(Skin.box);
+        MyRowStyle = new GUIStyle(Skin.box);
         if( Network.isServer ) 
             Network.Instantiate( LeaderboardPrefab, Vector3.zero, Quaternion.identity, 0 );
     }
 
-    void OnDisconnectedFromServer(NetworkDisconnection info) 
+    public void OnDisconnectedFromServer(NetworkDisconnection info) 
     {
         Leaderboard = null;
     }
 
-    void Update()
+    public void Update()
     {
         visible = Input.GetKey(KeyCode.Tab) || RoundScript.Instance.RoundStopped;
     }
 
-    void OnGUI()
+    public void OnGUI()
     {
         if (Network.peerType == NetworkPeerType.Disconnected || Network.peerType == NetworkPeerType.Connecting) return;
 
@@ -47,7 +44,7 @@ class LeaderboardViewerScript : MonoBehaviour
 
         if (!visible)
         {
-            var height = 32;
+            //var height = 32;
            // GUILayout.Window(2, new Rect(278, 0, /*466*/376, height), BoardRow, string.Empty, SingleRowWindowStyle);
         }
         else
@@ -57,26 +54,27 @@ class LeaderboardViewerScript : MonoBehaviour
         }
     }
 
-    void BoardRow(int windowId)
-    {
-        var log = Leaderboard.Entries.FirstOrDefault(x => x.NetworkPlayer == Network.player);
-        if (log == null || !PlayerRegistry.Has(Network.player)) return;
-        {
-            GUIStyle rowStyle = RowStyle;
-           // rowStyle.normal.textColor = PlayerRegistry.For(log.NetworkPlayer).Color;
+    // TODO unused method?
+    //void BoardRow(int windowId)
+    //{
+    //    var log = Leaderboard.Entries.FirstOrDefault(x => x.NetworkPlayer == Network.player);
+    //    if (log == null || !PlayerRegistry.Has(Network.player)) return;
+    //    {
+    //        GUIStyle rowStyle = RowStyle;
+    //       // rowStyle.normal.textColor = PlayerRegistry.For(log.NetworkPlayer).Color;
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Box(PlayerRegistry.For(log.NetworkPlayer).Username.ToUpper(), rowStyle, GUILayout.MinWidth(125), GUILayout.MaxWidth(125));
+    //        GUILayout.BeginHorizontal();
+    //        GUILayout.Box(PlayerRegistry.For(log.NetworkPlayer).Username.ToUpper(), rowStyle, GUILayout.MinWidth(125), GUILayout.MaxWidth(125));
 
-            //rowStyle.normal.textColor = Color.white;
+    //        //rowStyle.normal.textColor = Color.white;
 
-            GUILayout.Box(log.Kills.ToString() + " K", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
-            GUILayout.Box(log.Deaths.ToString() + " D", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
-            //GUILayout.Label(log.Ratio.ToString() + " R", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
-            GUILayout.Box(log.Ping.ToString() + " P", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
-            GUILayout.EndHorizontal();
-        }
-    }
+    //        GUILayout.Box(log.Kills + " K", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+    //        GUILayout.Box(log.Deaths + " D", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+    //        //GUILayout.Label(log.Ratio.ToString() + " R", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+    //        GUILayout.Box(log.Ping + " P", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+    //        GUILayout.EndHorizontal();
+    //    }
+    //}
 
     void BoardWindow(int windowId)
     {
@@ -98,10 +96,10 @@ class LeaderboardViewerScript : MonoBehaviour
 
            // rowStyle.normal.textColor = Color.white;
 
-            GUILayout.Box(log.Kills.ToString() + " K", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
-            GUILayout.Box(log.Deaths.ToString() + " D", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+            GUILayout.Box(log.Kills + " K", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+            GUILayout.Box(log.Deaths + " D", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
             //GUILayout.Label(log.Ratio.ToString() + " R", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
-            GUILayout.Box(log.Ping.ToString() + " P", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+            GUILayout.Box(log.Ping + " P", rowStyle, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
             GUILayout.EndHorizontal();
         }
     }
