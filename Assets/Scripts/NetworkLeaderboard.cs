@@ -16,15 +16,11 @@ class NetworkLeaderboard : MonoBehaviour
     public List<LeaderboardEntry> Entries = new List<LeaderboardEntry>();
     bool disposed;
 
-    static NetworkLeaderboard instance;
-    public static NetworkLeaderboard Instance
-    {
-        get { return instance; }
-    }
+    public static NetworkLeaderboard Instance { get; private set; }
 
-    void OnNetworkInstantiate(NetworkMessageInfo info)
+    public void OnNetworkInstantiate(NetworkMessageInfo info)
     {
-        instance = this;
+        Instance = this;
 
         DontDestroyOnLoad(gameObject);
 		
@@ -44,7 +40,7 @@ class NetworkLeaderboard : MonoBehaviour
 		}
     }
 
-    void Update()
+    public void Update()
     {
         if (disposed)
         {
@@ -85,7 +81,7 @@ class NetworkLeaderboard : MonoBehaviour
         }
     }
 
-    void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+    public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
         if (disposed)
         {
@@ -163,7 +159,7 @@ class NetworkLeaderboard : MonoBehaviour
             ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, shooter, "is merciless!", true, false);
     }
 
-    void OnPlayerConnected(NetworkPlayer player)
+    public void OnPlayerConnected(NetworkPlayer player)
     {
         Entries.Add(new LeaderboardEntry
         {
@@ -171,7 +167,8 @@ class NetworkLeaderboard : MonoBehaviour
             NetworkPlayer = player
         });
     }
-    void OnPlayerDisconnected(NetworkPlayer player)
+
+    public void OnPlayerDisconnected(NetworkPlayer player)
     {
         Entries.RemoveAll(x => x.NetworkPlayer == player);
     }
@@ -179,6 +176,6 @@ class NetworkLeaderboard : MonoBehaviour
     {
         disposed = true;
         Destroy( gameObject );
-        instance = null;
+        Instance = null;
     }
 }
