@@ -6,6 +6,9 @@ public class CameraScript : MonoBehaviour
     public float collisionRadius = 0.7f;
     public float minDistance = 1;
     public float smoothing = 0.1f;
+
+    public bool HasSmoothedRotation = true;
+    public bool UsesRaycastCrosshair = true;
 	
 	bool aimingAtPlayer;
     PlayerScript player;
@@ -48,9 +51,20 @@ public class CameraScript : MonoBehaviour
 
         if(player.networkView.isMine)
         {
+            if (Input.GetButtonDown("ToggleCameraSmoothing"))
+            {
+                HasSmoothedRotation = !HasSmoothedRotation;
+            }
+            if (Input.GetButtonDown("ToggleRaycastCrosshair"))
+            {
+                UsesRaycastCrosshair = !UsesRaycastCrosshair;
+            }
 
-            actualCameraRotation = Quaternion.Lerp(transform.rotation, actualCameraRotation,
-                Easing.EaseOut(Mathf.Pow(smoothing, Time.deltaTime), EasingType.Quadratic));
+            if (HasSmoothedRotation)
+                actualCameraRotation = Quaternion.Lerp(transform.rotation, actualCameraRotation,
+                    Easing.EaseOut(Mathf.Pow(smoothing, Time.deltaTime), EasingType.Quadratic));
+            else
+                actualCameraRotation = transform.rotation;
 
             Vector3 scaledLocalPosition = Vector3.Scale(transform.localPosition, transform.lossyScale);
             Vector3 direction = actualCameraRotation * scaledLocalPosition;
@@ -122,7 +136,18 @@ public class CameraScript : MonoBehaviour
     public Vector3 GetTargetPosition()
     {
         RaycastHit hitInfo;
-        if(Physics.Raycast(transform.position, transform.forward, out hitInfo,
+        Vector3 position, forward;
+        if (UsesRaycastCrosshair)
+        {
+            position = transform.position;
+            forward = transform.forward;
+        }
+        else
+        {
+            position = mainCamera.transform.position;
+            forward = mainCamera.transform.forward;
+        }
+        if(Physics.Raycast(position, forward, out hitInfo,
                            Mathf.Infinity, 1<<LayerMask.NameToLayer("Default")))
             return hitInfo.point;
         else
