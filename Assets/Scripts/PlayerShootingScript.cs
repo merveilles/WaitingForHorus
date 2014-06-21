@@ -36,6 +36,10 @@ public class PlayerShootingScript : MonoBehaviour
 	float cooldownLeft = 0.0f;
     int bulletsLeft;
 
+    public delegate void ShotFiredHandler();
+    // Invoked when a shot is fired (either primary or secondary)
+    public event ShotFiredHandler OnShotFired = delegate {};
+
     //float cannonChargeCountdown = CannonChargeTime;
     WeaponIndicatorScript weaponIndicator;
     // public because HealthScript accesses it :x
@@ -86,7 +90,7 @@ public class PlayerShootingScript : MonoBehaviour
                 // Shotgun
                 if( Input.GetButton( "Alternate Fire") )
                 {
-                    gameObject.SendMessage("ShotFired");
+                    OnShotFired();
 
                     // find homing target(s)
 					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();
@@ -119,7 +123,7 @@ public class PlayerShootingScript : MonoBehaviour
                 // Burst
                 else if (Input.GetButton("Fire")) // burst fire
                 {
-                    gameObject.SendMessage("ShotFired");
+                    OnShotFired();
 
                     DoShot( BurstSpread );
                     cooldownLeft += ShotCooldown;

@@ -75,8 +75,26 @@ public class HealthScript : MonoBehaviour
         }
     }
 
-    // Used by 'PlayerShootingScript', 'SendMessage'
-    public void ShotFired()
+    public void OnEnable()
+    {
+        var shootingScript = GetComponent<PlayerShootingScript>();
+        if (shootingScript != null)
+        {
+            shootingScript.OnShotFired += ShotFired;
+        }
+    }
+
+    public void OnDisable()
+    {
+        var shootingScript = GetComponent<PlayerShootingScript>();
+        if (shootingScript != null)
+        {
+            shootingScript.OnShotFired -= ShotFired;
+        }
+    }
+
+    // Called from delegate/event after any shot is fired.
+    private void ShotFired()
     {
         invulnerable = false;
     }
@@ -143,7 +161,10 @@ public class HealthScript : MonoBehaviour
             {
                 if( Network.player == shootingPlayer ) 
 				{
-					NetworkLeaderboard.Instance.networkView.RPC( "RegisterKill", RPCMode.All, shootingPlayer, GetComponent<PlayerScript>().owner );
+				    if (NetworkLeaderboard.Instance != null)
+				    {
+    					NetworkLeaderboard.Instance.networkView.RPC( "RegisterKill", RPCMode.All, shootingPlayer, GetComponent<PlayerScript>().owner );
+				    }
                		networkView.RPC("ScheduleRespawn", RPCMode.All,
                         RespawnZone.GetRespawnPoint());
 				}
