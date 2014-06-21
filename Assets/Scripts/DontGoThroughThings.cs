@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
  
 public class DontGoThroughThings : MonoBehaviour 
 {
@@ -13,17 +12,17 @@ public class DontGoThroughThings : MonoBehaviour
 	private Rigidbody myRigidbody; 
  
  
-	//initialize values 
-	void Awake() 
+    public void Awake() 
 	{ 
+    	//initialize values 
 	   myRigidbody = rigidbody; 
 	   previousPosition = myRigidbody.position; 
 	   minimumExtent = Mathf.Min(Mathf.Min(collider.bounds.extents.x, collider.bounds.extents.y), collider.bounds.extents.z); 
 	   partialExtent = minimumExtent * (1.0f - skinWidth); 
 	   sqrMinimumExtent = minimumExtent * minimumExtent; 
-	} 
- 
-	void Update() 
+	}
+
+    public void Update() 
 	{ 
 	   //have we moved more than our minimum extent? 
 	   Vector3 movementThisStep = myRigidbody.position - previousPosition; 
