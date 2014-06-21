@@ -75,11 +75,11 @@ public class HealthScript : MonoBehaviour
         }
     }
 
-    // TODO seemingly unused. Safe to remove?
-    //void ShotFired()
-    //{
-    //    invulnerable = false;
-    //}
+    // Used by 'PlayerShootingScript', 'SendMessage'
+    public void ShotFired()
+    {
+        invulnerable = false;
+    }
 
     [RPC]
     public void SetShield(bool on, bool immediate)
