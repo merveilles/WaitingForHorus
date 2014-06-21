@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
@@ -60,12 +59,15 @@ public class PlayerScript : MonoBehaviour
     Vector3 lastNetworkFramePosition;
     Quaternion smoothLookRotation;
     float smoothYaw;
-	List<NetworkPlayer> targetedBy { get; set; }
+
+    // TODO unused 'get', intentional? No reason to ever set it, then.
+	//List<NetworkPlayer> targetedBy { get; set; }
+
 	List<GameObject> warningSpheres { get; set; }
 
-	void Awake() 
+    public void Awake() 
 	{
-		targetedBy = new List<NetworkPlayer>();
+		//targetedBy = new List<NetworkPlayer>();
 		warningSpheres = new List<GameObject>();
 		
         DontDestroyOnLoad(gameObject);
@@ -90,7 +92,7 @@ public class PlayerScript : MonoBehaviour
         }
 	}
 
-    void OnNetworkInstantiate(NetworkMessageInfo info)
+    public void OnNetworkInstantiate(NetworkMessageInfo info)
     {
         if( Network.isServer )
         {
@@ -112,7 +114,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void OnGUI()
+    public void OnGUI()
     {
         if(Event.current.type == EventType.KeyDown &&
            Event.current.keyCode == KeyCode.Escape)
@@ -124,7 +126,7 @@ public class PlayerScript : MonoBehaviour
     [RPC]
     public void Targeted( NetworkPlayer aggressor )
     {
-        if( !networkView.isMine || aggressor == null ) return;
+        if( !networkView.isMine ) return;
 		
 		if( GlobalSoundsScript.soundEnabled )
 		   warningSound.Play(); 
@@ -141,12 +143,11 @@ public class PlayerScript : MonoBehaviour
     [RPC]
     public void Untargeted( NetworkPlayer aggressor )
     {
-        if( !networkView.isMine || aggressor == null  ) return;
+        if( !networkView.isMine  ) return;
 		
 		print( "Untargeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
-		int id = -1;
-		id = warningSpheres.FindIndex( a => a.GetComponent<Billboard>().target == PlayerRegistry.For( aggressor ).Location );
+		int id = warningSpheres.FindIndex( a => a.GetComponent<Billboard>().target == PlayerRegistry.For( aggressor ).Location );
 		if( id == -1 ) return;
 		
 		Destroy( warningSpheres[id] );
@@ -178,7 +179,7 @@ public class PlayerScript : MonoBehaviour
         fallingVelocity = Vector3.zero;
     }
 
-    void Update()
+    public void Update()
     {
         if (Network.peerType == NetworkPeerType.Disconnected) return;
         if (Paused) return;
@@ -291,7 +292,7 @@ public class PlayerScript : MonoBehaviour
         }*/
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         if(!controller.enabled) return;
         if (Paused) return;
@@ -440,7 +441,7 @@ public class PlayerScript : MonoBehaviour
         lastInputVelocity = inputVelocity = Vector3.zero;
     }
 
-    void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+    public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
         var pOwner = owner.HasValue ? owner.Value : default(NetworkPlayer);
         stream.Serialize(ref pOwner);
@@ -476,7 +477,7 @@ public class PlayerScript : MonoBehaviour
         playJumpSound = playDashSound = false;
     }
 
-    void OnDestroy( )
+    public void OnDestroy( )
     {
         Network.RemoveRPCs( networkView.viewID );
     }
