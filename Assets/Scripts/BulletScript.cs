@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class BulletScript : MonoBehaviour 
 {
@@ -37,7 +36,7 @@ public class BulletScript : MonoBehaviour
 	private Vector3 previousPosition; 
 	private Rigidbody myRigidbody; 
 	
-    void OnNetworkInstantiate( NetworkMessageInfo info )
+    public void OnNetworkInstantiate( NetworkMessageInfo info )
     {
 		/*if( Network.isServer )
 		{
@@ -49,7 +48,7 @@ public class BulletScript : MonoBehaviour
 		randomBrightness = RandomHelper.Between( 0.125f, 1.0f );
     }
 
-    void Awake()
+    public void Awake()
     {
 		// Auxillary Collision Testing
 		myRigidbody = rigidbody; 
@@ -147,21 +146,21 @@ public class BulletScript : MonoBehaviour
 		renderer.enabled = false;
 	}
 	
-	void OnCollisionEnter( Collision collision ) 
+	public void OnCollisionEnter( Collision collision ) 
 	{
 		BulletScript hitBullet = collision.gameObject.GetComponent<BulletScript>();
         if( !dead && hitBullet == null )
 			Collide( collision.transform, collision.contacts[0].point, collision.contacts[0].normal );
 	}
 	
-	void OnCollisionStay( Collision collision ) 
+	public void OnCollisionStay( Collision collision ) 
 	{
 		BulletScript hitBullet = collision.gameObject.GetComponent<BulletScript>();
         if( !dead && hitBullet == null )
 			Collide( collision.transform, collision.contacts[0].point, collision.contacts[0].normal );
 	}
 
-	void Update()
+    public void Update()
     {
         if( !dead )
         {
@@ -196,7 +195,7 @@ public class BulletScript : MonoBehaviour
 		}
 	}
 
-	void FixedUpdate() 
+    public void FixedUpdate() 
 	{ 
 		if( dead ) return;
 		
