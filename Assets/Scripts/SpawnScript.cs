@@ -70,7 +70,7 @@ public class SpawnScript : MonoBehaviour
             else
                 Debug.Log("Successfully diconnected from the server");
 
-        foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+        foreach (var p in PlayerScript.AllEnabledPlayerScripts)
             Destroy(p.gameObject);
     }
 	

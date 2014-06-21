@@ -100,7 +100,7 @@ public class RoundScript : MonoBehaviour
     [RPC]
     public void StopRound()
     {
-        foreach (var player in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+        foreach (var player in PlayerScript.AllEnabledPlayerScripts)
             player.Paused = true;
         RoundStopped = true;
     }
@@ -116,7 +116,7 @@ public class RoundScript : MonoBehaviour
         while (ServerScript.IsAsyncLoading)
             yield return new WaitForSeconds(1 / 30f);
 
-        foreach (var player in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+        foreach (var player in PlayerScript.AllEnabledPlayerScripts)
            player.Paused = false;
 
         foreach (var entry in NetworkLeaderboard.Instance.Entries)

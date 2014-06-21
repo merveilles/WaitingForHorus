@@ -213,7 +213,7 @@ public class ChatScript : MonoBehaviour
                                 if (!ServerScript.Spectating)
                                 {
                                     bool isDead = false;
-                                    foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                                    foreach (var p in PlayerScript.AllEnabledPlayerScripts)
                                         if (p.networkView != null && p.networkView.isMine)
                                         {
                                             var h = p.GetComponent<HealthScript>();
@@ -242,7 +242,7 @@ public class ChatScript : MonoBehaviour
                             case "/join":
                                 if (ServerScript.Spectating)
                                 {
-                                    foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                                    foreach (var p in PlayerScript.AllEnabledPlayerScripts)
                                         if (p.networkView != null && p.networkView.isMine)
                                             p.GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
 

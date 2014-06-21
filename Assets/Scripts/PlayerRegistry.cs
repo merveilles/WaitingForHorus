@@ -152,7 +152,7 @@ class PlayerRegistry : MonoBehaviour
                                 info.Spectating);
 
                 if (info.Spectating)
-                    foreach (var p in FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>())
+                    foreach (var p in PlayerScript.AllEnabledPlayerScripts)
                         if (p.networkView.owner == otherPlayer)
                             p.GetComponent<HealthScript>().networkView.RPC("ToggleSpectate", player, true);
             }

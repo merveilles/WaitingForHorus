@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -56,8 +57,10 @@ public class PlayerScript : MonoBehaviour
 
     // Used as a global collection of all enabled PlayerScripts. Will help us
 	// avoid iterating all GameObjects.
-    public static List<PlayerScript> EnabledPlayerScripts = new List<PlayerScript>();
+    public static readonly List<PlayerScript> UnsafeAllEnabledPlayerScripts = new List<PlayerScript>();
 
+    public static IEnumerable<PlayerScript> AllEnabledPlayerScripts { get { return UnsafeAllEnabledPlayerScripts.ToList(); } }
+        
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
     Vector3 lastNetworkFramePosition;
@@ -71,12 +74,12 @@ public class PlayerScript : MonoBehaviour
 
     public void OnEnable()
     {
-        EnabledPlayerScripts.Add(this);
+        UnsafeAllEnabledPlayerScripts.Add(this);
     }
 
     public void OnDisable()
     {
-        EnabledPlayerScripts.Remove(this);
+        UnsafeAllEnabledPlayerScripts.Remove(this);
     }
 
     public void Awake() 
