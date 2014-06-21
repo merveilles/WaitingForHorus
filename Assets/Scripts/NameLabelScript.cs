@@ -1,9 +1,8 @@
 using UnityEngine;
-using System.Collections;
 
 public class NameLabelScript : MonoBehaviour 
-{	
-	void LateUpdate()
+{
+    public void LateUpdate()
 	{
 		transform.rotation = Camera.main.transform.rotation;
 		var distance = Mathf.Sqrt(Vector3.Distance(Camera.main.transform.position, transform.position)) / 10;
