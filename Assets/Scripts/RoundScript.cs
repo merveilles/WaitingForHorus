@@ -11,19 +11,18 @@ public class RoundScript : MonoBehaviour
     float sinceRoundTransition;
     public bool RoundStopped { get; private set; }
     public string CurrentLevel { get; set; }
-    float sinceInteround;
     bool said60secWarning, said30secWarning, said10secWarning, said5secWarning;
     int toLevelChange;
 
     public static RoundScript Instance { get; private set; }
 
-    void Awake()
+    public void Awake()
     {
         Instance = this;
         toLevelChange = SameLevelRounds;
     }
 
-    void Update() 
+    public void Update() 
     {
         if (Network.isServer)
 	    {
