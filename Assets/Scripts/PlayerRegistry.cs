@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -9,7 +7,7 @@ class PlayerRegistry : MonoBehaviour
     readonly Dictionary<NetworkPlayer, PlayerInfo> registry = new Dictionary<NetworkPlayer, PlayerInfo>();
     bool disposed;
 
-    public static PlayerRegistry Instance;
+    public static PlayerRegistry Instance { get; private set; }
     public static bool Propagated = false;
 	
     public static PlayerInfo For(NetworkPlayer player)
@@ -24,13 +22,13 @@ class PlayerRegistry : MonoBehaviour
 
    	public static NetworkPlayer For(Transform player)
     {
-        for( int i = 0; i < PlayerRegistry.Instance.registry.Count; i++ )
+        for( int i = 0; i < Instance.registry.Count; i++ )
 		{
-			var otherPlayer = PlayerRegistry.Instance.registry.ElementAt( i ).Value; 
-			if( otherPlayer.Location == player ) return PlayerRegistry.Instance.registry.ElementAt( i ).Key;
+			var otherPlayer = Instance.registry.ElementAt( i ).Value; 
+			if( otherPlayer.Location == player ) return Instance.registry.ElementAt( i ).Key;
 		}
 		
-		return PlayerRegistry.Instance.registry.ElementAt( 0 ).Key; // SHOULD NEVER HAPPEN!!!
+		return Instance.registry.ElementAt( 0 ).Key; // SHOULD NEVER HAPPEN!!!
     }
 	
     int ConnectedCount()
@@ -38,7 +36,7 @@ class PlayerRegistry : MonoBehaviour
         return registry.Values.Count(x => !x.Disconnected);
     }
 
-    void OnNetworkInstantiate(NetworkMessageInfo info)
+    public void OnNetworkInstantiate(NetworkMessageInfo info)
     {
         Instance = this;
         DontDestroyOnLoad(gameObject);
