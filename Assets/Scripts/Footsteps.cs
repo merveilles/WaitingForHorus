@@ -17,16 +17,19 @@ public class Footsteps : MonoBehaviour
 	
 	bool CheckStep()
 	{
-		return ( Input.GetAxis( "Strafe" ) != 0.0f || Input.GetAxis( "Thrust" ) != 0.0f ) && Physics.Raycast( transform.position, Vector3.down, StepHeight );
+	    bool strafing = !Mathf.Approximately(Input.GetAxis( "Strafe" ), 0.0f);
+	    bool thrusting = !Mathf.Approximately(Input.GetAxis( "Thrust" ), 0.0f);
+	    bool stepRaycast = Physics.Raycast( transform.position, Vector3.down, StepHeight );
+	    return ( strafing || thrusting ) && stepRaycast;
 	}
-	
-	void Update()
+
+    public void Update()
 	{
 		if( CheckStep() && !Walking )
 			StartCoroutine( "Step" );
 	}
-	
-	IEnumerator Step()
+
+    public IEnumerator Step()
 	{
 		Walking = true;
 		while( CheckStep() )
