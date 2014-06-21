@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 public class WeaponIndicatorScript : MonoBehaviour
@@ -28,7 +26,7 @@ public class WeaponIndicatorScript : MonoBehaviour
     public List<PlayerData> Targets { get; private set; }
     public Vector2 CrosshairPosition { get; set; }
 
-    void Start()
+    public void Start()
     {
         mat = new Material("Shader \"Lines/Colored Blended\" {" +
                            "SubShader { Pass { " +
@@ -47,7 +45,7 @@ public class WeaponIndicatorScript : MonoBehaviour
 	
 	void Render( Color color, float opacity, Vector2 size )
 	{
-        const float Segments = 32;
+        const float segments = 32;
 
         GL.PushMatrix();
         GL.LoadPixelMatrix();
@@ -62,12 +60,12 @@ public class WeaponIndicatorScript : MonoBehaviour
         var radius = size * Screen.height / 1500f;
         ssPos = CrosshairPosition;
         //ssPos = new Vector2(Screen.width, Screen.height) / 2f;
-        for (int i = 0; i < Segments; i++)
+        for (int i = 0; i < segments; i++)
         {
             var eased = Easing.EaseIn(CooldownStep, EasingType.Quadratic);
 
-            var thisA = (i / Segments * Mathf.PI * 2) * eased + Mathf.PI / 2;
-            var nextA = ((i + 1) / Segments * Mathf.PI * 2) * eased + Mathf.PI / 2;
+            var thisA = (i / segments * Mathf.PI * 2) * eased + Mathf.PI / 2;
+            var nextA = ((i + 1) / segments * Mathf.PI * 2) * eased + Mathf.PI / 2;
 
             GL.Vertex3(ssPos.x + (float) Math.Cos(thisA) * radius.x, ssPos.y + (float) Math.Sin(thisA) * radius.y, 0);
             GL.Vertex3(ssPos.x + (float) Math.Cos(nextA) * radius.x, ssPos.y + (float) Math.Sin(nextA) * radius.y, 0);
@@ -86,7 +84,7 @@ public class WeaponIndicatorScript : MonoBehaviour
             var step = 1 -
                        Easing.EaseIn(Mathf.Clamp01(t.SinceInCrosshair / PlayerShootingScript.AimingTime),
                                      EasingType.Cubic);
-            isReady |= step == 0;
+            isReady |= Mathf.Approximately(step, 0);
 
             step *= offsetSize;
 
@@ -121,7 +119,7 @@ public class WeaponIndicatorScript : MonoBehaviour
         GL.PopMatrix();
 	}
 
-    IEnumerator OnPostRender()
+    public IEnumerator OnPostRender()
     {
         yield return new WaitForEndOfFrame();
 
