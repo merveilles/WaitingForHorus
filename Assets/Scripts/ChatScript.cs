@@ -8,7 +8,10 @@ public class ChatScript : MonoBehaviour
     public readonly List<ChatMessage> ChatLog = new List<ChatMessage>();
 
     public GUISkin Skin;
-    GUIStyle ChatStyle, MyChatStyle;
+
+    // TODO was unused. Intentional?
+    //GUIStyle ChatStyle;
+    //GUIStyle MyChatStyle;
 
 	string lastMessage = "";
     public bool showChat;
@@ -17,32 +20,35 @@ public class ChatScript : MonoBehaviour
 
     public static ChatScript Instance { get; private set; }
 
-    void Awake()
+    public void Awake()
     {
         Instance = this;
     }
 
-    void OnDestroy()
+    public void OnDestroy()
     {
         if (Instance == this)
             Instance = null;
     }
 
-    void Start()
+    public void Start()
     {
-        ChatStyle = new GUIStyle { normal = { textColor = Color.white }, padding = { top = 9, left = 5, right = 10 }, fixedWidth = 209, fixedHeight = 32 };
-        MyChatStyle = new GUIStyle(ChatStyle) { normal = { background = Skin.window.normal.background } };
+        // TODO was unused. Intentional?
+        //MyChatStyle = new GUIStyle(ChatStyle) { normal = { background = Skin.window.normal.background } };
+        //ChatStyle = new GUIStyle { normal = { textColor = Color.white }, padding = { top = 9, left = 5, right = 10 }, fixedWidth = 209, fixedHeight = 32 };
     }
 
-    void OnServerInitialized()
+    public void OnServerInitialized()
     {
         CleanUp();
     }
-    void OnConnectedToServer()
+
+    public void OnConnectedToServer()
     {
         CleanUp();
     }
-    void OnDisconnectedFromServer()
+
+    public void OnDisconnectedFromServer()
     {
         Screen.lockCursor = false;
     }
@@ -54,7 +60,7 @@ public class ChatScript : MonoBehaviour
         lastMessage = string.Empty;
     }
 
-    void Update()
+    public void Update()
     {
         forceVisible = Input.GetKey(KeyCode.Tab) || RoundScript.Instance.RoundStopped;
 
@@ -62,7 +68,7 @@ public class ChatScript : MonoBehaviour
             log.Life += Time.deltaTime;
     }
 
-	void OnGUI()
+    public void OnGUI()
 	{
 	    if (Network.peerType == NetworkPeerType.Disconnected || Network.peerType == NetworkPeerType.Connecting) return;
 
@@ -293,7 +299,9 @@ public class ChatScript : MonoBehaviour
 			
 			GUILayout.Box( "", new GUIStyle( Skin.box ) { fixedWidth = showChat ? 1 : 184 } );
 			
-			GUIStyle bsty = new GUIStyle( Skin.button ) { fixedWidth = 92 };
+            // TODO was unused. intentional?
+			//GUIStyle bsty = new GUIStyle( Skin.button ) { fixedWidth = 92 };
+
             if (GUILayout.Button("Disconnect"))
             {
                 GlobalSoundsScript.PlayButtonPress();
