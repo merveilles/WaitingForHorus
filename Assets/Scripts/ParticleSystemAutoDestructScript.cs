@@ -1,13 +1,12 @@
 using UnityEngine;
-using System.Collections;
 
 public class ParticleSystemAutoDestructScript : MonoBehaviour 
 {
-    void Update()
+    public void Update()
     {
         if(!particleSystem.IsAlive())
         {
-            Object.Destroy(gameObject);
+            Destroy(gameObject);
         }
     }
 }
