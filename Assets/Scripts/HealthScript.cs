@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 using System.Collections;
 
@@ -30,7 +29,7 @@ public class HealthScript : MonoBehaviour
     Renderer bigCell;
     Renderer[] smallCells;
 
-    void Awake()
+    public void Awake()
     {
         Shield = maxShield;
         Health = maxHealth;
@@ -40,13 +39,16 @@ public class HealthScript : MonoBehaviour
         smallCells = new[] { graphics.FindChild("healthsphere_left").GetComponentInChildren<Renderer>(), graphics.FindChild("healthsphere_right").GetComponentInChildren<Renderer>() };
     }
 
-    void Update()
+    public void Update()
     {
+        // TODO magical -104 number, what does it do?
         if( networkView.isMine && transform.position.y < -104 )
         {
-            DoDamage( 1, (NetworkPlayer)GetComponent<PlayerScript>().owner );
+            NetworkPlayer? networkPlayer = GetComponent<PlayerScript>().owner;
+            if (networkPlayer.HasValue)
+                DoDamage( 1, networkPlayer.Value );
         }
-		
+
         if (!firstSet && shieldRenderer != null)
         {
             shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
@@ -73,13 +75,14 @@ public class HealthScript : MonoBehaviour
         }
     }
 
-    void ShotFired()
-    {
-        invulnerable = false;
-    }
+    // TODO seemingly unused. Safe to remove?
+    //void ShotFired()
+    //{
+    //    invulnerable = false;
+    //}
 
     [RPC]
-    void SetShield(bool on, bool immediate)
+    public void SetShield(bool on, bool immediate)
     {
         if (immediate)
         {
@@ -110,7 +113,7 @@ public class HealthScript : MonoBehaviour
         });
     }
     [RPC]
-    void SetHealth(int health)
+    public void SetHealth(int health)
     {
         bigCell.enabled = health >= 2;
         foreach (var r in smallCells)
@@ -161,9 +164,17 @@ public class HealthScript : MonoBehaviour
         }
     }
 
+    // TODO there is some clearly broken code here. It previously checked for
+	// 'this != null' which is always impossible in C#. Probably someone was
+	// having it crash and they didn't understand why, so they added that. I'm
+	// guessing the timeout will sometimes perform an invalid action when the
+	// game has gone into certain states and it tries to do something.
+    //
+    // Most likely, a timeout shouldn't be used, and it should simply count time
+	// in Update or something like that.
     object respawnLock;
     [RPC]
-    void ScheduleRespawn(Vector3 position)
+    public void ScheduleRespawn(Vector3 position)
     {
         Hide();
         Instantiate(deathPrefab, transform.position, transform.rotation);
@@ -172,13 +183,13 @@ public class HealthScript : MonoBehaviour
         TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() =>
         {
             //Debug.Log("Spectating? " + ServerScript.Spectating);
-            if (this != null && respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
+            if (respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
                 Respawn(position);
         });
     }
 
     [RPC]
-    void ImmediateRespawn()
+    public void ImmediateRespawn()
     {
         StartCoroutine(WaitAndRespawn());
     }
