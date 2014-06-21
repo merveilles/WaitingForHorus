@@ -201,6 +201,15 @@ public class PlayerScript : MonoBehaviour
         fallingVelocity = Vector3.zero;
     }
 
+
+    private Vector3 RawAxisMovementDirection
+    { 
+        get {
+            return (Input.GetAxisRaw("Strafe") * transform.right +
+                    Input.GetAxisRaw("Thrust") * transform.forward).normalized;
+        }
+    }
+
     public void Update()
     {
         if (Network.peerType == NetworkPeerType.Disconnected) return;
@@ -357,8 +366,10 @@ public class PlayerScript : MonoBehaviour
                 	dashSound.Play();
 				}
 
-                var dashDirection = inputVelocity.normalized;
-                if (dashDirection == Vector3.zero)
+                Vector3 dashDirection = RawAxisMovementDirection;
+
+                // Dash upwards if no significant direction input
+                if (dashDirection.magnitude < Mathf.Epsilon)
                     dashDirection = Vector3.up * 0.4f;
 
                 fallingVelocity +=
