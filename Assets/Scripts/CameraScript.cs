@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour
@@ -15,7 +14,7 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
-    void Start()
+    public void Start()
     {
         player = transform.parent.parent.GetComponent<PlayerScript>();
         if(player.networkView.isMine)
@@ -23,8 +22,8 @@ public class CameraScript : MonoBehaviour
             mainCamera = Camera.main;
         }
     }
-	
-	void FixedUpdate()
+
+    public void FixedUpdate()
 	{
         RaycastHit hitInfo;
 
@@ -38,7 +37,7 @@ public class CameraScript : MonoBehaviour
         player.gameObject.FindChild("PlayerHit").collider.enabled = true;	
 	}
 
-    void LateUpdate()
+    public void LateUpdate()
     {
         if (player.Paused && mainCamera != null)
         {
@@ -57,6 +56,7 @@ public class CameraScript : MonoBehaviour
             Vector3 direction = actualCameraRotation * scaledLocalPosition;
             Vector3 cameraPosition = transform.parent.position + direction;
             float magnitude = direction.magnitude;
+            // TODO what is this assignment? Should it be above? is it a mistake?
             direction /= magnitude;
 
            /* RaycastHit hitInfo;
@@ -77,6 +77,7 @@ public class CameraScript : MonoBehaviour
                 r.material.color = new Color(c.r, c.g, c.b, o);
             }*/
 
+            // TODO can mainCamera be null here?
             mainCamera.transform.position = cameraPosition;
             mainCamera.transform.rotation = actualCameraRotation;
 
@@ -101,7 +102,7 @@ public class CameraScript : MonoBehaviour
 		GUI.DrawTexture(position, crosshair);
 	}
 
-    void OnGUI()
+    public void OnGUI()
     {
         if(player.networkView.isMine)
         {
