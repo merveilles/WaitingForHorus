@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -33,8 +32,6 @@ public class PlayerShootingScript : MonoBehaviour
     public AnimationCurve cannonOuterScale;
     public AnimationCurve cannonInnerScale;
 
-    Material mat;
-	
 	public float heat = 0.0f;
 	float cooldownLeft = 0.0f;
     int bulletsLeft;
@@ -47,7 +44,7 @@ public class PlayerShootingScript : MonoBehaviour
     CameraScript playerCamera;
     PlayerScript playerScript;
 
-    void Awake()
+    public void Awake()
     {
 		bulletsLeft = BurstCount;
         playerCamera = GetComponentInChildren<CameraScript>();
@@ -64,13 +61,14 @@ public class PlayerShootingScript : MonoBehaviour
             bulletsLeft = BurstCount;
     }*/
 	
-	WeaponIndicatorScript.PlayerData GetFirstTarget()
-	{
-		var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime );
-		return aimedAt.OrderBy( x => Guid.NewGuid() ).First();
-	}
+    // TODO unused, looks like it should go below in the homing firing
+    //WeaponIndicatorScript.PlayerData GetFirstTarget()
+    //{
+    //    var aimedAt = targets.Where(x => x.SinceInCrosshair >= AimingTime );
+    //    return aimedAt.OrderBy( x => Guid.NewGuid() ).First();
+    //}
 
-    void Update()
+    public void Update()
     {
         gun.LookAt(playerCamera.GetTargetPosition());
 
@@ -83,7 +81,7 @@ public class PlayerShootingScript : MonoBehaviour
 			heat = Mathf.Clamp01( heat - Time.deltaTime );
             weaponIndicator.CooldownStep = 1 - Math.Min( Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1 );
 
-		    if( cooldownLeft == 0 )
+		    if( cooldownLeft <= Mathf.Epsilon )
             {
                 // Shotgun
                 if( Input.GetButton( "Alternate Fire") )
@@ -91,7 +89,8 @@ public class PlayerShootingScript : MonoBehaviour
                     gameObject.SendMessage("ShotFired");
 
                     // find homing target(s)
-					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime );
+					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();
+					var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
 
 					var bulletsShot = bulletsLeft;
                     var first = true;
@@ -101,7 +100,6 @@ public class PlayerShootingScript : MonoBehaviour
                             DoHomingShot( ShotgunSpread, null, 0, first );
                         else
 						{
-							var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
                             DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ) * ShotgunHomingSpeed, first );
 						}
 						
@@ -154,10 +152,9 @@ public class PlayerShootingScript : MonoBehaviour
             //Debug.Log(targets.Values.Count + " targets to find");
 
             // Test for players in crosshair
-            foreach (var p in FindSceneObjectsOfType(typeof(PlayerScript)))
+            foreach (var ps in FindObjectsOfType<PlayerScript>())
             {
-                var ps = p as PlayerScript;
-                if( p == gameObject.GetComponent<PlayerScript>() ) // Is targeting self?
+                if( ps == gameObject.GetComponent<PlayerScript>() ) // Is targeting self?
                     continue;
 
                 var health = ps.gameObject.GetComponent<HealthScript>();
@@ -187,8 +184,8 @@ public class PlayerShootingScript : MonoBehaviour
 			CheckTargets();
 		}
     }
-	
-    void OnApplicationQuit()
+
+    public void OnApplicationQuit()
     {
 		CheckTargets();
 	}
@@ -277,6 +274,7 @@ public class PlayerShootingScript : MonoBehaviour
         	burstGunSound.Play();
     }
 
+    // TODO very inefficient
     [RPC]
     void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, Vector3 lastKnownPosition, float homing, bool doSound)
     {
@@ -286,7 +284,7 @@ public class PlayerShootingScript : MonoBehaviour
 		PlayerScript targetScript;
         try
         {
-            targetScript = FindSceneObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>().Where(
+            targetScript = FindObjectsOfType(typeof(PlayerScript)).Cast<PlayerScript>().Where(
                 x => x.owner == target).OrderBy(x => Vector3.Distance(x.transform.position, lastKnownPosition)).FirstOrDefault();
         }
         catch (Exception) { targetScript = null; }
