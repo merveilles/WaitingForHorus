@@ -9,6 +9,7 @@ public class CameraScript : MonoBehaviour
 
     public bool HasSmoothedRotation = true;
     public bool UsesRaycastCrosshair = true;
+    public float CrosshairSmoothingSpeed = 20.0f;
 	
 	bool aimingAtPlayer;
     PlayerScript player;
@@ -17,6 +18,10 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
+    // Used only for drawing the crosshair on screen. Actual aiming raycast will
+	// not use this.
+    private Vector2 SmoothedCrosshairPosition;
+
     public void Start()
     {
         player = transform.parent.parent.GetComponent<PlayerScript>();
@@ -24,6 +29,7 @@ public class CameraScript : MonoBehaviour
         {
             mainCamera = Camera.main;
         }
+        SmoothedCrosshairPosition = GetCrosshairPosition();
     }
 
     public void FixedUpdate()
@@ -96,8 +102,11 @@ public class CameraScript : MonoBehaviour
             mainCamera.transform.rotation = actualCameraRotation;
 
 
+            var rawCrosshairPosition = GetCrosshairPosition();
+            SmoothedCrosshairPosition = Vector2.Lerp(SmoothedCrosshairPosition, rawCrosshairPosition, Time.deltaTime * CrosshairSmoothingSpeed);
             Camera.main.GetComponent<WeaponIndicatorScript>()
-                .CrosshairPosition = GetCrosshairPosition();
+                .CrosshairPosition = SmoothedCrosshairPosition;
+
         }
     }
 	
@@ -105,7 +114,7 @@ public class CameraScript : MonoBehaviour
 	{
         var scale = ( Screen.height / 1750f ) * size;
 
-        Vector2 center = GetCrosshairPosition();
+	    Vector2 center = SmoothedCrosshairPosition;
         Rect position = new Rect(
             center.x - crosshair.width / 2f * scale,
             Screen.height - center.y - crosshair.height / 2f * scale,
