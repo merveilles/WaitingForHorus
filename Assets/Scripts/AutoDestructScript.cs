@@ -1,18 +1,17 @@
 using UnityEngine;
-using System.Collections;
 
 public class AutoDestructScript : MonoBehaviour 
 {
     public float timeToLive = 1.0f;
     public float fadeOutTime = -1;
 
-    void Start()
+    public void Start()
     {
-        if (fadeOutTime == -1)
+        if (Mathf.Approximately(fadeOutTime, -1))
             fadeOutTime = timeToLive / 3;
     }
 
-    void Update()
+    public void Update()
     {
         timeToLive -= Time.deltaTime;
 
@@ -35,6 +34,6 @@ public class AutoDestructScript : MonoBehaviour
         }
 
         if(timeToLive <= 0)
-            Object.Destroy(gameObject);
+            Destroy(gameObject);
     }
 }
