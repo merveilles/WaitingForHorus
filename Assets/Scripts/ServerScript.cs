@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using JsonFx.Json;
 using JsonFx.Serialization;
 using JsonFx.Serialization.Resolvers;
@@ -39,11 +35,15 @@ public class ServerScript : MonoBehaviour
 	
 	public Texture Multiply;
 
-    IFuture<string> wanIp;
+    // TODO unused?
+    //IFuture<string> wanIp;
+
     IFuture<ReadResponse> readResponse;
     IFuture<int> thisServerId;
     ServerInfo currentServer;
     bool connecting;
+    // Looks like it's used for debugging
+// ReSharper disable once NotAccessedField.Local
     string lastStatus;
 	string chosenUsername = "Anon";
 	public string chosenIP = "127.0.0.1";
@@ -124,13 +124,13 @@ public class ServerScript : MonoBehaviour
         Connected
     }
     public static HostingState hostState = HostingState.WaitingForInput;
-	
-    void Awake()
+
+    public void Awake()
     {
         Instance = this;
     }
-	
-    void Start()
+
+    public void Start()
     {
         DontDestroyOnLoad(gameObject);
         networkView.group = 1;
@@ -154,7 +154,7 @@ public class ServerScript : MonoBehaviour
         QueryServerList();
     }
 
-    void Update()
+    public void Update()
     {
         // Automatic host/connect logic follows
 
@@ -319,7 +319,7 @@ public class ServerScript : MonoBehaviour
         }
     }
 
-	void OnGUI() 
+    public void OnGUI() 
     {
         PeerType = Network.peerType;
         if (connecting) PeerType = NetworkPeerType.Connecting;
@@ -551,7 +551,7 @@ public class ServerScript : MonoBehaviour
         ChatScript.Instance.LogChat( Network.player, "Changing level to " + newLevel + ".", true, true );
     }
 
-    void OnLevelWasLoaded( int id )
+    public void OnLevelWasLoaded( int id )
     {
         // Turn networking back on
         Network.isMessageQueueRunning = true;
@@ -577,7 +577,7 @@ public class ServerScript : MonoBehaviour
         return true;
     }
 
-    void OnConnectedToServer()
+    public void OnConnectedToServer()
     {
         connecting = false;
         PeerType = NetworkPeerType.Client;
@@ -590,7 +590,7 @@ public class ServerScript : MonoBehaviour
         });
     }
 
-    void OnPlayerConnected( NetworkPlayer player )
+    public void OnPlayerConnected( NetworkPlayer player )
     {
         networkView.RPC( "ChangeLevelRPC", player, RoundScript.Instance.CurrentLevel, false, lastLevelPrefix );
     }
@@ -708,14 +708,14 @@ public class ServerScript : MonoBehaviour
 
         yield return tcpResult;
     }
-	
-	void OnServerInitialized()
+
+    public void OnServerInitialized()
 	{
 		Debug.Log("==> GUID is " + Network.player.guid + ". Use this on clients to connect with NAT punchthrough.");
 		Debug.Log("==> Local IP/port is " + Network.player.ipAddress + "/" + Network.player.port + ". Use this on clients to connect directly.");
 	}
 
-    void OnApplicationQuit()
+    public void OnApplicationQuit()
     {
         foreach (var mr in mappingResults)
         {
@@ -743,7 +743,7 @@ public class ServerScript : MonoBehaviour
         natDiscoveryStarted = false;
     }
 
-    void OnFailedToConnect(NetworkConnectionError error)
+    public void OnFailedToConnect(NetworkConnectionError error)
     {
         if (error == NetworkConnectionError.TooManyConnectedPlayers)
             lastStatus = "Server full.";
@@ -757,7 +757,7 @@ public class ServerScript : MonoBehaviour
         connecting = false;
     }
 
-    void OnDisconnectedFromServer(NetworkDisconnection info)
+    public void OnDisconnectedFromServer(NetworkDisconnection info)
     {
        	hostState = HostingState.WaitingForInput;
        	lastStatus = "";
@@ -785,11 +785,4 @@ public class ServerScript : MonoBehaviour
 		PlayerRegistry.Instance.Clear(); // Clear registrys now we're finished
 		NetworkLeaderboard.Instance.Clear(); // Clear registry now we're finished*/
     }
-	
-	IEnumerator DelayedJoin()
-	{
-		yield return new WaitForSeconds( 1.0f );
-		
-		hostState = HostingState.ReadyToConnect;
-	}
 }
