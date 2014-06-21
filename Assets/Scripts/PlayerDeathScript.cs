@@ -1,16 +1,15 @@
 using UnityEngine;
-using System.Collections;
 
 public class PlayerDeathScript : MonoBehaviour
 {
     ParticleSystem p;
 
-    void Awake()
+    public void Awake()
     {
         p = GetComponentInChildren<ParticleSystem>();
     }
 
-    void Update()
+    public void Update()
     {
         if(!p.IsAlive())
         {
