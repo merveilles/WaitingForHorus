@@ -84,9 +84,10 @@ public class RoundScript : MonoBehaviour
 
                         Debug.Log("Loaded level is now " + CurrentLevel);
                         networkView.RPC("ChangeLevelTo", RPCMode.Others, CurrentLevel);
+                        PlayerRegistry.Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, null, true );
                     }
 
-                    networkView.RPC("RestartRound", RPCMode.All);
+                    networkView.RPC( "RestartRound", RPCMode.All, true );
                     ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
                                     "Game start!", true, true);
                 }
@@ -106,10 +107,8 @@ public class RoundScript : MonoBehaviour
     }
 
     [RPC]
-    public void RestartRound()
+    public void RestartRound( bool changedLevel = false )
     {
-        SpawnScript.Instance.FinishSpawn();
-
         StartCoroutine(WaitAndResume());
     }
 

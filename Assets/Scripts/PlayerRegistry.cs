@@ -78,13 +78,13 @@ class PlayerRegistry : MonoBehaviour
         Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
 
         if( Network.isServer )
-            Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, player );
+            Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, player, false );
     }
 
     [RPC]
-    public void RegisteredHandshake( NetworkPlayer player )
+    public void RegisteredHandshake( NetworkPlayer player, bool all = false )
     {
-        if( Network.player != player ) return;
+        if( Network.player != player && !all ) return;
         SpawnScript.Instance.FinishSpawn();
         Debug.Log( "Handshake Successfull, Spawning" );
     }
