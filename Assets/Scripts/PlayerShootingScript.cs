@@ -90,7 +90,6 @@ public class PlayerShootingScript : MonoBehaviour
 
                     // find homing target(s)
 					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();
-					var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
 
 					var bulletsShot = bulletsLeft;
                     var first = true;
@@ -100,6 +99,7 @@ public class PlayerShootingScript : MonoBehaviour
                             DoHomingShot( ShotgunSpread, null, 0, first );
                         else
 						{
+        					var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
                             DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ) * ShotgunHomingSpeed, first );
 						}
 						
