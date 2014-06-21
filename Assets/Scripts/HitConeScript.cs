@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class HitConeScript : MonoBehaviour
 {
@@ -10,7 +9,7 @@ public class HitConeScript : MonoBehaviour
     Vector3 baseScale;
     float maxScale;
 
-	void Start()
+    public void Start()
 	{
         float roll = Random.value * 360;
         Quaternion spreadRotation =
@@ -24,8 +23,8 @@ public class HitConeScript : MonoBehaviour
 	    baseScale = new Vector3(baseScale.x, baseScale.y * Random.Range(0.5f, 1), baseScale.z);
 	    maxScale = Random.Range(0.25f, 2);
 	}
-	
-	void Update()
+
+    public void Update()
 	{
 	    sinceAlive += Time.deltaTime;
 	    var step = Easing.EaseOut(sinceAlive / Lifetime, EasingType.Cubic);
