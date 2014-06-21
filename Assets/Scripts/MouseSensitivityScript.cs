@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class MouseSensitivityScript : MonoBehaviour
 {
@@ -11,13 +10,13 @@ public class MouseSensitivityScript : MonoBehaviour
     int sensitivityPercentage = 50;
     GUIStyle windowStyle;
 
-    void Awake()
+    public void Awake()
     {
         windowStyle = new GUIStyle(skin.window) { normal = { background = null } };
         sensitivityPercentage = PlayerPrefs.GetInt("sensitivity", 50);
     }
 
-    void Update()
+    public void Update()
     {
         if(Input.GetButtonDown("Increase Sensitivity"))
         {
@@ -34,7 +33,7 @@ public class MouseSensitivityScript : MonoBehaviour
             Mathf.Pow(2, sensitivityPercentage / 25.0f - 2);
     }
 
-    void OnGUI()
+    public void OnGUI()
     {
         GUILayout.Window(3, new Rect(Screen.width - 200, 0, 200, 40),
                          OnWindow, "", windowStyle);
