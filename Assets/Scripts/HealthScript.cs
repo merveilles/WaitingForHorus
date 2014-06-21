@@ -29,6 +29,8 @@ public class HealthScript : MonoBehaviour
     Renderer bigCell;
     Renderer[] smallCells;
 
+    public const float KillHeight = -104;
+
     public void Awake()
     {
         Shield = maxShield;
@@ -42,7 +44,7 @@ public class HealthScript : MonoBehaviour
     public void Update()
     {
         // TODO magical -104 number, what does it do?
-        if( networkView.isMine && transform.position.y < -104 )
+        if( networkView.isMine && transform.position.y < KillHeight )
         {
             NetworkPlayer? networkPlayer = GetComponent<PlayerScript>().owner;
             if (networkPlayer.HasValue)
