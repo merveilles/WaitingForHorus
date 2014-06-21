@@ -14,6 +14,8 @@ public class EffectsScript : MonoBehaviour
     public GameObject areaExplosionPrefab;
     public GameObject hitConePrefab;
 
+    private static float LastExplosionSoundTime;
+
     public void Awake()
     {
         Instance = this;
@@ -23,9 +25,14 @@ public class EffectsScript : MonoBehaviour
     public static void Explosion(Vector3 position, Quaternion rotation)
     {
         var exp = (GameObject) Instantiate(Instance.explosionPrefab, position, rotation);
-			
-			//sounds disabled? don't play this one then
-		exp.GetComponent<AudioSource>().mute = !GlobalSoundsScript.soundEnabled;
+
+        const float window = 0.01f;
+        // TODO this is a bit of a hack
+        bool enoughTimeElapsed = LastExplosionSoundTime + window < Time.realtimeSinceStartup;
+        if (enoughTimeElapsed)
+            LastExplosionSoundTime = Time.realtimeSinceStartup;
+		//sounds disabled or already played the sound very recently? don't play this one then
+		exp.GetComponent<AudioSource>().mute = !(GlobalSoundsScript.soundEnabled && enoughTimeElapsed);
 
         var count = RandomHelper.Random.Next(1, 4);
         for (int i = 0; i < count; i++)
