@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class DayNightCycleScript : MonoBehaviour {
 
@@ -22,18 +21,18 @@ public class DayNightCycleScript : MonoBehaviour {
     {
         playerMaterials = GameObject.FindGameObjectsWithTag( "PlayerMaterial" );
     }
-	
-	void Start()
+
+    public void Start()
     {	
         RecapturePlayerMaterials();
 	}
 
-    void OnPlayerConnected( )
+    public void OnPlayerConnected( )
     {
         RecapturePlayerMaterials();
     }
 
-	void Update()
+    public void Update()
     {
 		float lerp = Easing.EaseInOut(Mathf.PingPong((float) Network.time, duration) / duration, EasingType.Sine);
 		
