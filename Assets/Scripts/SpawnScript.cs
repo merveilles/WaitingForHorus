@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,13 +12,13 @@ public class SpawnScript : MonoBehaviour
     //public GameObject ChatScriptPrefab;
 
 	public string chosenUsername;
-	
-    void Awake()
+
+    public void Awake()
     {
         Instance = this;
     }
 
-	void OnServerInitialized() 
+    public void OnServerInitialized() 
     {
         RegistrySpawn();
 	}
@@ -51,8 +49,8 @@ public class SpawnScript : MonoBehaviour
         Network.Instantiate( PlayerTemplate, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0 );
         ChatScript.Instance.networkView.RPC( "LogChat", RPCMode.All, Network.player, "connected", true, false );
     }
-	
-	void OnPlayerDisconnected(NetworkPlayer player) 
+
+    public void OnPlayerDisconnected(NetworkPlayer player) 
     {
         if (Network.isServer)
             ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, player, "disconnected", true, false);
@@ -61,8 +59,8 @@ public class SpawnScript : MonoBehaviour
 		Network.RemoveRPCs(player);
 		Network.DestroyPlayerObjects(player);
 	}
-	
-	void OnDisconnectedFromServer(NetworkDisconnection info) 
+
+    public void OnDisconnectedFromServer(NetworkDisconnection info) 
     {
         if (Network.isServer)
             Debug.Log("Local server connection disconnected");
@@ -76,8 +74,8 @@ public class SpawnScript : MonoBehaviour
             Destroy(p.gameObject);
     }
 	
-	public void SetChosenUsername(string chosenUsername) 
+	public void SetChosenUsername(string newChosenUsername) 
 	{
-		this.chosenUsername = chosenUsername;
+		chosenUsername = newChosenUsername;
 	}
 }
