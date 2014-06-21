@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 public class RespawnZone : MonoBehaviour
 {
-    static List<RespawnZone> respawnZones = new List<RespawnZone>();
+    static readonly List<RespawnZone> respawnZones = new List<RespawnZone>();
 
-    void Awake()
+    public void Awake()
     {
         respawnZones.Add(this);
     }
 
-    void OnDestroy()
+    public void OnDestroy()
     {
         respawnZones.Remove(this);
     }
