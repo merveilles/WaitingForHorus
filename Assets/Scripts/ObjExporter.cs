@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.IO;
 using System.Text;
 
@@ -9,21 +8,23 @@ public class ObjExporter
     public static string MeshToString( MeshFilter mf )
     {
         Mesh m = mf.mesh;
-        Material[] mats = mf.renderer.sharedMaterials;
 
-        StringBuilder sb = new StringBuilder();
+        // TODO unused
+        //Material[] mats = mf.renderer.sharedMaterials;
+
+        var sb = new StringBuilder();
 
         sb.Append( "g " ).Append( mf.name ).Append( "\n" );
         foreach( Vector3 v in m.vertices )
         {
-            Vector3 wv = mf.transform.TransformPoint( v );
+            //Vector3 wv = mf.transform.TransformPoint( v );
             //sb.Append( string.Format( "v {0} {1} {2}\n", -wv.x, wv.y, wv.z ) );
             sb.Append( string.Format( "v {0} {1} {2}\n", v.x, v.y, v.z ) );
         }
         sb.Append( "\n" );
         foreach( Vector3 v in m.normals )
         {
-            Vector3 wv = mf.transform.TransformDirection( v );
+            //Vector3 wv = mf.transform.TransformDirection( v );
            // sb.Append( string.Format( "vn {0} {1} {2}\n", -wv.x, wv.y, wv.z ) );
             sb.Append( string.Format( "vn {0} {1} {2}\n", v.x, v.y, v.z ) );
         }
