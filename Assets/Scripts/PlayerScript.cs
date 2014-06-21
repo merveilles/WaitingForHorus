@@ -54,6 +54,10 @@ public class PlayerScript : MonoBehaviour
 
     public bool Paused { get; set; }
 
+    // Used as a global collection of all enabled PlayerScripts. Will help us
+	// avoid iterating all GameObjects.
+    public static List<PlayerScript> EnabledPlayerScripts = new List<PlayerScript>();
+
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
     Vector3 lastNetworkFramePosition;
@@ -64,6 +68,16 @@ public class PlayerScript : MonoBehaviour
 	//List<NetworkPlayer> targetedBy { get; set; }
 
 	List<GameObject> warningSpheres { get; set; }
+
+    public void OnEnable()
+    {
+        EnabledPlayerScripts.Add(this);
+    }
+
+    public void OnDisable()
+    {
+        EnabledPlayerScripts.Remove(this);
+    }
 
     public void Awake() 
 	{
