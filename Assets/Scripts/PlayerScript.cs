@@ -56,10 +56,15 @@ public class PlayerScript : MonoBehaviour
     public bool Paused { get; set; }
 
     // Used as a global collection of all enabled PlayerScripts. Will help us
-	// avoid iterating all GameObjects.
+	// avoid iterating all GameObjects. It's possible to accidentally remove
+	// PlayerScripts from this list while iterating it (for example, calling
+	// Destroy() while iterating), so there is a safe copying variant below for
+	// use when performance is not critical.
     public static readonly List<PlayerScript> UnsafeAllEnabledPlayerScripts = new List<PlayerScript>();
 
-    public static IEnumerable<PlayerScript> AllEnabledPlayerScripts { get { return UnsafeAllEnabledPlayerScripts.ToList(); } }
+    // A safe (copied) list of all enabled PlayerScripts in the game world.
+    public static IEnumerable<PlayerScript> AllEnabledPlayerScripts
+    { get { return UnsafeAllEnabledPlayerScripts.ToList(); } }
         
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
