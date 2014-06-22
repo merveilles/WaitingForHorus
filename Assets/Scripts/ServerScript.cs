@@ -645,7 +645,7 @@ public class ServerScript : MonoBehaviour
             //    WanIP = externalIp;
             //}
         };
-        NatUtility.DeviceLost += (s, ea) => { mappingResults.RemoveAll(x => x.Device == ea.Device); };
+        NatUtility.DeviceLost += (s, ea) => { mappingResults.RemoveAll(x => Equals(x.Device, ea.Device)); };
         NatUtility.StartDiscovery();
     }
 
