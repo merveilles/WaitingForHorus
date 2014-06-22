@@ -41,7 +41,7 @@ public class PlayerShootingScript : MonoBehaviour
     // Invoked when a shot is fired (either primary or secondary)
     public event ShotFiredHandler OnShotFired = delegate {};
 
-    public float GunRotationSmoothingSpeed = 8.0f;
+    public float GunRotationSmoothingSpeed = 7.0f;
 
     //float cannonChargeCountdown = CannonChargeTime;
     WeaponIndicatorScript weaponIndicator;
@@ -83,9 +83,8 @@ public class PlayerShootingScript : MonoBehaviour
         firingDirection = (actualTargetPosition - gun.transform.position).normalized;
         var gunRotationAngles = Quaternion.FromToRotation(Vector3.forward, firingDirection).eulerAngles;
         var desiredGunRotation = Quaternion.Euler(gunRotationAngles.x, gunRotationAngles.y, 0);
-        gun.transform.rotation = Quaternion.Slerp(gun.transform.rotation, desiredGunRotation, Time.deltaTime * GunRotationSmoothingSpeed);
-        //gun.transform.rotation = Quaternion.Lerp(gun.transform.rotation, desiredGunRotation,
-        //            Easing.EaseOut(Mathf.Pow(GunRotationSmoothingSpeed, Time.deltaTime), EasingType.Quadratic));
+        gun.transform.rotation = Quaternion.Slerp(gun.transform.rotation, desiredGunRotation,
+            1.0f - Mathf.Pow(GunRotationSmoothingSpeed, -GunRotationSmoothingSpeed * Time.deltaTime));
 
         if (playerScript.Paused)
             bulletsLeft = BurstCount;

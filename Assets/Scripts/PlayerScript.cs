@@ -327,13 +327,12 @@ public class PlayerScript : MonoBehaviour
             if (!networkView.isMine)
                 GetComponentInChildren<TextMesh>().text = info.Username;
         }*/
+
+        UpdateMovement();
     }
 
-    public void FixedUpdate()
+    private void UpdateMovement()
     {
-        if(!controller.enabled) return;
-        if (Paused) return;
-
         Vector3 smoothedInputVelocity = inputVelocity * 0.6f + lastInputVelocity * 0.45f;
         lastInputVelocity = smoothedInputVelocity;
 
@@ -492,6 +491,11 @@ public class PlayerScript : MonoBehaviour
 
         if (controller.isGrounded)
             recoilVelocity.y = 0;
+    }
+    public void FixedUpdate()
+    {
+        if(!controller.enabled) return;
+        if (Paused) return;
     }
 
     // Used by HealthScript in Respawn

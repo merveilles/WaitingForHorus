@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour
@@ -9,7 +10,7 @@ public class CameraScript : MonoBehaviour
 
     public bool HasSmoothedRotation = true;
     public bool UsesRaycastCrosshair = true;
-    public float CrosshairSmoothingSpeed = 20.0f;
+    public float CrosshairSmoothingSpeed = 8.5f;
 	
 	bool aimingAtPlayer;
     PlayerScript player;
@@ -67,8 +68,17 @@ public class CameraScript : MonoBehaviour
             }
 
             if (HasSmoothedRotation)
-                actualCameraRotation = Quaternion.Lerp(transform.rotation, actualCameraRotation,
-                    Easing.EaseOut(Mathf.Pow(smoothing, Time.deltaTime), EasingType.Quadratic));
+                // Old, not working with uncapped frame limit, but left for
+                // reference in case someone wants to match its settings exactly
+                // in the future.
+                //actualCameraRotation = Quaternion.Lerp(transform.rotation, actualCameraRotation,
+                //Easing.EaseOut(Mathf.Pow(smoothing, Time.deltaTime), EasingType.Quadratic));
+
+            {
+                // TODO make a nicer interface for goofy power curve
+                var amt = (float)Math.Pow(0.0000000000001, Time.deltaTime);
+                actualCameraRotation = Quaternion.Slerp(actualCameraRotation, transform.rotation, 1.0f - amt);
+            }
             else
                 actualCameraRotation = transform.rotation;
 
@@ -103,7 +113,8 @@ public class CameraScript : MonoBehaviour
 
 
             var rawCrosshairPosition = GetCrosshairPosition();
-            SmoothedCrosshairPosition = Vector2.Lerp(SmoothedCrosshairPosition, rawCrosshairPosition, Time.deltaTime * CrosshairSmoothingSpeed);
+            SmoothedCrosshairPosition = Vector2.Lerp(SmoothedCrosshairPosition, rawCrosshairPosition,
+                1.0f - Mathf.Pow(CrosshairSmoothingSpeed, -CrosshairSmoothingSpeed * Time.deltaTime));
             Camera.main.GetComponent<WeaponIndicatorScript>()
                 .CrosshairPosition = SmoothedCrosshairPosition;
 
