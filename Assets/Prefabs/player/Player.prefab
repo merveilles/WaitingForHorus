@@ -2719,8 +2719,19 @@ MonoBehaviour:
   HasSmoothedRotation: 1
   UsesRaycastCrosshair: 1
   CrosshairSmoothingSpeed: 8.5
+  ObjectsHiddenToInteriorView:
+  - {fileID: 100104}
+  - {fileID: 100110}
+  - {fileID: 100108}
+  - {fileID: 100106}
+  - {fileID: 100064}
+  - {fileID: 100100}
+  - {fileID: 100112}
+  - {fileID: 100002}
   BaseFieldOfView: 85
   ZoomedFieldOfViewRatio: .5
+  ExteriorViewOffset: {x: 0, y: 2.5, z: -6}
+  InteriorViewOffset: {x: 0, y: 1, z: 0}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1

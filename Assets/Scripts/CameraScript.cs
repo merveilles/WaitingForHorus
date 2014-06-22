@@ -19,6 +19,8 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
+    public GameObject[] ObjectsHiddenToInteriorView;
+
     public bool IsZoomedIn { get; set; }
 
     public float BaseFieldOfView = 85.0f;
@@ -31,18 +33,35 @@ public class CameraScript : MonoBehaviour
         get { return SmoothedBaseFieldOfView * (IsZoomedIn ? ZoomedFieldOfViewRatio : 1.0f); }
     }
 
+    public bool IsExteriorView { get; set; }
+    public Vector3 ExteriorViewOffset = new Vector3(0f, 2.5f, -6f);
+    public Vector3 InteriorViewOffset = new Vector3(0f, 1.0f, 0f);
+    private Vector3 SmoothedViewOffset = new Vector3(0f, 2.5f, -6f);
+
+    private Vector3 DesiredViewOffset
+    {
+        get { return IsExteriorView ? ExteriorViewOffset : InteriorViewOffset; }
+    }
+
     // Used only for drawing the crosshair on screen. Actual aiming raycast will
 	// not use this.
     private Vector2 SmoothedCrosshairPosition;
 
     public void Start()
     {
+        IsExteriorView = true;
+
         player = transform.parent.parent.GetComponent<PlayerScript>();
         if(player.networkView.isMine)
         {
             mainCamera = Camera.main;
         }
         SmoothedCrosshairPosition = GetCrosshairPosition();
+
+        if (ObjectsHiddenToInteriorView == null)
+        {
+            ObjectsHiddenToInteriorView = new GameObject[0];
+        }
     }
 
     public void Update()
@@ -55,11 +74,22 @@ public class CameraScript : MonoBehaviour
         {
             BaseFieldOfView += 5.0f;
         }
+        if (Input.GetKeyDown("x"))
+        {
+            IsExteriorView = !IsExteriorView;
+            // TODO is it slow to set this every update?
+            // TODO this is bad for various reasons, like stuff showing up when it should be hidden, etc. will change soon!
+            for (int i = 0; i < ObjectsHiddenToInteriorView.Length; i++)
+            {
+                ObjectsHiddenToInteriorView[i].renderer.enabled = IsExteriorView;
+            }
+        }
 
         // Prevent crazy values
         BaseFieldOfView = Mathf.Clamp(BaseFieldOfView, 45f, 150f);
 
         IsZoomedIn = Input.GetButton("Zoom");
+
     }
 
     public void FixedUpdate()
@@ -108,6 +138,11 @@ public class CameraScript : MonoBehaviour
                 if (!Mathf.Approximately(mainCamera.fieldOfView, SmoothedFieldOfView))
                     mainCamera.fieldOfView = SmoothedFieldOfView;
             }
+
+            // Update and smooth view position
+            SmoothedViewOffset = Vector3.Lerp(SmoothedViewOffset, DesiredViewOffset,
+                1.0f - Mathf.Pow(0.00001f, Time.deltaTime));
+            transform.localPosition = SmoothedViewOffset;
 
             if (HasSmoothedRotation)
                 // Old, not working with uncapped frame limit, but left for
