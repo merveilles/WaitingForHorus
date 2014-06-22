@@ -217,7 +217,7 @@ InputManager:
     descriptiveName: Increase Field of View
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: ']'
+    positiveButton: '['
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
@@ -233,7 +233,7 @@ InputManager:
     descriptiveName: Decrease Field of View
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: '['
+    positiveButton: ']'
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
