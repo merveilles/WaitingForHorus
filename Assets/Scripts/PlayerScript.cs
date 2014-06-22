@@ -328,6 +328,8 @@ public class PlayerScript : MonoBehaviour
                 GetComponentInChildren<TextMesh>().text = info.Username;
         }*/
 
+        if(!controller.enabled) return;
+        if (Paused) return;
         UpdateMovement();
     }
 
@@ -491,11 +493,6 @@ public class PlayerScript : MonoBehaviour
 
         if (controller.isGrounded)
             recoilVelocity.y = 0;
-    }
-    public void FixedUpdate()
-    {
-        if(!controller.enabled) return;
-        if (Paused) return;
     }
 
     // Used by HealthScript in Respawn
