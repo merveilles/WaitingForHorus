@@ -61,7 +61,7 @@ public class ServerScript : MonoBehaviour
     bool natDiscoveryStarted;
     float sinceRefreshedPlayers;
     int lastPlayerCount;
-    bool couldntCreateServer;
+    public bool CouldntCreateServer { get; private set; }
     float sinceStartedDiscovery;
     string lastLevelName;
 	
@@ -71,22 +71,26 @@ public class ServerScript : MonoBehaviour
     public static bool Spectating;
 
     int lastLevelPrefix = 0;
-    GUIStyle TextStyle;
-    GUIStyle WelcomeStyle;
 
-    static bool isAsyncLoading;
+    //GUIStyle TextStyle;
+    //GUIStyle WelcomeStyle;
+
+    static bool _isAsyncLoading;
     public static bool IsAsyncLoading
     {
-        get { return isAsyncLoading || Application.isLoadingLevel; }
-        private set { isAsyncLoading = value; }
+        get { return _isAsyncLoading || Application.isLoadingLevel; }
+        private set { _isAsyncLoading = value; }
     }
 
+// ReSharper disable once ClassNeverInstantiated.Local
     class ReadResponse
     {
+// ReSharper disable UnassignedField.Compiler
         public string Message;
         public int Connections;
         public int Activegames;
         public ServerInfo[] Servers;
+// ReSharper restore UnassignedField.Compiler
     }
 
     class ServerInfo
@@ -146,8 +150,8 @@ public class ServerScript : MonoBehaviour
         Application.targetFrameRate = 60;
         Network.minimumAllocatableViewIDs = 500;
 
-        TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
-        WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
+        //TextStyle = new GUIStyle { normal = { textColor = new Color(1.0f, 138 / 255f, 0) }, padding = { left = 30, top = 12 } };
+        //WelcomeStyle = new GUIStyle { normal = { textColor = new Color(1, 1, 1, 1f) } };
 
         RoundScript.Instance.CurrentLevel = RandomHelper.InEnumerable( AllowedLevels );
         ChangeLevel( RoundScript.Instance.CurrentLevel, true );
@@ -171,13 +175,11 @@ public class ServerScript : MonoBehaviour
                 if( !readResponse.HasValue && !readResponse.InError )
                     break;
 
-                var shouldHost = readResponse.Value.Servers.Sum( x => MaxPlayers - x.Players ) < MaxPlayers / 2f;
-
-                /*Debug.Log("Should host? " + shouldHost);
-
-                if (shouldHost && !cantNat && !couldntCreateServer)
-                    hostState = HostingState.ReadyToDiscoverNat;
-                else*/
+                //var shouldHost = readResponse.Value.Servers.Sum( x => MaxPlayers - x.Players ) < MaxPlayers / 2f;
+                //Debug.Log("Should host? " + shouldHost);
+                //if (shouldHost && !cantNat && !CouldntCreateServer)
+                //    hostState = HostingState.ReadyToDiscoverNat;
+                //else
                     hostState = HostingState.ReadyToChooseServer;
                 break;
 
@@ -191,7 +193,7 @@ public class ServerScript : MonoBehaviour
                 currentServer = readResponse.Value.Servers.OrderBy(x => x.Players).ThenBy(x => Guid.NewGuid()).FirstOrDefault(x => !x.ConnectionFailed && x.Players < MaxPlayers && x.Version == BuildVersion ); //&& x.BuildVer == BuildVersion
                 if( currentServer == null )
                 {
-                    //if( couldntCreateServer ) //|| cantNat
+                    //if( CouldntCreateServer ) //|| cantNat
                     //{
                         Debug.Log( "Tried to find server, failed. Returning to interactive state." );
                         readResponse = null;
@@ -268,7 +270,7 @@ public class ServerScript : MonoBehaviour
 
             case HostingState.ReadyToHost:
                 LastStatus = "Creating server...";
-                couldntCreateServer = false;
+                CouldntCreateServer = false;
                 if (CreateServer())
                 {
                     hostState = HostingState.Hosting;
@@ -280,7 +282,7 @@ public class ServerScript : MonoBehaviour
                 else
                 {
                     Debug.Log("Couldn't create server, will try joining instead");
-                    couldntCreateServer = true;
+                    CouldntCreateServer = true;
                     hostState = HostingState.ReadyToChooseServer;
                 }
                 break;
@@ -409,7 +411,7 @@ public class ServerScript : MonoBehaviour
 
                 try
                 {
-                    var data = jsonReader.Read<ReadResponse>(response);
+                    ReadResponse data = jsonReader.Read<ReadResponse>(response);
                     Debug.Log("MOTD : " + data.Message);
                     Debug.Log(data.Servers.Length + " servers : ");
                     foreach (var s in data.Servers)
@@ -422,7 +424,7 @@ public class ServerScript : MonoBehaviour
                 catch (Exception ex)
                 {
                     Debug.Log(ex.ToString());
-                    throw ex;
+                    throw;
                 }
             }
         });
@@ -472,17 +474,17 @@ public class ServerScript : MonoBehaviour
         });
     }
 
-    void DeleteServer()
-    {
-        if (LocalMode) return;
-        using (var client = new WebClient())
-        {
-            var uri = new Uri(MasterServerUri + "&cmd=delete&id=" + thisServerId.Value);
-            var nvc = new NameValueCollection { { "", "" } };
-            var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
-            Debug.Log("Deleted server " + thisServerId.Value + ", server said : " + response);
-        }
-    }
+    //void DeleteServer()
+    //{
+    //    if (LocalMode) return;
+    //    using (var client = new WebClient())
+    //    {
+    //        var uri = new Uri(MasterServerUri + "&cmd=delete&id=" + thisServerId.Value);
+    //        var nvc = new NameValueCollection { { "", "" } };
+    //        var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
+    //        Debug.Log("Deleted server " + thisServerId.Value + ", server said : " + response);
+    //    }
+    //}
 
     bool CreateServer()
     {
