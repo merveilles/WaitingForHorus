@@ -563,16 +563,16 @@ public class PlayerScript : MonoBehaviour
         return Physics.CheckCapsule(top, bottom, radius, SafetyCollisionMask);
     }
 
-    private bool CheckSweep(Vector3 start, Vector3 end, out RaycastHit hitInfo)
-    {
-        float height, radius;
-        Vector3 top, bottom;
-        GetControllerCapsuleGeometryAtPosition(start, out top, out bottom, out height, out radius);
-        Vector3 movementVector = end - start;
-        Vector3 movementDirection = movementVector.normalized;
-        float movementDistance = movementVector.magnitude;
-        return Physics.CapsuleCast(top, bottom, radius, movementDirection, out hitInfo, movementDistance);
-    }
+    //private bool CheckSweep(Vector3 start, Vector3 end, out RaycastHit hitInfo)
+    //{
+    //    float height, radius;
+    //    Vector3 top, bottom;
+    //    GetControllerCapsuleGeometryAtPosition(start, out top, out bottom, out height, out radius);
+    //    Vector3 movementVector = end - start;
+    //    Vector3 movementDirection = movementVector.normalized;
+    //    float movementDistance = movementVector.magnitude;
+    //    return Physics.CapsuleCast(top, bottom, radius, movementDirection, out hitInfo, movementDistance);
+    //}
 
 }
 
