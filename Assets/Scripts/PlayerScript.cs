@@ -72,6 +72,11 @@ public class PlayerScript : MonoBehaviour
     Quaternion smoothLookRotation;
     float smoothYaw;
 
+    // Extra stuff we'll use to fix up Unity's bad character component collision
+    private Vector3 LastNonCollidingPosition;
+    public LayerMask SafetyCollisionMask;
+    public float OverlapEjectionSpeed = 50.0f;
+
     // TODO unused 'get', intentional? No reason to ever set it, then.
 	//List<NetworkPlayer> targetedBy { get; set; }
 
@@ -455,7 +460,23 @@ public class PlayerScript : MonoBehaviour
         }
 
         // move!
-        controller.Move((smoothFallingVelocity + smoothedInputVelocity + recoilVelocity) * Time.deltaTime);
+        Vector3 movementVector = (smoothFallingVelocity + smoothedInputVelocity + recoilVelocity) * Time.deltaTime;
+        controller.Move(movementVector);
+        bool doesOverlap = CheckOverlap(transform.position);
+        if (doesOverlap)
+        {
+            transform.position = Vector3.Lerp(transform.position, LastNonCollidingPosition, Time.deltaTime * OverlapEjectionSpeed);
+        }
+        else
+        {
+            LastNonCollidingPosition = transform.position;
+        }
+
+        if (sinceNotGrounded > 0.25f && controller.isGrounded) {
+			if(GlobalSoundsScript.soundEnabled) {
+            	landingSound.Play();
+			}
+		}
 
         if (sinceNotGrounded > 0.25f && controller.isGrounded) {
 			if(GlobalSoundsScript.soundEnabled) {
@@ -514,6 +535,38 @@ public class PlayerScript : MonoBehaviour
     {
         Network.RemoveRPCs( networkView.viewID );
     }
+
+    // Try to guess capsule info for doing overlap tests and sweeps, because
+	// Character Controller is a piece of shit and doesn't expose anything it
+	// does. Probably wrong in many ways (not accounting for rotation, etc., and
+	// probably getting 'skin' wrong, which we don't have access to, cool).
+    private void GetControllerCapsuleGeometryAtPosition(Vector3 position, out Vector3 top, out Vector3 bottom, out float height, out float radius)
+    {
+        height = controller.height - (controller.height * 0.08f);
+        radius = controller.radius - controller.radius * 0.08f;
+        top = position + new Vector3(0, height/2, 0);
+        bottom = position - new Vector3(0, height/2, 0);
+    }
+
+    private bool CheckOverlap(Vector3 position)
+    {
+        float height, radius;
+        Vector3 top, bottom;
+        GetControllerCapsuleGeometryAtPosition(position, out top, out bottom, out height, out radius);
+        return Physics.CheckCapsule(top, bottom, radius, SafetyCollisionMask);
+    }
+
+    //private bool CheckSweep(Vector3 start, Vector3 end, out RaycastHit hitInfo)
+    //{
+    //    float height, radius;
+    //    Vector3 top, bottom;
+    //    GetControllerCapsuleGeometryAtPosition(start, out top, out bottom, out height, out radius);
+    //    Vector3 movementVector = end - start;
+    //    Vector3 movementDirection = movementVector.normalized;
+    //    float movementDistance = movementVector.magnitude;
+    //    return Physics.CapsuleCast(top, bottom, radius, movementDirection, out hitInfo, movementDistance);
+    //}
+
 }
 
 abstract class Interpolator<T>
