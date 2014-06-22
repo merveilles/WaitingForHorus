@@ -27,8 +27,8 @@ public class ServerScript : MonoBehaviour
     public GUISkin Skin;
 	public int BuildVersion;
 
-    JsonWriter jsonWriter;
-    JsonReader jsonReader;
+    static JsonWriter jsonWriter;
+    static JsonReader jsonReader;
 
     public int connectionFacilitatorPort; 
     public string connectionFacilitatorIPAddress;
@@ -109,9 +109,6 @@ public class ServerScript : MonoBehaviour
         public int Id;
         public bool ConnectionFailed;
 		public int Version;
-
-        // Why is ToString() defined with a jsonWriter? What?
-        public JsonWriter jsonWriter;
 
         public object Packed
         {
@@ -502,14 +499,7 @@ public class ServerScript : MonoBehaviour
         var result = Network.InitializeServer( MaxPlayers, Port, true );
         if (result == NetworkConnectionError.NoError)
         {
-            currentServer = new ServerInfo
-            {
-                Ip = Network.player.guid,
-                Map = RoundScript.Instance.CurrentLevel,
-                Players = 1,
-                Version = BuildVersion,
-                jsonWriter = jsonWriter
-            }; //wanIp.Value
+            currentServer = new ServerInfo { Ip = Network.player.guid, Map = RoundScript.Instance.CurrentLevel, Players = 1, Version = BuildVersion }; //wanIp.Value
 
             TaskManager.Instance.WaitUntil(_ => !IsAsyncLoading).Then(() =>
             {
