@@ -42,9 +42,10 @@ public class ServerScript : MonoBehaviour
     IFuture<int> thisServerId;
     ServerInfo currentServer;
     bool connecting;
+
     // Looks like it's used for debugging
-// ReSharper disable once NotAccessedField.Local
-    string lastStatus;
+    public string LastStatus { get; private set; }
+
 	string chosenUsername = "Anon";
 	public string chosenIP = "127.0.0.1";
 
@@ -161,7 +162,7 @@ public class ServerScript : MonoBehaviour
         switch( hostState )
         {
             case HostingState.ReadyToListServers:
-                lastStatus = "Listing servers...";
+                LastStatus = "Listing servers...";
                 QueryServerList();
                 hostState = HostingState.WaitingForServers;
                 break;
@@ -194,7 +195,7 @@ public class ServerScript : MonoBehaviour
                     //{
                         Debug.Log( "Tried to find server, failed. Returning to interactive state." );
                         readResponse = null;
-                        lastStatus = "No server found.";
+                        LastStatus = "No server found.";
                         hostState = HostingState.WaitingForInput;
                     //}
                    // else
@@ -208,7 +209,7 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.ReadyToDiscoverNat:
-                lastStatus = "Looking for UPnP...";
+                LastStatus = "Looking for UPnP...";
                 if (!natDiscoveryStarted /*|| !wanIp.HasValue*/)
                 {
                     Debug.Log("NAT discovery started");
@@ -260,13 +261,13 @@ public class ServerScript : MonoBehaviour
 //                break;
 //
 //            case HostingState.WaitingForIp:
-//                lastStatus = "Determining IP...";
+//                LastStatus = "Determining IP...";
 //                if (wanIp.HasValue)
 //                    hostState = HostingState.ReadyToHost;
 //                break;
 
             case HostingState.ReadyToHost:
-                lastStatus = "Creating server...";
+                LastStatus = "Creating server...";
                 couldntCreateServer = false;
                 if (CreateServer())
                 {
@@ -306,7 +307,7 @@ public class ServerScript : MonoBehaviour
                 break;
 
             case HostingState.ReadyToConnect:
-                lastStatus = "Connecting...";
+                LastStatus = "Connecting...";
                 if( Connect() )
                     hostState = HostingState.Connected;
                 else
@@ -379,7 +380,7 @@ public class ServerScript : MonoBehaviour
                         PlayerPrefs.Save();
                         GlobalSoundsScript.PlayButtonPress();
                         hostState = HostingState.ReadyToListServers;
-                        lastStatus = "";
+                        LastStatus = "";
                     }
                     GUI.enabled = true;
                 }
@@ -498,7 +499,7 @@ public class ServerScript : MonoBehaviour
 
             return true;
         }
-        lastStatus = "Failed.";
+        LastStatus = "Failed.";
         return false;
     }
 
@@ -565,12 +566,12 @@ public class ServerScript : MonoBehaviour
 
     bool Connect()
     {
-        lastStatus = "Connecting...";
+        LastStatus = "Connecting...";
         Debug.Log("Connecting to " + chosenIP ); //chosenIP
         var result = Network.Connect( chosenIP );
         if (result != NetworkConnectionError.NoError)
         {
-            lastStatus = "Failed.";
+            LastStatus = "Failed.";
             return false;
         }
         connecting = true;
@@ -648,7 +649,7 @@ public class ServerScript : MonoBehaviour
 
     IEnumerable<MappingResult> MapPort(INatDevice device)
     {
-        lastStatus = "Mapping port...";
+        LastStatus = "Mapping port...";
 
         var udpMapping = new Mapping(Protocol.Udp, Port, Port) { Description = "Horus (UDP)" };
         var udpResult = new MappingResult { Device = device, Mapping = udpMapping };
@@ -657,7 +658,7 @@ public class ServerScript : MonoBehaviour
         {
             if (state.IsCompleted)
             {
-                lastStatus = "Testing UDP mapping...";
+                LastStatus = "Testing UDP mapping...";
                 Debug.Log("Mapping complete for : " + udpMapping.ToString());
                 try
                 {
@@ -686,7 +687,7 @@ public class ServerScript : MonoBehaviour
         {
             if (state.IsCompleted)
             {
-                lastStatus = "Testing TCP mapping...";
+                LastStatus = "Testing TCP mapping...";
                 Debug.Log("Mapping complete for : " + tcpMapping.ToString());
                 try
                 {
@@ -746,9 +747,9 @@ public class ServerScript : MonoBehaviour
     public void OnFailedToConnect(NetworkConnectionError error)
     {
         if (error == NetworkConnectionError.TooManyConnectedPlayers)
-            lastStatus = "Server full.";
+            LastStatus = "Server full.";
         else
-            lastStatus = "Failed.";
+            LastStatus = "Failed.";
 
         currentServer.ConnectionFailed = true;
         Debug.Log("Couldn't connect, will try choosing another server");
@@ -760,7 +761,7 @@ public class ServerScript : MonoBehaviour
     public void OnDisconnectedFromServer(NetworkDisconnection info)
     {
        	hostState = HostingState.WaitingForInput;
-       	lastStatus = "";
+       	LastStatus = "";
 		
         /*if( Network.isServer )
         {
