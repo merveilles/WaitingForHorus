@@ -958,7 +958,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 62.966011, y: 0, z: 305.063843}
+  m_LocalPosition: {x: 0, y: -1.90734863e-05, z: -44.996933}
   m_LocalScale: {x: 1.79999995, y: 1.79999995, z: 1.79999995}
   m_Children:
   - {fileID: 400118}
@@ -2623,6 +2623,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 257
   OverlapEjectionSpeed: 100
+  InstantOverlapEjection: 1
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2699,7 +2700,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
   heat: 0
-  GunRotationSmoothingSpeed: 8
+  GunRotationSmoothingSpeed: 7
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2717,7 +2718,9 @@ MonoBehaviour:
   smoothing: 1.00000002e-35
   HasSmoothedRotation: 1
   UsesRaycastCrosshair: 1
-  CrosshairSmoothingSpeed: 20
+  CrosshairSmoothingSpeed: 8.5
+  BaseFieldOfView: 85
+  ZoomedFieldOfViewRatio: .5
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1

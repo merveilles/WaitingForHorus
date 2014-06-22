@@ -19,6 +19,18 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
+    public bool IsZoomedIn { get; set; }
+
+    public float BaseFieldOfView = 85.0f;
+    public float ZoomedFieldOfViewRatio = 0.42f;
+
+    private float SmoothedBaseFieldOfView = 85.0f;
+    private float SmoothedFieldOfView = 85.0f;
+    public float DesiredFieldOfView
+    {
+        get { return SmoothedBaseFieldOfView * (IsZoomedIn ? ZoomedFieldOfViewRatio : 1.0f); }
+    }
+
     // Used only for drawing the crosshair on screen. Actual aiming raycast will
 	// not use this.
     private Vector2 SmoothedCrosshairPosition;
@@ -31,6 +43,23 @@ public class CameraScript : MonoBehaviour
             mainCamera = Camera.main;
         }
         SmoothedCrosshairPosition = GetCrosshairPosition();
+    }
+
+    public void Update()
+    {
+        if (Input.GetButtonDown("DecreaseFOV"))
+        {
+            BaseFieldOfView -= 5.0f;
+        }
+        if (Input.GetButtonDown("IncreaseFOV"))
+        {
+            BaseFieldOfView += 5.0f;
+        }
+
+        // Prevent crazy values
+        BaseFieldOfView = Mathf.Clamp(BaseFieldOfView, 45f, 150f);
+
+        IsZoomedIn = Input.GetButton("Zoom");
     }
 
     public void FixedUpdate()
@@ -67,6 +96,19 @@ public class CameraScript : MonoBehaviour
                 UsesRaycastCrosshair = !UsesRaycastCrosshair;
             }
 
+            // Smooth changes in base field of view (if player adjusts FOV, we
+			// want it to be a slower smoothing than zooming in/out)
+            SmoothedBaseFieldOfView = Mathf.Lerp(SmoothedBaseFieldOfView, BaseFieldOfView,
+                1.0f - Mathf.Pow(0.0001f, Time.deltaTime));
+            // Interpolate field of view, set on main camera if necessary
+            SmoothedFieldOfView = Mathf.Lerp(SmoothedFieldOfView, DesiredFieldOfView,
+                1.0f - Mathf.Pow(0.000001f, Time.deltaTime));
+            if (mainCamera != null)
+            {
+                if (!Mathf.Approximately(mainCamera.fieldOfView, SmoothedFieldOfView))
+                    mainCamera.fieldOfView = SmoothedFieldOfView;
+            }
+
             if (HasSmoothedRotation)
                 // Old, not working with uncapped frame limit, but left for
                 // reference in case someone wants to match its settings exactly
@@ -85,9 +127,9 @@ public class CameraScript : MonoBehaviour
             Vector3 scaledLocalPosition = Vector3.Scale(transform.localPosition, transform.lossyScale);
             Vector3 direction = actualCameraRotation * scaledLocalPosition;
             Vector3 cameraPosition = transform.parent.position + direction;
-            float magnitude = direction.magnitude;
+            //float magnitude = direction.magnitude;
             // TODO what is this assignment? Should it be above? is it a mistake?
-            direction /= magnitude;
+            //direction /= magnitude;
 
            /* RaycastHit hitInfo;
             if(Physics.SphereCast(player.transform.position, collisionRadius,
