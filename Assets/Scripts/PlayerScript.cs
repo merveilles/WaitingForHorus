@@ -76,6 +76,7 @@ public class PlayerScript : MonoBehaviour
     private Vector3 LastNonCollidingPosition;
     public LayerMask SafetyCollisionMask;
     public float OverlapEjectionSpeed = 100.0f;
+    public bool InstantOverlapEjection = true;
 
     // TODO unused 'get', intentional? No reason to ever set it, then.
 	//List<NetworkPlayer> targetedBy { get; set; }
@@ -460,12 +461,17 @@ public class PlayerScript : MonoBehaviour
         }
 
         // move!
-        Vector3 movementVector = (smoothFallingVelocity + smoothedInputVelocity + recoilVelocity) * Time.deltaTime;
+        Vector3 movementVelocity = smoothFallingVelocity + smoothedInputVelocity + recoilVelocity;
+        Vector3 movementVector = movementVelocity * Time.deltaTime;
         controller.Move(movementVector);
         bool doesOverlap = CheckOverlap(transform.position);
         if (doesOverlap)
         {
-            transform.position = Vector3.Lerp(transform.position, LastNonCollidingPosition, Time.deltaTime * OverlapEjectionSpeed);
+            fallingVelocity = Vector3.zero;
+            if (InstantOverlapEjection)
+                transform.position = LastNonCollidingPosition;
+            else
+                transform.position = Vector3.Lerp(transform.position, LastNonCollidingPosition, Time.deltaTime * OverlapEjectionSpeed);
         }
         else
         {
@@ -556,16 +562,16 @@ public class PlayerScript : MonoBehaviour
         return Physics.CheckCapsule(top, bottom, radius, SafetyCollisionMask);
     }
 
-    //private bool CheckSweep(Vector3 start, Vector3 end, out RaycastHit hitInfo)
-    //{
-    //    float height, radius;
-    //    Vector3 top, bottom;
-    //    GetControllerCapsuleGeometryAtPosition(start, out top, out bottom, out height, out radius);
-    //    Vector3 movementVector = end - start;
-    //    Vector3 movementDirection = movementVector.normalized;
-    //    float movementDistance = movementVector.magnitude;
-    //    return Physics.CapsuleCast(top, bottom, radius, movementDirection, out hitInfo, movementDistance);
-    //}
+    private bool CheckSweep(Vector3 start, Vector3 end, out RaycastHit hitInfo)
+    {
+        float height, radius;
+        Vector3 top, bottom;
+        GetControllerCapsuleGeometryAtPosition(start, out top, out bottom, out height, out radius);
+        Vector3 movementVector = end - start;
+        Vector3 movementDirection = movementVector.normalized;
+        float movementDistance = movementVector.magnitude;
+        return Physics.CapsuleCast(top, bottom, radius, movementDirection, out hitInfo, movementDistance);
+    }
 
 }
 
