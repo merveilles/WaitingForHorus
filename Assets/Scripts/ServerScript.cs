@@ -85,12 +85,20 @@ public class ServerScript : MonoBehaviour
 // ReSharper disable once ClassNeverInstantiated.Local
     class ReadResponse
     {
-// ReSharper disable UnassignedField.Compiler
         public string Message;
         public int Connections;
         public int Activegames;
         public ServerInfo[] Servers;
-// ReSharper restore UnassignedField.Compiler
+
+        // Have a constructor to make the static analyzers/compilers not whine
+		// at us
+        public ReadResponse(string message, int connections, int activeGames, ServerInfo[] servers)
+        {
+            Message = message;
+            Connections = connections;
+            Activegames = activeGames;
+            Servers = servers;
+        }
     }
 
     class ServerInfo
