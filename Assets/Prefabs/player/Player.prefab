@@ -2622,7 +2622,7 @@ MonoBehaviour:
   SafetyCollisionMask:
     serializedVersion: 2
     m_Bits: 257
-  OverlapEjectionSpeed: 50
+  OverlapEjectionSpeed: 100
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

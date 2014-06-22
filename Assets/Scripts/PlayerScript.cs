@@ -75,7 +75,7 @@ public class PlayerScript : MonoBehaviour
     // Extra stuff we'll use to fix up Unity's bad character component collision
     private Vector3 LastNonCollidingPosition;
     public LayerMask SafetyCollisionMask;
-    public float OverlapEjectionSpeed = 50.0f;
+    public float OverlapEjectionSpeed = 100.0f;
 
     // TODO unused 'get', intentional? No reason to ever set it, then.
 	//List<NetworkPlayer> targetedBy { get; set; }
