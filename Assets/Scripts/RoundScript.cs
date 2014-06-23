@@ -14,10 +14,9 @@ using System.Collections;
 
 public class RoundScript : MonoBehaviour
 {
-    //const float RoundDuration = 8 * 5;
-    private const float RoundDuration = 10;
-    const float PauseDuration = 5;
-    const int SameLevelRounds = 1;
+    private const float RoundDuration = 60 * 5;
+    private const float PauseDuration = 20;
+    private const int SameLevelRounds = 2;
 
     float sinceRoundTransition;
     public bool RoundStopped { get; private set; }
