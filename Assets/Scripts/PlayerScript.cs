@@ -98,7 +98,7 @@ public class PlayerScript : MonoBehaviour
 		//targetedBy = new List<NetworkPlayer>();
 		warningSpheres = new List<GameObject>();
 		
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
 
         controller = GetComponent<CharacterController>();
         characterAnimation = transform.Find("Animated Mesh Fixed").animation;

@@ -513,29 +513,29 @@ public class ServerScript : MonoBehaviour
         return false;
     }
 
-    public void ChangeLevel( string toLevelName, bool force = false )
+    public void ChangeLevel( string toLevelName, bool force = false, bool notFirst = false )
     {
         Network.RemoveRPCsInGroup( 0 );
         Network.RemoveRPCsInGroup( 1 ); 
         
         if( Network.isServer )
-            networkView.RPC( "ChangeLevelRPC", RPCMode.OthersBuffered, toLevelName, force, lastLevelPrefix + 1 );
-        ChangeLevelRPC( toLevelName, force, lastLevelPrefix + 1 );
+            networkView.RPC( "ChangeLevelRPC", RPCMode.OthersBuffered, toLevelName, force, lastLevelPrefix + 1, notFirst );
+        ChangeLevelRPC( toLevelName, force, lastLevelPrefix + 1, notFirst );
     }
 
     [RPC]
-    public void ChangeLevelRPC( string newLevel, bool force, int prefix )
+    public void ChangeLevelRPC( string newLevel, bool force, int prefix, bool notFirst )
     {
-        if( newLevel == Application.loadedLevelName )
+        if( newLevel == Application.loadedLevelName && !force )
         {
             IsAsyncLoading = false;
             return;
         }
 
-        ChangeLevelAsync( newLevel, force, prefix );
+        ChangeLevelAsync( newLevel, force, prefix, notFirst );
     }
 
-    void ChangeLevelAsync( string newLevel, bool force = false, int prefix = 0 )
+    void ChangeLevelAsync( string newLevel, bool force = false, int prefix = 0, bool notFirst = false )
     {
         lastLevelPrefix = prefix;
 
@@ -558,6 +558,9 @@ public class ServerScript : MonoBehaviour
         {
             Application.LoadLevel( newLevel );
         }
+
+        if( notFirst )
+            SpawnScript.Instance.FinishSpawn();
 
         ChatScript.Instance.LogChat( Network.player, "Changing level to " + newLevel + ".", true, true );
     }

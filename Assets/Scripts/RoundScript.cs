@@ -4,9 +4,9 @@ using System.Collections;
 
 public class RoundScript : MonoBehaviour
 {
-    const float RoundDuration = 60 * 5;
-    const float PauseDuration = 20;
-    const int SameLevelRounds = 2;
+    const float RoundDuration = 8 * 5;
+    const float PauseDuration = 5;
+    const int SameLevelRounds = 1;
 
     float sinceRoundTransition;
     public bool RoundStopped { get; private set; }
@@ -76,15 +76,16 @@ public class RoundScript : MonoBehaviour
                 }
                 else
                 {
-                    if (toLevelChange == 0)
-                    {
+                    string oldLevel = CurrentLevel;
+                    if( toLevelChange == 0 )
                         CurrentLevel = RandomHelper.InEnumerable( ServerScript.Instance.AllowedLevels );
-                        ServerScript.Instance.ChangeLevel( CurrentLevel );
 
-                        Debug.Log("Loaded level is now " + CurrentLevel);
-                        networkView.RPC("ChangeLevelTo", RPCMode.Others, CurrentLevel);
-                        PlayerRegistry.Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, null, true );
-                    }
+                    ServerScript.Instance.ChangeLevel( CurrentLevel, true, true );
+
+                    if( toLevelChange == 0 )
+                        Debug.Log( "Loaded level is now " + CurrentLevel );
+
+                    PlayerRegistry.Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, null, true );
 
                     networkView.RPC( "RestartRound", RPCMode.All, true );
                     ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
