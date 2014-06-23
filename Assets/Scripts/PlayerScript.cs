@@ -309,8 +309,9 @@ public class PlayerScript : MonoBehaviour
                 //Debug.Log("After correct : " + transform.position);
             }
 
-            smoothYaw = Mathf.LerpAngle(smoothYaw, lookRotationEuler.y, 0.4f);
-            smoothLookRotation = Quaternion.Slerp(smoothLookRotation, Quaternion.Euler(lookRotationEuler), 0.3f);
+            var amt = (float)Math.Pow(0.0000000001, Time.deltaTime);
+            smoothLookRotation = Quaternion.Slerp(smoothLookRotation, Quaternion.Euler(lookRotationEuler), 1.0f - amt);
+            smoothYaw = smoothLookRotation.eulerAngles.y;
         }
 
         // set up text bubble visibility
