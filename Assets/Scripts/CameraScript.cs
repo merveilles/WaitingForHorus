@@ -31,10 +31,16 @@ public class CameraScript : MonoBehaviour
         get { return SmoothedBaseFieldOfView * (IsZoomedIn ? ZoomedFieldOfViewRatio : 1.0f); }
     }
 
+    // Indicates whether the camera is in third person (exterior) or first
+	// person (interior) view.
     public bool IsExteriorView { get; set; }
     public Vector3 ExteriorViewOffset = new Vector3(0f, 2.5f, -6f);
     public Vector3 InteriorViewOffset = new Vector3(0f, 1.0f, 0f);
     private Vector3 SmoothedViewOffset = new Vector3(0f, 2.5f, -6f);
+
+    public delegate void CameraIsExteriorChangedHandler(bool isExteriorView);
+    // Invoked when the camera mode changes
+    public event CameraIsExteriorChangedHandler OnCameraIsExteriorChanged = delegate {};
 
     private Vector3 DesiredViewOffset
     {
@@ -79,17 +85,10 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKeyDown("x"))
         {
             IsExteriorView = !IsExteriorView;
-
-            if (IsExteriorView)
-            {
-                mainCamera.cullingMask = InitialCameraCullingMask;
-                mainCamera.nearClipPlane = InitialCameraNearClipPlane;
-            }
-            else
-            {
-                mainCamera.cullingMask = InitialCameraCullingMask ^ LayerMask.GetMask("LocalPlayer");
-                mainCamera.nearClipPlane = InitialCameraNearClipPlane / 2.0f;
-            }
+            // Invoke listeners
+            OnCameraIsExteriorChanged(IsExteriorView);
+            // Update which objects we want to be hidden via layers
+            UpdateCameraObjectVisibiliy();
         }
 
         // Prevent crazy values
@@ -97,6 +96,22 @@ public class CameraScript : MonoBehaviour
 
         IsZoomedIn = Input.GetButton("Zoom");
 
+    }
+
+    // Hide or show objects based on what camera mode we're in. Uses layer masks.
+    private void UpdateCameraObjectVisibiliy()
+    {
+        
+        if (IsExteriorView)
+        {
+            mainCamera.cullingMask = InitialCameraCullingMask;
+            mainCamera.nearClipPlane = InitialCameraNearClipPlane;
+        }
+        else
+        {
+            mainCamera.cullingMask = InitialCameraCullingMask ^ LayerMask.GetMask("LocalPlayer");
+            mainCamera.nearClipPlane = InitialCameraNearClipPlane / 2.0f;
+        }
     }
 
     public void FixedUpdate()
@@ -151,7 +166,8 @@ public class CameraScript : MonoBehaviour
                 1.0f - Mathf.Pow(0.00001f, Time.deltaTime));
             transform.localPosition = SmoothedViewOffset;
 
-            if (HasSmoothedRotation)
+            // TODO we need smarter handling for toggilng smoothing and first/third person at the same time
+            if (HasSmoothedRotation && IsExteriorView)
                 // Old, not working with uncapped frame limit, but left for
                 // reference in case someone wants to match its settings exactly
                 // in the future.
@@ -241,7 +257,8 @@ public class CameraScript : MonoBehaviour
     {
         RaycastHit hitInfo;
         Vector3 position, forward;
-        if (UsesRaycastCrosshair)
+        // TODO we need smarter handling for toggilng raycast crosshair and first/third person at the same time
+        if (UsesRaycastCrosshair && IsExteriorView)
         {
             position = transform.position;
             forward = transform.forward;
