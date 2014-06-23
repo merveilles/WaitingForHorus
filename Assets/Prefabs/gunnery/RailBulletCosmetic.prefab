@@ -187,7 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b90bbdd2a72ee4398b8ae175052720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletCasingPrefab: {fileID: 100000, guid: 0c0f4137b2b770140abfda1e828f053f, type: 2}
+  bulletCasingPrefab: {fileID: 100000, guid: 4157ec895f822344c9214ba57d441613, type: 2}
   speed: 12
   lifetime: 1
   damage: 0

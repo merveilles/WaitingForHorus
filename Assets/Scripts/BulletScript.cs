@@ -59,13 +59,16 @@ public class BulletScript : MonoBehaviour
 		
         GameObject casing = (GameObject)
             Instantiate(bulletCasingPrefab, transform.position, transform.rotation);
-        casing.rigidbody.AddRelativeForce(
-            new Vector3(1 + Random.value, Random.value + 1, 0),
-            ForceMode.Impulse);
-        casing.rigidbody.AddTorque(
-            5 * new Vector3(-0.5f-Random.value, -Random.value*0.1f, -0.5f-Random.value),
-            ForceMode.Impulse);
-        casing.rigidbody.useGravity = true;
+        if (casing.rigidbody)
+        {
+            casing.rigidbody.AddRelativeForce(
+                new Vector3(1 + Random.value, Random.value + 1, 0),
+                ForceMode.Impulse);
+            casing.rigidbody.AddTorque(
+                5 * new Vector3(-0.5f-Random.value, -Random.value*0.1f, -0.5f-Random.value),
+                ForceMode.Impulse);
+            casing.rigidbody.useGravity = true;
+        }
     }
 
     bool DoDamageTo( Transform t )
