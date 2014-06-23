@@ -19,6 +19,7 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
+    public GameObject[] ObjectsToHideInFirstPerson;
     // Used to disable shadows on stuff like the gun until we're able to draw
 	// shadows for everything, because a floating gun's shadow looks silly.
     public GameObject[] HackDisableShadowsObjects;
@@ -91,6 +92,16 @@ public class CameraScript : MonoBehaviour
         InitialCameraNearClipPlane = 1f;
 
         UpdateCameraObjectVisibiliy();
+
+        // More hacks
+        if (player.networkView.isMine)
+        {
+            int layerID = LayerMask.NameToLayer("LocalPlayer");
+            foreach (var objectToHide in ObjectsToHideInFirstPerson)
+            {
+                objectToHide.layer = layerID;
+            }
+        }
     }
 
     public void Update()

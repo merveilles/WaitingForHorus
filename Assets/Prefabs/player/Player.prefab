@@ -29,7 +29,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400002}
   - 137: {fileID: 13700008}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: flag_flag001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -833,7 +833,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400104}
   - 137: {fileID: 13700000}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: MECHA_Head001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -849,7 +849,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400106}
   - 137: {fileID: 13700002}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: healthsphere_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -865,7 +865,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400108}
   - 137: {fileID: 13700004}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: healthsphere_rear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -881,7 +881,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400110}
   - 137: {fileID: 13700006}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: healthsphere_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -897,7 +897,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400112}
   - 137: {fileID: 13700010}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: flag_pole001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2727,6 +2727,13 @@ MonoBehaviour:
   HasSmoothedRotation: 1
   UsesRaycastCrosshair: 1
   CrosshairSmoothingSpeed: 8.5
+  ObjectsToHideInFirstPerson:
+  - {fileID: 100112}
+  - {fileID: 100002}
+  - {fileID: 100110}
+  - {fileID: 100108}
+  - {fileID: 100106}
+  - {fileID: 100104}
   HackDisableShadowsObjects:
   - {fileID: 100056}
   - {fileID: 100054}
