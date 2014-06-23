@@ -102,7 +102,6 @@ public class PlayerScript : MonoBehaviour
 
     private void ReceiveRoundStateChanged()
     {
-        Debug.Log("playerscript received round state changed to " + RoundScript.Instance.RoundStopped);
         if (networkView.isMine)
         {
             if (RoundScript.Instance.RoundStopped)
