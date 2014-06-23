@@ -105,8 +105,14 @@ public class PlayerScript : MonoBehaviour
         if (networkView.isMine)
         {
             if (RoundScript.Instance.RoundStopped)
-                Destroy(gameObject);
+                networkView.RPC("PostRoundDestroy", RPCMode.All);
         }
+    }
+
+    [RPC]
+    private void PostRoundDestroy()
+    {
+        Destroy(gameObject);
     }
 
     public void Awake() 
