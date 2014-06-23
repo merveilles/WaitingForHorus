@@ -76,13 +76,16 @@ public class CameraScript : MonoBehaviour
         }
         SmoothedCrosshairPosition = GetCrosshairPosition();
 
-        // Grab whatever the camera currently has. We'll remove 'LocalPlayer' from it when in interior view.
-        InitialCameraCullingMask = mainCamera.cullingMask;
-        InitialCameraNearClipPlane = mainCamera.nearClipPlane;
+        // We should use a better way to get these values.
+        InitialCameraCullingMask = -1;
+        InitialCameraNearClipPlane = 1f;
+
+        UpdateCameraObjectVisibiliy();
     }
 
     public void Update()
     {
+        if (!mainCamera) return;
         if (Input.GetButtonDown("DecreaseFOV"))
         {
             BaseFieldOfView -= 5.0f;
@@ -119,7 +122,7 @@ public class CameraScript : MonoBehaviour
     // Hide or show objects based on what camera mode we're in. Uses layer masks.
     private void UpdateCameraObjectVisibiliy()
     {
-        
+        if (!mainCamera) return;
         if (IsExteriorView)
         {
             mainCamera.cullingMask = InitialCameraCullingMask;
@@ -134,6 +137,7 @@ public class CameraScript : MonoBehaviour
 
     public void FixedUpdate()
 	{
+        if (!mainCamera) return;
         RaycastHit hitInfo;
 
         player.gameObject.FindChild("PlayerHit").collider.enabled = false;
@@ -148,6 +152,7 @@ public class CameraScript : MonoBehaviour
 
     public void LateUpdate()
     {
+        if (!mainCamera) return;
         if (player.Paused && mainCamera != null)
         {
             mainCamera.transform.localPosition = new Vector3(-85.77416f, 32.8305f, -69.88891f);
