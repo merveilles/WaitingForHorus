@@ -201,9 +201,9 @@ InputManager:
     descriptiveName: Zoom
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: mouse 4
+    positiveButton: z
     altNegativeButton: 
-    altPositiveButton: 
+    altPositiveButton: mouse 2
     gravity: 1000
     dead: .00100000005
     sensitivity: 1000
