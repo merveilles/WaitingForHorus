@@ -15,11 +15,11 @@ public class DayNightCycleScript : MonoBehaviour {
 	public Color nightlightMaterialColor 	= new Color(0.92F,1.00F,0.98F);
 	
 	public Material worldTexture;
-    private GameObject[] playerMaterials;
+    //private GameObject[] playerMaterials;
 
     void RecapturePlayerMaterials()
     {
-        playerMaterials = GameObject.FindGameObjectsWithTag( "PlayerMaterial" );
+        //playerMaterials = GameObject.FindGameObjectsWithTag( "PlayerMaterial" );
     }
 
     public void Start()
@@ -46,10 +46,12 @@ public class DayNightCycleScript : MonoBehaviour {
 		// Fix Texture
 	    var newColor = Color.Lerp(daylightMaterialColor, nightlightMaterialColor, lerp);
 	    worldTexture.color = newColor;
-        foreach( var player in playerMaterials )
-        {
-            var c = player.renderer.material.color;
-            player.renderer.material.color = new Color( newColor.r, newColor.g, newColor.b, c.a );
-        }
+
+        // TODO basically unusable, rewrite
+        //foreach( var player in playerMaterials )
+        //{
+        //    var c = player.renderer.material.color;
+        //    player.renderer.material.color = new Color( newColor.r, newColor.g, newColor.b, c.a );
+        //}
     }
 }
