@@ -86,6 +86,13 @@ public class PlayerScript : MonoBehaviour
 
 	List<GameObject> warningSpheres { get; set; }
 
+    // Will be multiplied by the mouse sensitivity. We usually want to reduce
+	// sensitivity when zoomed in.
+    private float ZoomLookSensitivityMultiplier
+    {
+        get { return CameraScript.IsZoomedIn ? 0.5f : 1.0f; }
+    }
+
     public void OnEnable()
     {
         UnsafeAllEnabledPlayerScripts.Add(this);
@@ -271,10 +278,13 @@ public class PlayerScript : MonoBehaviour
 			if (Screen.lockCursor)
 			{
                 float invertMultiplier = invertMouse ? -1 : 1;
-                lookRotationEuler += MouseSensitivityScript.Sensitivity * new Vector3(
-                    Input.GetAxis("Vertical Look") * invertMultiplier,
-                    Input.GetAxis("Horizontal Look"),
-                    0);
+                lookRotationEuler +=
+                    MouseSensitivityScript.Sensitivity *
+                    ZoomLookSensitivityMultiplier *
+                    new Vector3(
+                        Input.GetAxis("Vertical Look") * invertMultiplier,
+                        Input.GetAxis("Horizontal Look"),
+                        0);
 			}
 			
 			lookRotationEuler.x = Mathf.Clamp(
