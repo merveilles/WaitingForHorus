@@ -225,7 +225,7 @@ public class ServerScript : MonoBehaviour
                 LastStatus = "Looking for UPnP...";
                 if (!natDiscoveryStarted /*|| !wanIp.HasValue*/)
                 {
-                    Debug.Log("NAT discovery started");
+                    //Debug.Log("NAT discovery started");
                     StartNatDiscovery();
 //                    GetWanIP();
                 }
@@ -254,7 +254,7 @@ public class ServerScript : MonoBehaviour
 
                 if (mappingResults.All(x => x.Status == MappingStatus.Success))
                 {
-                    Debug.Log("Ready to host!");
+                    //Debug.Log("Ready to host!");
                     hostState = HostingState.ReadyToHost;
                 }
                 else
@@ -311,7 +311,7 @@ public class ServerScript : MonoBehaviour
                          lastLevelName != RoundScript.Instance.CurrentLevel || 
                          sinceRefreshedPlayers > 25))
                 {
-                    Debug.Log("Refreshing...");
+                    //Debug.Log("Refreshing...");
                     RefreshListedServer();
                     sinceRefreshedPlayers = 0;
                     lastPlayerCount = Network.connections.Length;
@@ -423,18 +423,18 @@ public class ServerScript : MonoBehaviour
                 try
                 {
                     ReadResponse data = jsonReader.Read<ReadResponse>(response);
-                    Debug.Log("MOTD : " + data.Message);
-                    Debug.Log(data.Servers.Length + " servers : ");
+                    //Debug.Log("MOTD : " + data.Message);
+                    //Debug.Log(data.Servers.Length + " servers : ");
                     foreach (var s in data.Servers)
                     {
                         s.ConnectionFailed = blackList.Contains(s.Id);
-                        Debug.Log(s + (s.ConnectionFailed ? " (blacklisted)" : ""));
+                        //Debug.Log(s + (s.ConnectionFailed ? " (blacklisted)" : ""));
                     }
                     return data;
                 }
                 catch (Exception ex)
                 {
-                    Debug.Log(ex.ToString());
+                    //Debug.Log(ex.ToString());
                     throw;
                 }
             }
@@ -450,13 +450,13 @@ public class ServerScript : MonoBehaviour
             using (var client = new WebClient())
             {
                 var result = jsonWriter.Write( currentServer.Packed );
-                Debug.Log( "server json : " + result );
+                //Debug.Log( "server json : " + result );
 
                 // then add new server
                 var nvc = new NameValueCollection { { "value", result } };
                 var uri = MasterServerUri + "&cmd=add";
                 var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
-                Debug.Log("Added server, got id = " + response);
+                //Debug.Log("Added server, got id = " + response);
                 currentServer.Id = int.Parse(response);
                 return int.Parse(response);
             }
@@ -473,14 +473,14 @@ public class ServerScript : MonoBehaviour
             {
                 var result = jsonWriter.Write(currentServer.Packed);
 
-                Debug.Log("server json : " + result);
+                //Debug.Log("server json : " + result);
 
                 // update!
                 var nvc = new NameValueCollection { { "value", result } };
                 string uri = MasterServerUri + "&cmd=update";
                 var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
-                Debug.Log(uri);
-                Debug.Log("Refreshed server with connection count to " + currentServer.Players + " and map " + currentServer.Map + ", server said : " + response);
+                //Debug.Log(uri);
+                //Debug.Log("Refreshed server with connection count to " + currentServer.Players + " and map " + currentServer.Map + ", server said : " + response);
             }
         });
     }
@@ -583,7 +583,7 @@ public class ServerScript : MonoBehaviour
     bool Connect()
     {
         LastStatus = "Connecting...";
-        Debug.Log("Connecting to " + chosenIP ); //chosenIP
+        //Debug.Log("Connecting to " + chosenIP ); //chosenIP
         var result = Network.Connect( chosenIP );
         if (result != NetworkConnectionError.NoError)
         {
@@ -637,7 +637,7 @@ public class ServerScript : MonoBehaviour
 
         NatUtility.DeviceFound += (s, ea) =>
         {
-            Debug.Log("Mapping port for device : " + ea.Device.ToString());
+            //Debug.Log("Mapping port for device : " + ea.Device.ToString());
 
             mappingResults.AddRange(MapPort(ea.Device));
 
@@ -675,7 +675,7 @@ public class ServerScript : MonoBehaviour
             if (state.IsCompleted)
             {
                 LastStatus = "Testing UDP mapping...";
-                Debug.Log("Mapping complete for : " + udpMapping.ToString());
+                //Debug.Log("Mapping complete for : " + udpMapping.ToString());
                 try
                 {
                     var m = device.GetSpecificMapping(Protocol.Udp, Port);
@@ -704,7 +704,7 @@ public class ServerScript : MonoBehaviour
             if (state.IsCompleted)
             {
                 LastStatus = "Testing TCP mapping...";
-                Debug.Log("Mapping complete for : " + tcpMapping.ToString());
+                //Debug.Log("Mapping complete for : " + tcpMapping.ToString());
                 try
                 {
                     var m = device.GetSpecificMapping(Protocol.Tcp, Port);
@@ -728,8 +728,8 @@ public class ServerScript : MonoBehaviour
 
     public void OnServerInitialized()
 	{
-		Debug.Log("==> GUID is " + Network.player.guid + ". Use this on clients to connect with NAT punchthrough.");
-		Debug.Log("==> Local IP/port is " + Network.player.ipAddress + "/" + Network.player.port + ". Use this on clients to connect directly.");
+		//Debug.Log("==> GUID is " + Network.player.guid + ". Use this on clients to connect with NAT punchthrough.");
+		//Debug.Log("==> Local IP/port is " + Network.player.ipAddress + "/" + Network.player.port + ". Use this on clients to connect directly.");
 	}
 
     public void OnApplicationQuit()
@@ -740,7 +740,7 @@ public class ServerScript : MonoBehaviour
                 try
                 {
                     mr.Device.DeletePortMap(mr.Mapping);
-                    Debug.Log("Deleted port mapping : " + mr.Mapping);
+                    //Debug.Log("Deleted port mapping : " + mr.Mapping);
                 }
                 catch (Exception)
                 {

@@ -73,7 +73,7 @@ class PlayerRegistry : MonoBehaviour
        // Transform location = playerData.transform;
 	
         registry.Add( player, new PlayerInfo { Username = username, Color = color, Location = null, GUID = guid } );
-        Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
+        //Debug.Log("Registered this player : " + player + " = " + username + " (" + ConnectedCount() + " now)");
 
         if( Network.isServer )
             Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, player, false );
@@ -84,7 +84,7 @@ class PlayerRegistry : MonoBehaviour
     {
         if( Network.player != player && !all ) return;
         SpawnScript.Instance.FinishSpawn();
-        Debug.Log( "Handshake Successfull, Spawning" );
+        //Debug.Log( "Handshake Successfull, Spawning" );
     }
 
     [RPC]
