@@ -104,15 +104,20 @@ public class BulletScript : MonoBehaviour
             if (!hitReceiver.Player.gameObject.networkView.isMine) continue;
 
             var playerTransform = hitReceiver.Player.gameObject.transform;
+
+            const float rocketJumpFudgeHeightDifference = 5.0f;
+            bool isImpactBelow = playerTransform.position.y + rocketJumpFudgeHeightDifference > point.y;
+            bool treatAsRocketJump = isImpactBelow && hitReceiver.WantsRocketJump;
+
             Vector3 positionDifference = playerTransform.position - point;
             // is there a function to do both of these at once? kinda dumb
-            Vector3 impulseDirection = positionDifference.normalized;
+            Vector3 impulseDirection = treatAsRocketJump ? Vector3.up : positionDifference.normalized;
             float impulseDistance = positionDifference.magnitude;
 
             var dist = Mathf.Max( impulseDistance, 0.5f );
 
             var impulse = impulseDirection * ( 45 / dist );
-            if( impulse.y > 0 ) 
+            if( impulse.y > 0 || treatAsRocketJump ) 
 				impulse.y *= 2.25f;
             else 
 				impulse.y = 0;
@@ -120,6 +125,8 @@ public class BulletScript : MonoBehaviour
             if( playerWasHit )
                 impulse *= 10;
 
+            if (treatAsRocketJump)
+                hitReceiver.Player.ReceiveStartedRocketJump();
             hitReceiver.Player.AddRecoil(impulse);
         }
 	}

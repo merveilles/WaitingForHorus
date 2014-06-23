@@ -53,6 +53,9 @@ public class PlayerScript : MonoBehaviour
     public AudioSource landingSound;
     public AudioSource jumpSound;
 
+    public PlayerShootingScript ShootingScript;
+    public CameraScript CameraScript;
+
     public bool Paused { get; set; }
 
     // Used as a global collection of all enabled PlayerScripts. Will help us
@@ -86,11 +89,13 @@ public class PlayerScript : MonoBehaviour
     public void OnEnable()
     {
         UnsafeAllEnabledPlayerScripts.Add(this);
+        ShootingScript.OnShotgunFired += ReceiveShotgunFired;
     }
 
     public void OnDisable()
     {
         UnsafeAllEnabledPlayerScripts.Remove(this);
+        ShootingScript.OnShotgunFired -= ReceiveShotgunFired;
     }
 
     public void Awake() 
@@ -328,6 +333,8 @@ public class PlayerScript : MonoBehaviour
                 GetComponentInChildren<TextMesh>().text = info.Username;
         }*/
 
+        TimeSinceRocketJump += Time.deltaTime;
+
         if(!controller.enabled) return;
         if (Paused) return;
         UpdateMovement();
@@ -343,8 +350,12 @@ public class PlayerScript : MonoBehaviour
 	 	bool justJumped = false;
         if(networkView.isMine && Time.time - lastJumpInputTime <= JumpInputQueueTime)
         {
-            if ((controller.isGrounded || sinceNotGrounded < 0.25f) && recoilVelocity.y <= 0)
+            bool groundedOrRecentRocketJump = controller.isGrounded || RecentlyDidRocketJump;
+            bool recoilOk = recoilVelocity.y <= 0;
+            // TODO ugly booleans
+            if ((groundedOrRecentRocketJump || sinceNotGrounded < 0.25f) && (recoilOk || RecentlyDidRocketJump))
             {
+                ConsumedRocketJump();
                 //Debug.Log("Accepted jump");
                 lastJumpInputTime = -1;
                 justJumped = true;
@@ -574,6 +585,49 @@ public class PlayerScript : MonoBehaviour
     //    return Physics.CapsuleCast(top, bottom, radius, movementDirection, out hitInfo, movementDistance);
     //}
 
+    private float RecentRocketJumpThreshold = 0.2f;
+    private float TimeSinceRocketJump = 0f;
+    private bool HasAvailableRocketJump;
+    public void ReceiveStartedRocketJump()
+    {
+        TimeSinceRocketJump = 0f;
+        HasAvailableRocketJump = true;
+    }
+
+    private bool RecentlyDidRocketJump
+    {
+        get { return TimeSinceRocketJump < RecentRocketJumpThreshold && HasAvailableRocketJump; }
+    }
+
+    private void ConsumedRocketJump()
+    {
+        HasAvailableRocketJump = false;
+    }
+
+    private void ReceiveShotgunFired()
+    {
+        // Distance to check downward to see if we're on the ground
+        Vector3 nearGround = new Vector3(0f, -3f, 0f);
+        // If we're looking down, touching ground (or close to touching), and
+		// fire the shotgun, we probably want to rocket jump.
+        if (IsLookingDownFarEnoughForRocketJump && CheckOverlap(transform.position + nearGround))
+        {
+            ReceiveStartedRocketJump();
+        }
+    }
+
+    // Dot product distance for when checking if we're looking down for rocket
+	// jumping
+    private const float RocketJumpLookingThreshold = 0.3f;
+
+    public bool IsLookingDownFarEnoughForRocketJump
+    {
+        get
+        {
+            float difference = Vector3.Dot(CameraScript.LookingDirection, Vector3.down);
+            return (difference > 1.0f - RocketJumpLookingThreshold);
+        }
+    }
 }
 
 abstract class Interpolator<T>
