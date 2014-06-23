@@ -1,9 +1,20 @@
 using UnityEngine;
 using System.Collections;
 
+//namespace GameMode
+//{
+//    enum RoundState
+//    {
+//        Active,
+//        Stopped,
+//        BetweenRounds
+//    }
+//}
+
 public class RoundScript : MonoBehaviour
 {
-    const float RoundDuration = 8 * 5;
+    //const float RoundDuration = 8 * 5;
+    private const float RoundDuration = 10;
     const float PauseDuration = 5;
     const int SameLevelRounds = 1;
 
@@ -18,10 +29,42 @@ public class RoundScript : MonoBehaviour
 
     public static RoundScript Instance { get; private set; }
 
+    public delegate void RoundStateChangedHandler();
+    public event RoundStateChangedHandler OnRoundStateChanged = delegate { };
+
     public void Awake()
     {
         Instance = this;
         toLevelChange = SameLevelRounds;
+    }
+
+    public void Start()
+    {
+        ServerScript.Instance.OnNewMapLoaded += ReceiveNewMapLoaded;
+    }
+
+    private void ReceiveNewMapLoaded()
+    {
+        if (Network.isServer)
+        {
+            ResetRoundState();
+        }
+    }
+
+    // Announce some predetermined times that are left for the round
+    private void CheckAndSpeakSecondsRemaining(float lastTimeRemaining, float timeRemaining)
+    {
+        foreach (var roundWarningTime in RoundWarningTimes)
+        {
+            if (lastTimeRemaining >= roundWarningTime &&
+                timeRemaining < roundWarningTime)
+            {
+                string decorator = roundWarningTime <= ScaryWarningTime ? "!" : "...";
+                ChatScript.Instance.networkView.RPC(
+                    "LogChat", RPCMode.All, Network.player,
+                    roundWarningTime + " seconds remaining" + decorator, true, true);
+            }
+        }
     }
 
     public void Update() 
@@ -34,17 +77,7 @@ public class RoundScript : MonoBehaviour
 
             if (!RoundStopped)
             {
-                foreach (var roundWarningTime in RoundWarningTimes)
-                {
-                    if (lastTimeRemaining >= roundWarningTime &&
-                        timeRemaining < roundWarningTime)
-                    {
-                        string decorator = roundWarningTime <= ScaryWarningTime ? "!" : "...";
-                        ChatScript.Instance.networkView.RPC(
-                            "LogChat", RPCMode.All, Network.player,
-                            roundWarningTime + " seconds remaining" + decorator, true, true);
-                    }
-                }
+                CheckAndSpeakSecondsRemaining(lastTimeRemaining, timeRemaining);
             }
             else
             {
@@ -113,7 +146,10 @@ public class RoundScript : MonoBehaviour
     {
         while (ServerScript.IsAsyncLoading)
             yield return new WaitForSeconds(1 / 30f);
-
+        ResetRoundState();
+    }
+    private void ResetRoundState()
+    {
         foreach (var player in PlayerScript.AllEnabledPlayerScripts)
            player.Paused = false;
 
@@ -127,5 +163,15 @@ public class RoundScript : MonoBehaviour
         ChatScript.Instance.ChatLog.ForEach(x => x.Hidden = true);
 
         RoundStopped = false;
+
+        
+        networkView.RPC("Client_ResetRoundState", RPCMode.All);
+    }
+
+    [RPC]
+    private void Client_ResetRoundState()
+    {
+        RoundStopped = false;
+        OnRoundStateChanged();
     }
 }

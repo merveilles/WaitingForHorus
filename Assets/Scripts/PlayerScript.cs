@@ -90,12 +90,14 @@ public class PlayerScript : MonoBehaviour
     {
         UnsafeAllEnabledPlayerScripts.Add(this);
         ShootingScript.OnShotgunFired += ReceiveShotgunFired;
+        Debug.Log("playerscript enabled");
     }
 
     public void OnDisable()
     {
         UnsafeAllEnabledPlayerScripts.Remove(this);
         ShootingScript.OnShotgunFired -= ReceiveShotgunFired;
+        Debug.Log("playerscript disabled");
     }
 
     public void Awake() 
@@ -551,6 +553,7 @@ public class PlayerScript : MonoBehaviour
 
     public void OnDestroy( )
     {
+        Debug.Log("destroyed!!");
         Network.RemoveRPCs( networkView.viewID );
     }
 

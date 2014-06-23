@@ -82,6 +82,9 @@ public class ServerScript : MonoBehaviour
         private set { _isAsyncLoading = value; }
     }
 
+    public delegate void NewMapLoadedHandler();
+    public event NewMapLoadedHandler OnNewMapLoaded = delegate { };
+
 // ReSharper disable once ClassNeverInstantiated.Local
     class ReadResponse
     {
@@ -532,10 +535,10 @@ public class ServerScript : MonoBehaviour
             return;
         }
 
-        ChangeLevelAsync( newLevel, force, prefix, notFirst );
+        ChangeLevelAsync(newLevel, force, prefix);
     }
 
-    void ChangeLevelAsync( string newLevel, bool force = false, int prefix = 0, bool notFirst = false )
+    void ChangeLevelAsync( string newLevel, bool force = false, int prefix = 0)
     {
         lastLevelPrefix = prefix;
 
@@ -559,8 +562,6 @@ public class ServerScript : MonoBehaviour
             Application.LoadLevel( newLevel );
         }
 
-        if( notFirst )
-            SpawnScript.Instance.FinishSpawn();
 
         ChatScript.Instance.LogChat( Network.player, "Changing level to " + newLevel + ".", true, true );
     }
@@ -575,6 +576,8 @@ public class ServerScript : MonoBehaviour
         ChatScript.Instance.LogChat( Network.player, "Changed level to " + Application.loadedLevelName + ".", true, true );
         if( currentServer != null )
             currentServer.Map = RoundScript.Instance.CurrentLevel;
+
+        OnNewMapLoaded();
     }
 
     bool Connect()

@@ -211,24 +211,6 @@ public class HealthScript : MonoBehaviour
         });
     }
 
-    [RPC]
-    public void ImmediateRespawn()
-    {
-        StartCoroutine(WaitAndRespawn());
-    }
-
-    IEnumerator WaitAndRespawn()
-    {
-        Hide();
-
-        while (ServerScript.IsAsyncLoading)
-            yield return new WaitForSeconds(1 / 30f);
-
-        //Debug.Log("WaitAndRespawned");
-
-        Respawn(RespawnZone.GetRespawnPoint());
-    }
-
     public void Hide()
     {
         if (!(ServerScript.hostState == ServerScript.HostingState.Hosting || ServerScript.hostState == ServerScript.HostingState.Connected))

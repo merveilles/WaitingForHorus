@@ -13,26 +13,28 @@ public class SpawnScript : MonoBehaviour
 
 	public string chosenUsername;
 
+    private void RoundStateChanged()
+    {
+        //Debug.Log("Round state changed!");
+        if (!RoundScript.Instance.RoundStopped)
+        {
+            FinishSpawn();
+        }
+    }
+
     public void Awake()
     {
         Instance = this;
+    }
+    public void Start()
+    {
+        RoundScript.Instance.OnRoundStateChanged += RoundStateChanged;
     }
 
     public void OnServerInitialized() 
     {
         RegistrySpawn();
 	}
-	
-    public void WaitAndSpawn()
-    {
-        StartCoroutine(Co_WaitAndSpawn());
-    }
-    IEnumerator Co_WaitAndSpawn()
-    {
-        while (ServerScript.IsAsyncLoading)
-            yield return new WaitForSeconds(1 / 30f);
-        FinishSpawn();
-    }
 
     void RegistrySpawn( )
 	{
