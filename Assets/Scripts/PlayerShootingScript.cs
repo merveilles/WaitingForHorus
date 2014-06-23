@@ -49,6 +49,8 @@ public class PlayerShootingScript : MonoBehaviour
 
     public BulletScript bulletPrefab;
     public BulletScript fastBulletPrefab;
+    public BulletScript railPrefab;
+    public BulletScript railCosmeticPrefab;
     public BulletScript cannonBulletPrefab;
     public Transform gun;
 
@@ -142,30 +144,47 @@ public class PlayerShootingScript : MonoBehaviour
                     OnShotFired();
                     OnShotgunFired();
 
-                    // find homing target(s)
-					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();
-
-					var bulletsShot = bulletsLeft;
-                    var first = true;
-                    while( bulletsLeft > 0 )
+                    // Rail shot
+                    if (bulletsLeft == BurstCount && playerCamera.IsZoomedIn)
                     {
-                        if( !aimedAt.Any() )
-                            DoHomingShot( ShotgunSpread, null, 0, first );
-                        else
-						{
-        					var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
-                            DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ) * ShotgunHomingSpeed, first );
-						}
-						
-                        cooldownLeft += ShotCooldown;
-                        first = false;
-                    }
-                    cooldownLeft += ReloadTime;
+                        DoRailShot();
+                        bulletsLeft = 0;
+                        cooldownLeft += ReloadTime * 2.7f;
 
-                    var recoilImpulse = -gun.forward * ((float)bulletsShot / BurstCount);
-                    recoilImpulse *= playerScript.controller.isGrounded ? 25 : 87.5f;
-                    recoilImpulse.y *= playerScript.controller.isGrounded ? 0.1f : 0.375f;
-                    playerScript.AddRecoil(recoilImpulse);
+                        var recoilImpulse = -playerCamera.LookingDirection * 2.35f;
+                        recoilImpulse *= playerScript.controller.isGrounded ? 25 : 87.5f;
+                        recoilImpulse.y *= playerScript.controller.isGrounded ? 0.1f : 0.375f;
+                        playerScript.AddRecoil(recoilImpulse);
+                    }
+
+                    // Homing/shotgun
+                    else
+                    {
+                        // find homing target(s)
+    					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();
+
+    					var bulletsShot = bulletsLeft;
+                        var first = true;
+                        while( bulletsLeft > 0 )
+                        {
+                            if( !aimedAt.Any() )
+                                DoHomingShot( ShotgunSpread, null, 0, first );
+                            else
+    						{
+            					var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
+                                DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ) * ShotgunHomingSpeed, first );
+    						}
+    						
+                            cooldownLeft += ShotCooldown;
+                            first = false;
+                        }
+                        cooldownLeft += ReloadTime;
+
+                        var recoilImpulse = -gun.forward * ((float)bulletsShot / BurstCount);
+                        recoilImpulse *= playerScript.controller.isGrounded ? 25 : 87.5f;
+                        recoilImpulse.y *= playerScript.controller.isGrounded ? 0.1f : 0.375f;
+                        playerScript.AddRecoil(recoilImpulse);
+                    }
 
                     //cannonChargeCountdown = CannonChargeTime;
                 }
@@ -286,13 +305,13 @@ public class PlayerShootingScript : MonoBehaviour
         {
             networkView.RPC("ShootFast", RPCMode.Others,
                 finalFiringPosition, finalFiringRotation, Network.player );
-            ShootFast( gun.position + firingDirection * 4.0f, firingRotation * spreadRotation, Network.player );
+            ShootFast( finalFiringPosition, finalFiringRotation, Network.player );
         }
         else
         {
             networkView.RPC("Shoot", RPCMode.Others,
                 finalFiringPosition, finalFiringRotation, Network.player );
-            Shoot( gun.position + firingDirection * 4.0f, firingRotation * spreadRotation, Network.player );
+            Shoot( finalFiringPosition, finalFiringRotation, Network.player );
         }
     }
 
@@ -328,6 +347,15 @@ public class PlayerShootingScript : MonoBehaviour
         ShootHoming(
             gun.position + firingDirection * 4.0f, firingRotation * spreadRotation,
             Network.player, targetOwner, lastKnownPosition, homing, doSound );
+    }
+
+    void DoRailShot()
+    {
+        Vector3 finalFiringPosition = gun.position + firingDirection*4.0f;
+        Quaternion finalFiringRotation = Quaternion.FromToRotation(Vector3.forward, firingDirection);
+            networkView.RPC("ShootRail", RPCMode.Others,
+                finalFiringPosition, finalFiringRotation, Network.player );
+            ShootRail( finalFiringPosition, finalFiringRotation, Network.player );
     }
 
     [RPC]
@@ -372,5 +400,17 @@ public class PlayerShootingScript : MonoBehaviour
         if( doSound )
 			if( GlobalSoundsScript.soundEnabled )
 				pepperGunSound.Play();
+    }
+
+    [RPC]
+    void ShootRail(Vector3 position, Quaternion rotation, NetworkPlayer player)
+    {
+        BulletScript bullet = (BulletScript)Instantiate( railPrefab, position, rotation );
+        BulletScript cosmeticBullet = (BulletScript)Instantiate( railCosmeticPrefab, position, rotation );
+        bullet.Player = player;
+        cosmeticBullet.Player = player;
+		
+		if( GlobalSoundsScript.soundEnabled )
+        	burstGunSound.Play();
     }
 }

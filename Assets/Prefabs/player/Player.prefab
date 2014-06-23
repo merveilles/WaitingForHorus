@@ -2667,6 +2667,8 @@ MonoBehaviour:
   burstGunSound: {fileID: 8200012}
   bulletPrefab: {fileID: 11400000, guid: a83a93c4702bdaa498af2d2a23f89779, type: 2}
   fastBulletPrefab: {fileID: 11400000, guid: 752c00003b245cd4eab685dbebe2913b, type: 2}
+  railPrefab: {fileID: 11400000, guid: 8d134e99157b0954ca529c56b8fb3d25, type: 2}
+  railCosmeticPrefab: {fileID: 11400000, guid: 23833d9379470374093c60fc2cf1c4b0, type: 2}
   cannonBulletPrefab: {fileID: 0}
   gun: {fileID: 400058}
   cannonIndicator: {fileID: 2800000, guid: 7751ea7854caf654a8d794d137427e22, type: 3}
