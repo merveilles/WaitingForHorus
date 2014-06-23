@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 using System.Collections;
 
@@ -14,7 +13,7 @@ public class RoundScript : MonoBehaviour
     bool said5secWarning;
     int toLevelChange;
 
-    private float[] RoundWarningTimes = new[] {60f, 30f, 10f};
+    private float[] RoundWarningTimes = {60f, 30f, 10f};
     private float ScaryWarningTime = 10f;
 
     public static RoundScript Instance { get; private set; }
