@@ -19,6 +19,10 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
+    // Used to disable shadows on stuff like the gun until we're able to draw
+	// shadows for everything, because a floating gun's shadow looks silly.
+    public GameObject[] HackDisableShadowsObjects;
+
     public Vector3 LookingDirection
     {
         get { return transform.rotation * Vector3.forward; }
@@ -64,6 +68,12 @@ public class CameraScript : MonoBehaviour
     // Used only for drawing the crosshair on screen. Actual aiming raycast will
 	// not use this.
     private Vector2 SmoothedCrosshairPosition;
+
+    public void Awake()
+    {
+        if (HackDisableShadowsObjects == null)
+            HackDisableShadowsObjects = new GameObject[0];
+    }
 
     public void Start()
     {
@@ -127,11 +137,21 @@ public class CameraScript : MonoBehaviour
         {
             mainCamera.cullingMask = InitialCameraCullingMask;
             mainCamera.nearClipPlane = InitialCameraNearClipPlane;
+
+            foreach (var hackDisableShadowsObject in HackDisableShadowsObjects)
+            {
+                hackDisableShadowsObject.renderer.castShadows = true;
+            }
         }
         else
         {
             mainCamera.cullingMask = InitialCameraCullingMask ^ (1 << LayerMask.NameToLayer("LocalPlayer"));
             mainCamera.nearClipPlane = InitialCameraNearClipPlane / 2.0f;
+
+            foreach (var hackDisableShadowsObject in HackDisableShadowsObjects)
+            {
+                hackDisableShadowsObject.renderer.castShadows = false;
+            }
         }
     }
 

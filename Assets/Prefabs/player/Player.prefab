@@ -2724,6 +2724,11 @@ MonoBehaviour:
   HasSmoothedRotation: 1
   UsesRaycastCrosshair: 1
   CrosshairSmoothingSpeed: 8.5
+  HackDisableShadowsObjects:
+  - {fileID: 100056}
+  - {fileID: 100054}
+  - {fileID: 100052}
+  - {fileID: 100050}
   BaseFieldOfView: 85
   ZoomedFieldOfViewRatio: .5
   ExteriorViewOffset: {x: 0, y: 2.5, z: -6}
@@ -2758,7 +2763,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 11400000}
-  CameraScript: {fileID: 11400006}
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1
