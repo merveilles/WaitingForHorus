@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using System.Collections;
 
@@ -110,21 +111,24 @@ public class RoundScript : MonoBehaviour
                     if( toLevelChange == 0 )
                         CurrentLevel = RandomHelper.InEnumerable( ServerScript.Instance.AllowedLevels );
 
-                    ServerScript.Instance.ChangeLevel( CurrentLevel, true, true );
+                    //ServerScript.Instance.ChangeLevel( CurrentLevel, true, true );
 
-                    if( toLevelChange == 0 )
-                        Debug.Log( "Loaded level is now " + CurrentLevel );
+                    //if( toLevelChange == 0 )
+                    //    Debug.Log( "Loaded level is now " + CurrentLevel );
 
-                    PlayerRegistry.Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, null, true );
+                    //PlayerRegistry.Instance.networkView.RPC( "RegisteredHandshake", RPCMode.All, null, true );
 
                     networkView.RPC( "RestartRound", RPCMode.All, true );
-                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
-                                    "Game start!", true, true);
+                    //ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
+                    //                "Game start!", true, true);
+                    //RestartRound();
+                    ResetRoundState();
                 }
                 sinceRoundTransition = 0f;
                 said5secWarning = false;
             }
 	    }
+        //Debug.Log("Enabled player scripts: " + PlayerScript.AllEnabledPlayerScripts.Count());
 	}
 
 
@@ -139,15 +143,10 @@ public class RoundScript : MonoBehaviour
     [RPC]
     public void RestartRound( bool changedLevel = false )
     {
-        StartCoroutine(WaitAndResume());
+        RoundStopped = true;
+        OnRoundStateChanged();
     }
 
-    IEnumerator WaitAndResume()
-    {
-        while (ServerScript.IsAsyncLoading)
-            yield return new WaitForSeconds(1 / 30f);
-        ResetRoundState();
-    }
     private void ResetRoundState()
     {
         foreach (var player in PlayerScript.AllEnabledPlayerScripts)

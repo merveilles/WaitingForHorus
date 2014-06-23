@@ -516,18 +516,18 @@ public class ServerScript : MonoBehaviour
         return false;
     }
 
-    public void ChangeLevel( string toLevelName, bool force = false, bool notFirst = false )
+    public void ChangeLevel( string toLevelName, bool force = false)
     {
         Network.RemoveRPCsInGroup( 0 );
-        Network.RemoveRPCsInGroup( 1 ); 
-        
-        if( Network.isServer )
-            networkView.RPC( "ChangeLevelRPC", RPCMode.OthersBuffered, toLevelName, force, lastLevelPrefix + 1, notFirst );
-        ChangeLevelRPC( toLevelName, force, lastLevelPrefix + 1, notFirst );
+        Network.RemoveRPCsInGroup( 1 );
+
+        if (Network.isServer)
+            networkView.RPC("ChangeLevelRPC", RPCMode.OthersBuffered, toLevelName, force, lastLevelPrefix + 1);
+        ChangeLevelRPC(toLevelName, force, lastLevelPrefix + 1);
     }
 
     [RPC]
-    public void ChangeLevelRPC( string newLevel, bool force, int prefix, bool notFirst )
+    public void ChangeLevelRPC( string newLevel, bool force, int prefix)
     {
         if( newLevel == Application.loadedLevelName && !force )
         {

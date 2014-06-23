@@ -90,14 +90,24 @@ public class PlayerScript : MonoBehaviour
     {
         UnsafeAllEnabledPlayerScripts.Add(this);
         ShootingScript.OnShotgunFired += ReceiveShotgunFired;
-        Debug.Log("playerscript enabled");
+        RoundScript.Instance.OnRoundStateChanged += ReceiveRoundStateChanged;
     }
 
     public void OnDisable()
     {
         UnsafeAllEnabledPlayerScripts.Remove(this);
         ShootingScript.OnShotgunFired -= ReceiveShotgunFired;
-        Debug.Log("playerscript disabled");
+        RoundScript.Instance.OnRoundStateChanged -= ReceiveRoundStateChanged;
+    }
+
+    private void ReceiveRoundStateChanged()
+    {
+        Debug.Log("playerscript received round state changed to " + RoundScript.Instance.RoundStopped);
+        if (networkView.isMine)
+        {
+            if (RoundScript.Instance.RoundStopped)
+                Destroy(gameObject);
+        }
     }
 
     public void Awake() 
@@ -553,7 +563,6 @@ public class PlayerScript : MonoBehaviour
 
     public void OnDestroy( )
     {
-        Debug.Log("destroyed!!");
         Network.RemoveRPCs( networkView.viewID );
     }
 
