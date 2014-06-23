@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
@@ -19,6 +18,29 @@ public class PlayerShootingScript : MonoBehaviour
     public float ShotgunHomingSpeed = 0.675f;
     public float CannonChargeTime = 0.5f;
     public float HeatAccuracyFudge = 0.5f;
+
+    // Amount to modify heat by when when a shot is fired and we're zoomed in
+	// (instead of at regular zoom) (we want accuracy to decrease more slowly
+	// when zoomed in).
+    public float HeatAccuracyZoomedMultiplier = 0.525f;
+
+    // Some fudge amount that modifies the amount of the heat that will be added
+	// if a shot is fired right now.
+    public float CurrentHeatAccuracyFudge
+    {
+        get
+        {
+            if (playerCamera != null)
+            {
+                return HeatAccuracyFudge * (playerCamera.IsZoomedIn ? HeatAccuracyZoomedMultiplier : 1.0f);
+            }
+            return HeatAccuracyFudge;
+        }
+    }
+
+    // How much to multiply the shot cooldown when we're zoomed (presumably, to
+	// slow the firing rate when zoomed).
+    public float ShotCooldownZoomedMultiplier = 2.35f;
 	
     public AudioSource reloadSound;
     public AudioSource targetSound;
@@ -36,6 +58,20 @@ public class PlayerShootingScript : MonoBehaviour
 	public float heat = 0.0f;
 	float cooldownLeft = 0.0f;
     int bulletsLeft;
+
+    // The amount that will get added to the shot cooldown if a shot is fired
+	// right now. Modulated by whether or not we're zoomed in.
+    private float CurrentShotCooldown
+    {
+        get
+        {
+            if (playerCamera != null)
+            {
+                return ShotCooldown * (playerCamera.IsZoomedIn ? ShotCooldownZoomedMultiplier : 1.0f);
+            }
+            return ShotCooldown;
+        }
+    }
 
     public delegate void ShotFiredHandler();
     // Invoked when a shot is fired (either primary or secondary)
@@ -136,7 +172,7 @@ public class PlayerShootingScript : MonoBehaviour
                     OnShotFired();
 
                     DoShot( BurstSpread );
-                    cooldownLeft += ShotCooldown;
+                    cooldownLeft += CurrentShotCooldown;
                     if( bulletsLeft <= 0 )
                         cooldownLeft += ReloadTime;
                 }
@@ -230,7 +266,7 @@ public class PlayerShootingScript : MonoBehaviour
     void DoShot(float spread)
     {
         bulletsLeft -= 1;
-		spread += heat * HeatAccuracyFudge;
+        spread += heat * CurrentHeatAccuracyFudge;
 		heat += 0.25f;
 
         float roll = Random.value * 360;

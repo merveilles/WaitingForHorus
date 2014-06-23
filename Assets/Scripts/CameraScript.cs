@@ -19,7 +19,11 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
-    public bool IsZoomedIn { get; set; }
+    public bool IsZoomedIn { get; private set; }
+
+    public delegate void CameraIsZoomedChangedHandler(bool isZoomed);
+    // Invoked when the camera becomes or un-becomes zoomed.
+    public event CameraIsZoomedChangedHandler OnCameraIsZoomedChanged = delegate { }; 
 
     public float BaseFieldOfView = 85.0f;
     public float ZoomedFieldOfViewRatio = 0.42f;
@@ -33,7 +37,7 @@ public class CameraScript : MonoBehaviour
 
     // Indicates whether the camera is in third person (exterior) or first
 	// person (interior) view.
-    public bool IsExteriorView { get; set; }
+    public bool IsExteriorView { get; private set; }
     public Vector3 ExteriorViewOffset = new Vector3(0f, 2.5f, -6f);
     public Vector3 InteriorViewOffset = new Vector3(0f, 1.0f, 0f);
     private Vector3 SmoothedViewOffset = new Vector3(0f, 2.5f, -6f);
@@ -94,7 +98,16 @@ public class CameraScript : MonoBehaviour
         // Prevent crazy values
         BaseFieldOfView = Mathf.Clamp(BaseFieldOfView, 45f, 150f);
 
-        IsZoomedIn = Input.GetButton("Zoom");
+        // Handle zoom changing
+        bool newZoom = Input.GetButton("Zoom");
+        // Not just assigning blindly since we don't want to spam the event if
+		// it hasn't changed.
+        if (newZoom != IsZoomedIn)
+        {
+            IsZoomedIn = newZoom;
+            // Notify listeners of zoom change
+            OnCameraIsZoomedChanged(IsZoomedIn);
+        }
 
     }
 
