@@ -19,6 +19,11 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
+    public Vector3 LookingDirection
+    {
+        get { return transform.rotation * Vector3.forward; }
+    }
+
     public bool IsZoomedIn { get; private set; }
 
     public delegate void CameraIsZoomedChangedHandler(bool isZoomed);

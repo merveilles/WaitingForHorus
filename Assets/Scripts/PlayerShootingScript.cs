@@ -76,6 +76,8 @@ public class PlayerShootingScript : MonoBehaviour
     public delegate void ShotFiredHandler();
     // Invoked when a shot is fired (either primary or secondary)
     public event ShotFiredHandler OnShotFired = delegate {};
+    // Invoked when a shotgun blast is fired
+    public event ShotFiredHandler OnShotgunFired = delegate {};
 
     public float GunRotationSmoothingSpeed = 7.0f;
 
@@ -137,6 +139,7 @@ public class PlayerShootingScript : MonoBehaviour
                 if( Input.GetButton( "Alternate Fire") )
                 {
                     OnShotFired();
+                    OnShotgunFired();
 
                     // find homing target(s)
 					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();

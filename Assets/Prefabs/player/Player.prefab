@@ -2620,6 +2620,8 @@ MonoBehaviour:
   dashSound: {fileID: 8200008}
   landingSound: {fileID: 8200014}
   jumpSound: {fileID: 8200004}
+  ShootingScript: {fileID: 11400004}
+  CameraScript: {fileID: 11400006}
   SafetyCollisionMask:
     serializedVersion: 2
     m_Bits: 257
@@ -2756,6 +2758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 11400000}
+  CameraScript: {fileID: 11400006}
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1
