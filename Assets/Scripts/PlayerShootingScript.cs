@@ -48,6 +48,7 @@ public class PlayerShootingScript : MonoBehaviour
     public AudioSource burstGunSound;
 
     public BulletScript bulletPrefab;
+    public BulletScript fastBulletPrefab;
     public BulletScript cannonBulletPrefab;
     public Transform gun;
 
@@ -279,10 +280,20 @@ public class PlayerShootingScript : MonoBehaviour
             Quaternion.Euler( 0, 0, -roll );
         Quaternion firingRotation = Quaternion.FromToRotation(Vector3.forward, firingDirection);
 
-        networkView.RPC("Shoot", RPCMode.Others,
-            gun.position + firingDirection * 4.0f, firingRotation * spreadRotation,
-            Network.player );
-        Shoot( gun.position + firingDirection * 4.0f, firingRotation * spreadRotation, Network.player );
+        Vector3 finalFiringPosition = gun.position + firingDirection*4.0f;
+        Quaternion finalFiringRotation = firingRotation*spreadRotation;
+        if (playerCamera.IsZoomedIn)
+        {
+            networkView.RPC("ShootFast", RPCMode.Others,
+                finalFiringPosition, finalFiringRotation, Network.player );
+            ShootFast( gun.position + firingDirection * 4.0f, firingRotation * spreadRotation, Network.player );
+        }
+        else
+        {
+            networkView.RPC("Shoot", RPCMode.Others,
+                finalFiringPosition, finalFiringRotation, Network.player );
+            Shoot( gun.position + firingDirection * 4.0f, firingRotation * spreadRotation, Network.player );
+        }
     }
 
     public void InstantReload()
@@ -323,6 +334,15 @@ public class PlayerShootingScript : MonoBehaviour
     void Shoot(Vector3 position, Quaternion rotation, NetworkPlayer player)
     {
         BulletScript bullet = (BulletScript)Instantiate( bulletPrefab, position, rotation );
+        bullet.Player = player;
+		
+		if( GlobalSoundsScript.soundEnabled )
+        	burstGunSound.Play();
+    }
+    [RPC]
+    void ShootFast(Vector3 position, Quaternion rotation, NetworkPlayer player)
+    {
+        BulletScript bullet = (BulletScript)Instantiate( fastBulletPrefab, position, rotation );
         bullet.Player = player;
 		
 		if( GlobalSoundsScript.soundEnabled )
