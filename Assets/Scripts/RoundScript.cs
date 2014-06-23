@@ -11,8 +11,11 @@ public class RoundScript : MonoBehaviour
     float sinceRoundTransition;
     public bool RoundStopped { get; private set; }
     public string CurrentLevel { get; set; }
-    bool said60secWarning, said30secWarning, said10secWarning, said5secWarning;
+    bool said5secWarning;
     int toLevelChange;
+
+    private float[] RoundWarningTimes = new[] {60f, 30f, 10f};
+    private float ScaryWarningTime = 10f;
 
     public static RoundScript Instance { get; private set; }
 
@@ -25,28 +28,23 @@ public class RoundScript : MonoBehaviour
     public void Update() 
     {
         if (Network.isServer)
-	    {
+        {
+            float lastTimeRemaining = RoundDuration - sinceRoundTransition;
             sinceRoundTransition += Time.deltaTime;
+            float timeRemaining = RoundDuration - sinceRoundTransition;
 
             if (!RoundStopped)
             {
-                if (!said60secWarning && RoundDuration - sinceRoundTransition < 60)
+                foreach (var roundWarningTime in RoundWarningTimes)
                 {
-                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
-                                                        "60 seconds remaining...", true, true);
-                    said60secWarning = true;
-                }
-                if (!said30secWarning && RoundDuration - sinceRoundTransition < 30)
-                {
-                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
-                                                        "30 seconds remaining...", true, true);
-                    said30secWarning = true;
-                }
-                if (!said10secWarning && RoundDuration - sinceRoundTransition < 10)
-                {
-                    ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
-                                                        "10 seconds remaining!", true, true);
-                    said10secWarning = true;
+                    if (lastTimeRemaining >= roundWarningTime &&
+                        timeRemaining < roundWarningTime)
+                    {
+                        string decorator = roundWarningTime <= ScaryWarningTime ? "!" : "...";
+                        ChatScript.Instance.networkView.RPC(
+                            "LogChat", RPCMode.All, Network.player,
+                            roundWarningTime + " seconds remaining" + decorator, true, true);
+                    }
                 }
             }
             else
@@ -91,8 +89,8 @@ public class RoundScript : MonoBehaviour
                     ChatScript.Instance.networkView.RPC("LogChat", RPCMode.All, Network.player,
                                     "Game start!", true, true);
                 }
-                sinceRoundTransition = 0;
-                said60secWarning = said30secWarning = said10secWarning = said5secWarning = false;
+                sinceRoundTransition = 0f;
+                said5secWarning = false;
             }
 	    }
 	}
