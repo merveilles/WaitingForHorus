@@ -106,7 +106,7 @@ public class RoundScript : MonoBehaviour
                 }
                 else
                 {
-                    string oldLevel = CurrentLevel;
+                    //string oldLevel = CurrentLevel;
                     if( toLevelChange == 0 )
                         CurrentLevel = RandomHelper.InEnumerable( ServerScript.Instance.AllowedLevels );
 

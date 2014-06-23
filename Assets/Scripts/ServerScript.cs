@@ -434,7 +434,7 @@ public class ServerScript : MonoBehaviour
                 }
                 catch (Exception ex)
                 {
-                    //Debug.Log(ex.ToString());
+                    Debug.Log(ex.ToString());
                     throw;
                 }
             }
@@ -478,7 +478,8 @@ public class ServerScript : MonoBehaviour
                 // update!
                 var nvc = new NameValueCollection { { "value", result } };
                 string uri = MasterServerUri + "&cmd=update";
-                var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
+                client.UploadValues(uri, nvc);
+                //var response = Encoding.ASCII.GetString(client.UploadValues(uri, nvc));
                 //Debug.Log(uri);
                 //Debug.Log("Refreshed server with connection count to " + currentServer.Players + " and map " + currentServer.Map + ", server said : " + response);
             }
