@@ -272,6 +272,11 @@ public class ChatScript : MonoBehaviour
                                 });
                                 break;
 
+                            case "/endround":
+                                if (Network.isServer)
+                                    RoundScript.Instance.EndRoundSoon();
+                                break;
+
                             default:
                                 LogChat(Network.player, lastMessage + " command not recognized.", true, true);
                                 break;

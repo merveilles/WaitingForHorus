@@ -98,6 +98,7 @@ public class PlayerScript : MonoBehaviour
         UnsafeAllEnabledPlayerScripts.Add(this);
         ShootingScript.OnShotgunFired += ReceiveShotgunFired;
         RoundScript.Instance.OnRoundStateChanged += ReceiveRoundStateChanged;
+        //Debug.Log("playerscript enabled");
     }
 
     public void OnDisable()
@@ -105,10 +106,16 @@ public class PlayerScript : MonoBehaviour
         UnsafeAllEnabledPlayerScripts.Remove(this);
         ShootingScript.OnShotgunFired -= ReceiveShotgunFired;
         RoundScript.Instance.OnRoundStateChanged -= ReceiveRoundStateChanged;
+        //Debug.Log("playerscript disabled");
     }
 
     private void ReceiveRoundStateChanged()
     {
+        //Debug.Log("received round state changed");
+        //if (networkView.isMine)
+        //{
+        //    GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
+        //}
         if (networkView.isMine)
         {
             if (RoundScript.Instance.RoundStopped)
@@ -127,7 +134,7 @@ public class PlayerScript : MonoBehaviour
 		//targetedBy = new List<NetworkPlayer>();
 		warningSpheres = new List<GameObject>();
 		
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
 
         controller = GetComponent<CharacterController>();
         characterAnimation = transform.Find("Animated Mesh Fixed").animation;

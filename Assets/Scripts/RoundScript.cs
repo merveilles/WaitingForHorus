@@ -24,6 +24,11 @@ public class RoundScript : MonoBehaviour
     bool said5secWarning;
     int toLevelChange;
 
+    public void EndRoundSoon()
+    {
+        sinceRoundTransition = RoundDuration - 5f;
+    }
+
     private float[] RoundWarningTimes = {60f, 30f, 10f};
     private float ScaryWarningTime = 10f;
 
