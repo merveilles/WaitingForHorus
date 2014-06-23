@@ -98,35 +98,29 @@ public class BulletScript : MonoBehaviour
         Collider[] colliders = Physics.OverlapSphere( point, 15, ( 1 << LayerMask.NameToLayer("Player Hit") ) );
         foreach( Collider c in colliders )
         {
-            if( c.gameObject.name != "PlayerHit" )
-                continue;
+            var hitReceiver = c.gameObject.GetComponent<PlayerHitReceiver>();
+            if (hitReceiver == null) continue;
+            // Recoil is applied per-client, locally
+            if (!hitReceiver.Player.gameObject.networkView.isMine) continue;
 
-            var t = c.transform;
-            NetworkView view = t.networkView;
-            while( view == null )
-            {
-                t = t.parent;
-                view = t.networkView;
-            }
+            var playerTransform = hitReceiver.Player.gameObject.transform;
+            Vector3 positionDifference = playerTransform.position - point;
+            // is there a function to do both of these at once? kinda dumb
+            Vector3 impulseDirection = positionDifference.normalized;
+            float impulseDistance = positionDifference.magnitude;
 
-            t = t.FindChild("mecha_gun");
-            var endpoint = t.position + t.forward;
+            var dist = Mathf.Max( impulseDistance, 0.5f );
 
-            var direction = endpoint - point;
-            var dist = Mathf.Max( direction.magnitude, 0.5f );
-            direction.Normalize();
-
-            var impulse = direction * ( 45 / dist );
+            var impulse = impulseDirection * ( 45 / dist );
             if( impulse.y > 0 ) 
 				impulse.y *= 2.25f;
             else 
 				impulse.y = 0;
 
-            if( playerWasHit ) // && hitInfo.transform == c.transform
+            if( playerWasHit )
                 impulse *= 10;
 
-            if( Network.isServer )
-                view.RPC( "AddRecoil", RPCMode.All, impulse );
+            hitReceiver.Player.AddRecoil(impulse);
         }
 	}
 	
