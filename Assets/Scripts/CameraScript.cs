@@ -19,8 +19,6 @@ public class CameraScript : MonoBehaviour
 
     Quaternion actualCameraRotation;
 
-    public GameObject[] ObjectsHiddenToInteriorView;
-
     public bool IsZoomedIn { get; set; }
 
     public float BaseFieldOfView = 85.0f;
@@ -43,6 +41,11 @@ public class CameraScript : MonoBehaviour
         get { return IsExteriorView ? ExteriorViewOffset : InteriorViewOffset; }
     }
 
+    // We're going to cache some initial values from the camera, because we're
+	// going to modify them but also need to restore the originals.
+    private int InitialCameraCullingMask;
+    private float InitialCameraNearClipPlane;
+
     // Used only for drawing the crosshair on screen. Actual aiming raycast will
 	// not use this.
     private Vector2 SmoothedCrosshairPosition;
@@ -58,10 +61,9 @@ public class CameraScript : MonoBehaviour
         }
         SmoothedCrosshairPosition = GetCrosshairPosition();
 
-        if (ObjectsHiddenToInteriorView == null)
-        {
-            ObjectsHiddenToInteriorView = new GameObject[0];
-        }
+        // Grab whatever the camera currently has. We'll remove 'LocalPlayer' from it when in interior view.
+        InitialCameraCullingMask = mainCamera.cullingMask;
+        InitialCameraNearClipPlane = mainCamera.nearClipPlane;
     }
 
     public void Update()
@@ -77,11 +79,16 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKeyDown("x"))
         {
             IsExteriorView = !IsExteriorView;
-            // TODO is it slow to set this every update?
-            // TODO this is bad for various reasons, like stuff showing up when it should be hidden, etc. will change soon!
-            for (int i = 0; i < ObjectsHiddenToInteriorView.Length; i++)
+
+            if (IsExteriorView)
             {
-                ObjectsHiddenToInteriorView[i].renderer.enabled = IsExteriorView;
+                mainCamera.cullingMask = InitialCameraCullingMask;
+                mainCamera.nearClipPlane = InitialCameraNearClipPlane;
+            }
+            else
+            {
+                mainCamera.cullingMask = InitialCameraCullingMask ^ LayerMask.GetMask("LocalPlayer");
+                mainCamera.nearClipPlane = InitialCameraNearClipPlane / 2.0f;
             }
         }
 
