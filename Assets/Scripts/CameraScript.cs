@@ -127,7 +127,7 @@ public class CameraScript : MonoBehaviour
         }
         else
         {
-            //mainCamera.cullingMask = InitialCameraCullingMask ^ LayerMask.GetMask("LocalPlayer");
+            mainCamera.cullingMask = InitialCameraCullingMask ^ (1 << LayerMask.NameToLayer("LocalPlayer"));
             mainCamera.nearClipPlane = InitialCameraNearClipPlane / 2.0f;
         }
     }
