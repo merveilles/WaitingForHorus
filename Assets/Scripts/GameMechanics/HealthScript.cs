@@ -194,21 +194,22 @@ public class HealthScript : MonoBehaviour
     //
     // Most likely, a timeout shouldn't be used, and it should simply count time
 	// in Update or something like that.
-    object respawnLock;
-    [RPC]
-    public void ScheduleRespawn(Vector3 position)
-    {
-        Hide();
-        Instantiate(deathPrefab, transform.position, transform.rotation);
-        var thisLock = new object();
-        respawnLock = thisLock;
-        TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() =>
-        {
-            //Debug.Log("Spectating? " + ServerScript.Spectating);
-            //if (respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
-            //    Respawn(position);
-        });
-    }
+
+    //object respawnLock;
+    //[RPC]
+    //public void ScheduleRespawn(Vector3 position)
+    //{
+    //    Hide();
+    //    Instantiate(deathPrefab, transform.position, transform.rotation);
+    //    var thisLock = new object();
+    //    respawnLock = thisLock;
+    //    TaskManager.Instance.WaitFor(timeUntilRespawn).Then(() =>
+    //    {
+    //        //Debug.Log("Spectating? " + ServerScript.Spectating);
+    //        //if (respawnLock == thisLock && !ServerScript.Spectating && !RoundScript.Instance.RoundStopped)
+    //        //    Respawn(position);
+    //    });
+    //}
 
     public void Hide()
     {

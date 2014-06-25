@@ -19,13 +19,10 @@ public class Water : MonoBehaviour
 	public LayerMask m_RefractLayers = -1;
 		
 	private Hashtable m_ReflectionCameras = new Hashtable(); // Camera -> Camera table
-	private Hashtable m_RefractionCameras = new Hashtable(); // Camera -> Camera table
 	
 	private RenderTexture m_ReflectionTexture = null;
-	private RenderTexture m_RefractionTexture = null;
 	private WaterMode m_HardwareWaterSupport = WaterMode.Refractive;
 	private int m_OldReflectionTextureSize = 0;
-	private int m_OldRefractionTextureSize = 0;
 	
 	private static bool s_InsideWater = false;
 
@@ -182,7 +179,8 @@ public class Water : MonoBehaviour
 	// On-demand create any objects we need for water
 	private void CreateWaterObjects( Camera currentCamera, out Camera reflectionCamera )
 	{
-		WaterMode mode = GetWaterMode();
+		//WaterMode mode = GetWaterMode();
+		GetWaterMode();
 		
 		reflectionCamera = null;
 		// Reflection render texture

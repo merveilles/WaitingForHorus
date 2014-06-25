@@ -11,7 +11,6 @@ public class EffectsScript : MonoBehaviour
 
     public GameObject explosionPrefab;
     public GameObject explosionHitPrefab;
-    public GameObject areaExplosionPrefab;
     public GameObject hitConePrefab;
 
     private static float LastExplosionSoundTime;
@@ -49,15 +48,4 @@ public class EffectsScript : MonoBehaviour
             Instantiate(Instance.hitConePrefab, position, rotation);
     }
 
-    //[RPC]
-    public static void ExplosionArea(Vector3 position, Quaternion rotation)
-    {
-        Instantiate(Instance.areaExplosionPrefab, position, rotation);
-    }
-
-    //[RPC]
-    public static void ExplosionHitArea(Vector3 position, Quaternion rotation)
-    {
-        ExplosionArea(position, rotation);
-    }
 }
