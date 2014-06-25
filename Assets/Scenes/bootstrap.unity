@@ -114,6 +114,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4a49f02a16788240a0fc121c55fef9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerCharacterPrefab: {fileID: 11400000, guid: 11a4e5f239d167a44bfaf435661ccd48,
+    type: 2}
 --- !u!4 &138782053
 Transform:
   m_ObjectHideFlags: 0
@@ -845,6 +847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonPressSound: {fileID: 1271378267}
+  PlayMusicInEditor: 0
   songs:
   - {fileID: 8300000, guid: 07f28d2eb73974f818f7786a07d023e4, type: 3}
   - {fileID: 8300000, guid: eae7aa79cd6b5496385d4d94456786df, type: 3}

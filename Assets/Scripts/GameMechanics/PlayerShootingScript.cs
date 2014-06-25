@@ -192,7 +192,7 @@ public class PlayerShootingScript : MonoBehaviour
                 // Burst
                 else if (Input.GetButton("Fire")) // burst fire
                 {
-                    OnShotFired();
+                    //OnShotFired();
 
                     DoShot( BurstSpread );
                     cooldownLeft += CurrentShotCooldown;
@@ -303,14 +303,20 @@ public class PlayerShootingScript : MonoBehaviour
         Quaternion finalFiringRotation = firingRotation*spreadRotation;
         if (playerCamera.IsZoomedIn)
         {
-            networkView.RPC("ShootFast", RPCMode.Others,
-                finalFiringPosition, finalFiringRotation, Network.player );
+            if (playerScript.Possessor.IsOnline)
+            {
+                networkView.RPC("ShootFast", RPCMode.Others,
+                    finalFiringPosition, finalFiringRotation, Network.player );
+            }
             ShootFast( finalFiringPosition, finalFiringRotation, Network.player );
         }
         else
         {
-            networkView.RPC("Shoot", RPCMode.Others,
-                finalFiringPosition, finalFiringRotation, Network.player );
+            if (playerScript.Possessor.IsOnline)
+            {
+                networkView.RPC("Shoot", RPCMode.Others,
+                    finalFiringPosition, finalFiringRotation, Network.player);
+            }
             Shoot( finalFiringPosition, finalFiringRotation, Network.player );
         }
     }
@@ -341,9 +347,12 @@ public class PlayerShootingScript : MonoBehaviour
             lastKnownPosition = target.transform.position;
         }
 
-        networkView.RPC("ShootHoming", RPCMode.Others,
-			gun.position + firingDirection * 4.0f, firingRotation * spreadRotation, 
-			Network.player, targetOwner, lastKnownPosition, homing, doSound );
+        if (playerScript.Possessor.IsOnline)
+        {
+            networkView.RPC("ShootHoming", RPCMode.Others,
+                gun.position + firingDirection*4.0f, firingRotation*spreadRotation,
+                Network.player, targetOwner, lastKnownPosition, homing, doSound);
+        }
         ShootHoming(
             gun.position + firingDirection * 4.0f, firingRotation * spreadRotation,
             Network.player, targetOwner, lastKnownPosition, homing, doSound );
@@ -353,9 +362,12 @@ public class PlayerShootingScript : MonoBehaviour
     {
         Vector3 finalFiringPosition = gun.position + firingDirection*4.0f;
         Quaternion finalFiringRotation = Quaternion.FromToRotation(Vector3.forward, firingDirection);
+        if (playerScript.Possessor.IsOnline)
+        {
             networkView.RPC("ShootRail", RPCMode.Others,
-                finalFiringPosition, finalFiringRotation, Network.player );
-            ShootRail( finalFiringPosition, finalFiringRotation, Network.player );
+                finalFiringPosition, finalFiringRotation, Network.player);
+        }
+        ShootRail( finalFiringPosition, finalFiringRotation, Network.player );
     }
 
     [RPC]

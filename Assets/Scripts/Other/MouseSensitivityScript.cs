@@ -12,7 +12,7 @@ public class MouseSensitivityScript : MonoBehaviour
 
     public void Awake()
     {
-        windowStyle = new GUIStyle(skin.window) { normal = { background = null } };
+        //windowStyle = new GUIStyle(skin.window) { normal = { background = null } };
         sensitivityPercentage = PlayerPrefs.GetInt("sensitivity", 50);
     }
 
@@ -35,8 +35,8 @@ public class MouseSensitivityScript : MonoBehaviour
 
     public void OnGUI()
     {
-        GUILayout.Window(3, new Rect(Screen.width - 200, 0, 200, 40),
-                         OnWindow, "", windowStyle);
+        //GUILayout.Window(3, new Rect(Screen.width - 200, 0, 200, 40),
+        //                 OnWindow, "", windowStyle);
     }
 
     void OnWindow(int windowId)

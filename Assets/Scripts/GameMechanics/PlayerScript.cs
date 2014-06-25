@@ -56,6 +56,9 @@ public class PlayerScript : MonoBehaviour
     public PlayerShootingScript ShootingScript;
     public CameraScript CameraScript;
 
+    private PlayerPresence _Possessor;
+    public PlayerPresence Possessor { get { return _Possessor; } set { ChangePossessor(value); } }
+
     public bool Paused { get; set; }
 
     // Used as a global collection of all enabled PlayerScripts. Will help us
@@ -119,6 +122,11 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    private void ChangePossessor(PlayerPresence newPlayerPresence)
+    {
+        _Possessor = newPlayerPresence;
+    }
+
     [RPC]
     private void PostRoundDestroy()
     {
@@ -152,6 +160,18 @@ public class PlayerScript : MonoBehaviour
         }
 	}
 
+    public void Start()
+    {
+        if (networkView.isMine)
+        {
+            gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
+        }
+        else
+        {
+            gameObject.layer = LayerMask.NameToLayer( "Player" );
+        }
+    }
+
     public void OnNetworkInstantiate(NetworkMessageInfo info)
     {
         if( Network.isServer )
@@ -170,7 +190,7 @@ public class PlayerScript : MonoBehaviour
         else
         {
             owner = Network.player;
-            gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
+            //gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
         }
     }
 
@@ -250,8 +270,9 @@ public class PlayerScript : MonoBehaviour
 
     public void Update()
     {
-        if (Network.peerType == NetworkPeerType.Disconnected) return;
+        //if (Network.peerType == NetworkPeerType.Disconnected) return;
         if (Paused) return;
+        if (Possessor == null) return;
 
         if (networkView.isMine)
         {
@@ -379,7 +400,7 @@ public class PlayerScript : MonoBehaviour
         // jump and dash
         dashCooldown -= Time.deltaTime;
 	 	bool justJumped = false;
-        if(networkView.isMine && Time.time - lastJumpInputTime <= JumpInputQueueTime)
+        if((networkView.isMine) && Time.time - lastJumpInputTime <= JumpInputQueueTime)
         {
             bool groundedOrRecentRocketJump = controller.isGrounded || RecentlyDidRocketJump;
             bool recoilOk = recoilVelocity.y <= 0;

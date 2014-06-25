@@ -191,11 +191,7 @@ public class BulletScript : MonoBehaviour
 		lifetime -= Time.deltaTime;
 		if( lifetime <= 0 )
 		{
-			if( networkView.isMine )
-			{
-				//Network.RemoveRPCs( networkView.viewID );
-				Network.Destroy( gameObject );
-			}
+            Destroy(gameObject);
 		}
 	}
 
