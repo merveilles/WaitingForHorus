@@ -116,6 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerCharacterPrefab: {fileID: 11400000, guid: 11a4e5f239d167a44bfaf435661ccd48,
     type: 2}
+  BaseServer: {fileID: 11400000, guid: d632df868fa18584bad7f16c70fccf13, type: 2}
 --- !u!4 &138782053
 Transform:
   m_ObjectHideFlags: 0

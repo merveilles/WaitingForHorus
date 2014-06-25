@@ -79,6 +79,10 @@ public class PlayerScript : MonoBehaviour
     // A safe (copied) list of all enabled PlayerScripts in the game world.
     public static IEnumerable<PlayerScript> AllEnabledPlayerScripts
     { get { return UnsafeAllEnabledPlayerScripts.ToList(); } }
+
+    public delegate void PlayerScriptSpawnedHandler(PlayerScript newPlayerScript);
+    // Invoked when any PlayerScript-attached gameobject is spawned
+    public static event PlayerScriptSpawnedHandler OnPlayerScriptSpawned;
         
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
@@ -173,6 +177,8 @@ public class PlayerScript : MonoBehaviour
         {
             gameObject.layer = LayerMask.NameToLayer( "Player" );
         }
+
+        OnPlayerScriptSpawned(this);
     }
 
     public void OnNetworkInstantiate(NetworkMessageInfo info)

@@ -6,6 +6,10 @@ public class Relay : MonoBehaviour
 {
     public PlayerScript PlayerCharacterPrefab;
 
+    public Server BaseServer;
+
+    public Server CurrentServer { get; private set; }
+
     public void Awake()
     {
         DontDestroyOnLoad(this);
@@ -13,7 +17,12 @@ public class Relay : MonoBehaviour
 
     public void Start()
     {
-        Application.LoadLevel("pi_mar");
+        if (Application.isEditor)
+        {
+            Network.InitializeServer(32, 5556, false);
+            CurrentServer = (Server)Network.Instantiate(BaseServer, Vector3.zero, Quaternion.identity, 0 );
+            CurrentServer.Relay = this;
+        }
     }
 
     public void Update()
@@ -23,10 +32,12 @@ public class Relay : MonoBehaviour
 
     public bool IsConnected { get { return false; } }
 
-    public void OnLevelWasLoaded(int levelIndex)
+
+    [RPC]
+    public void ClientSpawnCharacter()
     {
-        var newPlayerCharacter = (PlayerScript)Instantiate(PlayerCharacterPrefab, RespawnZone.GetRespawnPoint(), Quaternion.identity);
+        var newPlayerCharacter = (PlayerScript)Network.Instantiate(PlayerCharacterPrefab, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);
+        //var newPlayerCharacter = (PlayerScript)Instantiate(PlayerCharacterPrefab, RespawnZone.GetRespawnPoint(), Quaternion.identity);
         newPlayerCharacter.Relay = this;
-        //var newPlayerCharacter = (PlayerScript)Network.Instantiate(PlayerCharacterPrefab, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);
     }
 }
