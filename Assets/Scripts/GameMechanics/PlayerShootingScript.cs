@@ -303,7 +303,7 @@ public class PlayerShootingScript : MonoBehaviour
         Quaternion finalFiringRotation = firingRotation*spreadRotation;
         if (playerCamera.IsZoomedIn)
         {
-            if (playerScript.Possessor.IsOnline)
+            if (playerScript.ShouldSendMessages)
             {
                 networkView.RPC("ShootFast", RPCMode.Others,
                     finalFiringPosition, finalFiringRotation, Network.player );
@@ -312,7 +312,7 @@ public class PlayerShootingScript : MonoBehaviour
         }
         else
         {
-            if (playerScript.Possessor.IsOnline)
+            if (playerScript.ShouldSendMessages)
             {
                 networkView.RPC("Shoot", RPCMode.Others,
                     finalFiringPosition, finalFiringRotation, Network.player);
@@ -347,7 +347,7 @@ public class PlayerShootingScript : MonoBehaviour
             lastKnownPosition = target.transform.position;
         }
 
-        if (playerScript.Possessor.IsOnline)
+        if (playerScript.ShouldSendMessages)
         {
             networkView.RPC("ShootHoming", RPCMode.Others,
                 gun.position + firingDirection*4.0f, firingRotation*spreadRotation,
@@ -362,7 +362,7 @@ public class PlayerShootingScript : MonoBehaviour
     {
         Vector3 finalFiringPosition = gun.position + firingDirection*4.0f;
         Quaternion finalFiringRotation = Quaternion.FromToRotation(Vector3.forward, firingDirection);
-        if (playerScript.Possessor.IsOnline)
+        if (playerScript.ShouldSendMessages)
         {
             networkView.RPC("ShootRail", RPCMode.Others,
                 finalFiringPosition, finalFiringRotation, Network.player);

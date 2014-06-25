@@ -56,8 +56,16 @@ public class PlayerScript : MonoBehaviour
     public PlayerShootingScript ShootingScript;
     public CameraScript CameraScript;
 
-    private PlayerPresence _Possessor;
-    public PlayerPresence Possessor { get { return _Possessor; } set { ChangePossessor(value); } }
+    public Relay Relay { get; set; }
+
+    public bool ShouldSendMessages
+    {
+        get
+        {
+            if (Relay == null) return false;
+            else return Relay.IsConnected;
+        }
+    }
 
     public bool Paused { get; set; }
 
@@ -120,11 +128,6 @@ public class PlayerScript : MonoBehaviour
             //if (RoundScript.Instance.RoundStopped)
             //    networkView.RPC("PostRoundDestroy", RPCMode.All);
         }
-    }
-
-    private void ChangePossessor(PlayerPresence newPlayerPresence)
-    {
-        _Possessor = newPlayerPresence;
     }
 
     [RPC]
@@ -272,8 +275,6 @@ public class PlayerScript : MonoBehaviour
     {
         //if (Network.peerType == NetworkPeerType.Disconnected) return;
         if (Paused) return;
-        if (Possessor == null) return;
-
         if (networkView.isMine)
         {
             //textBubbleVisible = ChatScript.Instance.showChat;

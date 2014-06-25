@@ -25,9 +25,8 @@ public class Relay : MonoBehaviour
 
     public void OnLevelWasLoaded(int levelIndex)
     {
-        var localPlayerPresence = new LocalPlayerPresence(this);
         var newPlayerCharacter = (PlayerScript)Instantiate(PlayerCharacterPrefab, RespawnZone.GetRespawnPoint(), Quaternion.identity);
-        newPlayerCharacter.Possessor = localPlayerPresence;
+        newPlayerCharacter.Relay = this;
         //var newPlayerCharacter = (PlayerScript)Network.Instantiate(PlayerCharacterPrefab, RespawnZone.GetRespawnPoint(), Quaternion.identity, 0);
     }
 }
