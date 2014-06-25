@@ -97,7 +97,7 @@ public class PlayerScript : MonoBehaviour
     {
         UnsafeAllEnabledPlayerScripts.Add(this);
         ShootingScript.OnShotgunFired += ReceiveShotgunFired;
-        RoundScript.Instance.OnRoundStateChanged += ReceiveRoundStateChanged;
+        //RoundScript.Instance.OnRoundStateChanged += ReceiveRoundStateChanged;
         //Debug.Log("playerscript enabled");
     }
 
@@ -105,21 +105,17 @@ public class PlayerScript : MonoBehaviour
     {
         UnsafeAllEnabledPlayerScripts.Remove(this);
         ShootingScript.OnShotgunFired -= ReceiveShotgunFired;
-        RoundScript.Instance.OnRoundStateChanged -= ReceiveRoundStateChanged;
+        //RoundScript.Instance.OnRoundStateChanged -= ReceiveRoundStateChanged;
         //Debug.Log("playerscript disabled");
     }
 
     private void ReceiveRoundStateChanged()
     {
         //Debug.Log("received round state changed");
-        //if (networkView.isMine)
-        //{
-        //    GetComponent<HealthScript>().Respawn(RespawnZone.GetRespawnPoint());
-        //}
         if (networkView.isMine)
         {
-            if (RoundScript.Instance.RoundStopped)
-                networkView.RPC("PostRoundDestroy", RPCMode.All);
+            //if (RoundScript.Instance.RoundStopped)
+            //    networkView.RPC("PostRoundDestroy", RPCMode.All);
         }
     }
 
@@ -195,11 +191,11 @@ public class PlayerScript : MonoBehaviour
 		if( GlobalSoundsScript.soundEnabled )
 		   warningSound.Play(); 
 		
-		print( "Targeted by: " + PlayerRegistry.For( aggressor ).Username );
+        //print( "Targeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
 		GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
 		sphere.transform.parent = gameObject.transform;
-		sphere.GetComponent<Billboard>().target = PlayerRegistry.For( aggressor ).Location;
+        //sphere.GetComponent<Billboard>().target = PlayerRegistry.For( aggressor ).Location;
 		
 		warningSpheres.Add( sphere );
     }
@@ -209,13 +205,13 @@ public class PlayerScript : MonoBehaviour
     {
         if( !networkView.isMine  ) return;
 		
-		print( "Untargeted by: " + PlayerRegistry.For( aggressor ).Username );
+        //print( "Untargeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
-		int id = warningSpheres.FindIndex( a => a.GetComponent<Billboard>().target == PlayerRegistry.For( aggressor ).Location );
-		if( id == -1 ) return;
+        //int id = warningSpheres.FindIndex( a => a.GetComponent<Billboard>().target == PlayerRegistry.For( aggressor ).Location );
+        //if( id == -1 ) return;
 		
-		Destroy( warningSpheres[id] );
-		warningSpheres.RemoveAt( id );
+        //Destroy( warningSpheres[id] );
+        //warningSpheres.RemoveAt( id );
     }
 	
     public void ResetWarnings()
@@ -259,7 +255,7 @@ public class PlayerScript : MonoBehaviour
 
         if (networkView.isMine)
         {
-            textBubbleVisible = ChatScript.Instance.showChat;
+            //textBubbleVisible = ChatScript.Instance.showChat;
 
             inputVelocity =
                 Input.GetAxis("Strafe") * transform.right +

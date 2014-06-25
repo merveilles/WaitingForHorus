@@ -29,9 +29,9 @@ public class CameraSpin : MonoBehaviour
 
         transform.Rotate(0, rotateSpeed * Time.deltaTime * sign, 0);
 
-        if (ServerScript.Spectating && !wasSpectating)
-            ResetTransforms();
-        wasSpectating = ServerScript.Spectating;
+        //if (ServerScript.Spectating && !wasSpectating)
+        //    ResetTransforms();
+        //wasSpectating = ServerScript.Spectating;
     }
 
     public void OnDisconnectedFromServer(NetworkDisconnection mode)
