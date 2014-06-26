@@ -7,7 +7,7 @@ public class CameraSpin : MonoBehaviour
 
     Vector3 camPosOrigin, transPosOrigin;
     Quaternion camRotOrigin, transRotOrigin;
-    bool wasSpectating;
+    //bool wasSpectating;
 
     public void Start()
     {

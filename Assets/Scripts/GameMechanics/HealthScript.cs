@@ -45,9 +45,9 @@ public class HealthScript : MonoBehaviour
         // TODO magical -104 number, what does it do?
         if( networkView.isMine && transform.position.y < KillHeight )
         {
-            NetworkPlayer? networkPlayer = GetComponent<PlayerScript>().owner;
-            if (networkPlayer.HasValue)
-                DoDamage( 1, networkPlayer.Value );
+            // lol wat
+            NetworkPlayer networkPlayer = GetComponent<PlayerScript>().networkView.owner;
+            DoDamage( 1, networkPlayer );
         }
 
         if (!firstSet && shieldRenderer != null)
@@ -139,14 +139,20 @@ public class HealthScript : MonoBehaviour
             r.enabled = health >= 2;
     }
 
-    //[RPC]
-    public void DoDamage( int damage, NetworkPlayer shootingPlayer ) //, NetworkPlayer hitPlayer 
+    public void DoDamage(int damage, NetworkPlayer shootingPlayer)
     {
-        if ( !dead )  //!networkView.isMine &&
+        if (networkView.isMine) DoDamageOwner(damage, shootingPlayer);
+        else
         {
-            //Debug.Log("Got " + damage + " damage");
-            //Debug.Log("Before hit : Shield = " + Shield + ", Health = " + Health);
+            networkView.RPC("DoDamageOwner", networkView.owner, damage, shootingPlayer);
+        }
+    }
 
+    [RPC]
+    private void DoDamageOwner( int damage, NetworkPlayer shootingPlayer )
+    {
+        if ( !dead )
+        {
             if (invulnerable)
                 return;
 
@@ -160,30 +166,27 @@ public class HealthScript : MonoBehaviour
             }
             if(Health <= 0)
             {
-                if( Network.player == shootingPlayer ) 
-				{
-                    //if (NetworkLeaderboard.Instance != null)
-                    //{
-                    //    NetworkLeaderboard.Instance.networkView.RPC( "RegisterKill", RPCMode.All, shootingPlayer, GetComponent<PlayerScript>().owner );
-                    //}
-               		networkView.RPC("ScheduleRespawn", RPCMode.All,
-                        RespawnZone.GetRespawnPoint());
-				}
-				
                 Health = 0;
                 dead = true;
+                PlayDeathPrefab();
+                GetComponent<PlayerScript>().RequestedToDieByOwner();
                 Camera.main.GetComponent<WeaponIndicatorScript>().CooldownStep = 0;
             }
-
-            //Debug.Log("Shield = " + Shield + ", Health = " + Health);
-
-            networkView.RPC("SetHealth", RPCMode.All, Health);
-
-            if((Shield != 0) != (oldShield != 0))
-            {
-                networkView.RPC("SetShield", RPCMode.All, Shield > 0, dead);
-            }
         }
+    }
+
+
+    // Call from server or client
+    public void PlayDeathPrefab()
+    {
+        // TODO is this the same as RPCMode.All ?
+        RemotePlayDeathPrefab();
+        networkView.RPC("RemotePlayDeathPrefab", RPCMode.Others);
+    }
+    [RPC]
+    private void RemotePlayDeathPrefab()
+    {
+        Instantiate(deathPrefab, transform.position, transform.rotation);
     }
 
     // TODO there is some clearly broken code here. It previously checked for

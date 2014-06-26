@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 148: {fileID: 14800000}
   m_Layer: 0
-  m_Name: BaseServer
+  m_Name: BasePlayerPresence
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,12 +37,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1457370da1d0c34d85ba05b98b0d50d, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e67767c290d4b14a8dc40db31eb159e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasePlayerPresence: {fileID: 11400000, guid: ff648254f272bc94c83fe99e4dfc0553, type: 2}
-  PlayerPrefab: {fileID: 11400000, guid: 11a4e5f239d167a44bfaf435661ccd48, type: 2}
-  DefaultGameMode: {fileID: 11400000, guid: bd0ed919566bc01478f62161656a716f, type: 2}
+  DefaultPlayerCharacterPrefab: {fileID: 11400000, guid: 11a4e5f239d167a44bfaf435661ccd48,
+    type: 2}
 --- !u!148 &14800000
 NetworkView:
   m_ObjectHideFlags: 1

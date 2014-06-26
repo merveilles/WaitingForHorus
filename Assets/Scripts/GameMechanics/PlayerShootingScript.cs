@@ -225,6 +225,8 @@ public class PlayerShootingScript : MonoBehaviour
             //Debug.Log(targets.Values.Count + " targets to find");
 
             // Test for players in crosshair
+            // TODO fixme
+		    return;
             foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
             {
                 if( ps == GetComponent<PlayerScript>() ) // Is targeting self?
@@ -265,25 +267,27 @@ public class PlayerShootingScript : MonoBehaviour
 	
 	public void CheckTargets()
 	{
-        if( targets.Count > 0 )
-		{
-			for( int i = 0; i < targets.Count; i++ )
-			{
-				if( targets[i].Script != null )
-				{
-					if( targets[i].WasLocked && !targets[i].Found ) 
-						targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.networkView.owner );
-					targets[i].WasLocked = targets[i].Locked;
-					
-	           		if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 || targets[i].Script == null ) // Is player in target list dead, or unseen? Am I dead?
-						targets.RemoveAt(i);
-				}
-				else 
-				{
-					targets.RemoveAt( i );
-				}
-			}
-		}	
+	    return;
+        // TODO fixme
+	    //if( targets.Count > 0 )
+	    //{
+	    //    for( int i = 0; i < targets.Count; i++ )
+	    //    {
+	    //        if( targets[i].Script != null )
+	    //        {
+	    //            if( targets[i].WasLocked && !targets[i].Found ) 
+	    //                targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.networkView.owner );
+	    //            targets[i].WasLocked = targets[i].Locked;
+
+	    //            if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 || targets[i].Script == null ) // Is player in target list dead, or unseen? Am I dead?
+	    //                targets.RemoveAt(i);
+	    //        }
+	    //        else 
+	    //        {
+	    //            targets.RemoveAt( i );
+	    //        }
+	    //    }
+	    //}	
 	}
 	
     void DoShot(float spread)
@@ -343,7 +347,7 @@ public class PlayerShootingScript : MonoBehaviour
         NetworkPlayer targetOwner = Network.player;
         if( target != null )
         {
-            targetOwner = target.owner ?? Network.player;
+            targetOwner = target.networkView.owner;
             lastKnownPosition = target.transform.position;
         }
 
@@ -400,7 +404,7 @@ public class PlayerShootingScript : MonoBehaviour
         try
         {
             targetScript = PlayerScript.UnsafeAllEnabledPlayerScripts.Where(
-                x => x.owner == target).OrderBy(x => Vector3.Distance(x.transform.position, lastKnownPosition)).FirstOrDefault();
+                x => x.networkView.owner == target).OrderBy(x => Vector3.Distance(x.transform.position, lastKnownPosition)).FirstOrDefault();
         }
         catch (Exception) { targetScript = null; }
 

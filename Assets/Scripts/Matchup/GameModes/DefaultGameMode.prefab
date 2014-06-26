@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 148: {fileID: 14800000}
   m_Layer: 0
-  m_Name: BaseServer
+  m_Name: DefaultGameMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,7 +24,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -261.722168, y: 19.3449116, z: -43.3499146}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -37,12 +37,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1457370da1d0c34d85ba05b98b0d50d, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c92b851208db4b498f4347ff64b3f9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasePlayerPresence: {fileID: 11400000, guid: ff648254f272bc94c83fe99e4dfc0553, type: 2}
-  PlayerPrefab: {fileID: 11400000, guid: 11a4e5f239d167a44bfaf435661ccd48, type: 2}
-  DefaultGameMode: {fileID: 11400000, guid: bd0ed919566bc01478f62161656a716f, type: 2}
 --- !u!148 &14800000
 NetworkView:
   m_ObjectHideFlags: 1

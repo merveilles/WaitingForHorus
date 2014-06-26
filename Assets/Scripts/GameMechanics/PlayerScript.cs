@@ -41,7 +41,7 @@ public class PlayerScript : MonoBehaviour
     float dashCooldown = 0;
     Animation characterAnimation;
     string currentAnim;
-    public NetworkPlayer? owner;
+    //public NetworkPlayer? owner;
     float sinceNotGrounded;
     bool activelyJumping;
     bool textBubbleVisible;
@@ -56,16 +56,27 @@ public class PlayerScript : MonoBehaviour
     public PlayerShootingScript ShootingScript;
     public CameraScript CameraScript;
 
-    public Relay Relay { get; set; }
+    //public Relay Relay { get; set; }
+
+    public PlayerPresence Possessor { get; set; }
 
     public bool ShouldSendMessages
     {
         get
         {
-            if (Relay == null) return false;
-            else return Relay.IsConnected;
+            if (Possessor == null) return false;
+            else return Possessor.Server != null;
         }
     }
+
+    //private void RemoteSetPossessorByViewID(NetworkViewID playerPresenceViewID)
+    //{
+    //    Possessor = null;
+    //    NetworkView view = NetworkView.Find(playerPresenceViewID);
+    //    if (view == null) return;
+    //    var presence = view.observed as PlayerPresence;
+    //    if (presence) Possessor = presence;
+    //}
 
     public bool Paused { get; set; }
 
@@ -83,6 +94,10 @@ public class PlayerScript : MonoBehaviour
     public delegate void PlayerScriptSpawnedHandler(PlayerScript newPlayerScript);
     // Invoked when any PlayerScript-attached gameobject is spawned
     public static event PlayerScriptSpawnedHandler OnPlayerScriptSpawned;
+
+    // This should really not be static
+    public delegate void PlayerScriptDiedHandler(PlayerScript diedPlayerScript);
+    public static event PlayerScriptDiedHandler OnPlayerScriptDied;
         
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
@@ -112,40 +127,20 @@ public class PlayerScript : MonoBehaviour
     {
         UnsafeAllEnabledPlayerScripts.Add(this);
         ShootingScript.OnShotgunFired += ReceiveShotgunFired;
-        //RoundScript.Instance.OnRoundStateChanged += ReceiveRoundStateChanged;
-        //Debug.Log("playerscript enabled");
     }
 
     public void OnDisable()
     {
         UnsafeAllEnabledPlayerScripts.Remove(this);
         ShootingScript.OnShotgunFired -= ReceiveShotgunFired;
-        //RoundScript.Instance.OnRoundStateChanged -= ReceiveRoundStateChanged;
-        //Debug.Log("playerscript disabled");
-    }
-
-    private void ReceiveRoundStateChanged()
-    {
-        //Debug.Log("received round state changed");
-        if (networkView.isMine)
-        {
-            //if (RoundScript.Instance.RoundStopped)
-            //    networkView.RPC("PostRoundDestroy", RPCMode.All);
-        }
-    }
-
-    [RPC]
-    private void PostRoundDestroy()
-    {
-        Destroy(gameObject);
     }
 
     public void Awake() 
 	{
+        DontDestroyOnLoad(gameObject);
+
 		//targetedBy = new List<NetworkPlayer>();
 		warningSpheres = new List<GameObject>();
-		
-        DontDestroyOnLoad(gameObject);
 
         controller = GetComponent<CharacterController>();
         characterAnimation = transform.Find("Animated Mesh Fixed").animation;
@@ -165,6 +160,8 @@ public class PlayerScript : MonoBehaviour
             if (r.gameObject.name == "flag_flag001") continue;
             r.tag = "PlayerMaterial";
         }
+
+        iPosition = new VectorInterpolator();
 	}
 
     public void Start()
@@ -179,28 +176,6 @@ public class PlayerScript : MonoBehaviour
         }
 
         OnPlayerScriptSpawned(this);
-    }
-
-    public void OnNetworkInstantiate(NetworkMessageInfo info)
-    {
-        if( Network.isServer )
-        {
-            foreach( NetworkView nv in GetComponents<NetworkView>() )
-                foreach( NetworkPlayer np in Network.connections )
-                    nv.SetScope( np, true );
-        }
-
-        if( !networkView.isMine )
-        {
-            owner = networkView.owner;
-            iPosition = new VectorInterpolator();
-            //enabled = false;
-        }
-        else
-        {
-            owner = Network.player;
-            //gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
-        }
     }
 
     public void OnGUI()
@@ -333,7 +308,8 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (iPosition.IsRunning)
+            // TODO fixme lol
+            if (iPosition != null && iPosition.IsRunning)
             {
                 //Debug.Log("Before correct : " + transform.position);
                 transform.position += iPosition.Update();
@@ -574,9 +550,9 @@ public class PlayerScript : MonoBehaviour
 
     public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
-        var pOwner = owner.HasValue ? owner.Value : default(NetworkPlayer);
-        stream.Serialize(ref pOwner);
-        if (stream.isReading) owner = pOwner;
+        //var pOwner = owner.HasValue ? owner.Value : default(NetworkPlayer);
+        //stream.Serialize(ref pOwner);
+        //if (stream.isReading) owner = pOwner;
 
         Vector3 pPosition = stream.isWriting ? transform.position : Vector3.zero;
 
@@ -596,7 +572,8 @@ public class PlayerScript : MonoBehaviour
             if (lastNetworkFramePosition == pPosition)
                 transform.position = pPosition;
 
-            if (!iPosition.Start(pPosition - transform.position))
+            // TODO iposition null check nope
+            if (iPosition != null && !iPosition.Start(pPosition - transform.position))
                 transform.position = pPosition;
 
             if (playDashSound && GlobalSoundsScript.soundEnabled) dashSound.Play();
@@ -610,7 +587,29 @@ public class PlayerScript : MonoBehaviour
 
     public void OnDestroy( )
     {
+        Debug.Log("Destroying PlayerScript " + this + " with view ID " + networkView.viewID);
         Network.RemoveRPCs( networkView.viewID );
+    }
+
+    // TODO gross
+    [RPC]
+    public void PerformDeath()
+    {
+        if (Network.isServer)
+        {
+            Network.RemoveRPCs(networkView.viewID);
+            Network.Destroy(gameObject);
+        }
+        else
+        {
+            networkView.RPC("PerformDeath", RPCMode.Server);
+        }
+    }
+
+    [RPC]
+    private void RemotePerformDeath()
+    {
+        Destroy(gameObject);
     }
 
     // Try to guess capsule info for doing overlap tests and sweeps, because
@@ -686,6 +685,20 @@ public class PlayerScript : MonoBehaviour
             float difference = Vector3.Dot(CameraScript.LookingDirection, Vector3.down);
             return (difference > 1.0f - RocketJumpLookingThreshold);
         }
+    }
+
+    public void RequestedToDieByOwner()
+    {
+        if (Network.isServer)
+            ServerRequestedToDie();
+        else
+            networkView.RPC("ServerRequestedToDie", RPCMode.Server);
+    }
+
+    [RPC]
+    private void ServerRequestedToDie()
+    {
+        OnPlayerScriptDied(this);
     }
 }
 
