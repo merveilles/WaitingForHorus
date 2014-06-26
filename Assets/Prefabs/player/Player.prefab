@@ -2764,6 +2764,7 @@ MonoBehaviour:
   deathPrefab: {fileID: 100000, guid: 44f7ec49704fd0f47a7e2a94bd9c0fe2, type: 2}
   shieldRenderer: {fileID: 2300000}
   timeUntilRespawn: 5
+  PlayerScript: {fileID: 11400000}
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1

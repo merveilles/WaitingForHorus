@@ -30,6 +30,8 @@ public class HealthScript : MonoBehaviour
     Renderer bigCell;
     Renderer[] smallCells;
 
+    public PlayerScript PlayerScript;
+
     public const float KillHeight = -104;
 
     public void Awake()
@@ -170,6 +172,7 @@ public class HealthScript : MonoBehaviour
     [RPC]
     private void DoDamageOwner( int damage, NetworkPlayer shootingPlayer )
     {
+        ScreenSpaceDebug.AddMessage("DAMAGE", gameObject.transform.position, Color.red);
         if ( !dead )
         {
             if (invulnerable)

@@ -382,7 +382,7 @@ public class PlayerShootingScript : MonoBehaviour
     void Shoot(Vector3 position, Quaternion rotation, NetworkPlayer player)
     {
         BulletScript bullet = (BulletScript)Instantiate( bulletPrefab, position, rotation );
-        bullet.Player = player;
+        bullet.Instigator = playerScript.Possessor;
 		
 		if( GlobalSoundsScript.soundEnabled )
         	burstGunSound.Play();
@@ -393,7 +393,7 @@ public class PlayerShootingScript : MonoBehaviour
     void ShootFast(Vector3 position, Quaternion rotation, NetworkPlayer player)
     {
         BulletScript bullet = (BulletScript)Instantiate( fastBulletPrefab, position, rotation );
-        bullet.Player = player;
+        bullet.Instigator = playerScript.Possessor;
 		
 		if( GlobalSoundsScript.soundEnabled )
         	burstGunSound.Play();
@@ -404,7 +404,7 @@ public class PlayerShootingScript : MonoBehaviour
     void ShootHoming(Vector3 position, Quaternion rotation, NetworkPlayer player, NetworkPlayer target, Vector3 lastKnownPosition, float homing, bool doSound)
     {
         BulletScript bullet = (BulletScript)Instantiate( bulletPrefab, position, rotation );
-        bullet.Player = player;
+        bullet.Instigator = playerScript.Possessor;
 
 		PlayerScript targetScript;
         try
@@ -429,8 +429,8 @@ public class PlayerShootingScript : MonoBehaviour
     {
         BulletScript bullet = (BulletScript)Instantiate( railPrefab, position, rotation );
         BulletScript cosmeticBullet = (BulletScript)Instantiate( railCosmeticPrefab, position, rotation );
-        bullet.Player = player;
-        cosmeticBullet.Player = player;
+        bullet.Instigator = playerScript.Possessor;
+        cosmeticBullet.Instigator = playerScript.Possessor;
 		
 		if( GlobalSoundsScript.soundEnabled )
         	burstGunSound.Play();

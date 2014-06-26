@@ -25,7 +25,7 @@ public class BulletScript : MonoBehaviour
 	float acceleration = 1.0f;
 	float randomBrightness = 1.0f;
 
-    public NetworkPlayer Player { get; set; }
+    public PlayerPresence Instigator { get; set; }
 	
 	public LayerMask layerMask; //make sure we aren't in this layer 
 	public float skinWidth = 0.1f; //probably doesn't need to be changed 
@@ -73,24 +73,19 @@ public class BulletScript : MonoBehaviour
 
     bool DoDamageTo( Transform t )
     {
-        HealthScript health = t.GetComponent<HealthScript>();
+        HealthScript health = t.root.GetComponentInChildren<HealthScript>();
         // err, kinda lame, this is so that the collider can be
         // directly inside the damaged object rather than on it,
         // useful when the damage collider is different from the
         // real collider
-        if( health == null && t.parent != null )
-           health = t.parent.GetComponent<HealthScript>();
 
-        if( health != null )
+        if( health != null)
         {
-            if (health.networkView.owner != Player ) // No Friendly Fire
+            if (health.PlayerScript.Possessor != Instigator && // No Friendly Fire
+                Network.player == Instigator.networkView.owner) // only do damage from net player that fired
 			{
-			    if (networkView.isMine)
-			    {
-    				audio.Play(); //Hitreg Sound
-                    health.DoDamage(damage, Player);
-			    }
-				
+				audio.Play(); //Hitreg Sound
+                health.DoDamage(damage, Instigator.networkView.owner);
 				return true;
 			}
         }
@@ -139,6 +134,10 @@ public class BulletScript : MonoBehaviour
 	void Collide( Transform trans, Vector3 point, Vector3 normal ) 
 	{
 		bool playerWasHit = DoDamageTo( trans );
+	    if (playerWasHit)
+	    {
+	        ScreenSpaceDebug.AddMessage("HIT", point, Color.green);
+	    }
 		if( recoil > 0 ) 
 			DoRecoil( point, playerWasHit );
 		

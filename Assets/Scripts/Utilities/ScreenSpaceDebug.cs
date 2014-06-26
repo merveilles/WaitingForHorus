@@ -95,6 +95,12 @@ public class ScreenSpaceDebug : MonoBehaviour
         var msg = new Message(worldPosition, message, 2f, Color.white, null, Vector2.zero);
         Instance.Messages.Add(msg);
     }
+    public static void AddMessage(string message, Vector3 worldPosition, Color color)
+    {
+        if (Instance == null) return;
+        var msg = new Message(worldPosition, message, 2f, color, null, Vector2.zero);
+        Instance.Messages.Add(msg);
+    }
     public static void AddMessage(string message, Vector3 worldPosition, Vector2 size)
     {
         if (Instance == null) return;
