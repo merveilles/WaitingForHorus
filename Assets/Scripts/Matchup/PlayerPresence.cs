@@ -160,6 +160,18 @@ public class PlayerPresence : MonoBehaviour
         {
             Destroy(Possession.gameObject);
         }
+
+        // FIXME dirty hack
+        {
+            Screen.lockCursor = false;
+            Screen.showCursor = true;
+            if (Relay.Instance.MainCamera != null)
+            {
+                var indicator = Relay.Instance.MainCamera.GetComponent<WeaponIndicatorScript>();
+                if (indicator != null)
+                    indicator.enabled = false;
+            }
+        }
     }
 
     public void SpawnCharacter(Vector3 position)

@@ -182,6 +182,14 @@ public class PlayerScript : MonoBehaviour
         }
 
         OnPlayerScriptSpawned(this);
+
+        // FIXME dirty hack
+        if (networkView.isMine)
+        {
+            var indicator = Relay.Instance.MainCamera.GetComponent<WeaponIndicatorScript>();
+            if (indicator != null)
+                indicator.enabled = true;
+        }
     }
 
     public void OnGUI()

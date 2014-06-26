@@ -10,6 +10,8 @@ public class Relay : MonoBehaviour
     public static Relay Instance { get; private set; }
     public Server BaseServer;
 
+    public GameObject MainCamera;
+
     private Server _CurrentServer;
 
     private bool TryingToConnect = false;
