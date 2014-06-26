@@ -56,7 +56,8 @@ public class PlayerScript : MonoBehaviour
     public PlayerShootingScript ShootingScript;
     public CameraScript CameraScript;
 
-    //public Relay Relay { get; set; }
+    public GameObject ObjectToUseForBounds;
+    public Bounds Bounds { get { return ObjectToUseForBounds.renderer.bounds; } }
 
     public PlayerPresence Possessor { get; set; }
 

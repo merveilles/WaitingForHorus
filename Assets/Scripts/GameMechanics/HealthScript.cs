@@ -13,8 +13,10 @@ public class HealthScript : MonoBehaviour
     readonly static Color HitShieldColor = new Color(1, 1, 1, 1f); // new Color(1, 0, 0, 1f);
     readonly static Color RecoverShieldColor = new Color(1, 1, 1, 1f);
 
-    public int Shield { get; private set; }
-    public int Health { get; private set; }
+    private int _Shield;
+    public int Shield { get { return _Shield; } private set { _Shield = value; } }
+    private int _Health;
+    public int Health { get { return _Health; } private set { _Health = value; } }
 
     public Renderer shieldRenderer;
 
@@ -61,10 +63,9 @@ public class HealthScript : MonoBehaviour
             timeUntilShieldRegen -= Time.deltaTime;
             if(timeUntilShieldRegen < 0 && Shield < maxShield)
             {
-                timeUntilShieldRegen += shieldRegenTime;
-                if (Shield == 0)
-                    networkView.RPC("SetShield", RPCMode.All, true, false);
+                timeUntilShieldRegen = shieldRegenTime;
                 Shield += 1;
+                UpdateShield();
             }
 
             if (invulnerable)
@@ -100,44 +101,62 @@ public class HealthScript : MonoBehaviour
         invulnerable = false;
     }
 
-    [RPC]
-    public void SetShield(bool on, bool immediate)
+
+    public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
-        if (immediate)
+        stream.Serialize(ref _Shield);
+        stream.Serialize(ref _Health);
+
+        if (stream.isReading)
         {
-            shieldRenderer.enabled = on;
-            shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
-            return;
+            UpdateShield();
         }
-
-        TaskManager.Instance.WaitUntil(t =>
-        {
-            if (shieldRenderer == null)
-                return true;
-
-            var p = Easing.EaseIn(Mathf.Clamp01(t / 0.75f), EasingType.Quadratic);
-            p = on ? p : 1 - p;
-
-            shieldRenderer.enabled = RandomHelper.Probability(Mathf.Clamp01(p));
-            shieldRenderer.material.SetColor("_TintColor", on ? Color.Lerp(RecoverShieldColor, DefaultShieldColor, p) : HitShieldColor);
-
-            return t >= 1;
-        }).Then(() =>
-        {
-            if (shieldRenderer != null)
-            {
-                shieldRenderer.enabled = on;
-                shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
-            }
-        });
     }
-    [RPC]
-    public void SetHealth(int health)
+
+    private void UpdateShield()
     {
-        bigCell.enabled = health >= 2;
-        foreach (var r in smallCells)
-            r.enabled = health >= 2;
+        bool shouldBeEnabled = Shield > 0;
+        shieldRenderer.enabled = shouldBeEnabled;
     }
+
+    //public void SetShield(bool on, bool immediate)
+    //{
+    //    if (immediate)
+    //    {
+    //        shieldRenderer.enabled = on;
+    //        shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
+    //        return;
+    //    }
+
+    //    TaskManager.Instance.WaitUntil(t =>
+    //    {
+    //        if (shieldRenderer == null)
+    //            return true;
+
+    //        var p = Easing.EaseIn(Mathf.Clamp01(t / 0.75f), EasingType.Quadratic);
+    //        p = on ? p : 1 - p;
+
+    //        shieldRenderer.enabled = RandomHelper.Probability(Mathf.Clamp01(p));
+    //        shieldRenderer.material.SetColor("_TintColor", on ? Color.Lerp(RecoverShieldColor, DefaultShieldColor, p) : HitShieldColor);
+
+    //        return t >= 1;
+    //    }).Then(() =>
+    //    {
+    //        if (shieldRenderer != null)
+    //        {
+    //            shieldRenderer.enabled = on;
+    //            shieldRenderer.material.SetColor("_TintColor", DefaultShieldColor);
+    //        }
+    //    });
+    //}
+
+    //[RPC]
+    //public void SetHealth(int health)
+    //{
+    //    bigCell.enabled = health >= 2;
+    //    foreach (var r in smallCells)
+    //        r.enabled = health >= 2;
+    //}
 
     public void DoDamage(int damage, NetworkPlayer shootingPlayer)
     {

@@ -14,6 +14,7 @@ GameObject:
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400012}
+  - 148: {fileID: 14800002}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -2623,6 +2624,7 @@ MonoBehaviour:
   jumpSound: {fileID: 8200004}
   ShootingScript: {fileID: 11400004}
   CameraScript: {fileID: 11400006}
+  ObjectToUseForBounds: {fileID: 100120}
   SafetyCollisionMask:
     serializedVersion: 2
     m_Bits: 257
@@ -3081,6 +3083,18 @@ NetworkView:
   m_Enabled: 1
   m_StateSynchronization: 2
   m_Observed: {fileID: 11400000}
+  m_ViewID:
+    m_ID: 0
+    m_Type: 0
+--- !u!148 &14800002
+NetworkView:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_StateSynchronization: 2
+  m_Observed: {fileID: 11400008}
   m_ViewID:
     m_ID: 0
     m_Type: 0

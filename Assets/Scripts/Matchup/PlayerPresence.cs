@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Com.EpixCode.Util.WeakReference.WeakDictionary;
 using UnityEngine;
 
 public class PlayerPresence : MonoBehaviour
@@ -24,6 +25,8 @@ public class PlayerPresence : MonoBehaviour
 
     public delegate void PlayerPresenceWantsRespawnHandler();
     public event PlayerPresenceWantsRespawnHandler OnPlayerPresenceWantsRespawn = delegate {};
+
+    private WeakDictionary<PlayerScript, Vector2> LastGUIDebugPositions;
 
     public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
@@ -56,6 +59,7 @@ public class PlayerPresence : MonoBehaviour
     {
         DontDestroyOnLoad(this);
         PossessedCharacterViewID = NetworkViewID.unassigned;
+        LastGUIDebugPositions = new WeakDictionary<PlayerScript, Vector2>();
     }
 
     public void Start()
@@ -75,7 +79,33 @@ public class PlayerPresence : MonoBehaviour
                     IndicateRespawn();
                 }
             }
+
+            // Update player labels
+            if (Camera.current != null)
+            {
+                foreach (var playerScript in PlayerScript.UnsafeAllEnabledPlayerScripts)
+                {
+                    if (playerScript == null) continue;
+                    Vector3 position = Camera.current.WorldToScreenPoint(InfoPointForPlayerScript(playerScript));
+                    Vector2 prevScreenPosition;
+                    if (!LastGUIDebugPositions.TryGetValue(playerScript, out prevScreenPosition))
+                    {
+                        prevScreenPosition = (Vector2) position;
+                    }
+                    Vector2 newScreenPosition = Vector2.Lerp(prevScreenPosition, (Vector2) position,
+                        1f - Mathf.Pow(0.0000000001f, Time.deltaTime));
+                    LastGUIDebugPositions[playerScript] = newScreenPosition;
+                }
+            }
+
         }
+    }
+
+    private Vector3 InfoPointForPlayerScript(PlayerScript playerScript)
+    {
+        Vector3 start = playerScript.gameObject.transform.position;
+        start.y -= playerScript.Bounds.extents.y;
+        return start;
     }
 
     private void IndicateRespawn()
@@ -151,5 +181,32 @@ public class PlayerPresence : MonoBehaviour
         sb.AppendLine(PlayerScript.UnsafeAllEnabledPlayerScripts.Count + " PlayerScripts");
         sb.AppendLine(UnsafeAllPlayerPresences.Count + " PlayerPresences");
         GUI.Label(new Rect(10, 10, 500, 500), sb.ToString());
+
+        if (networkView.isMine && Camera.current != null)
+        {
+            foreach (var playerScript in PlayerScript.UnsafeAllEnabledPlayerScripts)
+            {
+                if (playerScript == null) continue;
+                Vector3 newScreenPosition = Camera.current.WorldToScreenPoint(InfoPointForPlayerScript(playerScript));
+                if (newScreenPosition.z < 0) continue;
+                Vector2 screenPosition;
+                if (!LastGUIDebugPositions.TryGetValue(playerScript, out screenPosition))
+                {
+                    screenPosition = newScreenPosition;
+                }
+                // Good stuff, great going guys
+                screenPosition.y = Screen.height - screenPosition.y;
+                var rect = new Rect(screenPosition.x - 50, screenPosition.y, 100, 25);
+                var healthComponent = playerScript.GetComponent<HealthScript>();
+                if (healthComponent == null)
+                {
+                    GUI.Box(rect, "No health component");
+                }
+                else
+                {
+                    GUI.Box(rect, "H: " + healthComponent.Health + "   S: " + healthComponent.Shield);
+                }
+            }
+        }
     }
 }

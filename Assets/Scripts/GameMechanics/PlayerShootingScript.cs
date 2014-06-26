@@ -386,6 +386,8 @@ public class PlayerShootingScript : MonoBehaviour
 		
 		if( GlobalSoundsScript.soundEnabled )
         	burstGunSound.Play();
+
+        ScreenSpaceDebug.AddMessage("Shot", position);
     }
     [RPC]
     void ShootFast(Vector3 position, Quaternion rotation, NetworkPlayer player)
