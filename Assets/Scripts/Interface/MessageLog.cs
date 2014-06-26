@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 
 public class GameMessage
@@ -74,8 +75,6 @@ public class MessageLog
         if (Event.current.keyCode == KeyCode.T && !IsInputFieldEnabled)
         {
             IsInputFieldEnabled = true;
-            GUI.FocusWindow(1);
-            GUI.FocusControl("MessageInput");
             DropFirstInput = true;
             //var previousInput = CurrentInput;
             //DeferredAction += () =>
@@ -86,6 +85,10 @@ public class MessageLog
 
         GUI.skin = Skin;
         var height = 36 + MessageCount * 36;
+
+        // Never shot input field when disconnected (so that we can type in the name box)
+        IsInputFieldEnabled = IsInputFieldEnabled && Relay.Instance.CurrentServer != null;
+
 	    GUILayout.Window(1, new Rect(35, Screen.height - height, 247, height), DisplayLog, string.Empty);
 
     }
@@ -103,6 +106,10 @@ public class MessageLog
         if (IsInputFieldEnabled)
         {
             DisplayInput();
+            GUI.FocusWindow(1);
+            GUI.FocusControl("MessageInput");
+            //Screen.lockCursor = false;
+            //Screen.showCursor = true;
         }
     }
 
@@ -111,7 +118,7 @@ public class MessageLog
         GUILayout.BeginHorizontal();
         GUI.SetNextControlName("MessageInput");
 		
-		GUIStyle sty = new GUIStyle( Skin.textField ) { fixedWidth = 180 };
+		GUIStyle sty = new GUIStyle( Skin.textField ) { fixedWidth = 200 };
         var newInput = GUILayout.TextField(CurrentInput, sty);
         if (DropFirstInput && newInput != CurrentInput)
         {
