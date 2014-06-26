@@ -147,4 +147,11 @@ public class Server : MonoBehaviour
         if (info.sender != networkView.owner) return;
         OnReceiveServerMessage(text);
     }
+
+    public void BroadcastChatMessageFromServer(string text, PlayerPresence playerPresence)
+    {
+        bool isHost = playerPresence.networkView.owner == networkView.owner;
+        string sigil = isHost ? "+ " : "";
+        BroadcastMessageFromServer(sigil + playerPresence.Name + " : " + text);
+    }
 }

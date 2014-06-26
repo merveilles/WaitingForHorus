@@ -101,6 +101,7 @@ public class Relay : MonoBehaviour
 
     public void Update()
     {
+        MessageLog.Update();
         if (CurrentServer != null)
         {
             if (Input.GetKeyDown("f8"))

@@ -87,7 +87,15 @@ public class PlayerPresence : MonoBehaviour
         if (networkView.isMine)
         {
             Name = PlayerPrefs.GetString("username", "Anonymous");
+
+            // TODO will obviously send messages to server twice if there are two local players, fix
+            Relay.Instance.MessageLog.OnMessageEntered += ReceiveMessageEntered;
         }
+    }
+
+    private void ReceiveMessageEntered(string text)
+    {
+        BroadcastChatMessageFrom(text);
     }
 
     public void Start()
@@ -159,6 +167,11 @@ public class PlayerPresence : MonoBehaviour
         if (Possession != null)
         {
             Destroy(Possession.gameObject);
+        }
+
+        if (networkView.isMine)
+        {
+            Relay.Instance.MessageLog.OnMessageEntered -= ReceiveMessageEntered;
         }
 
     }
@@ -276,7 +289,7 @@ public class PlayerPresence : MonoBehaviour
     [RPC]
     private void SendNameBack(NetworkMessageInfo info)
     {
-        networkView.RPC("ReceiveNameSent", info.sender);
+        networkView.RPC("ReceiveNameSent", info.sender, Name);
     }
 
     [RPC]
@@ -291,6 +304,27 @@ public class PlayerPresence : MonoBehaviour
             {
                 OnBecameNamed();
             }
+        }
+    }
+
+    public void BroadcastChatMessageFrom(string text)
+    {
+        if (Server.networkView.isMine)
+        {
+            Server.BroadcastChatMessageFromServer(text, this);
+        }
+        else
+        {
+            networkView.RPC("ServerBroadcastChatMessageFrom", Server.networkView.owner, text);
+        }
+    }
+
+    [RPC]
+    private void ServerBroadcastChatMessageFrom(string text, NetworkMessageInfo info)
+    {
+        if (Server.networkView.isMine && info.sender == networkView.owner)
+        {
+            Server.BroadcastChatMessageFromServer(text, this);
         }
     }
 }
