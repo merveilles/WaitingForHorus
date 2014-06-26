@@ -105,6 +105,18 @@ public class Server : MonoBehaviour
         {
             Relay.Instance.CurrentServer = null;
         }
+
+        // FIXME dirty hack
+        {
+            Screen.lockCursor = false;
+            Screen.showCursor = true;
+            if (Relay.Instance.MainCamera != null)
+            {
+                var indicator = Relay.Instance.MainCamera.GetComponent<WeaponIndicatorScript>();
+                if (indicator != null)
+                    indicator.enabled = false;
+            }
+        }
     }
 
     public delegate void ReceiveServerMessageHandler(string text);
