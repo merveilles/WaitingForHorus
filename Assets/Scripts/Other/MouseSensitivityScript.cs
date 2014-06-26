@@ -8,7 +8,7 @@ public class MouseSensitivityScript : MonoBehaviour
     public static float Sensitivity { get; private set; }
 
     int sensitivityPercentage = 50;
-    GUIStyle windowStyle;
+    //GUIStyle windowStyle;
 
     public void Awake()
     {

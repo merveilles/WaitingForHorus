@@ -103,6 +103,11 @@ public class PlayerShootingScript : MonoBehaviour
         playerScript = GetComponent<PlayerScript>();
     }
 
+    public void Start()
+    {
+        cooldownLeft += 1f;
+    }
+
     /*void Update()
     {
         gun.LookAt(playerCamera.GetTargetPosition());
@@ -218,45 +223,44 @@ public class PlayerShootingScript : MonoBehaviour
                 	reloadSound.Play();
             }
 
-		    var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            var allowedDistance = 130 * Screen.height / 1500f;
+            //var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            //var allowedDistance = 130 * Screen.height / 1500f;
 
-            foreach ( var v in targets ) v.Found = false;
-            //Debug.Log(targets.Values.Count + " targets to find");
+            //foreach ( var v in targets ) v.Found = false;
+            ////Debug.Log(targets.Values.Count + " targets to find");
 
             // Test for players in crosshair
             // TODO fixme
-		    return;
-            foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
-            {
-                if( ps == GetComponent<PlayerScript>() ) // Is targeting self?
-                    continue;
+            //foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
+            //{
+            //    if( ps == GetComponent<PlayerScript>() ) // Is targeting self?
+            //        continue;
 
-                var health = ps.gameObject.GetComponent<HealthScript>();
-                var position = ps.transform.position;
-                var screenPos = Camera.main.WorldToScreenPoint(position);
+            //    var health = ps.gameObject.GetComponent<HealthScript>();
+            //    var position = ps.transform.position;
+            //    var screenPos = Camera.main.WorldToScreenPoint(position);
 
-                if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
-                {
-                    WeaponIndicatorScript.PlayerData data;
-                    if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null )
-                        targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps, WasLocked = false } );
+            //    if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
+            //    {
+            //        WeaponIndicatorScript.PlayerData data;
+            //        if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null )
+            //            targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps, WasLocked = false } );
 
-                    data.ScreenPosition = screenPos.XY();
-                    data.SinceInCrosshair += Time.deltaTime;
-                    data.Found = true;
+            //        data.ScreenPosition = screenPos.XY();
+            //        data.SinceInCrosshair += Time.deltaTime;
+            //        data.Found = true;
 					
-                    if ( !data.WasLocked && data.Locked ) // Send target notification
-					{	
-						if( GlobalSoundsScript.soundEnabled )
-                        	targetSound.Play();
+            //        if ( !data.WasLocked && data.Locked ) // Send target notification
+            //        {	
+            //            if( GlobalSoundsScript.soundEnabled )
+            //                targetSound.Play();
 						
-						data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.networkView.owner );
-					}
-                }
-            }
+            //            data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.networkView.owner );
+            //        }
+            //    }
+            //}
 			
-			CheckTargets();
+            //CheckTargets();
 		}
     }
 

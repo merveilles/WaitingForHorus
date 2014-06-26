@@ -3,10 +3,10 @@
 
 public class GameMode : MonoBehaviour
 {
-    public delegate void GameModeCompleteHandler();
-    public event GameModeCompleteHandler OnGameModeComplete = delegate { };
+    //public delegate void GameModeCompleteHandler();
+    //public event GameModeCompleteHandler OnGameModeComplete = delegate { };
 
-    public void Awake()
+    public virtual void Awake()
     {
         DontDestroyOnLoad(this);
     }

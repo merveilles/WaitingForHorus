@@ -156,7 +156,6 @@ public class HealthScript : MonoBehaviour
             if (invulnerable)
                 return;
 
-            int oldShield = Shield;
             Shield -= damage;
             timeUntilShieldRegen = shieldRegenTime;
             if(Shield < 0)

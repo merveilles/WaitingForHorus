@@ -60,6 +60,10 @@ public class PlayerScript : MonoBehaviour
 
     public PlayerPresence Possessor { get; set; }
 
+    public delegate void DeathHandler();
+    // Invoked when the character dies
+    public event DeathHandler OnDeath = delegate {};
+
     public bool ShouldSendMessages
     {
         get
@@ -587,27 +591,38 @@ public class PlayerScript : MonoBehaviour
 
     public void OnDestroy( )
     {
-        Debug.Log("Destroying PlayerScript " + this + " with view ID " + networkView.viewID);
-        Network.RemoveRPCs( networkView.viewID );
+        // TODO this belongs earlier in the chain of death-related stuff
+        OnDeath();
+        //Debug.Log("Destroying PlayerScript " + this + " with view ID " + networkView.viewID);
+        //Network.RemoveRPCs( networkView.viewID );
     }
 
     // TODO gross
     [RPC]
-    public void PerformDeath()
+    public void PerformDestroy()
     {
-        if (Network.isServer)
+        if (!networkView.isMine)
         {
-            Network.RemoveRPCs(networkView.viewID);
-            Network.Destroy(gameObject);
+            networkView.RPC("PerformDestroy", networkView.owner);
         }
         else
         {
-            networkView.RPC("PerformDeath", RPCMode.Server);
+            Destroy(gameObject);
         }
+        // Use code below for explicit destruction (currently implicit, handled by PlayerPresence)
+        //if (Network.isServer)
+        //{
+        //    Network.RemoveRPCs(networkView.viewID);
+        //    Network.Destroy(gameObject);
+        //}
+        //else
+        //{
+        //    networkView.RPC("PerformDestroy", RPCMode.Server);
+        //}
     }
 
     [RPC]
-    private void RemotePerformDeath()
+    private void RemotePerformDestroy()
     {
         Destroy(gameObject);
     }
