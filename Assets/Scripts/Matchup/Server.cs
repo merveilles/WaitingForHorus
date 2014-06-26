@@ -22,6 +22,7 @@ public class Server : MonoBehaviour
     {
         Relay.Instance.CurrentServer = this;
         PlayerPresence.OnPlayerPresenceAdded += ReceivePlayerPresenceAdd;
+        PlayerPresence.OnPlayerPresenceRemoved += ReceivePlayerPresenceRemove;
         SpawnPresence();
         if (networkView.isMine)
         {
@@ -34,6 +35,22 @@ public class Server : MonoBehaviour
     private void ReceivePlayerPresenceAdd(PlayerPresence newPlayerPresence)
     {
         newPlayerPresence.Server = this;
+        if (newPlayerPresence.HasBeenNamed)
+            ReceivePlayerPresenceIdentified(newPlayerPresence);
+        else
+            newPlayerPresence.OnBecameNamed += () =>
+                ReceivePlayerPresenceIdentified(newPlayerPresence);
+        //BroadcastMessageFromServer(newPlayerPresence.Name + " has joined");
+    }
+
+    private void ReceivePlayerPresenceRemove(PlayerPresence removedPlayerPresence)
+    {
+        BroadcastMessageFromServer(removedPlayerPresence.Name + " has left");
+    }
+
+    private void ReceivePlayerPresenceIdentified(PlayerPresence playerPresence)
+    {
+        BroadcastMessageFromServer(playerPresence.Name + " has joined");
     }
 
     private PlayerPresence SpawnPresence()
@@ -70,9 +87,52 @@ public class Server : MonoBehaviour
 
     public void OnDestroy()
     {
+        PlayerPresence.OnPlayerPresenceAdded -= ReceivePlayerPresenceAdd;
+        PlayerPresence.OnPlayerPresenceRemoved -= ReceivePlayerPresenceRemove;
+        if (CurrentGameMode != null)
+        {
+            Destroy(CurrentGameMode.gameObject);
+        }
+        foreach (var playerPresence in PlayerPresence.AllPlayerPresences)
+        {
+            Destroy(playerPresence.gameObject);
+        }
+        foreach (var playerScript in PlayerScript.AllEnabledPlayerScripts)
+        {
+            Destroy(playerScript.gameObject);
+        }
         if (Relay.Instance.CurrentServer == this)
         {
             Relay.Instance.CurrentServer = null;
         }
+    }
+
+    public delegate void ReceiveServerMessageHandler(string text);
+
+    public event ReceiveServerMessageHandler OnReceiveServerMessage = delegate {};
+
+    public void BroadcastMessageFromServer(string text)
+    {
+        if (networkView.isMine)
+        {
+            networkView.RPC("ReceiveServerMessage", RPCMode.All, text);
+            OnReceiveServerMessage(text);
+        }
+    }
+
+    public void SendMessageFromServer(string text, NetworkPlayer target)
+    {
+        if (networkView.isMine)
+        {
+            networkView.RPC("ReceiveServerMessage", target, text);
+        }
+    }
+
+    [RPC]
+    void ReceiveServerMessage(string text, NetworkMessageInfo info)
+    {
+        // Only care about messages from server
+        if (info.sender != networkView.owner) return;
+        OnReceiveServerMessage(text);
     }
 }

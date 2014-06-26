@@ -38,7 +38,10 @@ public class Deathmatch : GameMode
         }
 
         CurrentMapName = "Loading...";
-        Application.LoadLevel("pi_mar");
+        if (Application.loadedLevelName != "pi_mar")
+            Application.LoadLevel("pi_mar");
+        else
+            ReceiveMapChanged();
     }
 
     [RPC]
@@ -91,6 +94,8 @@ public class Deathmatch : GameMode
                 presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
             }
         }
+        CurrentMapName = Application.loadedLevelName;
+        Server.BroadcastMessageFromServer("Welcome to " + CurrentMapName);
     }
     private void ReceivePresenceAdded(PlayerPresence newPlayerPresence)
     {

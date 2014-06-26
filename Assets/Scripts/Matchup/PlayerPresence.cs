@@ -8,7 +8,25 @@ using UnityEngine;
 public class PlayerPresence : MonoBehaviour
 {
     public Server Server { get; set; }
-    public bool HasAuthority { get { return networkView.isMine; } }
+
+    private string _Name = "Nameless";
+    public string Name {
+        get
+        {
+            return _Name;
+        }
+        private set
+        {
+            ReceiveNameSent(value);
+            if (networkView.isMine)
+            {
+                if (Relay.Instance.IsConnected)
+                {
+                    networkView.RPC("ReceiveNameSent", RPCMode.Others, value);
+                }
+            }
+        }
+    }
 
     public static IEnumerable<PlayerPresence> AllPlayerPresences { get { return UnsafeAllPlayerPresences.ToList(); }}
     public static List<PlayerPresence> UnsafeAllPlayerPresences = new List<PlayerPresence>();
@@ -27,6 +45,12 @@ public class PlayerPresence : MonoBehaviour
     public event PlayerPresenceWantsRespawnHandler OnPlayerPresenceWantsRespawn = delegate {};
 
     private WeakDictionary<PlayerScript, Vector2> LastGUIDebugPositions;
+
+    public bool HasBeenNamed { get { return Name != "Nameless"; } }
+    public delegate void NameChangedHandler();
+
+    public event NameChangedHandler OnNameChanged = delegate {}; 
+    public event NameChangedHandler OnBecameNamed = delegate {};
 
     public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
@@ -60,6 +84,10 @@ public class PlayerPresence : MonoBehaviour
         DontDestroyOnLoad(this);
         PossessedCharacterViewID = NetworkViewID.unassigned;
         LastGUIDebugPositions = new WeakDictionary<PlayerScript, Vector2>();
+        if (networkView.isMine)
+        {
+            Name = PlayerPrefs.GetString("username", "Anonymous");
+        }
     }
 
     public void Start()
@@ -117,6 +145,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void ServerIndicateRespawn(NetworkMessageInfo info)
     {
         if (info.sender == networkView.owner)
@@ -214,6 +243,52 @@ public class PlayerPresence : MonoBehaviour
                 {
                     GUI.Box(rect, "H: " + healthComponent.Health + "   S: " + healthComponent.Shield);
                 }
+            }
+        }
+    }
+
+    public void SendMessageTo(string text)
+    {
+        if (Server != null)
+        {
+            Server.SendMessageFromServer(text, networkView.owner);
+        }
+        else
+        {
+            Debug.LogWarning("Unable to send message to " + this + " because Server is null");
+        }
+    }
+
+    public void OnNetworkInstantiate(NetworkMessageInfo info)
+    {
+        WantNameSentBack();
+    }
+
+    private void WantNameSentBack()
+    {
+        if (!networkView.isMine)
+        {
+            networkView.RPC("SendNameBack", networkView.owner);
+        }
+    }
+
+    [RPC]
+    private void SendNameBack(NetworkMessageInfo info)
+    {
+        networkView.RPC("ReceiveNameSent", info.sender);
+    }
+
+    [RPC]
+    private void ReceiveNameSent(string text)
+    {
+        bool wasNamed = HasBeenNamed;
+        _Name = text;
+        if (HasBeenNamed)
+        {
+            OnNameChanged();
+            if (!wasNamed)
+            {
+                OnBecameNamed();
             }
         }
     }
