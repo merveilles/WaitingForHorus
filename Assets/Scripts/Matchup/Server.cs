@@ -55,8 +55,8 @@ public class Server : MonoBehaviour
     // Only called by Unity on server
     public void OnPlayerDisconnected(NetworkPlayer player)
     {
-        Network.RemoveRPCs(player);
         Network.DestroyPlayerObjects(player);
+        Network.RemoveRPCs(player);
         NetworkPlayers.Remove(player);
     }
 

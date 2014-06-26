@@ -96,6 +96,11 @@ public class PlayerPresence : MonoBehaviour
     public void OnDestroy()
     {
         OnPlayerPresenceRemoved(this);
+        UnsafeAllPlayerPresences.Remove(this);
+        if (Possession != null)
+        {
+            Destroy(Possession.gameObject);
+        }
     }
 
     public void SpawnCharacter(Vector3 position)
