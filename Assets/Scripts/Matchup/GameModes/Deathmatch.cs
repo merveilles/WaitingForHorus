@@ -81,6 +81,7 @@ public class Deathmatch : GameMode
         if (networkView.isMine)
         {
             deadPlayerScript.PerformDestroy();
+            Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed");
         }
     }
 
