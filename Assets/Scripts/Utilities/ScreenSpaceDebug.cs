@@ -4,7 +4,7 @@ using UnityEngine;
 public class ScreenSpaceDebug : MonoBehaviour
 {
     public static ScreenSpaceDebug Instance { get; private set; }
-    private bool ShouldDraw = false;
+    public bool ShouldDraw = false;
 
     private class Message
     {

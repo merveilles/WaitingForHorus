@@ -177,6 +177,14 @@ public class PlayerPresence : MonoBehaviour
 
     public void OnGUI()
     {
+        if (ScreenSpaceDebug.Instance.ShouldDraw)
+        {
+            OnDrawDebugStuff();
+        }
+    }
+
+    private void OnDrawDebugStuff()
+    {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine(PlayerScript.UnsafeAllEnabledPlayerScripts.Count + " PlayerScripts");
         sb.AppendLine(UnsafeAllPlayerPresences.Count + " PlayerPresences");

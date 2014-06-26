@@ -55,6 +55,7 @@ public class PlayerScript : MonoBehaviour
 
     public PlayerShootingScript ShootingScript;
     public CameraScript CameraScript;
+    public HealthScript HealthScript;
 
     public GameObject ObjectToUseForBounds;
     public Bounds Bounds { get { return ObjectToUseForBounds.renderer.bounds; } }
@@ -571,6 +572,10 @@ public class PlayerScript : MonoBehaviour
         stream.Serialize(ref playJumpSound);
         stream.Serialize(ref lookRotationEuler);
 
+        // Health script (should be moved here probably)
+        stream.Serialize(ref HealthScript._Shield);
+        stream.Serialize(ref HealthScript._Health);
+
         if (stream.isReading)
         {
             //Debug.Log("pPosition = " + pPosition + " / transform.position = " + transform.position);
@@ -585,6 +590,8 @@ public class PlayerScript : MonoBehaviour
             if (playJumpSound && GlobalSoundsScript.soundEnabled) jumpSound.Play();
 
             lastNetworkFramePosition = pPosition;
+
+            HealthScript.UpdateShield();
         }
 
         playJumpSound = playDashSound = false;

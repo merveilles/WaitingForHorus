@@ -13,9 +13,9 @@ public class HealthScript : MonoBehaviour
     readonly static Color HitShieldColor = new Color(1, 1, 1, 1f); // new Color(1, 0, 0, 1f);
     readonly static Color RecoverShieldColor = new Color(1, 1, 1, 1f);
 
-    private int _Shield;
+    public int _Shield;
     public int Shield { get { return _Shield; } private set { _Shield = value; } }
-    private int _Health;
+    public int _Health;
     public int Health { get { return _Health; } private set { _Health = value; } }
 
     public Renderer shieldRenderer;
@@ -51,7 +51,7 @@ public class HealthScript : MonoBehaviour
         {
             // lol wat
             NetworkPlayer networkPlayer = GetComponent<PlayerScript>().networkView.owner;
-            DoDamage( 1, networkPlayer );
+            DoDamageOwner( 1, transform.position, networkPlayer );
         }
 
         if (!firstSet && shieldRenderer != null)
@@ -104,18 +104,7 @@ public class HealthScript : MonoBehaviour
     }
 
 
-    public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
-    {
-        stream.Serialize(ref _Shield);
-        stream.Serialize(ref _Health);
-
-        if (stream.isReading)
-        {
-            UpdateShield();
-        }
-    }
-
-    private void UpdateShield()
+    public void UpdateShield()
     {
         bool shouldBeEnabled = Shield > 0;
         shieldRenderer.enabled = shouldBeEnabled;
@@ -160,19 +149,34 @@ public class HealthScript : MonoBehaviour
     //        r.enabled = health >= 2;
     //}
 
-    public void DoDamage(int damage, NetworkPlayer shootingPlayer)
+    public void DeclareHitToOthers(int damage, Vector3 point, NetworkPlayer shootingPlayer)
     {
-        if (networkView.isMine) DoDamageOwner(damage, shootingPlayer);
-        else
-        {
-            networkView.RPC("DoDamageOwner", networkView.owner, damage, shootingPlayer);
-        }
+        networkView.RPC("OthersReceiveHit", RPCMode.Others, damage, point, shootingPlayer);
     }
 
     [RPC]
-    private void DoDamageOwner( int damage, NetworkPlayer shootingPlayer )
+    private void OthersReceiveHit(int damage, Vector3 point, NetworkPlayer shootingPlayer)
     {
-        ScreenSpaceDebug.AddMessage("DAMAGE", gameObject.transform.position, Color.red);
+		EffectsScript.ExplosionHit( point, Quaternion.LookRotation( Vector3.up ) );
+        if (networkView.isMine)
+        {
+            DoDamageOwner(damage, point, shootingPlayer);
+        }
+    }
+
+    //public void DoDamage(int damage, Vector3 point, NetworkPlayer shootingPlayer)
+    //{
+    //    if (networkView.isMine) DoDamageOwner(damage, point, shootingPlayer);
+    //    else
+    //    {
+    //        networkView.RPC("DoDamageOwner", networkView.owner, damage, point, shootingPlayer);
+    //    }
+    //}
+
+    [RPC]
+    private void DoDamageOwner( int damage, Vector3 point, NetworkPlayer shootingPlayer )
+    {
+        ScreenSpaceDebug.AddMessage("DAMAGE", point, Color.red);
         if ( !dead )
         {
             if (invulnerable)

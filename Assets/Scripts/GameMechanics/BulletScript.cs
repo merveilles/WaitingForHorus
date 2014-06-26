@@ -71,7 +71,7 @@ public class BulletScript : MonoBehaviour
         }
     }
 
-    bool DoDamageTo( Transform t )
+    bool DoDamageTo( Transform t, Vector3 point)
     {
         HealthScript health = t.root.GetComponentInChildren<HealthScript>();
         // err, kinda lame, this is so that the collider can be
@@ -85,7 +85,7 @@ public class BulletScript : MonoBehaviour
                 Network.player == Instigator.networkView.owner) // only do damage from net player that fired
 			{
 				audio.Play(); //Hitreg Sound
-                health.DoDamage(damage, Instigator.networkView.owner);
+                health.DeclareHitToOthers(damage, point, Instigator.networkView.owner);
 				return true;
 			}
         }
@@ -133,7 +133,7 @@ public class BulletScript : MonoBehaviour
 	
 	void Collide( Transform trans, Vector3 point, Vector3 normal ) 
 	{
-		bool playerWasHit = DoDamageTo( trans );
+		bool playerWasHit = DoDamageTo(trans, point);
 	    if (playerWasHit)
 	    {
 	        ScreenSpaceDebug.AddMessage("HIT", point, Color.green);
@@ -142,7 +142,7 @@ public class BulletScript : MonoBehaviour
 			DoRecoil( point, playerWasHit );
 		
         if( playerWasHit )
-			EffectsScript.ExplosionHit( point, Quaternion.LookRotation( normal ) );
+            EffectsScript.ExplosionHit( point, Quaternion.LookRotation( normal ) );
         else
 			EffectsScript.Explosion( point, Quaternion.LookRotation( normal ) );
 
