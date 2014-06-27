@@ -13,7 +13,7 @@ public class CameraScript : MonoBehaviour
     public float CrosshairSmoothingSpeed = 8.5f;
 	
 	bool aimingAtPlayer;
-    PlayerScript player;
+    public PlayerScript player;
 
     Camera mainCamera;
 
@@ -33,9 +33,24 @@ public class CameraScript : MonoBehaviour
 
     public delegate void CameraIsZoomedChangedHandler(bool isZoomed);
     // Invoked when the camera becomes or un-becomes zoomed.
-    public event CameraIsZoomedChangedHandler OnCameraIsZoomedChanged = delegate { }; 
+    public event CameraIsZoomedChangedHandler OnCameraIsZoomedChanged = delegate { };
 
-    public float BaseFieldOfView = 85.0f;
+    private float _BaseFieldOfView;
+
+    public float BaseFieldOfView
+    {
+        get
+        {
+            return _BaseFieldOfView;
+        }
+        set
+        {
+            _BaseFieldOfView = value;
+            PlayerPrefs.SetFloat("fov", _BaseFieldOfView);
+        }
+    }
+
+    private const float DefaultBaseFieldOfView = 85.0f;
     public float ZoomedFieldOfViewRatio = 0.42f;
 
     private float SmoothedBaseFieldOfView = 85.0f;
@@ -94,11 +109,16 @@ public class CameraScript : MonoBehaviour
     {
         if (HackDisableShadowsObjects == null)
             HackDisableShadowsObjects = new GameObject[0];
+        if (player.networkView.isMine)
+        {
+            _BaseFieldOfView = PlayerPrefs.GetFloat("fov", 85.0f);
+            SmoothedBaseFieldOfView = _BaseFieldOfView;
+            SmoothedFieldOfView = _BaseFieldOfView;
+        }
     }
 
     public void Start()
     {
-        player = transform.parent.parent.GetComponent<PlayerScript>();
         if(player.networkView.isMine)
         {
             mainCamera = Camera.main;
