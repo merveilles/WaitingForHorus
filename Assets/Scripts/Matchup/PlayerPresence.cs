@@ -81,8 +81,11 @@ public class PlayerPresence : MonoBehaviour
         set
         {
             _WantsExteriorView = value;
-            int asNumber = _WantsExteriorView ? 1 : 0;
-            PlayerPrefs.SetInt("thirdperson", asNumber);
+            if (networkView.isMine)
+            {
+                int asNumber = _WantsExteriorView ? 1 : 0;
+                PlayerPrefs.SetInt("thirdperson", asNumber);
+            }
         }
     }
 
@@ -119,7 +122,10 @@ public class PlayerPresence : MonoBehaviour
         PossessedCharacterViewID = NetworkViewID.unassigned;
         LastGUIDebugPositions = new WeakDictionary<PlayerScript, Vector2>();
 
-        _WantsExteriorView = PlayerPrefs.GetInt("thirdperson", 1) > 0;
+        if (networkView.isMine)
+        {
+            _WantsExteriorView = PlayerPrefs.GetInt("thirdperson", 1) > 0;
+        }
 
         // Ladies and gentlemen, the great and powerful Unity
         wasMine = networkView.isMine;
