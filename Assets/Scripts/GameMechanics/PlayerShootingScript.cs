@@ -223,44 +223,59 @@ public class PlayerShootingScript : MonoBehaviour
                 	reloadSound.Play();
             }
 
-            //var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            //var allowedDistance = 130 * Screen.height / 1500f;
+            var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            var allowedDistance = 130 * Screen.height / 1500f;
 
             //foreach ( var v in targets ) v.Found = false;
             ////Debug.Log(targets.Values.Count + " targets to find");
 
             // Test for players in crosshair
             // TODO fixme
-            //foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
-            //{
-            //    if( ps == GetComponent<PlayerScript>() ) // Is targeting self?
-            //        continue;
+            foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
+            {
+                if( ps == GetComponent<PlayerScript>() ) // Is targeting self?
+                    continue;
 
-            //    var health = ps.gameObject.GetComponent<HealthScript>();
-            //    var position = ps.transform.position;
-            //    var screenPos = Camera.main.WorldToScreenPoint(position);
+                var health = ps.gameObject.GetComponent<HealthScript>();
+                var position = ps.transform.position;
+                var screenPos = Camera.main.WorldToScreenPoint(position);
 
-            //    if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
-            //    {
-            //        WeaponIndicatorScript.PlayerData data;
-            //        if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null )
-            //            targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps, WasLocked = false } );
+                if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
+                {
+                    WeaponIndicatorScript.PlayerData data;
+                    if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null )
+                        targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps, WasLocked = false } );
 
-            //        data.ScreenPosition = screenPos.XY();
-            //        data.SinceInCrosshair += Time.deltaTime;
-            //        data.Found = true;
+                    data.TimeSinceLastLockSend += Time.deltaTime;
+
+                    data.ScreenPosition = screenPos.XY();
+                    data.SinceInCrosshair += Time.deltaTime;
+                    data.Found = true;
 					
-            //        if ( !data.WasLocked && data.Locked ) // Send target notification
-            //        {	
-            //            if( GlobalSoundsScript.soundEnabled )
-            //                targetSound.Play();
-						
-            //            data.Script.networkView.RPC( "Targeted", RPCMode.All, gameObject.networkView.owner );
-            //        }
-            //    }
-            //}
+                    if ( !data.WasLocked && data.Locked ) // Send target notification
+                    {	
+                        if( GlobalSoundsScript.soundEnabled )
+                            targetSound.Play();
+
+                    }
+                    if (data.NeedsLockSent)
+                    {
+                        data.Script.GetTargetedBy(playerScript);
+                        data.TimeSinceLastLockSend = 0f;
+                    }
+                }
+                else
+                {
+                    WeaponIndicatorScript.PlayerData data = targets.Find((data2) => data2.Script == ps);
+                    if (data != null)
+                    {
+                        data.Found = false;
+                        data.TimeSinceLastLockSend += Time.deltaTime;
+                    }
+                }
+            }
 			
-            //CheckTargets();
+            CheckTargets();
 		}
     }
 
@@ -271,27 +286,24 @@ public class PlayerShootingScript : MonoBehaviour
 	
 	public void CheckTargets()
 	{
-	    return;
+	    //return;
         // TODO fixme
-	    //if( targets.Count > 0 )
-	    //{
-	    //    for( int i = 0; i < targets.Count; i++ )
-	    //    {
-	    //        if( targets[i].Script != null )
-	    //        {
-	    //            if( targets[i].WasLocked && !targets[i].Found ) 
-	    //                targets[i].Script.networkView.RPC( "Untargeted", RPCMode.All, gameObject.networkView.owner );
-	    //            targets[i].WasLocked = targets[i].Locked;
+        for( int i = 0; i < targets.Count; i++ )
+        {
+            if( targets[i].Script != null )
+            {
+                if( targets[i].WasLocked && !targets[i].Found ) 
+                    targets[i].Script.GetUntargetedBy(playerScript);
+                targets[i].WasLocked = targets[i].Locked;
 
-	    //            if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 || targets[i].Script == null ) // Is player in target list dead, or unseen? Am I dead?
-	    //                targets.RemoveAt(i);
-	    //        }
-	    //        else 
-	    //        {
-	    //            targets.RemoveAt( i );
-	    //        }
-	    //    }
-	    //}	
+                if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 ) // Is player in target list dead, or unseen? Am I dead?
+                    targets.RemoveAt(i);
+            }
+            else 
+            {
+                targets.RemoveAt( i );
+            }
+        }
 	}
 	
     void DoShot(float spread)

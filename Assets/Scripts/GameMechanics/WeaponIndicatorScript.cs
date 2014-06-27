@@ -16,11 +16,19 @@ public class WeaponIndicatorScript : MonoBehaviour
         public float SinceInCrosshair;
         public bool Found;
         public bool WasLocked;
+        public float TimeSinceLastLockSend;
     
         public bool Locked
         {
             get { return SinceInCrosshair >= PlayerShootingScript.AimingTime; }
         }
+
+        public bool NeedsLockSent
+        {
+            get { return Locked && TimeSinceLastLockSend > TimeBetweenLockSends; }
+        }
+
+        public const float TimeBetweenLockSends = 1f;
     }
 
     public List<PlayerData> Targets { get; private set; }
