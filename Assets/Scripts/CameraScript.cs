@@ -62,7 +62,7 @@ public class CameraScript : MonoBehaviour
 
     // Indicates whether the camera is in third person (exterior) or first
 	// person (interior) view.
-    public bool _IsExteriorView;
+    private bool _IsExteriorView;
 
     public bool IsExteriorView
     {
@@ -111,7 +111,7 @@ public class CameraScript : MonoBehaviour
             HackDisableShadowsObjects = new GameObject[0];
         if (player.networkView.isMine)
         {
-            _BaseFieldOfView = PlayerPrefs.GetFloat("fov", 85.0f);
+            _BaseFieldOfView = PlayerPrefs.GetFloat("fov", DefaultBaseFieldOfView);
             SmoothedBaseFieldOfView = _BaseFieldOfView;
             SmoothedFieldOfView = _BaseFieldOfView;
         }
@@ -302,8 +302,11 @@ public class CameraScript : MonoBehaviour
             }*/
 
             // TODO can mainCamera be null here?
-            mainCamera.transform.position = cameraPosition;
-            mainCamera.transform.rotation = actualCameraRotation;
+            if (mainCamera != null)
+            {
+                mainCamera.transform.position = cameraPosition;
+                mainCamera.transform.rotation = actualCameraRotation;
+            }
 
 
             var rawCrosshairPosition = GetCrosshairPosition();

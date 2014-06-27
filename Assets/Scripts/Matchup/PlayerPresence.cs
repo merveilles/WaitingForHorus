@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Com.EpixCode.Util.WeakReference.WeakDictionary;
 using UnityEngine;
 
