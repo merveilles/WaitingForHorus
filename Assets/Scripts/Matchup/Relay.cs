@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net;
 using System.Text;
+using MasterServer;
 using UnityEngine;
 
 // A single instance, as part of the startup scene, which is used to communicate
@@ -40,6 +42,8 @@ public class Relay : MonoBehaviour
     public GUISkin BaseSkin;
     public MessageLog MessageLog { get; private set; }
 
+    private ExternalServerList ExternalServerList;
+
     [Serializable]
     public enum RunMode
     {
@@ -57,11 +61,16 @@ public class Relay : MonoBehaviour
         MessageLog.Skin = BaseSkin;
 
         Network.natFacilitatorIP = "107.170.78.82";
+
+        ExternalServerList = new ExternalServerList();
+        ExternalServerList.OnMasterServerListChanged += ReceiveMasterListChanged;
     }
 
     public void Start()
     {
         Application.LoadLevel("pi_mar");
+
+        ExternalServerList.Refresh();
     }
 
     public void Connect(RunMode mode)
@@ -185,5 +194,16 @@ public class Relay : MonoBehaviour
           if (c != '\n' && c != '\r' && sb.Length < 24)
              sb.Append(c);
        return sb.ToString();
+    }
+
+    public void OnDestroy()
+    {
+        ExternalServerList.OnMasterServerListChanged -= ReceiveMasterListChanged;
+        ExternalServerList.Dispose();
+    }
+
+    private void ReceiveMasterListChanged()
+    {
+        MessageLog.AddMessage("Found " + ExternalServerList.MasterListRaw.servers.Length + " servers");
     }
 }

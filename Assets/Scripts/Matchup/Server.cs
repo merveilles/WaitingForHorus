@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MasterServer;
 using UnityEngine;
 
 public class Server : MonoBehaviour
@@ -15,10 +16,16 @@ public class Server : MonoBehaviour
     // Will only be available on the server
     public string NetworkGUID { get; set; }
 
+    public ExternalServerNotifier ServerNotifier { get; private set; }
+
+    private bool WasMine = false;
+
     public void Awake()
     {
         DontDestroyOnLoad(this);
         NetworkPlayers = new List<NetworkPlayer>();
+
+        ServerNotifier = new ExternalServerNotifier();
     }
 
     public void Start()
@@ -29,6 +36,7 @@ public class Server : MonoBehaviour
         SpawnPresence();
         if (networkView.isMine)
         {
+            WasMine = true;
             OnPlayerConnected(Network.player);
             CurrentGameMode = (GameMode) Instantiate(DefaultGameMode, Vector3.zero, Quaternion.identity);
             CurrentGameMode.Server = this;
@@ -56,6 +64,7 @@ public class Server : MonoBehaviour
         BroadcastMessageFromServer(playerPresence.Name + " has joined");
     }
 
+// ReSharper disable once UnusedMethodReturnValue.Local
     private PlayerPresence SpawnPresence()
     {
         var presence = (PlayerPresence) Network.Instantiate(BasePlayerPresence, Vector3.zero, Quaternion.identity, 0);
@@ -64,6 +73,13 @@ public class Server : MonoBehaviour
 
     public void Update()
     {
+        if (networkView.isMine)
+        {
+            ServerNotifier.GUID = NetworkGUID;
+            ServerNotifier.CurrentMapName = Application.loadedLevelName;
+            ServerNotifier.NumberOfPlayers = PlayerPresence.UnsafeAllPlayerPresences.Count;
+            ServerNotifier.Update();
+        }
     }
 
     // Only called by Unity on server
@@ -120,6 +136,15 @@ public class Server : MonoBehaviour
                     indicator.enabled = false;
             }
         }
+
+        // Will need to not dispose this if we're going to delist our server,
+		// since we'll have to hand this off to the Relay for ownership.
+        // TODO bit o' the old hack 'ere
+        if (WasMine)
+        {
+            ServerNotifier.BecomeUnlisted();
+        }
+        ServerNotifier.Dispose();
     }
 
     public delegate void ReceiveServerMessageHandler(string text);
@@ -144,6 +169,7 @@ public class Server : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     void ReceiveServerMessage(string text, NetworkMessageInfo info)
     {
         // Only care about messages from server
@@ -161,9 +187,14 @@ public class Server : MonoBehaviour
     public void ChangeLevel(string levelName)
     {
         if (Application.loadedLevelName != levelName)
-            Application.LoadLevel("pi_mar");
+        {
+            Application.LoadLevel(levelName);
+            ServerNotifier.CurrentMapName = levelName;
+        }
     }
+
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteReceiveLevelChange(string levelName, NetworkMessageInfo info)
     {
         if (info.sender == networkView.owner)
