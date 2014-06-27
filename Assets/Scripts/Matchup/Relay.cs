@@ -17,6 +17,9 @@ public class Relay : MonoBehaviour
 
     private bool TryingToConnect = false;
 
+    // Some more un-lovely hacks
+    private GUIStyle BoxSpacer;
+
     public Server CurrentServer
     {
         get
@@ -33,6 +36,11 @@ public class Relay : MonoBehaviour
             if (_CurrentServer != null)
             {
                 _CurrentServer.OnReceiveServerMessage += ReceiveServerMessage;
+            }
+            else
+            {
+                // Refresh if we go back to the title screen
+                //ExternalServerList.Refresh();
             }
             TryingToConnect = false;
         }
@@ -64,6 +72,8 @@ public class Relay : MonoBehaviour
         ExternalServerList = new ExternalServerList();
         ExternalServerList.OnMasterServerListChanged += ReceiveMasterListChanged;
         ExternalServerList.OnMasterServerListFetchError += ReceiveMasterListFetchError;
+
+        BoxSpacer = new GUIStyle(BaseSkin.box) {fixedWidth = 1};
     }
 
     public void Start()
@@ -217,20 +227,20 @@ public class Relay : MonoBehaviour
             }
             GUI.enabled = !TryingToConnect;
             // TODO shouldn't be allocating here, that's dumb, store it
-			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
+			GUILayout.Box( "", BoxSpacer );
             if(GUILayout.Button("HOST"))
             {
                 GlobalSoundsScript.PlayButtonPress();
                 Connect(RunMode.Server);
             }
-			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
+			GUILayout.Box( "", BoxSpacer );
             if(GUILayout.Button("RANDOM"))
             {
                 GlobalSoundsScript.PlayButtonPress();
                 Connect(RunMode.Client);
             }
 
-			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
+			GUILayout.Box( "", BoxSpacer );
             if(GUILayout.Button("REFRESH"))
             {
                 GlobalSoundsScript.PlayButtonPress();
@@ -247,6 +257,7 @@ public class Relay : MonoBehaviour
         // TODO this should be in a scrollable view, because it will obviously run offscreen if there are too many
         if (DoAnyServersExist)
         {
+            GUIStyle rowStyle = new GUIStyle( BaseSkin.box ) { fixedWidth = 312 - 65 };
             StringBuilder sb = new StringBuilder();
             foreach (var serverInfo in ExternalServerList.MasterListRaw.servers)
             {
@@ -256,7 +267,6 @@ public class Relay : MonoBehaviour
                 sb.Append(" [");
                 sb.Append(serverInfo.ip);
                 sb.Append("]");
-                GUIStyle rowStyle = new GUIStyle( BaseSkin.box ) { fixedWidth = 312 - 65 };
                 GUILayout.BeginHorizontal();
                 //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
                 GUILayout.Box(sb.ToString(), rowStyle);

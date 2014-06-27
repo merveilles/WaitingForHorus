@@ -16,7 +16,22 @@ public class MessageLog
     public readonly Queue<GameMessage> Messages = new Queue<GameMessage>();
     public int BufferSize = 10;
     public bool Visible { get; set; }
-    public GUISkin Skin { get; set; }
+
+    private GUISkin _Skin;
+
+    public GUISkin Skin
+    {
+        get
+        {
+            return _Skin;
+        }
+        set
+        {
+            _Skin = value;
+            RecalculateStyles();
+        }
+    }
+
     public int MessageCount { get { return Messages.Count; } }
 
     public bool IsInputFieldEnabled { get; set; }
@@ -95,10 +110,9 @@ public class MessageLog
     {
         foreach (var message in Messages)
         {
-            GUIStyle rowStyle = new GUIStyle( Skin.box ) { fixedWidth = 200 };
             GUILayout.BeginHorizontal();
             //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
-            GUILayout.Box(message.Content, rowStyle);
+            GUILayout.Box(message.Content, NormalDisplayRowStyle);
             GUILayout.EndHorizontal();
         }
         if (IsInputFieldEnabled)
@@ -116,8 +130,7 @@ public class MessageLog
         GUILayout.BeginHorizontal();
         GUI.SetNextControlName("MessageInput");
 		
-		GUIStyle sty = new GUIStyle( Skin.textField ) { fixedWidth = 200 };
-        var newInput = GUILayout.TextField(CurrentInput, sty);
+        var newInput = GUILayout.TextField(CurrentInput, InputRowStyle);
         if (DropFirstInput && newInput != CurrentInput)
         {
             DropFirstInput = false;
@@ -129,4 +142,13 @@ public class MessageLog
         GUILayout.EndHorizontal();
     }
 
+
+    private GUIStyle NormalDisplayRowStyle;
+    private GUIStyle InputRowStyle;
+
+    private void RecalculateStyles()
+    {
+            NormalDisplayRowStyle = new GUIStyle( Skin.box ) { fixedWidth = 200 };
+            InputRowStyle = new GUIStyle( Skin.textField ) { fixedWidth = 200 };
+    }
 }
