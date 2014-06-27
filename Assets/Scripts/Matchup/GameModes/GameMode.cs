@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 
+// GameModes are only spawned on the server, and are not replicated. Use the
+// Server for communication to players.
 public class GameMode : MonoBehaviour
 {
     //public delegate void GameModeCompleteHandler();

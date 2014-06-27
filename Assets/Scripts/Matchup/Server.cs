@@ -27,7 +27,7 @@ public class Server : MonoBehaviour
         if (networkView.isMine)
         {
             OnPlayerConnected(Network.player);
-            CurrentGameMode = (GameMode)Network.Instantiate(DefaultGameMode, Vector3.zero, Quaternion.identity, 0);
+            CurrentGameMode = (GameMode) Instantiate(DefaultGameMode, Vector3.zero, Quaternion.identity);
             CurrentGameMode.Server = this;
         }
     }
@@ -153,5 +153,17 @@ public class Server : MonoBehaviour
         bool isHost = playerPresence.networkView.owner == networkView.owner;
         string sigil = isHost ? "+ " : "";
         BroadcastMessageFromServer(sigil + playerPresence.Name + " : " + text);
+    }
+
+    public void ChangeLevel(string levelName)
+    {
+        if (Application.loadedLevelName != levelName)
+            Application.LoadLevel("pi_mar");
+    }
+    [RPC]
+    private void RemoteReceiveLevelChange(string levelName, NetworkMessageInfo info)
+    {
+        if (info.sender == networkView.owner)
+            ChangeLevel(levelName);
     }
 }

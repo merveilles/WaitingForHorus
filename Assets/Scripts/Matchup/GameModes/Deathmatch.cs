@@ -22,12 +22,7 @@ public class Deathmatch : GameMode
         PlayerPresence.OnPlayerPresenceAdded += ReceivePresenceAdded;
         PlayerPresence.OnPlayerPresenceRemoved += ReceivePresenceRemoved;
         
-        if (networkView.isMine || Server != null)
-            StartAfterReceivingServer();
-        else
-        {
-            networkView.RPC("WantServerViewID", networkView.owner);
-        }
+        StartAfterReceivingServer();
     }
 
     private void StartAfterReceivingServer()
@@ -38,33 +33,14 @@ public class Deathmatch : GameMode
         }
 
         CurrentMapName = "Loading...";
-        if (Application.loadedLevelName != "pi_mar")
-            Application.LoadLevel("pi_mar");
-        else
-            ReceiveMapChanged();
+        Server.ChangeLevel("pi_mar");
+        ReceiveMapChanged();
+        //if (Application.loadedLevelName != "pi_mar")
+        //    Application.LoadLevel("pi_mar");
+        //else
+        //    ReceiveMapChanged();
     }
 
-    [RPC]
-// ReSharper disable once UnusedMember.Local
-    private void WantServerViewID(NetworkMessageInfo info)
-    {
-        if (networkView.isMine)
-        {
-            networkView.RPC("RemoteReceiveServerViewID", info.sender, Server.networkView.viewID);
-        }
-    }
-
-    [RPC]
-// ReSharper disable once UnusedMember.Local
-    private void RemoteReceiveServerViewID(NetworkViewID serverViewID)
-    {
-        NetworkView view = NetworkView.Find(serverViewID);
-        if (view != null)
-        {
-            Server = view.observed as Server;
-            if (Server != null && !IsMapLoaded) StartAfterReceivingServer();
-        }
-    }
 
     //public override void OnNewConnection(NetworkPlayer newPlayer)
     //{
@@ -78,22 +54,16 @@ public class Deathmatch : GameMode
 
     private void ReceivePlayerDied(PlayerScript deadPlayerScript)
     {
-        if (networkView.isMine)
-        {
-            deadPlayerScript.PerformDestroy();
-            Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed");
-        }
+        deadPlayerScript.PerformDestroy();
+        Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed");
     }
 
     public override void ReceiveMapChanged()
     {
         IsMapLoaded = true;
-        if (networkView.isMine)
+        foreach (var presence in Server.Presences)
         {
-            foreach (var presence in Server.Presences)
-            {
-                presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
-            }
+            presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
         }
         CurrentMapName = Application.loadedLevelName;
         Server.BroadcastMessageFromServer("Welcome to " + CurrentMapName);
@@ -101,7 +71,7 @@ public class Deathmatch : GameMode
     private void ReceivePresenceAdded(PlayerPresence newPlayerPresence)
     {
         SetupPresenceListener(newPlayerPresence);
-        if (networkView.isMine && IsMapLoaded)
+        if (IsMapLoaded)
         {
             newPlayerPresence.SpawnCharacter(RespawnZone.GetRespawnPoint());
         }
@@ -138,7 +108,7 @@ public class Deathmatch : GameMode
 
     private void PresenceListenerWantsRespawnFor(PlayerPresence presence)
     {
-        if (networkView.isMine && IsMapLoaded)
+        if (IsMapLoaded)
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
     }
 

@@ -94,6 +94,7 @@ public class Relay : MonoBehaviour
 
     public void OnDisconnectedFromServer(NetworkDisconnection error)
     {
+        MessageLog.AddMessage("Disconnected from server: " + error);
         if (CurrentServer != null)
             Destroy(CurrentServer.gameObject);
         TryingToConnect = false;
@@ -113,6 +114,14 @@ public class Relay : MonoBehaviour
 
     public void OnGUI()
     {
+        if (ScreenSpaceDebug.Instance.ShouldDraw)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(PlayerScript.UnsafeAllEnabledPlayerScripts.Count + " PlayerScripts");
+            sb.AppendLine(PlayerPresence.UnsafeAllPlayerPresences.Count + " PlayerPresences");
+            GUI.Label(new Rect(10, 10, 500, 500), sb.ToString());
+        }
+
         MessageLog.OnGUI();
 
         // Display name setter and other stuff when not connected

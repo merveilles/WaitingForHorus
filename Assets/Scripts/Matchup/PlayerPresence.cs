@@ -52,6 +52,8 @@ public class PlayerPresence : MonoBehaviour
     public event NameChangedHandler OnNameChanged = delegate {}; 
     public event NameChangedHandler OnBecameNamed = delegate {};
 
+    private bool wasMine = false;
+
     public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
         NetworkViewID prevPossesedID = PossessedCharacterViewID;
@@ -84,6 +86,10 @@ public class PlayerPresence : MonoBehaviour
         DontDestroyOnLoad(this);
         PossessedCharacterViewID = NetworkViewID.unassigned;
         LastGUIDebugPositions = new WeakDictionary<PlayerScript, Vector2>();
+
+        // Ladies and gentlemen, the great and powerful Unity
+        wasMine = networkView.isMine;
+
         if (networkView.isMine)
         {
             Name = PlayerPrefs.GetString("username", "Anonymous");
@@ -169,7 +175,7 @@ public class PlayerPresence : MonoBehaviour
             Destroy(Possession.gameObject);
         }
 
-        if (networkView.isMine)
+        if (wasMine)
         {
             Relay.Instance.MessageLog.OnMessageEntered -= ReceiveMessageEntered;
         }
@@ -228,11 +234,6 @@ public class PlayerPresence : MonoBehaviour
 
     private void OnDrawDebugStuff()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine(PlayerScript.UnsafeAllEnabledPlayerScripts.Count + " PlayerScripts");
-        sb.AppendLine(UnsafeAllPlayerPresences.Count + " PlayerPresences");
-        GUI.Label(new Rect(10, 10, 500, 500), sb.ToString());
-
         if (networkView.isMine && Camera.current != null)
         {
             foreach (var playerScript in PlayerScript.UnsafeAllEnabledPlayerScripts)

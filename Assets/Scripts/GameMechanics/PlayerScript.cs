@@ -99,11 +99,11 @@ public class PlayerScript : MonoBehaviour
 
     public delegate void PlayerScriptSpawnedHandler(PlayerScript newPlayerScript);
     // Invoked when any PlayerScript-attached gameobject is spawned
-    public static event PlayerScriptSpawnedHandler OnPlayerScriptSpawned;
+    public static event PlayerScriptSpawnedHandler OnPlayerScriptSpawned = delegate{};
 
     // This should really not be static
     public delegate void PlayerScriptDiedHandler(PlayerScript diedPlayerScript);
-    public static event PlayerScriptDiedHandler OnPlayerScriptDied;
+    public static event PlayerScriptDiedHandler OnPlayerScriptDied = delegate{};
         
     // for interpolation on remote computers only
     VectorInterpolator iPosition;
