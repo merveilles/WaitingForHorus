@@ -275,7 +275,7 @@ public class Relay : MonoBehaviour
         }
         else
         {
-            GUIStyle rowStyle = new GUIStyle( BaseSkin.box ) { fixedWidth = 340 };
+            GUIStyle rowStyle = new GUIStyle( BaseSkin.box ) { fixedWidth = 312 };
             GUILayout.BeginHorizontal();
             //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
             string message;
