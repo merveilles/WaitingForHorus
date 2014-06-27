@@ -226,9 +226,6 @@ public class PlayerShootingScript : MonoBehaviour
             var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
             var allowedDistance = 130 * Screen.height / 1500f;
 
-            //foreach ( var v in targets ) v.Found = false;
-            ////Debug.Log(targets.Values.Count + " targets to find");
-
             // Test for players in crosshair
             // TODO fixme
             foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
@@ -248,20 +245,17 @@ public class PlayerShootingScript : MonoBehaviour
 
                     data.TimeSinceLastLockSend += Time.deltaTime;
 
+                    // TODO lots of redundant stuff here
                     data.ScreenPosition = screenPos.XY();
-                    data.SinceInCrosshair += Time.deltaTime;
+                    data.LockStrength += Time.deltaTime;
+                    data.ClampStrength();
                     data.Found = true;
 					
-                    if ( !data.WasLocked && data.Locked ) // Send target notification
+                    if ( !data.WasLocked && data.Locked )
                     {	
                         if( GlobalSoundsScript.soundEnabled )
                             targetSound.Play();
 
-                    }
-                    if (data.NeedsLockSent)
-                    {
-                        data.Script.GetTargetedBy(playerScript);
-                        data.TimeSinceLastLockSend = 0f;
                     }
                 }
                 else
@@ -269,7 +263,10 @@ public class PlayerShootingScript : MonoBehaviour
                     WeaponIndicatorScript.PlayerData data = targets.Find((data2) => data2.Script == ps);
                     if (data != null)
                     {
+                        data.ScreenPosition = screenPos.XY();
                         data.Found = false;
+                        data.LockStrength -= Time.deltaTime * WeaponIndicatorScript.PlayerData.LockLossTimeMultiplier;
+                        data.ClampStrength();
                         data.TimeSinceLastLockSend += Time.deltaTime;
                     }
                 }
@@ -278,26 +275,29 @@ public class PlayerShootingScript : MonoBehaviour
             CheckTargets();
 		}
     }
-
-    public void OnApplicationQuit()
-    {
-		CheckTargets();
-	}
 	
 	public void CheckTargets()
 	{
-	    //return;
-        // TODO fixme
-        for( int i = 0; i < targets.Count; i++ )
+        for( int i = targets.Count - 1; i >= 0; i-- )
         {
             if( targets[i].Script != null )
             {
-                if( targets[i].WasLocked && !targets[i].Found ) 
+                ScreenSpaceDebug.AddMessageOnce(targets[i].LockStrength.ToString(), targets[i].Script.transform.position);
+                if (targets[i].NeedsLockSent)
+                {
+                    targets[i].Script.GetTargetedBy(playerScript);
+                    targets[i].TimeSinceLastLockSend = 0f;
+                }
+                if (targets[i].WasLocked && !targets[i].Locked)
+                {
                     targets[i].Script.GetUntargetedBy(playerScript);
-                targets[i].WasLocked = targets[i].Locked;
-
-                if( !targets[i].Found || gameObject.GetComponent<HealthScript>().Health < 1 ) // Is player in target list dead, or unseen? Am I dead?
+                }
+                if (targets[i].LockStrength <= Mathf.Epsilon)
                     targets.RemoveAt(i);
+                else
+                {
+                    targets[i].WasLocked = targets[i].Locked;
+                }
             }
             else 
             {
