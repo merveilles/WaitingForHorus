@@ -223,7 +223,7 @@ public class Relay : MonoBehaviour
             GUI.skin = BaseSkin;
             // TODO less magical layout numerology
             GUILayout.Window(0, new Rect( ( Screen.width / 2 ) - 155, Screen.height - 110, 77, 35), DrawLoginWindow, string.Empty);
-    	    GUILayout.Window(2, new Rect( ( Screen.width / 2 ) - 155, Screen.height - (ServerListHeight + 1) - 110, 312, ServerListHeight), DrawServerList, string.Empty);
+    	    GUILayout.Window(2, new Rect( ( Screen.width / 2 ) - 155, Screen.height - ServerListHeight - 110, 312, ServerListHeight), DrawServerList, string.Empty);
         }
     }
 

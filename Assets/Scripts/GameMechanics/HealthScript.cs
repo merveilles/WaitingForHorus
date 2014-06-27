@@ -49,9 +49,7 @@ public class HealthScript : MonoBehaviour
         // TODO magical -104 number, what does it do?
         if( networkView.isMine && transform.position.y < KillHeight )
         {
-            // lol wat
-            NetworkPlayer networkPlayer = GetComponent<PlayerScript>().networkView.owner;
-            DoDamageOwner( 1, transform.position, networkPlayer );
+            DoDamageOwner(1, transform.position);
         }
 
         if (!firstSet && shieldRenderer != null)
@@ -110,24 +108,24 @@ public class HealthScript : MonoBehaviour
         shieldRenderer.enabled = shouldBeEnabled;
     }
 
-    public void DeclareHitToOthers(int damage, Vector3 point, NetworkPlayer shootingPlayer)
+    public void DeclareHitToOthers(int damage, Vector3 point)
     {
-        networkView.RPC("OthersReceiveHit", RPCMode.Others, damage, point, shootingPlayer);
+        networkView.RPC("OthersReceiveHit", RPCMode.Others, damage, point);
     }
 
     [RPC]
 // ReSharper disable once UnusedMember.Local
-    private void OthersReceiveHit(int damage, Vector3 point, NetworkPlayer shootingPlayer)
+    private void OthersReceiveHit(int damage, Vector3 point)
     {
 		EffectsScript.ExplosionHit( point, Quaternion.LookRotation( Vector3.up ) );
         if (networkView.isMine)
         {
-            DoDamageOwner(damage, point, shootingPlayer);
+            DoDamageOwner(damage, point);
         }
     }
 
     [RPC]
-    private void DoDamageOwner( int damage, Vector3 point, NetworkPlayer shootingPlayer )
+    private void DoDamageOwner( int damage, Vector3 point)
     {
         ScreenSpaceDebug.AddMessage("DAMAGE", point, Color.red);
         if ( !dead )

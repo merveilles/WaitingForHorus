@@ -85,7 +85,7 @@ public class BulletScript : MonoBehaviour
                 Network.player == Instigator.networkView.owner) // only do damage from net player that fired
 			{
 				audio.Play(); //Hitreg Sound
-                health.DeclareHitToOthers(damage, point, Instigator.networkView.owner);
+			    health.DeclareHitToOthers(damage, point);
 				return true;
 			}
         }
