@@ -63,6 +63,7 @@ public class Relay : MonoBehaviour
 
         ExternalServerList = new ExternalServerList();
         ExternalServerList.OnMasterServerListChanged += ReceiveMasterListChanged;
+        ExternalServerList.OnMasterServerListFetchError += ReceiveMasterListFetchError;
     }
 
     public void Start()
@@ -183,7 +184,7 @@ public class Relay : MonoBehaviour
                 Connect(RunMode.Server);
             }
 			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
-            if(GUILayout.Button("JOIN"))
+            if(GUILayout.Button("RANDOM"))
             {
                 GlobalSoundsScript.PlayButtonPress();
                 Connect(RunMode.Client);
@@ -222,11 +223,17 @@ public class Relay : MonoBehaviour
     public void OnDestroy()
     {
         ExternalServerList.OnMasterServerListChanged -= ReceiveMasterListChanged;
+        ExternalServerList.OnMasterServerListFetchError -= ReceiveMasterListFetchError;
         ExternalServerList.Dispose();
     }
 
     private void ReceiveMasterListChanged()
     {
         MessageLog.AddMessage("Found " + ExternalServerList.MasterListRaw.servers.Length + " servers");
+    }
+
+    private void ReceiveMasterListFetchError(string message)
+    {
+        MessageLog.AddMessage("Failed to get server list: " + message);
     }
 }

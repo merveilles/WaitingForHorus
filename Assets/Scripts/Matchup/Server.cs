@@ -200,4 +200,15 @@ public class Server : MonoBehaviour
         if (info.sender == networkView.owner)
             ChangeLevel(levelName);
     }
+
+    // I have no idea if this actually works reliably or not, but it seems to
+	// work in my testing. Semi-hack? I guess I could stall the application
+	// until we know it's worked, but that's kind of jerky, too.
+    public void OnApplicationQuit()
+    {
+        if (WasMine)
+        {
+            ServerNotifier.BecomeUnlisted();
+        }
+    }
 }
