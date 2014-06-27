@@ -250,7 +250,6 @@ public class HealthScript : MonoBehaviour
         foreach (var r in GetComponentsInChildren<Collider>()) r.enabled = false;
         foreach (var r in GetComponentsInChildren<PlayerShootingScript>())
         {
-            r.CheckTargets();
 			r.targets.Clear();
             r.enabled = false;
         }
