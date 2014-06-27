@@ -223,60 +223,64 @@ public class PlayerShootingScript : MonoBehaviour
                 	reloadSound.Play();
             }
 
-            var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            var allowedDistance = 130 * Screen.height / 1500f;
-
-            // Test for players in crosshair
-            // TODO fixme
-            foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
-            {
-                if( ps == GetComponent<PlayerScript>() ) // Is targeting self?
-                    continue;
-
-                var health = ps.gameObject.GetComponent<HealthScript>();
-                var position = ps.transform.position;
-                var screenPos = Camera.main.WorldToScreenPoint(position);
-
-                if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
-                {
-                    WeaponIndicatorScript.PlayerData data;
-                    if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null )
-                        targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps, WasLocked = false } );
-
-                    data.TimeSinceLastLockSend += Time.deltaTime;
-
-                    // TODO lots of redundant stuff here
-                    data.ScreenPosition = screenPos.XY();
-                    data.LockStrength += Time.deltaTime;
-                    data.ClampStrength();
-                    data.Found = true;
-					
-                    if ( !data.WasLocked && data.Locked )
-                    {	
-                        if( GlobalSoundsScript.soundEnabled )
-                            targetSound.Play();
-
-                    }
-                }
-                else
-                {
-                    WeaponIndicatorScript.PlayerData data = targets.Find((data2) => data2.Script == ps);
-                    if (data != null)
-                    {
-                        data.ScreenPosition = screenPos.XY();
-                        data.Found = false;
-                        data.LockStrength -= Time.deltaTime * WeaponIndicatorScript.PlayerData.LockLossTimeMultiplier;
-                        data.ClampStrength();
-                        data.TimeSinceLastLockSend += Time.deltaTime;
-                    }
-                }
-            }
 			
+            TestScreenSpaceLockTargets();
             CheckTargets();
 		}
     }
+
+    private void TestScreenSpaceLockTargets()
+    {
+        var screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        var allowedDistance = 130 * Screen.height / 1500f;
+
+        // Test for players in crosshair
+        foreach (var ps in PlayerScript.UnsafeAllEnabledPlayerScripts)
+        {
+            if( ps == GetComponent<PlayerScript>() ) // Is targeting self?
+                continue;
+
+            var health = ps.gameObject.GetComponent<HealthScript>();
+            var position = ps.transform.position;
+            var screenPos = Camera.main.WorldToScreenPoint(position);
+
+            if (health.Health > 0 && screenPos.z > 0 && ( screenPos.XY() - screenCenter ).magnitude < allowedDistance)
+            {
+                WeaponIndicatorScript.PlayerData data;
+                if ( (data = targets.FirstOrDefault( x => x.Script == ps ) ) == null )
+                    targets.Add( data = new WeaponIndicatorScript.PlayerData { Script = ps, WasLocked = false } );
+
+                data.TimeSinceLastLockSend += Time.deltaTime;
+
+                // TODO lots of redundant stuff here
+                data.ScreenPosition = screenPos.XY();
+                data.LockStrength += Time.deltaTime;
+                data.ClampStrength();
+                data.Found = true;
+				
+                if ( !data.WasLocked && data.Locked )
+                {	
+                    if( GlobalSoundsScript.soundEnabled )
+                        targetSound.Play();
+
+                }
+            }
+            else
+            {
+                WeaponIndicatorScript.PlayerData data = targets.Find(data2 => data2.Script == ps);
+                if (data != null)
+                {
+                    data.ScreenPosition = screenPos.XY();
+                    data.Found = false;
+                    data.LockStrength -= Time.deltaTime * WeaponIndicatorScript.PlayerData.LockLossTimeMultiplier;
+                    data.ClampStrength();
+                    data.TimeSinceLastLockSend += Time.deltaTime;
+                }
+            }
+        }
+    }
 	
-	public void CheckTargets()
+	private void CheckTargets()
 	{
         for( int i = targets.Count - 1; i >= 0; i-- )
         {
