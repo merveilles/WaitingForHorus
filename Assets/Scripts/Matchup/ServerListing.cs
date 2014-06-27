@@ -67,6 +67,18 @@ namespace MasterServer
             }
         }
 
+        public bool TryGetRandomServer(out ServerInfoRaw serverInfo)
+        {
+            // Dumb de dumb. Is there a better way to do this in C# if I want to
+			// be able to use 'out' without getting compile errors?
+            serverInfo = new ServerInfoRaw();
+            if (MasterListRaw == null) return false;
+            if (!(MasterListRaw.servers.Length > 0)) return false;
+            int i = UnityEngine.Random.Range(0, MasterListRaw.servers.Length);
+            serverInfo = MasterListRaw.servers[i];
+            return true;
+        }
+
         public void Dispose()
         {
             if (WebClient != null)

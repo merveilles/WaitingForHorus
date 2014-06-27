@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Text;
 using MasterServer;
 using UnityEngine;
@@ -91,8 +90,24 @@ public class Relay : MonoBehaviour
         }
     }
 
+    private void ConnectToExternalListedServer(ServerInfoRaw serverInfo)
+    {
+        TryingToConnect = true;
+        Network.Connect(serverInfo.ip);
+        MessageLog.AddMessage("Connecting to " + serverInfo.ip);
+    }
+    private void ConnectToRandomServer()
+    {
+        ServerInfoRaw serverInfo;
+        if (ExternalServerList.TryGetRandomServer(out serverInfo))
+        {
+            ConnectToExternalListedServer(serverInfo);
+        }
+    }
+
     public void OnServerInitialized()
     {
+        TryingToConnect = false;
         MessageLog.AddMessage("Started server on port " + Port);
         var server = (Server)Network.Instantiate(BaseServer, Vector3.zero, Quaternion.identity, 0 );
         server.NetworkGUID = Network.player.guid;
@@ -173,6 +188,14 @@ public class Relay : MonoBehaviour
                 GlobalSoundsScript.PlayButtonPress();
                 Connect(RunMode.Client);
             }
+
+			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
+            if(GUILayout.Button("REFRESH"))
+            {
+                GlobalSoundsScript.PlayButtonPress();
+                ExternalServerList.Refresh();
+            }
+
             GUI.enabled = true;
         }
         GUILayout.EndHorizontal();
