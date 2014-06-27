@@ -144,7 +144,7 @@ public class Server : MonoBehaviour
         {
             ServerNotifier.BecomeUnlisted();
         }
-        ServerNotifier.Dispose();
+        //ServerNotifier.Dispose();
     }
 
     public delegate void ReceiveServerMessageHandler(string text);

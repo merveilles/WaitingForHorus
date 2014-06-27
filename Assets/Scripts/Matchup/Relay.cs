@@ -20,6 +20,9 @@ public class Relay : MonoBehaviour
     // Some more un-lovely hacks
     private GUIStyle BoxSpacer;
 
+    private float TimeUntilRefresh = 0f;
+    private float TimeBetweenRefreshes = 15f;
+
     public Server CurrentServer
     {
         get
@@ -39,8 +42,8 @@ public class Relay : MonoBehaviour
             }
             else
             {
+                TimeUntilRefresh = 1f;
                 // Refresh if we go back to the title screen
-                //ExternalServerList.Refresh();
             }
             TryingToConnect = false;
         }
@@ -80,7 +83,7 @@ public class Relay : MonoBehaviour
     {
         Application.LoadLevel("pi_mar");
 
-        ExternalServerList.Refresh();
+        //ExternalServerList.Refresh();
     }
 
     public void Connect(RunMode mode)
@@ -150,6 +153,16 @@ public class Relay : MonoBehaviour
             if (Input.GetKeyDown("f8"))
             {
                 Network.Disconnect();
+            }
+        }
+
+        if (CurrentServer == null)
+        {
+            TimeUntilRefresh -= Time.deltaTime;
+            if (TimeUntilRefresh <= 0f)
+            {
+                TimeUntilRefresh += TimeBetweenRefreshes;
+                ExternalServerList.Refresh();
             }
         }
     }
