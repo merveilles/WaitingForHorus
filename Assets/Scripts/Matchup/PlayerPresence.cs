@@ -39,7 +39,23 @@ public class PlayerPresence : MonoBehaviour
 
     public NetworkViewID PossessedCharacterViewID;
 
-    public PlayerScript Possession { get; set; }
+    private PlayerScript _Possession;
+
+    public PlayerScript Possession
+    {
+        get
+        {
+            return _Possession;
+        }
+        set
+        {
+            _Possession = value;
+            if (_Possession != null)
+            {
+                _Possession.CameraScript.IsExteriorView = WantsExteriorView;
+            }
+        }
+    }
 
     public delegate void PlayerPresenceWantsRespawnHandler();
     public event PlayerPresenceWantsRespawnHandler OnPlayerPresenceWantsRespawn = delegate {};
@@ -53,6 +69,22 @@ public class PlayerPresence : MonoBehaviour
     public event NameChangedHandler OnBecameNamed = delegate {};
 
     private bool wasMine = false;
+
+    private bool _WantsExteriorView;
+
+    public bool WantsExteriorView
+    {
+        get
+        {
+            return _WantsExteriorView;
+        }
+        set
+        {
+            _WantsExteriorView = value;
+            int asNumber = _WantsExteriorView ? 1 : 0;
+            PlayerPrefs.SetInt("thirdperson", asNumber);
+        }
+    }
 
     public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
@@ -86,6 +118,8 @@ public class PlayerPresence : MonoBehaviour
         DontDestroyOnLoad(this);
         PossessedCharacterViewID = NetworkViewID.unassigned;
         LastGUIDebugPositions = new WeakDictionary<PlayerScript, Vector2>();
+
+        _WantsExteriorView = PlayerPrefs.GetInt("thirdperson", 1) > 0;
 
         // Ladies and gentlemen, the great and powerful Unity
         wasMine = networkView.isMine;

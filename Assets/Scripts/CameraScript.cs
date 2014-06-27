@@ -47,7 +47,27 @@ public class CameraScript : MonoBehaviour
 
     // Indicates whether the camera is in third person (exterior) or first
 	// person (interior) view.
-    public bool IsExteriorView { get; private set; }
+    public bool _IsExteriorView;
+
+    public bool IsExteriorView
+    {
+        get
+        {
+            return _IsExteriorView;
+        }
+        set
+        {
+            if (_IsExteriorView != value)
+            {
+                _IsExteriorView = value;
+                // Invoke listeners
+                OnCameraIsExteriorChanged(IsExteriorView);
+                // Update which objects we want to be hidden via layers
+                UpdateCameraObjectVisibiliy();
+            }
+        }
+    }
+
     public Vector3 ExteriorViewOffset = new Vector3(0f, 2.5f, -6f);
     public Vector3 InteriorViewOffset = new Vector3(0f, 1.0f, 0f);
     private Vector3 SmoothedViewOffset = new Vector3(0f, 2.5f, -6f);
@@ -78,8 +98,6 @@ public class CameraScript : MonoBehaviour
 
     public void Start()
     {
-        IsExteriorView = true;
-
         player = transform.parent.parent.GetComponent<PlayerScript>();
         if(player.networkView.isMine)
         {
@@ -118,10 +136,12 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKeyDown("x"))
         {
             IsExteriorView = !IsExteriorView;
-            // Invoke listeners
-            OnCameraIsExteriorChanged(IsExteriorView);
-            // Update which objects we want to be hidden via layers
-            UpdateCameraObjectVisibiliy();
+
+            // TODO Hack, I'm feeling lazy right now
+            if (player.Possessor != null)
+            {
+                player.Possessor.WantsExteriorView = IsExteriorView;
+            }
         }
 
         // Prevent crazy values
