@@ -144,6 +144,44 @@ public class Relay : MonoBehaviour
         }
     }
 
+    private bool ExternalServerListAvailable
+    {
+        get
+        {
+            if (ExternalServerList == null) return false;
+            if (ExternalServerList.MasterListRaw == null) return false;
+            return true;
+        }
+    }
+    private bool DoAnyServersExist
+    {
+        get
+        {
+            if (ExternalServerList == null) return false;
+            if (ExternalServerList.MasterListRaw == null) return false;
+            return ExternalServerList.MasterListRaw.servers.Length > 0;
+        }
+    }
+
+    private int ServerListEntries
+    {
+        get
+        {
+            if (DoAnyServersExist)
+                return ExternalServerList.MasterListRaw.servers.Length;
+            else
+                return 1;
+        }
+    }
+
+    private int ServerListHeight
+    {
+        get
+        {
+            return ServerListEntries * 36;
+        }
+    }
+
     public void OnGUI()
     {
         if (ScreenSpaceDebug.Instance.ShouldDraw)
@@ -160,7 +198,9 @@ public class Relay : MonoBehaviour
         if (CurrentServer == null)
         {
             GUI.skin = BaseSkin;
-            GUILayout.Window(0, new Rect( ( Screen.width / 2 ) - 122, Screen.height - 110, 77, 35), DrawLoginWindow, string.Empty);
+            // TODO less magical layout numerology
+            GUILayout.Window(0, new Rect( ( Screen.width / 2 ) - 155, Screen.height - 110, 77, 35), DrawLoginWindow, string.Empty);
+    	    GUILayout.Window(2, new Rect( ( Screen.width / 2 ) - 155, Screen.height - (ServerListHeight + 1) - 110, 312, ServerListHeight), DrawServerList, string.Empty);
         }
     }
 
@@ -202,6 +242,56 @@ public class Relay : MonoBehaviour
         GUILayout.EndHorizontal();
     }
 
+    private void DrawServerList(int id)
+    {
+        // TODO this should be in a scrollable view, because it will obviously run offscreen if there are too many
+        if (DoAnyServersExist)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var serverInfo in ExternalServerList.MasterListRaw.servers)
+            {
+                sb.Append(serverInfo.players);
+                sb.Append(" players on ");
+                sb.Append(serverInfo.map);
+                sb.Append(" [");
+                sb.Append(serverInfo.ip);
+                sb.Append("]");
+                GUIStyle rowStyle = new GUIStyle( BaseSkin.box ) { fixedWidth = 312 - 65 };
+                GUILayout.BeginHorizontal();
+                //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
+                GUILayout.Box(sb.ToString(), rowStyle);
+    			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
+                GUI.enabled = !TryingToConnect;
+                if(GUILayout.Button("JOIN"))
+                {
+                    GlobalSoundsScript.PlayButtonPress();
+                    ConnectToExternalListedServer(serverInfo);
+                }
+                GUILayout.EndHorizontal();
+
+                // clear
+                sb.Length = 0;
+            }
+        }
+        else
+        {
+            GUIStyle rowStyle = new GUIStyle( BaseSkin.box ) { fixedWidth = 340 };
+            GUILayout.BeginHorizontal();
+            //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
+            string message;
+            if (ExternalServerListAvailable)
+            {
+                message = "No servers";
+            }
+            else
+            {
+                message = "Getting server list...";
+            }
+            GUILayout.Box(message, rowStyle);
+            GUILayout.EndHorizontal();
+        }
+    }
+
     public bool IsConnected { get { return false; } }
 
     private void ReceiveServerMessage(string text)
@@ -229,7 +319,7 @@ public class Relay : MonoBehaviour
 
     private void ReceiveMasterListChanged()
     {
-        MessageLog.AddMessage("Found " + ExternalServerList.MasterListRaw.servers.Length + " servers");
+        // do something useful?
     }
 
     private void ReceiveMasterListFetchError(string message)
