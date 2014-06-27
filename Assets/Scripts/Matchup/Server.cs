@@ -12,6 +12,9 @@ public class Server : MonoBehaviour
 
     public GameMode DefaultGameMode;
 
+    // Will only be available on the server
+    public string NetworkGUID { get; set; }
+
     public void Awake()
     {
         DontDestroyOnLoad(this);

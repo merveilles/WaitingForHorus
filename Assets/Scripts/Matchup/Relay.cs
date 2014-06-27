@@ -55,6 +55,8 @@ public class Relay : MonoBehaviour
         Instance = this;
         MessageLog = new MessageLog();
         MessageLog.Skin = BaseSkin;
+
+        Network.natFacilitatorIP = "107.170.78.82";
     }
 
     public void Start()
@@ -73,18 +75,23 @@ public class Relay : MonoBehaviour
                 break;
             case RunMode.Server:
                 TryingToConnect = true;
-                Network.InitializeServer(32, Port, false);
-                Network.Instantiate(BaseServer, Vector3.zero, Quaternion.identity, 0 );
-                MessageLog.AddMessage("Started server on port " + Port);
-                //CurrentServer = (Server)Network.Instantiate(BaseServer, Vector3.zero, Quaternion.identity, 0 );
-                //CurrentServer.Relay = this;
+                Network.InitializeServer(32, Port, true); // true = use nat facilitator
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-
+    public void OnServerInitialized()
+    {
+        MessageLog.AddMessage("Started server on port " + Port);
+        var server = (Server)Network.Instantiate(BaseServer, Vector3.zero, Quaternion.identity, 0 );
+        server.NetworkGUID = Network.player.guid;
+        MessageLog.AddMessage("Server GUID: " + server.NetworkGUID);
+        // Old method, would still be useful if we ever have multiple servers per Unity process (wha?)
+        //CurrentServer = (Server)Network.Instantiate(BaseServer, Vector3.zero, Quaternion.identity, 0 );
+        //CurrentServer.Relay = this;
+    }
 
     public void OnFailedToConnect(NetworkConnectionError error)
     {
