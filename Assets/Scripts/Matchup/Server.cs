@@ -189,6 +189,7 @@ public class Server : MonoBehaviour
         if (Application.loadedLevelName != levelName)
         {
             Application.LoadLevel(levelName);
+            networkView.RPC("RemoteReceiveLevelChange", RPCMode.Others, levelName);
             ServerNotifier.CurrentMapName = levelName;
         }
     }

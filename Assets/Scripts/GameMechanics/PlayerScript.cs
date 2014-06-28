@@ -721,7 +721,8 @@ public class PlayerScript : MonoBehaviour
     {
         if (!networkView.isMine)
         {
-            networkView.RPC("PerformDestroy", networkView.owner);
+            if (ShouldSendMessages)
+                networkView.RPC("PerformDestroy", networkView.owner);
         }
         else
         {

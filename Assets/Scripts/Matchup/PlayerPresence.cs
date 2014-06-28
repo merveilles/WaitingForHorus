@@ -48,10 +48,23 @@ public class PlayerPresence : MonoBehaviour
         }
         set
         {
+            // Do nothing if same
+            if (_Possession == value) return;
+
+            // Destroy old one if not null
+            if (_Possession != null)
+                _Possession.PerformDestroy();
+
             _Possession = value;
             if (_Possession != null)
             {
                 _Possession.CameraScript.IsExteriorView = WantsExteriorView;
+                if (networkView.isMine)
+                {
+                    _Possession.CameraScript.BaseFieldOfView = PlayerPrefs.GetFloat("fov",
+                        CameraScript.DefaultBaseFieldOfView);
+                    _Possession.CameraScript.AdjustCameraFOVInstantly();
+                }
             }
         }
     }

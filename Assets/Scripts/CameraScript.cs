@@ -46,11 +46,12 @@ public class CameraScript : MonoBehaviour
         set
         {
             _BaseFieldOfView = value;
-            PlayerPrefs.SetFloat("fov", _BaseFieldOfView);
+            if (player.networkView.isMine)
+                PlayerPrefs.SetFloat("fov", _BaseFieldOfView);
         }
     }
 
-    private const float DefaultBaseFieldOfView = 85.0f;
+    public const float DefaultBaseFieldOfView = 85.0f;
     public float ZoomedFieldOfViewRatio = 0.42f;
 
     private float SmoothedBaseFieldOfView = 85.0f;
@@ -109,12 +110,12 @@ public class CameraScript : MonoBehaviour
     {
         if (HackDisableShadowsObjects == null)
             HackDisableShadowsObjects = new GameObject[0];
-        if (player.networkView.isMine)
-        {
-            _BaseFieldOfView = PlayerPrefs.GetFloat("fov", DefaultBaseFieldOfView);
-            SmoothedBaseFieldOfView = _BaseFieldOfView;
-            SmoothedFieldOfView = _BaseFieldOfView;
-        }
+    }
+
+    public void AdjustCameraFOVInstantly()
+    {
+        SmoothedBaseFieldOfView = _BaseFieldOfView;
+        SmoothedFieldOfView = _BaseFieldOfView;
     }
 
     public void Start()
@@ -355,7 +356,7 @@ public class CameraScript : MonoBehaviour
         RaycastHit hitInfo;
         Vector3 position, forward;
         // TODO we need smarter handling for toggilng raycast crosshair and first/third person at the same time
-        if (UsesRaycastCrosshair && IsExteriorView)
+        if ((UsesRaycastCrosshair && IsExteriorView) || mainCamera == null)
         {
             position = transform.position;
             forward = transform.forward;

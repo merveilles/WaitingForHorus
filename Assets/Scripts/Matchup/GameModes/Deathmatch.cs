@@ -21,6 +21,8 @@ public class Deathmatch : GameMode
         PlayerScript.OnPlayerScriptDied += ReceivePlayerDied;
         PlayerPresence.OnPlayerPresenceAdded += ReceivePresenceAdded;
         PlayerPresence.OnPlayerPresenceRemoved += ReceivePresenceRemoved;
+
+        Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
         
         StartAfterReceivingServer();
     }
@@ -32,7 +34,7 @@ public class Deathmatch : GameMode
             SetupPresenceListener(presence);
         }
 
-        CurrentMapName = "Loading...";
+        CurrentMapName = "pi_mar";
         Server.ChangeLevel("pi_mar");
         ReceiveMapChanged();
         //if (Application.loadedLevelName != "pi_mar")
@@ -99,6 +101,7 @@ public class Deathmatch : GameMode
         PlayerScript.OnPlayerScriptSpawned -= ReceivePlayerSpawned;
         PlayerScript.OnPlayerScriptDied -= ReceivePlayerDied;
         PlayerPresence.OnPlayerPresenceAdded -= ReceivePresenceAdded;
+        Relay.Instance.MessageLog.OnCommandEntered -= ReceiveCommandEntered;
     }
 
     private void SetupPresenceListener(PlayerPresence presence)
@@ -138,6 +141,29 @@ public class Deathmatch : GameMode
         public void OnDestroy()
         {
             Presence.OnPlayerPresenceWantsRespawn -= ReceivePresenceWantsRespawn;
+        }
+    }
+
+    private void ReceiveCommandEntered(string command, string[] args)
+    {
+        switch (command)
+        {
+            case "map":
+                if (args.Length > 0)
+                    TryChangeLevel(args[0]);
+            break;
+        }
+    }
+
+    private void TryChangeLevel(string levelName)
+    {
+        if (Application.CanStreamedLevelBeLoaded(levelName))
+        {
+            foreach (var playerScript in PlayerScript.AllEnabledPlayerScripts)
+            {
+                playerScript.PerformDestroy();
+            }
+            Server.ChangeLevel(levelName);
         }
     }
 }

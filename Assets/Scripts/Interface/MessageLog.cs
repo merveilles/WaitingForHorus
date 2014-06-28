@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameMessage
@@ -38,6 +39,9 @@ public class MessageLog
 
     public delegate void MessageEnteredHandler(string text);
     public event MessageEnteredHandler OnMessageEntered = delegate { };
+
+    public delegate void CommandEnteredHandler(string command, string[] args);
+    public event CommandEnteredHandler OnCommandEntered = delegate { };
 
     private string CurrentInput = "";
 
@@ -80,7 +84,24 @@ public class MessageLog
         {
             // Don't broadcast empty string. TODO should probably trim, too.
             if (CurrentInput != "")
-                OnMessageEntered(CurrentInput);
+            {
+                if (CurrentInput.StartsWith("/"))
+                {
+                    if (CurrentInput.Length > 1)
+                    {
+                        var parts = CurrentInput.Substring(1).Split(' ');
+                        if (parts.Length > 0)
+                        {
+                            var args = parts.Skip(1).ToArray();
+                            OnCommandEntered(parts[0], args);
+                        }
+                    }
+                }
+                else
+                {
+                    OnMessageEntered(CurrentInput);
+                }
+            }
             CurrentInput = "";
             IsInputFieldEnabled = false;
         }
