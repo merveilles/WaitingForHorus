@@ -91,8 +91,8 @@ public class Server : MonoBehaviour
     // Only called by Unity on server
     public void OnPlayerDisconnected(NetworkPlayer player)
     {
-        Network.DestroyPlayerObjects(player);
         Network.RemoveRPCs(player);
+        Network.DestroyPlayerObjects(player);
         NetworkPlayers.Remove(player);
     }
 
@@ -112,6 +112,7 @@ public class Server : MonoBehaviour
         {
             Destroy(CurrentGameMode.gameObject);
         }
+        // TODO not sure what to do about this stuff now
         foreach (var playerPresence in PlayerPresence.AllPlayerPresences)
         {
             Destroy(playerPresence.gameObject);

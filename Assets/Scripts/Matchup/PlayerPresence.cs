@@ -48,16 +48,22 @@ public class PlayerPresence : MonoBehaviour
         }
         set
         {
+            //var newName = value == null ? "null" : value.name;
+            //Debug.Log("Setting presence " + Name + "'s possession to " + newName);
+
             // Do nothing if same
             if (_Possession == value) return;
 
-            // Destroy old one if not null
+            // Not dead yet, but we won't be interested anymore if it dies
             if (_Possession != null)
-                _Possession.PerformDestroy();
+            {
+                _Possession.OnDeath -= ReceivePawnDeath;
+            }
 
             _Possession = value;
             if (_Possession != null)
             {
+                _Possession.Possessor = this;
                 _Possession.CameraScript.IsExteriorView = WantsExteriorView;
                 if (networkView.isMine)
                 {
@@ -65,6 +71,10 @@ public class PlayerPresence : MonoBehaviour
                         CameraScript.DefaultBaseFieldOfView);
                     _Possession.CameraScript.AdjustCameraFOVInstantly();
                 }
+                _Possession.OnDeath += ReceivePawnDeath;
+
+                if (_Possession.networkView != null)
+                    PossessedCharacterViewID = _Possession.networkView.viewID;
             }
         }
     }
@@ -107,24 +117,46 @@ public class PlayerPresence : MonoBehaviour
         stream.Serialize(ref PossessedCharacterViewID);
         if (stream.isReading)
         {
-            if (prevPossesedID != PossessedCharacterViewID)
+            if (Possession == null)
             {
-                if (prevPossesedID != NetworkViewID.unassigned)
-                {
-                    NetworkView view = null;
-                    try
-                    {
-                        view = NetworkView.Find(prevPossesedID);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.Log(e);
-                    }
-                    if (view != null) Destroy(view.gameObject);
-                }
-                if (PossessedCharacterViewID != NetworkViewID.unassigned)
-                    PerformSpawnForViewID(PossessedCharacterViewID);
+                // see if possession id from network is not null
+                // see if new possession object from that id is not null
+                // then assign
+                PlayerScript character = TryGetPlayerScriptFromNetworkViewID(PossessedCharacterViewID);
+                if (character != null) Possession = character;
             }
+            else
+            {
+                // see if new possession id is different from current possession id
+                // assign new possession, even if null
+                if (prevPossesedID != PossessedCharacterViewID)
+                {
+                    Possession = TryGetPlayerScriptFromNetworkViewID(PossessedCharacterViewID);
+                }
+            }
+        }
+    }
+
+    private PlayerScript TryGetPlayerScriptFromNetworkViewID(NetworkViewID viewID)
+    {
+        if (viewID == NetworkViewID.unassigned) return null;
+        NetworkView view = null;
+        try
+        {
+            view = NetworkView.Find(viewID);
+        }
+        catch (Exception)
+        {
+            //Debug.Log(e);
+        }
+        if (view != null)
+        {
+            var character = view.observed as PlayerScript;
+            return character;
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -193,6 +225,9 @@ public class PlayerPresence : MonoBehaviour
             }
 
         }
+
+        if (Input.GetKeyDown("f11"))
+            ScreenSpaceDebug.LogMessageSizes();
     }
 
     private Vector3 InfoPointForPlayerScript(PlayerScript playerScript)
@@ -237,33 +272,48 @@ public class PlayerPresence : MonoBehaviour
     public void SpawnCharacter(Vector3 position)
     {
         if (networkView.isMine)
-            ClientSpawnCharacter(position);
+        {
+            DoActualSpawn(position);
+        }
         else
-            networkView.RPC("ClientSpawnCharacter", networkView.owner, position);
+        {
+            networkView.RPC("RemoteSpawnCharacter", networkView.owner, position);
+        }
     }
 
-    private PlayerScript PerformSpawnForViewID(NetworkViewID characterViewId)
+    // Used by owner of this Presence
+    private void DoActualSpawn(Vector3 position)
     {
-        var newPlayerCharacter =
-            (PlayerScript) Instantiate(DefaultPlayerCharacterPrefab, Vector3.zero, Quaternion.identity);
-        newPlayerCharacter.networkView.viewID = characterViewId;
-        newPlayerCharacter.Possessor = this;
-        Possession = newPlayerCharacter;
-        newPlayerCharacter.OnDeath += ReceivePawnDeath;
-        return newPlayerCharacter;
+        // ondestroy will be bound in the setter
+        Possession = (PlayerScript)Network.Instantiate(DefaultPlayerCharacterPrefab, position, Quaternion.identity, 1);
     }
 
     [RPC]
-    private void ClientSpawnCharacter(Vector3 spawnPosition)
+    private void RemoteSpawnCharacter(Vector3 position, NetworkMessageInfo info)
     {
-        var newViewID = Network.AllocateViewID();
-        //Debug.Log("Will spawn character with view ID: " + newViewID);
-        var newCharacter = PerformSpawnForViewID(newViewID);
-        newCharacter.transform.position = spawnPosition;
-        newCharacter.Possessor = this;
-        Possession = newCharacter;
-        newCharacter.OnDeath += ReceivePawnDeath;
-        PossessedCharacterViewID = newViewID;
+        if (info.sender == Server.networkView.owner)
+        {
+            if (Possession != null)
+            {
+                Possession = null;
+                CleanupOldCharacter(Possession);
+            }
+            DoActualSpawn(position);
+        }
+    }
+
+    private void CleanupOldCharacter(PlayerScript character)
+    {
+        if (Relay.Instance.IsConnected)
+        {
+            Network.RemoveRPCs(character.networkView.viewID);
+            Network.Destroy(character.gameObject);
+        }
+        else
+        {
+            // TODO Don't need to remove RPCs if offline? What if we start the server again ?? Fuck unity
+            Destroy(character.gameObject);
+        }
     }
 
     private void ReceivePawnDeath()

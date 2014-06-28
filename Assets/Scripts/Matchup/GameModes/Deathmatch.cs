@@ -56,8 +56,8 @@ public class Deathmatch : GameMode
 
     private void ReceivePlayerDied(PlayerScript deadPlayerScript)
     {
-        deadPlayerScript.PerformDestroy();
         Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed");
+        deadPlayerScript.PerformDestroy();
     }
 
     public override void ReceiveMapChanged()
@@ -164,6 +164,10 @@ public class Deathmatch : GameMode
                 playerScript.PerformDestroy();
             }
             Server.ChangeLevel(levelName);
+        }
+        else
+        {
+            Relay.Instance.MessageLog.AddMessage("Unable to change level to " + levelName + " because it is not available.");
         }
     }
 }

@@ -167,6 +167,24 @@ public class Relay : MonoBehaviour
                 ExternalServerList.Refresh();
             }
         }
+
+        var sb = new StringBuilder();
+        sb.AppendLine(PlayerScript.UnsafeAllEnabledPlayerScripts.Count + " PlayerScripts");
+        sb.Append(PlayerPresence.UnsafeAllPlayerPresences.Count + " PlayerPresences");
+        ScreenSpaceDebug.AddLineOnce(sb.ToString());
+
+        for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
+        {
+            var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
+            var presenceName = character.Possessor == null ? "null" : character.Possessor.Name;
+            ScreenSpaceDebug.AddLineOnce("Character: " + character.name + " possessed by " + presenceName);
+        }
+        for (int i = 0; i < PlayerPresence.UnsafeAllPlayerPresences.Count; i++)
+        {
+            var presence = PlayerPresence.UnsafeAllPlayerPresences[i];
+            var characterName = presence.Possession == null ? "null" : presence.Possession.name;
+            ScreenSpaceDebug.AddLineOnce("Presence: " + presence.Name + " possessing " + characterName);
+        }
     }
 
     private bool ExternalServerListAvailable
@@ -209,14 +227,6 @@ public class Relay : MonoBehaviour
 
     public void OnGUI()
     {
-        if (ScreenSpaceDebug.Instance.ShouldDraw)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(PlayerScript.UnsafeAllEnabledPlayerScripts.Count + " PlayerScripts");
-            sb.AppendLine(PlayerPresence.UnsafeAllPlayerPresences.Count + " PlayerPresences");
-            GUI.Label(new Rect(10, 10, 500, 500), sb.ToString());
-        }
-
         MessageLog.OnGUI();
 
         // Display name setter and other stuff when not connected

@@ -711,39 +711,21 @@ public class PlayerScript : MonoBehaviour
 
         // TODO this belongs earlier in the chain of death-related stuff
         OnDeath();
-        //Debug.Log("Destroying PlayerScript " + this + " with view ID " + networkView.viewID);
-        //Network.RemoveRPCs( networkView.viewID );
     }
 
     // TODO gross
     [RPC]
     public void PerformDestroy()
     {
-        if (!networkView.isMine)
+        if (!Network.isServer)
         {
-            if (ShouldSendMessages)
-                networkView.RPC("PerformDestroy", networkView.owner);
+            networkView.RPC("PerformDestroy", RPCMode.Server);
         }
         else
         {
-            Destroy(gameObject);
+            Network.RemoveRPCs(Possessor.networkView.viewID);
+            Network.Destroy(networkView.viewID);
         }
-        // Use code below for explicit destruction (currently implicit, handled by PlayerPresence)
-        //if (Network.isServer)
-        //{
-        //    Network.RemoveRPCs(networkView.viewID);
-        //    Network.Destroy(gameObject);
-        //}
-        //else
-        //{
-        //    networkView.RPC("PerformDestroy", RPCMode.Server);
-        //}
-    }
-
-    [RPC]
-    private void RemotePerformDestroy()
-    {
-        Destroy(gameObject);
     }
 
     // Try to guess capsule info for doing overlap tests and sweeps, because
