@@ -11,6 +11,8 @@ public class Relay : MonoBehaviour
     public static Relay Instance { get; private set; }
     public Server BaseServer;
 
+    public int CurrentVersionID = 0;
+
     public GameObject MainCamera;
 
     private Server _CurrentServer;
@@ -280,11 +282,16 @@ public class Relay : MonoBehaviour
                 sb.Append(" [");
                 sb.Append(serverInfo.ip);
                 sb.Append("]");
+
+                if( serverInfo.mismatchedVersion )
+                    sb.Append( " |Game Using Incompatible Version|" );
+
                 GUILayout.BeginHorizontal();
                 //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
                 GUILayout.Box(sb.ToString(), rowStyle);
     			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
-                GUI.enabled = !TryingToConnect;
+                GUI.enabled = !TryingToConnect && !serverInfo.mismatchedVersion;
+
                 if(GUILayout.Button("JOIN"))
                 {
                     GlobalSoundsScript.PlayButtonPress();
