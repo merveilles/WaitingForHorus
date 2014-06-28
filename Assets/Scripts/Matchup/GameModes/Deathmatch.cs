@@ -35,12 +35,12 @@ public class Deathmatch : GameMode
         }
 
         CurrentMapName = "pi_mar";
-        Server.ChangeLevel("pi_mar");
-        ReceiveMapChanged();
-        //if (Application.loadedLevelName != "pi_mar")
-        //    Application.LoadLevel("pi_mar");
-        //else
-        //    ReceiveMapChanged();
+
+        // TODO can we get some real map changing here?
+        if (Application.loadedLevelName == "pi_mar")
+            ReceiveMapChanged();
+        else
+            Server.ChangeLevel("pi_mar");
     }
 
 
