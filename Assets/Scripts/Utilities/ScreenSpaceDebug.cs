@@ -17,6 +17,10 @@ public class ScreenSpaceDebug : MonoBehaviour
         private Vector2? Size;
         private Vector2 Offset;
 
+        // TODO hacks...
+        public bool DrawOnce = false;
+        public bool Drawn = false;
+
         public Message(Vector3 position, string text, float lifetime, Color color, Vector2? size, Vector2 offset)
         {
             Position = position;
@@ -33,7 +37,7 @@ public class ScreenSpaceDebug : MonoBehaviour
         {
             Age += Time.deltaTime;
         }
-        public bool Finished {get { return Age >= Lifetime; }}
+        public bool Finished {get { return Age >= Lifetime || (DrawOnce && Drawn); }}
 
         public void OnGUI()
         {
@@ -56,6 +60,7 @@ public class ScreenSpaceDebug : MonoBehaviour
                 GUI.contentColor = Color;
                 GUI.Label(rect, Text);
             }
+            Drawn = true;
         }
     }
     public void Awake()
@@ -105,6 +110,14 @@ public class ScreenSpaceDebug : MonoBehaviour
     {
         if (Instance == null) return;
         var msg = new Message(worldPosition, message, 2f, Color.white, size, Vector2.zero);
+        Instance.Messages.Add(msg);
+    }
+
+    public static void AddMessageOnce(string message, Vector3 worldPosition)
+    {
+        if (Instance == null) return;
+        var msg = new Message(worldPosition, message, 2f, Color.white, null, Vector2.zero);
+        msg.DrawOnce = true;
         Instance.Messages.Add(msg);
     }
 }

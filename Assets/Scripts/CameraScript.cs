@@ -13,7 +13,7 @@ public class CameraScript : MonoBehaviour
     public float CrosshairSmoothingSpeed = 8.5f;
 	
 	bool aimingAtPlayer;
-    PlayerScript player;
+    public PlayerScript player;
 
     Camera mainCamera;
 
@@ -33,9 +33,24 @@ public class CameraScript : MonoBehaviour
 
     public delegate void CameraIsZoomedChangedHandler(bool isZoomed);
     // Invoked when the camera becomes or un-becomes zoomed.
-    public event CameraIsZoomedChangedHandler OnCameraIsZoomedChanged = delegate { }; 
+    public event CameraIsZoomedChangedHandler OnCameraIsZoomedChanged = delegate { };
 
-    public float BaseFieldOfView = 85.0f;
+    private float _BaseFieldOfView;
+
+    public float BaseFieldOfView
+    {
+        get
+        {
+            return _BaseFieldOfView;
+        }
+        set
+        {
+            _BaseFieldOfView = value;
+            PlayerPrefs.SetFloat("fov", _BaseFieldOfView);
+        }
+    }
+
+    private const float DefaultBaseFieldOfView = 85.0f;
     public float ZoomedFieldOfViewRatio = 0.42f;
 
     private float SmoothedBaseFieldOfView = 85.0f;
@@ -47,7 +62,27 @@ public class CameraScript : MonoBehaviour
 
     // Indicates whether the camera is in third person (exterior) or first
 	// person (interior) view.
-    public bool IsExteriorView { get; private set; }
+    private bool _IsExteriorView;
+
+    public bool IsExteriorView
+    {
+        get
+        {
+            return _IsExteriorView;
+        }
+        set
+        {
+            if (_IsExteriorView != value)
+            {
+                _IsExteriorView = value;
+                // Invoke listeners
+                OnCameraIsExteriorChanged(IsExteriorView);
+                // Update which objects we want to be hidden via layers
+                UpdateCameraObjectVisibiliy();
+            }
+        }
+    }
+
     public Vector3 ExteriorViewOffset = new Vector3(0f, 2.5f, -6f);
     public Vector3 InteriorViewOffset = new Vector3(0f, 1.0f, 0f);
     private Vector3 SmoothedViewOffset = new Vector3(0f, 2.5f, -6f);
@@ -74,13 +109,16 @@ public class CameraScript : MonoBehaviour
     {
         if (HackDisableShadowsObjects == null)
             HackDisableShadowsObjects = new GameObject[0];
+        if (player.networkView.isMine)
+        {
+            _BaseFieldOfView = PlayerPrefs.GetFloat("fov", DefaultBaseFieldOfView);
+            SmoothedBaseFieldOfView = _BaseFieldOfView;
+            SmoothedFieldOfView = _BaseFieldOfView;
+        }
     }
 
     public void Start()
     {
-        IsExteriorView = true;
-
-        player = transform.parent.parent.GetComponent<PlayerScript>();
         if(player.networkView.isMine)
         {
             mainCamera = Camera.main;
@@ -118,10 +156,12 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKeyDown("x"))
         {
             IsExteriorView = !IsExteriorView;
-            // Invoke listeners
-            OnCameraIsExteriorChanged(IsExteriorView);
-            // Update which objects we want to be hidden via layers
-            UpdateCameraObjectVisibiliy();
+
+            // TODO Hack, I'm feeling lazy right now
+            if (player.Possessor != null)
+            {
+                player.Possessor.WantsExteriorView = IsExteriorView;
+            }
         }
 
         // Prevent crazy values
@@ -262,8 +302,11 @@ public class CameraScript : MonoBehaviour
             }*/
 
             // TODO can mainCamera be null here?
-            mainCamera.transform.position = cameraPosition;
-            mainCamera.transform.rotation = actualCameraRotation;
+            if (mainCamera != null)
+            {
+                mainCamera.transform.position = cameraPosition;
+                mainCamera.transform.rotation = actualCameraRotation;
+            }
 
 
             var rawCrosshairPosition = GetCrosshairPosition();

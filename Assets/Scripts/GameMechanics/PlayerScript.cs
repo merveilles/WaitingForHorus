@@ -66,6 +66,11 @@ public class PlayerScript : MonoBehaviour
     // Invoked when the character dies
     public event DeathHandler OnDeath = delegate {};
 
+    public EnemiesTargetingUs EnemiesTargetingUs { get; private set; }
+
+    private float TimeSinceLastTargetedWarningPlayed = 0f;
+    private const float TimeBetweenTargetedWarningNotification = 0.7f;
+
     public bool ShouldSendMessages
     {
         get
@@ -168,6 +173,10 @@ public class PlayerScript : MonoBehaviour
         }
 
         iPosition = new VectorInterpolator();
+
+        EnemiesTargetingUs = new EnemiesTargetingUs();
+        EnemiesTargetingUs.OnStartedBeingLockedOnByEnemy += ReceiveStartedBeingLockedOnBy;
+        EnemiesTargetingUs.OnStoppedBeingLockedOnByEnemy += ReceiveStoppedBeingLockedOnBy;
 	}
 
     public void Start()
@@ -200,28 +209,82 @@ public class PlayerScript : MonoBehaviour
             Screen.lockCursor = false;
         }
     }
-	
-    [RPC]
-    public void Targeted( NetworkPlayer aggressor )
+
+    public void GetTargetedBy(PlayerScript enemy)
     {
-        if( !networkView.isMine ) return;
-		
-		if( GlobalSoundsScript.soundEnabled )
-		   warningSound.Play(); 
-		
-        //print( "Targeted by: " + PlayerRegistry.For( aggressor ).Username );
-		
-		GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
-		sphere.transform.parent = gameObject.transform;
-        //sphere.GetComponent<Billboard>().target = PlayerRegistry.For( aggressor ).Location;
-		
-		warningSpheres.Add( sphere );
+        Targeted(enemy);
+        if (ShouldSendMessages)
+        {
+            networkView.RPC("RemoteReceiveTargetedBy", RPCMode.Others, enemy.networkView.viewID);
+        }
+    }
+
+    public void GetUntargetedBy(PlayerScript enemy)
+    {
+        Untargeted(enemy);
+        if (ShouldSendMessages)
+        {
+            networkView.RPC("RemoteReceiveUntargetedBy", RPCMode.Others, enemy.networkView.viewID);
+        }
+    }
+
+    [RPC]
+// ReSharper disable once UnusedMember.Local
+    private void RemoteReceiveTargetedBy(NetworkViewID enemyPlayerScriptID, NetworkMessageInfo info)
+    {
+        try
+        {
+            var view = NetworkView.Find(enemyPlayerScriptID);
+            var enemy = (PlayerScript)view.observed;
+            if (view.owner == info.sender)
+            {
+                Targeted(enemy);
+            }
+        }
+        catch (Exception)
+        {
+            // nope lol
+        }
+    }
+    [RPC]
+// ReSharper disable once UnusedMember.Local
+    private void RemoteReceiveUntargetedBy(NetworkViewID enemyPlayerScriptID, NetworkMessageInfo info)
+    {
+        try
+        {
+            var view = NetworkView.Find(enemyPlayerScriptID);
+            var enemy = (PlayerScript)view.observed;
+            if (view.owner == info.sender)
+            {
+                Untargeted(enemy);
+            }
+        }
+        catch (Exception)
+        {
+            // nope lol
+        }
     }
 	
-    [RPC]
-    public void Untargeted( NetworkPlayer aggressor )
+    private void Targeted( PlayerScript targetingUs )
     {
-        if( !networkView.isMine  ) return;
+        //ScreenSpaceDebug.AddMessage("RECEIVE TARGET BY", targetingUs.transform.position);
+
+        EnemiesTargetingUs.TryAddEnemyLockingOnToUs(targetingUs);
+
+        //print( "Targeted by: " + PlayerRegistry.For( aggressor ).Username );
+		
+		//GameObject sphere = (GameObject)Instantiate( warningSphereFab, transform.position, transform.rotation );
+		//sphere.transform.parent = gameObject.transform;
+        //sphere.GetComponent<Billboard>().target = PlayerRegistry.For( aggressor ).Location;
+		
+		//warningSpheres.Add( sphere );
+    }
+	
+    private void Untargeted( PlayerScript enemy )
+    {
+        //ScreenSpaceDebug.AddMessage("RECEIVE UNTARGET BY", enemy.transform.position);
+
+        EnemiesTargetingUs.TryRemoveEnemyLockingOnToUs(enemy);
 		
         //print( "Untargeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
@@ -230,6 +293,22 @@ public class PlayerScript : MonoBehaviour
 		
         //Destroy( warningSpheres[id] );
         //warningSpheres.RemoveAt( id );
+    }
+
+    private void ReceiveStartedBeingLockedOnBy(PlayerScript enemy)
+    {
+        if (networkView.isMine)
+        {
+            ScreenSpaceDebug.AddMessage("TARGETED BY", enemy.transform.position);
+        }
+    }
+
+    private void ReceiveStoppedBeingLockedOnBy(PlayerScript enemy)
+    {
+        if (networkView.isMine)
+        {
+            ScreenSpaceDebug.AddMessage("UNTARGETED BY", enemy.transform.position);
+        }
     }
 	
     public void ResetWarnings()
@@ -270,6 +349,24 @@ public class PlayerScript : MonoBehaviour
     {
         //if (Network.peerType == NetworkPeerType.Disconnected) return;
         if (Paused) return;
+
+        // Update enemies targeting us and related stuff
+        EnemiesTargetingUs.Update();
+
+        // Only interested in playing sound effects locally
+        if (networkView.isMine)
+        {
+            TimeSinceLastTargetedWarningPlayed += Time.deltaTime;
+            // Play sound effect if necessary
+            if (EnemiesTargetingUs.IsLockedByAnyEnemy &&
+                TimeSinceLastTargetedWarningPlayed >= TimeBetweenTargetedWarningNotification)
+            {
+                TimeSinceLastTargetedWarningPlayed = 0f;
+        		if( GlobalSoundsScript.soundEnabled )
+        		   warningSound.Play(); 
+            }
+        }
+
         if (networkView.isMine)
         {
             //textBubbleVisible = ChatScript.Instance.showChat;
@@ -607,6 +704,11 @@ public class PlayerScript : MonoBehaviour
 
     public void OnDestroy( )
     {
+        EnemiesTargetingUs.ClearAllEnemies();
+        EnemiesTargetingUs.OnStartedBeingLockedOnByEnemy -= ReceiveStartedBeingLockedOnBy;
+        EnemiesTargetingUs.OnStoppedBeingLockedOnByEnemy -= ReceiveStoppedBeingLockedOnBy;
+        EnemiesTargetingUs.Destroy();
+
         // TODO this belongs earlier in the chain of death-related stuff
         OnDeath();
         //Debug.Log("Destroying PlayerScript " + this + " with view ID " + networkView.viewID);
@@ -794,5 +896,105 @@ class QuaternionInterpolator : Interpolator<Quaternion>
         if (!IsRunning) return Quaternion.identity;
         return Quaternion.Slerp(
             Quaternion.identity, Delta, Time.deltaTime / InterpolationTime);
+    }
+}
+
+public class EnemyTargetingUsInfo
+{
+    public float TimeSinceLastNotification;
+}
+
+public class EnemiesTargetingUs
+{
+    public Dictionary<PlayerScript, EnemyTargetingUsInfo> Enemies { get; private set; }
+
+    private readonly List<PlayerScript> RemovalCache;
+
+    public float AutoRemoveTime = 2f;
+
+    public delegate void EnemyLockOnStateChangedHandler(PlayerScript enemy);
+
+    public event EnemyLockOnStateChangedHandler OnStartedBeingLockedOnByEnemy = delegate {};
+    public event EnemyLockOnStateChangedHandler OnStoppedBeingLockedOnByEnemy = delegate {};
+
+    public bool IsLockedByEnemy(PlayerScript enemy)
+    {
+        return Enemies.ContainsKey(enemy);
+    }
+
+    public bool IsLockedByAnyEnemy
+    {
+        get { return Enemies.Count > 0; }
+    }
+
+    public IEnumerable<PlayerScript> EnemiesLockingUs
+    {
+        get { return Enemies.Keys; }
+    }
+
+    public EnemiesTargetingUs()
+    {
+        Enemies = new Dictionary<PlayerScript, EnemyTargetingUsInfo>();
+        RemovalCache = new List<PlayerScript>();
+        PlayerScript.OnPlayerScriptDied += ReceiveEnemyRemoved;
+    }
+
+    public void TryAddEnemyLockingOnToUs(PlayerScript enemy)
+    {
+        EnemyTargetingUsInfo info;
+        if (Enemies.TryGetValue(enemy, out info))
+        {
+            info.TimeSinceLastNotification = 0f;
+        }
+        else
+        {
+            info = new EnemyTargetingUsInfo {TimeSinceLastNotification = 0f};
+            Enemies.Add(enemy, info);
+            OnStartedBeingLockedOnByEnemy(enemy);
+        }
+    }
+
+    public void TryRemoveEnemyLockingOnToUs(PlayerScript enemy)
+    {
+        if (Enemies.ContainsKey(enemy))
+        {
+            Enemies.Remove(enemy);
+            OnStoppedBeingLockedOnByEnemy(enemy);
+        }
+    }
+
+    public void Update()
+    {
+        RemovalCache.Clear();
+        foreach (var enemyTargetingUs in Enemies)
+        {
+            enemyTargetingUs.Value.TimeSinceLastNotification += Time.deltaTime;
+            if (enemyTargetingUs.Value.TimeSinceLastNotification > AutoRemoveTime)
+                RemovalCache.Add(enemyTargetingUs.Key);
+        }
+        foreach (var enemyTargetingUs in RemovalCache)
+        {
+            Enemies.Remove(enemyTargetingUs);
+            OnStoppedBeingLockedOnByEnemy(enemyTargetingUs);
+        }
+    }
+
+    public void ClearAllEnemies()
+    {
+        foreach (var enemy in Enemies.Keys)
+        {
+            OnStoppedBeingLockedOnByEnemy(enemy);
+        }
+        Enemies.Clear();
+    }
+
+    public void Destroy()
+    {
+        PlayerScript.OnPlayerScriptDied -= ReceiveEnemyRemoved;
+    }
+
+    private void ReceiveEnemyRemoved(PlayerScript enemy)
+    {
+        TryRemoveEnemyLockingOnToUs(enemy);
     }
 }

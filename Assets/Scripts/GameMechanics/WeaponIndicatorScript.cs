@@ -13,14 +13,31 @@ public class WeaponIndicatorScript : MonoBehaviour
     {
         public PlayerScript Script;
         public Vector2 ScreenPosition;
-        public float SinceInCrosshair;
+        public float SinceInCrosshair { get { return Mathf.Max(0f, LockStrength); } }
         public bool Found;
         public bool WasLocked;
+        public float TimeSinceLastLockSend;
+
+        public float LockStrength = 0f;
+        public const float LockLossTimeMultiplier = 2.8f;
+        public const float LockStrengthLimitMultiplier = 2f * PlayerShootingScript.AimingTime;
     
         public bool Locked
         {
-            get { return SinceInCrosshair >= PlayerShootingScript.AimingTime; }
+            get { return LockStrength >= PlayerShootingScript.AimingTime; }
         }
+
+        public bool NeedsLockSent
+        {
+            get { return Locked && TimeSinceLastLockSend > TimeBetweenLockSends; }
+        }
+
+        public void ClampStrength()
+        {
+            LockStrength = Mathf.Clamp(LockStrength, 0, LockStrengthLimitMultiplier);
+        }
+
+        public const float TimeBetweenLockSends = 1f;
     }
 
     public List<PlayerData> Targets { get; private set; }

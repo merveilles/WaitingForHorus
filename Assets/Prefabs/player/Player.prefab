@@ -2730,6 +2730,7 @@ MonoBehaviour:
   HasSmoothedRotation: 1
   UsesRaycastCrosshair: 1
   CrosshairSmoothingSpeed: 8.5
+  player: {fileID: 11400000}
   ObjectsToHideInFirstPerson:
   - {fileID: 100112}
   - {fileID: 100002}
@@ -2742,8 +2743,8 @@ MonoBehaviour:
   - {fileID: 100054}
   - {fileID: 100052}
   - {fileID: 100050}
-  BaseFieldOfView: 85
   ZoomedFieldOfViewRatio: .5
+  _IsExteriorView: 0
   ExteriorViewOffset: {x: 0, y: 2.5, z: -6}
   InteriorViewOffset: {x: 0, y: 1, z: 0}
 --- !u!114 &11400008
@@ -2762,6 +2763,8 @@ MonoBehaviour:
   shieldRegenTime: 5
   invulnerabilityTime: 2
   deathPrefab: {fileID: 100000, guid: 44f7ec49704fd0f47a7e2a94bd9c0fe2, type: 2}
+  _Shield: 0
+  _Health: 0
   shieldRenderer: {fileID: 2300000}
   timeUntilRespawn: 5
   PlayerScript: {fileID: 11400000}
