@@ -22,6 +22,42 @@ public class Server : MonoBehaviour
 
     public Leaderboard Leaderboard { get; private set; }
 
+
+    // Map name stuff
+    private string _CurrentMapName;
+    public string CurrentMapName
+    {
+        get { return _CurrentMapName; }
+        private set
+        {
+            _CurrentMapName = value;
+            if (networkView.isMine)
+            {
+                networkView.RPC("RemoteReceiveMapName", RPCMode.Others, _CurrentMapName);
+            }
+            if (Application.CanStreamedLevelBeLoaded(_CurrentMapName))
+            {
+                Application.LoadLevel(_CurrentMapName);
+                Network.isMessageQueueRunning = false;
+            }
+        }
+    }
+
+    [RPC]
+// ReSharper disable once UnusedMember.Local
+    private void RequestedMapNameFromRemote(NetworkMessageInfo info)
+    {
+        networkView.RPC("RemoteReceiveMapName", info.sender, CurrentMapName);
+    }
+
+    [RPC]
+// ReSharper disable once UnusedMember.Local
+    private void RemoteReceiveMapName(string mapName, NetworkMessageInfo info)
+    {
+        if (networkView.owner == info.sender)
+            CurrentMapName = mapName;
+    }
+
     public void Awake()
     {
         DontDestroyOnLoad(this);
@@ -31,6 +67,15 @@ public class Server : MonoBehaviour
 
         Leaderboard = new Leaderboard();
         Leaderboard.Skin = Relay.Instance.BaseSkin;
+    }
+
+    public void OnNetworkInstantiate(NetworkMessageInfo info)
+    {
+        // I guess this check is redundant?
+        if (!networkView.isMine)
+        {
+            networkView.RPC("RequestedMapNameFromRemote", networkView.owner);
+        }
     }
 
     public void Start()
@@ -56,7 +101,6 @@ public class Server : MonoBehaviour
         else
             newPlayerPresence.OnBecameNamed += () =>
                 ReceivePlayerPresenceIdentified(newPlayerPresence);
-        //BroadcastMessageFromServer(newPlayerPresence.Name + " has joined");
     }
 
     private void ReceivePlayerPresenceRemove(PlayerPresence removedPlayerPresence)
@@ -104,6 +148,7 @@ public class Server : MonoBehaviour
 
     public void OnLevelWasLoaded(int level)
     {
+        Network.isMessageQueueRunning = true;
         if (networkView.isMine)
         {
             CurrentGameMode.ReceiveMapChanged();
@@ -193,20 +238,12 @@ public class Server : MonoBehaviour
 
     public void ChangeLevel(string levelName)
     {
-        if (Application.loadedLevelName != levelName)
+        if (Application.loadedLevelName != levelName &&
+            Application.CanStreamedLevelBeLoaded(levelName))
         {
-            Application.LoadLevel(levelName);
-            networkView.RPC("RemoteReceiveLevelChange", RPCMode.Others, levelName);
             ServerNotifier.CurrentMapName = levelName;
+            CurrentMapName = levelName;
         }
-    }
-
-    [RPC]
-// ReSharper disable once UnusedMember.Local
-    private void RemoteReceiveLevelChange(string levelName, NetworkMessageInfo info)
-    {
-        if (info.sender == networkView.owner)
-            ChangeLevel(levelName);
     }
 
     // I have no idea if this actually works reliably or not, but it seems to
