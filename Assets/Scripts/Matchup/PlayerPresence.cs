@@ -120,6 +120,14 @@ public class PlayerPresence : MonoBehaviour
 
     private bool _IsDoingMenuStuff = false;
 
+    private float TimeToHoldLeaderboardFor = 0f;
+    private float DefaultAutoLeaderboardTime = 1.85f;
+
+    public void DisplayScoreForAWhile()
+    {
+        TimeToHoldLeaderboardFor = DefaultAutoLeaderboardTime;
+    }
+
     public bool IsDoingMenuStuff
     {
         get { return _IsDoingMenuStuff; }
@@ -286,7 +294,7 @@ public class PlayerPresence : MonoBehaviour
 
             // Leaderboard show/hide
             // Always show when not possessing anything
-            if (Possession == null)
+            if (Possession == null || TimeToHoldLeaderboardFor >= 0f)
             {
                 Server.Leaderboard.Show = true;
             }
@@ -295,6 +303,8 @@ public class PlayerPresence : MonoBehaviour
             {
                 Server.Leaderboard.Show = Input.GetKey("tab");
             }
+
+            TimeToHoldLeaderboardFor -= Time.deltaTime;
         }
 
         if (Possession != null)
@@ -544,16 +554,60 @@ public class PlayerPresence : MonoBehaviour
         }
     }
 
+    // Only works from server and owner
+    public void SetScorePoints(int points)
+    {
+        if (networkView.isMine)
+            OwnerSetScorePoints(points);
+        else
+            networkView.RPC("RemoteSetScorePoints", networkView.owner, points);
+    }
     [RPC]
+    private void RemoteSetScorePoints(int points, NetworkMessageInfo info)
+    {
+        if (info.sender != Server.networkView.owner) return;
+        if (networkView.isMine)
+            OwnerSetScorePoints(points);
+        else
+            networkView.RPC("RemoteSetScorePoints", networkView.owner, points);
+    }
+
+    private void OwnerSetScorePoints(int points)
+    {
+        Score = points;
+        DisplayScoreForAWhile();
+    }
+
+    // Only works from server and owner
     public void ReceiveScorePoints(int points)
     {
         if (networkView.isMine)
         {
-            Score += points;
+            OwnerReceiveScorePoints(points);
         }
         else
         {
-            networkView.RPC("ReceiveScorePoints", networkView.owner, points);
+            networkView.RPC("RemoteReceiveScorePoints", networkView.owner, points);
+        }
+    }
+
+    private void OwnerReceiveScorePoints(int points)
+    {
+        Score += points;
+        DisplayScoreForAWhile();
+    }
+
+    [RPC]
+    private void RemoteReceiveScorePoints(int points, NetworkMessageInfo info)
+    {
+        if (info.sender != Server.networkView.owner) return;
+        if (networkView.isMine)
+        {
+            OwnerReceiveScorePoints(points);
+        }
+        else
+        {
+            networkView.RPC("RemoteReceiveScorePoints", networkView.owner, points);
         }
     }
 }

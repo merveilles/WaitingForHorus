@@ -80,6 +80,7 @@ public class Deathmatch : GameMode
         foreach (var presence in Server.Presences)
         {
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
+            presence.SetScorePoints(0);
         }
         CurrentMapName = Application.loadedLevelName;
         Server.BroadcastMessageFromServer("Welcome to " + CurrentMapName);
@@ -91,6 +92,7 @@ public class Deathmatch : GameMode
         {
             newPlayerPresence.SpawnCharacter(RespawnZone.GetRespawnPoint());
         }
+        newPlayerPresence.SetScorePoints(0);
     }
 
     private void ReceivePresenceRemoved(PlayerPresence removedPlayerPresence)
