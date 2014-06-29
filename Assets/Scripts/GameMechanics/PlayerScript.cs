@@ -107,7 +107,7 @@ public class PlayerScript : MonoBehaviour
     public static event PlayerScriptSpawnedHandler OnPlayerScriptSpawned = delegate{};
 
     // This should really not be static
-    public delegate void PlayerScriptDiedHandler(PlayerScript diedPlayerScript);
+    public delegate void PlayerScriptDiedHandler(PlayerScript diedPlayerScript, PlayerPresence deathInstigator);
     public static event PlayerScriptDiedHandler OnPlayerScriptDied = delegate{};
         
     // for interpolation on remote computers only
@@ -807,18 +807,18 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    public void RequestedToDieByOwner()
+    public void RequestedToDieByOwner(PlayerPresence instigator)
     {
         if (Network.isServer)
-            ServerRequestedToDie();
+            OnPlayerScriptDied(this, instigator);
         else
-            networkView.RPC("ServerRequestedToDie", RPCMode.Server);
+            networkView.RPC("ServerRequestedToDie", RPCMode.Server, instigator.networkView.viewID);
     }
 
     [RPC]
-    private void ServerRequestedToDie()
+    private void ServerRequestedToDie(NetworkViewID instigatorPresenceViewID)
     {
-        OnPlayerScriptDied(this);
+        OnPlayerScriptDied(this, PlayerPresence.TryGetPlayerPresenceFromNetworkViewID(instigatorPresenceViewID));
     }
 
     public bool CanSeeOtherPlayer(PlayerScript other)
@@ -977,7 +977,7 @@ public class EnemiesTargetingUs
         PlayerScript.OnPlayerScriptDied -= ReceiveEnemyRemoved;
     }
 
-    private void ReceiveEnemyRemoved(PlayerScript enemy)
+    private void ReceiveEnemyRemoved(PlayerScript enemy, PlayerPresence instigator)
     {
         TryRemoveEnemyLockingOnToUs(enemy);
     }

@@ -131,6 +131,7 @@ public class PlayerPresence : MonoBehaviour
         NetworkViewID prevPossesedID = PossessedCharacterViewID;
         stream.Serialize(ref PossessedCharacterViewID);
         stream.Serialize(ref _IsDoingMenuStuff);
+        stream.Serialize(ref _Score);
         if (stream.isReading)
         {
             if (Possession == null)
@@ -150,6 +151,30 @@ public class PlayerPresence : MonoBehaviour
                     Possession = TryGetPlayerScriptFromNetworkViewID(PossessedCharacterViewID);
                 }
             }
+        }
+    }
+
+    // TODO factor out
+    public static PlayerPresence TryGetPlayerPresenceFromNetworkViewID(NetworkViewID viewID)
+    {
+        if (viewID == NetworkViewID.unassigned) return null;
+        NetworkView view = null;
+        try
+        {
+            view = NetworkView.Find(viewID);
+        }
+        catch (Exception)
+        {
+            //Debug.Log(e);
+        }
+        if (view != null)
+        {
+            var presence = view.observed as PlayerPresence;
+            return presence;
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -516,6 +541,19 @@ public class PlayerPresence : MonoBehaviour
         if (Server.networkView.isMine && info.sender == networkView.owner)
         {
             Server.BroadcastChatMessageFromServer(text, this);
+        }
+    }
+
+    [RPC]
+    public void ReceiveScorePoints(int points)
+    {
+        if (networkView.isMine)
+        {
+            Score += points;
+        }
+        else
+        {
+            networkView.RPC("ReceiveScorePoints", networkView.owner, points);
         }
     }
 }

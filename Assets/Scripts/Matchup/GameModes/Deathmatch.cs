@@ -54,9 +54,23 @@ public class Deathmatch : GameMode
         //Debug.Log("Spawned: " + newPlayerScript);
     }
 
-    private void ReceivePlayerDied(PlayerScript deadPlayerScript)
+    private void ReceivePlayerDied(PlayerScript deadPlayerScript, PlayerPresence instigator)
     {
-        Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed");
+        if (instigator != null)
+        {
+            if (deadPlayerScript.Possessor == instigator)
+            {
+                Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " committed suicide");
+                instigator.ReceiveScorePoints(-1);
+            }
+            else
+            {
+                Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed by " + instigator.Name);
+                instigator.ReceiveScorePoints(1);
+            }
+        }
+        else
+            Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed");
         deadPlayerScript.PerformDestroy();
     }
 

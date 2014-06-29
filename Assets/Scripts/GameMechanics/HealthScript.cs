@@ -49,7 +49,7 @@ public class HealthScript : MonoBehaviour
         // TODO magical -104 number, what does it do?
         if( networkView.isMine && transform.position.y < KillHeight )
         {
-            DoDamageOwner(1, transform.position);
+            DoDamageOwner(1, transform.position, PlayerScript.Possessor);
         }
 
         if (!firstSet && shieldRenderer != null)
@@ -108,24 +108,25 @@ public class HealthScript : MonoBehaviour
         shieldRenderer.enabled = shouldBeEnabled;
     }
 
-    public void DeclareHitToOthers(int damage, Vector3 point)
+    public void DeclareHitToOthers(int damage, Vector3 point, PlayerPresence instigator)
     {
-        networkView.RPC("OthersReceiveHit", RPCMode.Others, damage, point);
+        networkView.RPC("OthersReceiveHit", RPCMode.Others, damage, point, instigator.networkView.viewID);
     }
 
     [RPC]
 // ReSharper disable once UnusedMember.Local
-    private void OthersReceiveHit(int damage, Vector3 point)
+    private void OthersReceiveHit(int damage, Vector3 point, NetworkViewID instigatorPresenceViewID)
     {
 		EffectsScript.ExplosionHit( point, Quaternion.LookRotation( Vector3.up ) );
         if (networkView.isMine)
         {
-            DoDamageOwner(damage, point);
+            DoDamageOwner(damage, point,
+                PlayerPresence.TryGetPlayerPresenceFromNetworkViewID(instigatorPresenceViewID));
         }
     }
 
     [RPC]
-    private void DoDamageOwner( int damage, Vector3 point)
+    private void DoDamageOwner( int damage, Vector3 point, PlayerPresence instigator)
     {
         ScreenSpaceDebug.AddMessage("DAMAGE", point, Color.red);
         if ( !dead )
@@ -145,7 +146,7 @@ public class HealthScript : MonoBehaviour
                 Health = 0;
                 dead = true;
                 PlayDeathPrefab();
-                GetComponent<PlayerScript>().RequestedToDieByOwner();
+                GetComponent<PlayerScript>().RequestedToDieByOwner(instigator);
                 Camera.main.GetComponent<WeaponIndicatorScript>().CooldownStep = 0;
             }
         }
