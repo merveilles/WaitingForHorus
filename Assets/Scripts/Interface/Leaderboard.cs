@@ -66,7 +66,7 @@ public class Leaderboard
     {
         PresenceCache.Clear();
         PresenceCache.AddRange(PlayerPresence.UnsafeAllPlayerPresences);
-        PresenceCache.Sort((p1, p2) => p1.Score.CompareTo(p2.Score));
+        PresenceCache.Sort((p1, p2) => p2.Score.CompareTo(p1.Score));
 
         GUI.skin = Skin;
         float offScreen = -300;
