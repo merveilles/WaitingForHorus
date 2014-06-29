@@ -122,6 +122,8 @@ public class PlayerScript : MonoBehaviour
     public float OverlapEjectionSpeed = 100.0f;
     public bool InstantOverlapEjection = true;
 
+    private int OtherPlayerVisibilityLayerMask;
+
     // TODO unused 'get', intentional? No reason to ever set it, then.
 	//List<NetworkPlayer> targetedBy { get; set; }
 
@@ -177,6 +179,9 @@ public class PlayerScript : MonoBehaviour
         EnemiesTargetingUs = new EnemiesTargetingUs();
         EnemiesTargetingUs.OnStartedBeingLockedOnByEnemy += ReceiveStartedBeingLockedOnBy;
         EnemiesTargetingUs.OnStoppedBeingLockedOnByEnemy += ReceiveStoppedBeingLockedOnBy;
+
+        OtherPlayerVisibilityLayerMask =
+            (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Default"));
 	}
 
     public void Start()
@@ -815,6 +820,24 @@ public class PlayerScript : MonoBehaviour
     {
         OnPlayerScriptDied(this);
     }
+
+    public bool CanSeeOtherPlayer(PlayerScript other)
+    {
+        Transform startTransform = CameraScript.CameraUsed != null ? CameraScript.CameraUsed.transform : transform;
+        Vector3 start = startTransform.position;
+        Vector3 direction = (other.transform.position - start).normalized;
+        float distance = Vector3.Distance(start, other.transform.position);
+        RaycastHit hitInfo;
+
+        // Maybe
+        if (Physics.Raycast(start, direction, out hitInfo, distance, OtherPlayerVisibilityLayerMask))
+        {
+            var hitPlayer = hitInfo.collider.GetComponentInParent<PlayerScript>();
+            return hitPlayer != null && hitPlayer == other;
+        }
+        // Nope
+        return false;
+    }
 }
 
 abstract class Interpolator<T>
@@ -857,27 +880,6 @@ class VectorInterpolator : Interpolator<Vector3>
         if (!IsRunning) return Vector3.zero;
         //Debug.Log("Correcting for " + Delta + " with " + (Delta * Time.deltaTime / InterpolationTime));
         return Delta * Time.deltaTime / InterpolationTime;
-    }
-}
-class QuaternionInterpolator : Interpolator<Quaternion>
-{
-    public override bool Start(Quaternion delta)
-    {
-        IsRunning = !Mathf.Approximately(
-            Quaternion.Angle(delta, Quaternion.identity), 0);
-        //if (IsRunning)
-        //    Debug.Log("quaternion interpolator started, angle == " +
-        //    Quaternion.Angle(delta, Quaternion.identity));
-        SinceStarted = 0;
-        Delta = delta;
-        return IsRunning;
-    }
-    public override Quaternion Update()
-    {
-        UpdateInternal();
-        if (!IsRunning) return Quaternion.identity;
-        return Quaternion.Slerp(
-            Quaternion.identity, Delta, Time.deltaTime / InterpolationTime);
     }
 }
 

@@ -234,6 +234,22 @@ public class PlayerPresence : MonoBehaviour
             }
 
             IsDoingMenuStuff = Relay.Instance.MessageLog.HasInputOpen;
+
+            // Debug visibility info for other playerscripts
+            if (Possession != null)
+            {
+                foreach (var character in PlayerScript.UnsafeAllEnabledPlayerScripts)
+                {
+                    if (character != Possession)
+                    {
+                        bool canSee = Possession.CanSeeOtherPlayer(character);
+                        if (canSee)
+                        {
+                            ScreenSpaceDebug.AddMessageOnce("VISIBLE", character.transform.position);
+                        }
+                    }
+                }
+            }
         }
 
         if (Possession != null)
@@ -348,12 +364,47 @@ public class PlayerPresence : MonoBehaviour
         {
             OnDrawDebugStuff();
         }
+
+        // Draw player names
+        if (networkView.isMine && Possession != null && Camera.current != null)
+        {
+            GUI.skin = Relay.Instance.BaseSkin;
+            GUIStyle boxStyle = new GUIStyle(Relay.Instance.BaseSkin.customStyles[2])
+            {
+                fixedWidth = 0,
+                fixedHeight = 18,
+                alignment = TextAnchor.MiddleCenter,
+                padding = new RectOffset(5, 5, 3, 3),
+            };
+            foreach (var character in PlayerScript.UnsafeAllEnabledPlayerScripts)
+            {
+                if (character == null) continue;
+                if (character == Possession) continue;
+                Vector3 screenPosition = Camera.current.WorldToScreenPoint(InfoPointForPlayerScript(character));
+                screenPosition.y = Screen.height - screenPosition.y;
+                if (screenPosition.z < 0) continue;
+                bool isVisible = Possession.CanSeeOtherPlayer(character);
+                if (!isVisible) continue;
+                string otherPlayerName;
+                if (character.Possessor == null)
+                    otherPlayerName = "?";
+                else
+                    otherPlayerName = character.Possessor.Name;
+                Vector2 baseNameSize = boxStyle.CalcSize(new GUIContent(otherPlayerName));
+                float baseNameWidth = baseNameSize.x + 10;
+                var rect = new Rect(screenPosition.x - baseNameWidth/2, screenPosition.y, baseNameWidth,
+                    boxStyle.fixedHeight);
+                GUI.Box(rect, otherPlayerName, boxStyle);
+            }
+        }
     }
 
     private void OnDrawDebugStuff()
     {
         if (networkView.isMine && Camera.current != null)
         {
+            GUI.skin = Relay.Instance.BaseSkin;
+            GUIStyle boxStyle = new GUIStyle(Relay.Instance.BaseSkin.box) {fixedWidth = 0};
             foreach (var playerScript in PlayerScript.UnsafeAllEnabledPlayerScripts)
             {
                 if (playerScript == null) continue;
@@ -366,7 +417,7 @@ public class PlayerPresence : MonoBehaviour
                 }
                 // Good stuff, great going guys
                 screenPosition.y = Screen.height - screenPosition.y;
-                var rect = new Rect(screenPosition.x - 50, screenPosition.y, 100, 25);
+                var rect = new Rect(screenPosition.x - 50, screenPosition.y, 75, 15);
                 var healthComponent = playerScript.GetComponent<HealthScript>();
                 if (healthComponent == null)
                 {
@@ -374,7 +425,7 @@ public class PlayerPresence : MonoBehaviour
                 }
                 else
                 {
-                    GUI.Box(rect, "H: " + healthComponent.Health + "   S: " + healthComponent.Shield);
+                    GUI.Box(rect, "H: " + healthComponent.Health + "   S: " + healthComponent.Shield, boxStyle);
                 }
             }
         }

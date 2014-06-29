@@ -17,6 +17,8 @@ public class CameraScript : MonoBehaviour
 
     Camera mainCamera;
 
+    public Camera CameraUsed { get { return mainCamera; } }
+
     Quaternion actualCameraRotation;
 
     public GameObject[] ObjectsToHideInFirstPerson;

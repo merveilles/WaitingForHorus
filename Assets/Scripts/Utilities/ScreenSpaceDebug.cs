@@ -7,6 +7,8 @@ public class ScreenSpaceDebug : MonoBehaviour
     public bool ShouldDraw = false;
     public GUISkin Skin;
 
+    private GUIStyle DefaultLabelStyle;
+
     private class LineMessage
     {
         public string Text;
@@ -52,11 +54,13 @@ public class ScreenSpaceDebug : MonoBehaviour
         private Vector2? Size;
         private Vector2 Offset;
 
+        private GUIStyle Style;
+
         // TODO hacks...
         public bool DrawOnce = false;
         public bool Drawn = false;
 
-        public Message(Vector3 position, string text, float lifetime, Color color, Vector2? size, Vector2 offset)
+        public Message(Vector3 position, string text, float lifetime, Color color, Vector2? size, Vector2 offset, GUIStyle style = null)
         {
             Position = position;
             Text = text;
@@ -66,6 +70,8 @@ public class ScreenSpaceDebug : MonoBehaviour
             Color = color;
             Size = size;
             Offset = offset;
+
+            Style = style ?? GUIStyle.none;
         }
 
         public void Update()
@@ -88,12 +94,12 @@ public class ScreenSpaceDebug : MonoBehaviour
             }
             else
             {
-                var rect = new Rect(Offset.x + screenPosition.x - 1, Offset.y + screenPosition.y + 2, 500, 500);
+                var rect = new Rect(Offset.x + screenPosition.x, Offset.y + screenPosition.y + 1, 500, 500);
                 GUI.contentColor = Color.black;
-                GUI.Label(rect, Text);
+                GUI.Label(rect, Text, Style);
                 rect = new Rect(Offset.x + screenPosition.x, Offset.y + screenPosition.y, 500, 500);
                 GUI.contentColor = Color;
-                GUI.Label(rect, Text);
+                GUI.Label(rect, Text, Style);
             }
             Drawn = true;
         }
@@ -105,6 +111,8 @@ public class ScreenSpaceDebug : MonoBehaviour
         LineMessages = new Dictionary<int, LineMessage>();
         AnonymousMessages = new List<LineMessage>();
         KeysCache = new List<int>();
+
+        DefaultLabelStyle = new GUIStyle(Skin.label) {};
     }
 
     private List<Message> Messages;
@@ -154,6 +162,7 @@ public class ScreenSpaceDebug : MonoBehaviour
     {
         if (!ShouldDraw) return;
 
+        GUI.skin = Skin;
         // Draw world space messages
         for (int i = 0; i < Messages.Count; i++)
         {
@@ -165,7 +174,6 @@ public class ScreenSpaceDebug : MonoBehaviour
         foreach (int i in LineMessages.Keys)
             KeysCache.Add(i);
         KeysCache.Sort();
-        GUI.skin = Skin;
 	    GUILayout.Window(3, new Rect( Screen.width - (35 + 300), 35, 300, 800), LineWindow, string.Empty);
     }
 
@@ -202,13 +210,13 @@ public class ScreenSpaceDebug : MonoBehaviour
     public static void AddMessage(string message, Vector3 worldPosition)
     {
         if (Instance == null) return;
-        var msg = new Message(worldPosition, message, 2f, Color.white, null, Vector2.zero);
+        var msg = new Message(worldPosition, message, 2f, Color.white, null, Vector2.zero, Instance.DefaultLabelStyle);
         Instance.Messages.Add(msg);
     }
     public static void AddMessage(string message, Vector3 worldPosition, Color color)
     {
         if (Instance == null) return;
-        var msg = new Message(worldPosition, message, 2f, color, null, Vector2.zero);
+        var msg = new Message(worldPosition, message, 2f, color, null, Vector2.zero, Instance.DefaultLabelStyle);
         Instance.Messages.Add(msg);
     }
     public static void AddMessage(string message, Vector3 worldPosition, Vector2 size)
@@ -221,7 +229,7 @@ public class ScreenSpaceDebug : MonoBehaviour
     public static void AddMessageOnce(string message, Vector3 worldPosition)
     {
         if (Instance == null) return;
-        var msg = new Message(worldPosition, message, 2f, Color.white, null, Vector2.zero);
+        var msg = new Message(worldPosition, message, 2f, Color.white, null, Vector2.zero, Instance.DefaultLabelStyle);
         msg.DrawOnce = true;
         Instance.Messages.Add(msg);
     }
