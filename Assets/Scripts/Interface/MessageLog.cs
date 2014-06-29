@@ -35,7 +35,20 @@ public class MessageLog
 
     public int MessageCount { get { return Messages.Count; } }
 
-    public bool IsInputFieldEnabled { get; set; }
+    private bool _IsInputFieldEnabled = false;
+
+    public bool IsInputFieldEnabled
+    {
+        get
+        {
+            return _IsInputFieldEnabled;
+        }
+        set
+        {
+            _IsInputFieldEnabled = value;
+            OnInputStateChanged(value);
+        }
+    }
 
     public delegate void MessageEnteredHandler(string text);
     public event MessageEnteredHandler OnMessageEntered = delegate { };
@@ -44,6 +57,12 @@ public class MessageLog
     public event CommandEnteredHandler OnCommandEntered = delegate { };
 
     private string CurrentInput = "";
+
+    public delegate void InputStateChangedHandler(bool hasInputOpen);
+    // Invoked when the player begins or ends inputting text
+    public event InputStateChangedHandler OnInputStateChanged = delegate {};
+    // Basically the same as IsInputFieldEnabled, but might not be in the future.
+    public bool HasInputOpen { get { return IsInputFieldEnabled; } }
 
     // We need to drop the first input after focusing the text field, otherwise
 	// it enters the key used to summon it... maybe I'm doing something wrong,

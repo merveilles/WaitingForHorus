@@ -111,10 +111,18 @@ public class PlayerPresence : MonoBehaviour
         }
     }
 
+    private bool _IsDoingMenuStuff = false;
+    public bool IsDoingMenuStuff
+    {
+        get { return _IsDoingMenuStuff; }
+        set { _IsDoingMenuStuff = value; }
+    }
+
     public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
         NetworkViewID prevPossesedID = PossessedCharacterViewID;
         stream.Serialize(ref PossessedCharacterViewID);
+        stream.Serialize(ref _IsDoingMenuStuff);
         if (stream.isReading)
         {
             if (Possession == null)
@@ -181,6 +189,7 @@ public class PlayerPresence : MonoBehaviour
             // TODO will obviously send messages to server twice if there are two local players, fix
             Relay.Instance.MessageLog.OnMessageEntered += ReceiveMessageEntered;
         }
+
     }
 
     private void ReceiveMessageEntered(string text)
@@ -224,6 +233,13 @@ public class PlayerPresence : MonoBehaviour
                 }
             }
 
+            IsDoingMenuStuff = Relay.Instance.MessageLog.HasInputOpen;
+        }
+
+        if (Possession != null)
+        {
+            // toggle bubble
+            Possession.TextBubbleVisible = IsDoingMenuStuff;
         }
 
         if (Input.GetKeyDown("f11"))

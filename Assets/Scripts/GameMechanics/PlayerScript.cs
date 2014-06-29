@@ -44,7 +44,7 @@ public class PlayerScript : MonoBehaviour
     //public NetworkPlayer? owner;
     float sinceNotGrounded;
     bool activelyJumping;
-    bool textBubbleVisible;
+    public bool TextBubbleVisible { get; set; }
     bool playJumpSound, playDashSound;
 	int jumpsSinceGrounded = 0;
 	
@@ -369,7 +369,7 @@ public class PlayerScript : MonoBehaviour
 
         if (networkView.isMine)
         {
-            //textBubbleVisible = ChatScript.Instance.showChat;
+            //TextBubbleVisible = ChatScript.Instance.showChat;
 
             inputVelocity =
                 Input.GetAxis("Strafe") * transform.right +
@@ -433,7 +433,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         // set up text bubble visibility
-        if (!textBubbleVisible)
+        if (!TextBubbleVisible)
         {
             var o = textBubble.renderer.material.color.a;
             textBubble.renderer.material.color = new Color(1, 1, 1, Mathf.Clamp(o - Time.deltaTime * 10, 0, 0.875f));
@@ -672,7 +672,6 @@ public class PlayerScript : MonoBehaviour
         stream.Serialize(ref fallingVelocity);
         stream.Serialize(ref activelyJumping);
         stream.Serialize(ref recoilVelocity);
-        stream.Serialize(ref textBubbleVisible);
         stream.Serialize(ref playDashSound);
         stream.Serialize(ref playJumpSound);
         stream.Serialize(ref lookRotationEuler);
