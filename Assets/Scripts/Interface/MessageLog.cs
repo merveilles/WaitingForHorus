@@ -72,7 +72,6 @@ public class MessageLog
         // TODO move this somewhere else? maybe it's fine here for now
         if (Event.current.keyCode == KeyCode.Escape)
         {
-            //CurrentInput = "";
             IsInputFieldEnabled = false;
             // TODO cursor lock/unlock via queue/stack
         }
@@ -110,11 +109,6 @@ public class MessageLog
         {
             IsInputFieldEnabled = true;
             DropFirstInput = true;
-            //var previousInput = CurrentInput;
-            //DeferredAction += () =>
-            //{
-            //    CurrentInput = previousInput;
-            //};
         }
 
         GUI.skin = Skin;
@@ -134,7 +128,6 @@ public class MessageLog
         foreach (var message in Messages)
         {
             GUILayout.BeginHorizontal();
-            //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
             GUILayout.Box(message.Content, VariableHeightBoxStyle);
             GUILayout.EndHorizontal();
         }
