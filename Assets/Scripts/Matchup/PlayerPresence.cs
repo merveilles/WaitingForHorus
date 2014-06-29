@@ -473,7 +473,7 @@ public class PlayerPresence : MonoBehaviour
                 }
                 // Good stuff, great going guys
                 screenPosition.y = Screen.height - screenPosition.y;
-                var rect = new Rect(screenPosition.x - 50, screenPosition.y, 75, 15);
+                var rect = new Rect(screenPosition.x - 50, screenPosition.y, 125, 45);
                 var healthComponent = playerScript.GetComponent<HealthScript>();
                 if (healthComponent == null)
                 {

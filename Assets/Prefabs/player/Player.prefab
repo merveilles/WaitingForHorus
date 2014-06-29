@@ -2625,6 +2625,9 @@ MonoBehaviour:
   CameraScript: {fileID: 11400006}
   HealthScript: {fileID: 11400008}
   ObjectToUseForBounds: {fileID: 100120}
+  FlagParts:
+  - {fileID: 13700010}
+  - {fileID: 13700008}
   SafetyCollisionMask:
     serializedVersion: 2
     m_Bits: 257

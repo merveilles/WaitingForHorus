@@ -27,14 +27,60 @@ public class Deathmatch : GameMode
         StartAfterReceivingServer();
     }
 
+    public override void Update()
+    {
+        base.Update();
+        var leader = Leader;
+        ScreenSpaceDebug.AddLineOnce("Deathmatch update");
+        if (leader != null)
+        {
+            ScreenSpaceDebug.AddLineOnce("leader is " + leader.Name);
+            for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
+            {
+                var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
+                if (character.Possessor == null) continue;
+                bool flagVisible = character.Possessor == leader;
+                ScreenSpaceDebug.AddLineOnce("setting " + character.Possessor.Name + "'s flag to " + flagVisible);
+                character.HasFlagVisible = flagVisible;
+            }
+        }
+        else
+        {
+            ScreenSpaceDebug.AddLineOnce("null leader");
+            for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
+            {
+                var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
+                character.HasFlagVisible = false;
+            }
+        }
+    }
+
+    // May return null
+    public PlayerPresence Leader
+    {
+        get
+        {
+            if (PlayerPresence.UnsafeAllPlayerPresences.Count < 1) return null;
+            PlayerPresence leader = PlayerPresence.UnsafeAllPlayerPresences[0];
+            if (PlayerPresence.UnsafeAllPlayerPresences.Count == 1) return leader;
+            bool anyChanged = false;
+            foreach (var presence in Server.Presences)
+            {
+                if (presence.Score != leader.Score)
+                    anyChanged = true;
+                if (presence.Score > leader.Score)
+                    leader = presence;
+            }
+            return anyChanged ? leader : null;
+        }
+    }
+
     private void StartAfterReceivingServer()
     {
         foreach (var presence in Server.Presences)
         {
             SetupPresenceListener(presence);
         }
-
-        CurrentMapName = "pi_mar";
 
         // TODO can we get some real map changing here?
         if (Application.loadedLevelName == "pi_mar")

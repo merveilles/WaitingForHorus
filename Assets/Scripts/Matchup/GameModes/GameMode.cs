@@ -13,6 +13,8 @@ public class GameMode : MonoBehaviour
         DontDestroyOnLoad(this);
     }
     public virtual void Start() { }
+
+    public virtual void Update() { }
     public Server Server { get; set; }
 
     public virtual void ReceiveMapChanged() {}

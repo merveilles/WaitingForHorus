@@ -71,6 +71,44 @@ public class PlayerScript : MonoBehaviour
     private float TimeSinceLastTargetedWarningPlayed = 0f;
     private const float TimeBetweenTargetedWarningNotification = 0.7f;
 
+    // Flag visibility stuff
+    public Renderer[] FlagParts;
+    private bool _HasFlagVisible = false;
+    private bool HasEverSetFlagVisibility = false;
+    public bool HasFlagVisible
+    {
+        get { return _HasFlagVisible; }
+        set
+        {
+            bool needsUpdate = (_HasFlagVisible != value) || (!HasEverSetFlagVisibility);
+            if (needsUpdate)
+            {
+                _HasFlagVisible = value;
+                foreach (var flagPart in FlagParts)
+                    flagPart.enabled = _HasFlagVisible;
+                // hack
+                if (Network.isServer)
+                    networkView.RPC("RemoteReceiveHasFlagVisible", RPCMode.Others, _HasFlagVisible);
+                HasEverSetFlagVisibility = true;
+            }
+        }
+    }
+
+    [RPC]
+    private void RemoteReceiveHasFlagVisible(bool visible, NetworkMessageInfo info)
+    {
+            HasFlagVisible = visible;
+    }
+
+    [RPC]
+    private void ReceiveRemoteWantsFlagVisibility(NetworkMessageInfo info)
+    {
+        if (Network.isServer && HasEverSetFlagVisibility) // try to avoid wastefulness
+        {
+            networkView.RPC("RemoteReceiveHasFlagVisible", info.sender, _HasFlagVisible);
+        }
+    }
+
     public bool ShouldSendMessages
     {
         get
@@ -204,6 +242,11 @@ public class PlayerScript : MonoBehaviour
             if (indicator != null)
                 indicator.enabled = true;
         }
+
+        if (!Network.isServer)
+        {
+            networkView.RPC("ReceiveRemoteWantsFlagVisibility", RPCMode.Server);
+        }
     }
 
     public void OnGUI()
@@ -302,6 +345,10 @@ public class PlayerScript : MonoBehaviour
 
     private void ReceiveStartedBeingLockedOnBy(PlayerScript enemy)
     {
+        // Sometimes unity will call an RPC even if 'this' has already been
+		// 'destroyed', and because unity overloads null comparison to mean
+		// 'destroyed', well, we're going to do this check. Great.
+        if (this == null) return;
         if (networkView.isMine)
         {
             ScreenSpaceDebug.AddMessage("TARGETED BY", enemy.transform.position);
@@ -310,6 +357,7 @@ public class PlayerScript : MonoBehaviour
 
     private void ReceiveStoppedBeingLockedOnBy(PlayerScript enemy)
     {
+        if (this == null) return;
         if (networkView.isMine)
         {
             ScreenSpaceDebug.AddMessage("UNTARGETED BY", enemy.transform.position);
@@ -766,6 +814,7 @@ public class PlayerScript : MonoBehaviour
     private float RecentRocketJumpThreshold = 0.2f;
     private float TimeSinceRocketJump = 0f;
     private bool HasAvailableRocketJump;
+
     public void ReceiveStartedRocketJump()
     {
         TimeSinceRocketJump = 0f;

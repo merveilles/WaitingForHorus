@@ -67,15 +67,13 @@ public class Server : MonoBehaviour
 
         Leaderboard = new Leaderboard();
         Leaderboard.Skin = Relay.Instance.BaseSkin;
+
+        if (networkView.isMine)
+            _CurrentMapName = "pi_mar";
     }
 
     public void OnNetworkInstantiate(NetworkMessageInfo info)
     {
-        // I guess this check is redundant?
-        if (!networkView.isMine)
-        {
-            networkView.RPC("RequestedMapNameFromRemote", networkView.owner);
-        }
     }
 
     public void Start()
@@ -90,6 +88,12 @@ public class Server : MonoBehaviour
             OnPlayerConnected(Network.player);
             CurrentGameMode = (GameMode) Instantiate(DefaultGameMode, Vector3.zero, Quaternion.identity);
             CurrentGameMode.Server = this;
+        }
+
+        // I guess this check is redundant?
+        if (!networkView.isMine)
+        {
+            networkView.RPC("RequestedMapNameFromRemote", networkView.owner);
         }
     }
 
