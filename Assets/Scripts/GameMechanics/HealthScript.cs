@@ -27,8 +27,7 @@ public class HealthScript : MonoBehaviour
     bool invulnerable;
     bool firstSet;
 
-    //Renderer bigCell;
-    //Renderer[] smallCells;
+    public Renderer[] HealthSpheres;
 
     public PlayerScript PlayerScript;
 
@@ -39,9 +38,18 @@ public class HealthScript : MonoBehaviour
         Shield = maxShield;
         Health = maxHealth;
 
-        //var graphics = gameObject.FindChild("Animated Mesh Fixed");
-        //bigCell = graphics.FindChild("healthsphere_rear").GetComponentInChildren<Renderer>();
-        //smallCells = new[] { graphics.FindChild("healthsphere_left").GetComponentInChildren<Renderer>(), graphics.FindChild("healthsphere_right").GetComponentInChildren<Renderer>() };
+        if (HealthSpheres == null)
+            HealthSpheres = new Renderer[0];
+    }
+
+    private void UpdateHealthSphereVisibility()
+    {
+        int visualHealth = Shield + Health;
+        for (int i = HealthSpheres.Length - 1; i >= 0; i--)
+        {
+            HealthSpheres[i].enabled = visualHealth > 0;
+            visualHealth--;
+        }
     }
 
     public void Update()
@@ -75,6 +83,7 @@ public class HealthScript : MonoBehaviour
                     invulnerable = false;
             }
         }
+        UpdateHealthSphereVisibility();
     }
 
     public void OnEnable()

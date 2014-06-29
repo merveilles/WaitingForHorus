@@ -2767,6 +2767,10 @@ MonoBehaviour:
   _Health: 0
   shieldRenderer: {fileID: 2300000}
   timeUntilRespawn: 5
+  HealthSpheres:
+  - {fileID: 13700004}
+  - {fileID: 13700006}
+  - {fileID: 13700002}
   PlayerScript: {fileID: 11400000}
 --- !u!114 &11400010
 MonoBehaviour:
