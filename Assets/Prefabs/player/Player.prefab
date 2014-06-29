@@ -2738,13 +2738,13 @@ MonoBehaviour:
   - {fileID: 100108}
   - {fileID: 100106}
   - {fileID: 100104}
+  - {fileID: 100120}
   HackDisableShadowsObjects:
   - {fileID: 100056}
   - {fileID: 100054}
   - {fileID: 100052}
   - {fileID: 100050}
   ZoomedFieldOfViewRatio: .5
-  _IsExteriorView: 0
   ExteriorViewOffset: {x: 0, y: 2.5, z: -6}
   InteriorViewOffset: {x: 0, y: 1, z: 0}
 --- !u!114 &11400008
