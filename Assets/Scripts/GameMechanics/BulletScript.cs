@@ -73,7 +73,7 @@ public class BulletScript : MonoBehaviour
 
     bool DoDamageTo( Transform t, Vector3 point)
     {
-        HealthScript health = t.root.GetComponentInChildren<HealthScript>();
+        HealthScript health = t.GetComponentInParent<HealthScript>();
         // err, kinda lame, this is so that the collider can be
         // directly inside the damaged object rather than on it,
         // useful when the damage collider is different from the
