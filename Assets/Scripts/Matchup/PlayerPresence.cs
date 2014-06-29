@@ -380,6 +380,7 @@ public class PlayerPresence : MonoBehaviour
             {
                 if (character == null) continue;
                 if (character == Possession) continue;
+                if (!Possession.ShootingScript.CharacterIsInTargets(character)) continue;
                 Vector3 screenPosition = Camera.current.WorldToScreenPoint(InfoPointForPlayerScript(character));
                 screenPosition.y = Screen.height - screenPosition.y;
                 if (screenPosition.z < 0) continue;

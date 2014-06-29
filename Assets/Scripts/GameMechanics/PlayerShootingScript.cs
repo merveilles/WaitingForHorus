@@ -108,6 +108,13 @@ public class PlayerShootingScript : MonoBehaviour
         cooldownLeft += 1f;
     }
 
+    public bool CharacterIsInTargets(PlayerScript otherCharacter)
+    {
+        for (int i = 0; i < targets.Count; i++)
+            if (targets[i].Script == otherCharacter) return true;
+        return false;
+    }
+
     /*void Update()
     {
         gun.LookAt(playerCamera.GetTargetPosition());
