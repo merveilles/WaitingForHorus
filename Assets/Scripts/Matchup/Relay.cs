@@ -25,6 +25,8 @@ public class Relay : MonoBehaviour
     private float TimeUntilRefresh = 0f;
     private float TimeBetweenRefreshes = 15f;
 
+    public const int CharacterSpawnGroupID = 1;
+
     public Server CurrentServer
     {
         get

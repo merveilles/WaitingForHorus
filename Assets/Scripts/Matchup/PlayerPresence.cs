@@ -317,7 +317,7 @@ public class PlayerPresence : MonoBehaviour
     private void DoActualSpawn(Vector3 position)
     {
         // ondestroy will be bound in the setter
-        Possession = (PlayerScript)Network.Instantiate(DefaultPlayerCharacterPrefab, position, Quaternion.identity, 1);
+        Possession = (PlayerScript)Network.Instantiate(DefaultPlayerCharacterPrefab, position, Quaternion.identity, Relay.CharacterSpawnGroupID);
     }
 
     [RPC]
@@ -338,7 +338,7 @@ public class PlayerPresence : MonoBehaviour
     {
         if (Relay.Instance.IsConnected)
         {
-            Network.RemoveRPCs(character.networkView.viewID);
+            Network.RemoveRPCs(character.networkView.owner, Relay.CharacterSpawnGroupID);
             Network.Destroy(character.gameObject);
         }
         else

@@ -727,7 +727,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            Network.RemoveRPCs(Possessor.networkView.viewID);
+            Network.RemoveRPCs(networkView.owner, Relay.CharacterSpawnGroupID);
             Network.Destroy(networkView.viewID);
         }
     }
