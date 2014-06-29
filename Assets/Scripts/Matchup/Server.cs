@@ -20,12 +20,17 @@ public class Server : MonoBehaviour
 
     private bool WasMine = false;
 
+    public Leaderboard Leaderboard { get; private set; }
+
     public void Awake()
     {
         DontDestroyOnLoad(this);
         NetworkPlayers = new List<NetworkPlayer>();
 
         ServerNotifier = new ExternalServerNotifier();
+
+        Leaderboard = new Leaderboard();
+        Leaderboard.Skin = Relay.Instance.BaseSkin;
     }
 
     public void Start()
@@ -80,6 +85,7 @@ public class Server : MonoBehaviour
             ServerNotifier.NumberOfPlayers = PlayerPresence.UnsafeAllPlayerPresences.Count;
             ServerNotifier.Update();
         }
+        Leaderboard.Update();
     }
 
     // Only called by Unity on server
@@ -212,5 +218,10 @@ public class Server : MonoBehaviour
         {
             ServerNotifier.BecomeUnlisted();
         }
+    }
+
+    public void OnGUI()
+    {
+        Leaderboard.DrawGUI();
     }
 }

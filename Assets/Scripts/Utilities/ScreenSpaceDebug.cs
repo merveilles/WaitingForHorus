@@ -179,9 +179,11 @@ public class ScreenSpaceDebug : MonoBehaviour
 
     private void LineWindow(int id)
     {
-        var basePadding = Skin.box.padding;
+        var basePadding = new RectOffset();
+        basePadding.left = Skin.box.padding.left;
         basePadding.top = 5;
         basePadding.bottom = 5;
+        basePadding.right = Skin.box.padding.right;
         var style = new GUIStyle(Skin.box)
         {
             fixedWidth = 300,

@@ -90,6 +90,13 @@ public class PlayerPresence : MonoBehaviour
     public event NameChangedHandler OnNameChanged = delegate {}; 
     public event NameChangedHandler OnBecameNamed = delegate {};
 
+    private int _Score;
+    public int Score
+    {
+        get { return _Score; }
+        set { _Score = value; }
+    }
+
     private bool wasMine = false;
 
     private bool _WantsExteriorView;
@@ -112,6 +119,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     private bool _IsDoingMenuStuff = false;
+
     public bool IsDoingMenuStuff
     {
         get { return _IsDoingMenuStuff; }
@@ -249,6 +257,18 @@ public class PlayerPresence : MonoBehaviour
                         }
                     }
                 }
+            }
+
+            // Leaderboard show/hide
+            // Always show when not possessing anything
+            if (Possession == null)
+            {
+                Server.Leaderboard.Show = true;
+            }
+            // Otherwise, show when holding tab
+            else
+            {
+                Server.Leaderboard.Show = Input.GetKey("tab");
             }
         }
 

@@ -68,7 +68,7 @@ MonoBehaviour:
     m_ImagePosition: 0
     m_ContentOffset: {x: 0, y: 0}
     m_FixedWidth: 0
-    m_FixedHeight: 35
+    m_FixedHeight: 0
     m_StretchWidth: 1
     m_StretchHeight: 0
   m_button:
