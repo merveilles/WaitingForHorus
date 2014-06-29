@@ -1312,7 +1312,7 @@ MonoBehaviour:
   - m_Name: HUDStuff
     m_Normal:
       m_Background: {fileID: 2800000, guid: 97a3a10810ab5124e817213d05a4ae19, type: 3}
-      m_TextColor: {r: .912846029, g: .918577731, b: .926470578, a: .964705884}
+      m_TextColor: {r: .985294104, g: .978049278, b: .978049278, a: .850980401}
     m_Hover:
       m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
