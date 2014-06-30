@@ -2656,12 +2656,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BurstCount: 8
-  ShotCooldown: .0450000018
+  ShotCooldown: .0432499982
   ReloadTime: .449999988
   BurstSpread: .375
   ShotgunSpreadBase: .649999976
-  ShotgunSpread: 10
-  ShotgunBulletSpeedMultiplier: .349999994
+  ShotgunSpread: 14
+  ShotgunBulletSpeedMultiplier: .625
   ShotgunHomingSpeed: .75
   CannonChargeTime: .5
   HeatAccuracyFudge: 4
