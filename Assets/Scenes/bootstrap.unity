@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BaseServer: {fileID: 11400000, guid: d632df868fa18584bad7f16c70fccf13, type: 2}
-  CurrentVersionID: 24
+  CurrentVersionID: 25
   MainCamera: {fileID: 656731828}
   BaseSkin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
   ConnectingServerHostname: 127.0.0.1

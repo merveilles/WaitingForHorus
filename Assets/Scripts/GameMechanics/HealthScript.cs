@@ -69,17 +69,18 @@ public class HealthScript : MonoBehaviour
         {
             isInWater = true;
 
-            if( !justBouncedPlayer )
+            /*if( !justBouncedPlayer )
             {
-                justBouncedPlayer = true;
-                PlayerScript.AddRecoil( Vector3.up * 255.0f );
-                bounceCooldown = 0.5f;
+                justBouncedPlayer = true;*/
+                PlayerScript.AddRecoil( Vector3.up * 275.0f );
+                DoDamageOwner( 1, transform.position, PlayerScript.Possessor );
+                /*bounceCooldown = 0.5f;
             }
             else
-            {
+            {*
                 justBouncedPlayer = false;
                 DoDamageOwner( 3, transform.position, PlayerScript.Possessor );
-            }
+            }*/
         }
         else
         {

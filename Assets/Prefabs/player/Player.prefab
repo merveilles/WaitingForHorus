@@ -2655,18 +2655,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c751b7c547ae2d949942c16c46f5a529, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BurstCount: 8
-  ShotCooldown: .0432499982
-  ReloadTime: .449999988
-  BurstSpread: .375
-  ShotgunSpreadBase: .649999976
-  ShotgunSpread: 14
-  ShotgunBulletSpeedMultiplier: .625
-  ShotgunHomingSpeed: .75
-  CannonChargeTime: .5
-  HeatAccuracyFudge: 4
-  HeatAccuracyZoomedMultiplier: .5
-  ShotCooldownZoomedMultiplier: 2
+  BurstCount: 10
+  ShotCooldown: .0425000004
+  ReloadTime: .587499976
+  BurstSpread: .362500012
+  ShotgunSpreadBase: .5
+  ShotgunSpread: 15
+  ShotgunBulletSpeedMultiplier: .600000024
+  ShotgunHomingSpeed: .725000024
+  HeatAccuracyFudge: 2.875
+  HeatAccuracyZoomedMultiplier: .425000012
+  ShotCooldownZoomedMultiplier: 2.17499995
   reloadSound: {fileID: 8200000}
   targetSound: {fileID: 8200002}
   pepperGunSound: {fileID: 8200010}

@@ -16,7 +16,7 @@ public class PlayerShootingScript : MonoBehaviour
     public float ShotgunSpread = 10;
     public float ShotgunBulletSpeedMultiplier = 0.25f;
     public float ShotgunHomingSpeed = 0.675f;
-    public float CannonChargeTime = 0.5f;
+    //public float CannonChargeTime = 0.5f;
     public float HeatAccuracyFudge = 0.5f;
 
     // Amount to modify heat by when when a shot is fired and we're zoomed in
@@ -174,6 +174,8 @@ public class PlayerShootingScript : MonoBehaviour
                     {
                         // find homing target(s)
     					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();
+
+                        //bulletsLeft *= 2;
 
     					var bulletsShot = bulletsLeft;
                         var first = true;
