@@ -21,8 +21,6 @@ public class BulletScript : MonoBehaviour
 	public float accelerationSpeed = 0.1f;
     public Transform target;
 	public float TrailAlpha = 0.5f;
-    public float HomingSpeed = 16.0f;
-    public float RocketJumpImpulse = 2.25f;
     bool dead;
 	float acceleration = 1.0f;
 	float randomBrightness = 1.0f;
@@ -119,8 +117,8 @@ public class BulletScript : MonoBehaviour
             var dist = Mathf.Max( impulseDistance, 0.5f );
 
             var impulse = impulseDirection * ( 45 / dist );
-            if( impulse.y > 0 || treatAsRocketJump )
-                impulse.y *= RocketJumpImpulse;
+            if( impulse.y > 0 || treatAsRocketJump ) 
+				impulse.y *= 2.25f;
             else 
 				impulse.y = 0;
 
@@ -183,7 +181,7 @@ public class BulletScript : MonoBehaviour
                 //Debug.Log("Is homing @ " + homing);
                 var lookVec = (target.position - transform.position).normalized;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookVec),
-                                                      Mathf.Clamp01( homing * Time.deltaTime * HomingSpeed ) );
+                                                      Mathf.Clamp01(homing * Time.deltaTime * 9));
             }
         }
 
