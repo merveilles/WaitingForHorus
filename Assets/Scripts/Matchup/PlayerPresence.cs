@@ -123,6 +123,13 @@ public class PlayerPresence : MonoBehaviour
     private float TimeToHoldLeaderboardFor = 0f;
     private float DefaultAutoLeaderboardTime = 1.85f;
 
+    // Prevent rapid attempts at respawning. This is to prevent high-latency
+	// situations from causing players to respawn multiple times in a row, which
+	// is confusing and weird. Ideally we would have smarter logic here than
+	// just a timer, but this is a good enough hack for now.
+    private const float MinTimeBetweenRespawnRequests = 0.75f;
+    private float TimeSinceLastRespawnRequest = MinTimeBetweenRespawnRequests;
+
     public void DisplayScoreForAWhile()
     {
         TimeToHoldLeaderboardFor = DefaultAutoLeaderboardTime;
@@ -315,6 +322,8 @@ public class PlayerPresence : MonoBehaviour
 
         if (Input.GetKeyDown("f11"))
             ScreenSpaceDebug.LogMessageSizes();
+
+        TimeSinceLastRespawnRequest += Time.deltaTime;
     }
 
     private Vector3 InfoPointForPlayerScript(PlayerScript playerScript)
@@ -326,6 +335,10 @@ public class PlayerPresence : MonoBehaviour
 
     private void IndicateRespawn()
     {
+        // Don't try to respawn if we just did it half a second ago
+        if (TimeSinceLastRespawnRequest < MinTimeBetweenRespawnRequests) return;
+        TimeSinceLastRespawnRequest = 0f;
+
         if (Network.isServer)
             OnPlayerPresenceWantsRespawn();
         else
