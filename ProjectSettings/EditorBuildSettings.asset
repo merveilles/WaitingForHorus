@@ -17,5 +17,5 @@ EditorBuildSettings:
     path: Assets/Scenes/pi_set.unity
   - enabled: 0
     path: Assets/Scenes/pi_ven.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/pi_rah.unity
