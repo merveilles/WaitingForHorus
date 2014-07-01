@@ -95,12 +95,14 @@ public class PlayerScript : MonoBehaviour
     }
 
     [RPC]
-    private void RemoteReceiveHasFlagVisible(bool visible, NetworkMessageInfo info)
+// ReSharper disable once UnusedMember.Local
+    private void RemoteReceiveHasFlagVisible(bool visible)
     {
             HasFlagVisible = visible;
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void ReceiveRemoteWantsFlagVisibility(NetworkMessageInfo info)
     {
         if (Network.isServer && HasEverSetFlagVisibility) // try to avoid wastefulness
@@ -289,6 +291,7 @@ public class PlayerScript : MonoBehaviour
                 Targeted(enemy);
             }
         }
+// ReSharper disable once EmptyGeneralCatchClause
         catch (Exception)
         {
             // nope lol
@@ -307,6 +310,7 @@ public class PlayerScript : MonoBehaviour
                 Untargeted(enemy);
             }
         }
+// ReSharper disable once EmptyGeneralCatchClause
         catch (Exception)
         {
             // nope lol
@@ -348,6 +352,8 @@ public class PlayerScript : MonoBehaviour
         // Sometimes unity will call an RPC even if 'this' has already been
 		// 'destroyed', and because unity overloads null comparison to mean
 		// 'destroyed', well, we're going to do this check. Great.
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+// ReSharper disable once HeuristicUnreachableCode
         if (this == null) return;
         // Also check if enemy is null, might have been destroyed by the time
 		// this RPC is called.
@@ -359,6 +365,8 @@ public class PlayerScript : MonoBehaviour
 
     private void ReceiveStoppedBeingLockedOnBy(PlayerScript enemy)
     {
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+// ReSharper disable once HeuristicUnreachableCode
         if (this == null) return;
         if (networkView.isMine && enemy != null)
         {
@@ -867,6 +875,7 @@ public class PlayerScript : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void ServerRequestedToDie(NetworkViewID instigatorPresenceViewID)
     {
         OnPlayerScriptDied(this, PlayerPresence.TryGetPlayerPresenceFromNetworkViewID(instigatorPresenceViewID));
