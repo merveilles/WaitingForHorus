@@ -628,7 +628,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         // Update running animation
-        if( controller.isGrounded && !justJumped )
+        if( controller.isGrounded && !justJumped && !activelyJumping)
         {
             if( MathHelper.AlmostEquals( smoothedInputVelocity, Vector3.zero, 0.1f ) && currentAnim != "idle" )
                     characterAnimation.CrossFade( currentAnim = "idle", IdleTransitionFadeLength );
@@ -663,6 +663,11 @@ public class PlayerScript : MonoBehaviour
                 }
             }
         }
+
+        // If nothing else has caused us to play the jump animation now, being
+		// airborne for a while seems like a good time to do it.
+        if (sinceNotGrounded > 0.05 && currentAnim != "jump")
+            characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
 
         var smoothFallingVelocity = fallingVelocity * 0.4f + lastFallingVelocity * 0.65f;
         lastFallingVelocity = smoothFallingVelocity;
@@ -747,6 +752,8 @@ public class PlayerScript : MonoBehaviour
 
         Vector3 pPosition = stream.isWriting ? transform.position : Vector3.zero;
 
+        bool wasJumping = activelyJumping;
+
         stream.Serialize(ref pPosition);
         stream.Serialize(ref inputVelocity);
         stream.Serialize(ref fallingVelocity);
@@ -762,6 +769,7 @@ public class PlayerScript : MonoBehaviour
 
         if (stream.isReading)
         {
+                //characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
             //Debug.Log("pPosition = " + pPosition + " / transform.position = " + transform.position);
             if (lastNetworkFramePosition == pPosition)
                 transform.position = pPosition;
@@ -773,7 +781,16 @@ public class PlayerScript : MonoBehaviour
             if (playDashSound && GlobalSoundsScript.soundEnabled) dashSound.Play();
             if (playJumpSound && GlobalSoundsScript.soundEnabled) jumpSound.Play();
 
+            bool isOverlappingGround = CheckOverlap(pPosition + new Vector3(0, -0.1f, 0));
+
             lastNetworkFramePosition = pPosition;
+
+            if (Possessor != null)
+                ScreenSpaceDebug.AddLineOnce(Possessor.Name + " jumping: " + activelyJumping);
+
+            // Play jump animation if it seems necessary
+            if (!wasJumping && activelyJumping && currentAnim != "jump")
+                characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
 
             HealthScript.UpdateShield();
         }
