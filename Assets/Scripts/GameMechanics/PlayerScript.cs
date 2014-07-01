@@ -688,7 +688,11 @@ public class PlayerScript : MonoBehaviour
         bool doesOverlap = CheckOverlap(transform.position);
         if (doesOverlap)
         {
-            fallingVelocity = Vector3.zero;
+            // The maximum speed we can be moving when overlapping. Prevents
+			// velocity from building up and eventually allowing us to
+			// penetrate.
+            const float maxVelocityMagnitudeWhenOverlapping = 60f;
+            fallingVelocity = Vector3.ClampMagnitude(fallingVelocity, maxVelocityMagnitudeWhenOverlapping);
             if (InstantOverlapEjection)
                 transform.position = LastNonCollidingPosition;
             else
@@ -713,6 +717,19 @@ public class PlayerScript : MonoBehaviour
 
         if (controller.isGrounded)
             recoilVelocity.y = 0;
+
+        // Prevent recoil velocity from sticking us to the ceiling for a while
+        // by checking to see if we're hitting it. A smarter solution, honestly,
+		// is to raycast and then modify our velocity by the surface hit normal.
+		// But this is a good enough hack for now.
+        Vector3 aboveUs = transform.position;
+        aboveUs.y += 1;
+        bool hittingHeadOnCeiling = CheckOverlap(aboveUs);
+        if (!controller.isGrounded && hittingHeadOnCeiling)
+        {
+            recoilVelocity.y = Mathf.Min(0f, recoilVelocity.y);
+            fallingVelocity.y = Mathf.Min(0f, fallingVelocity.y);
+        }
     }
 
     // Used by HealthScript in Respawn
