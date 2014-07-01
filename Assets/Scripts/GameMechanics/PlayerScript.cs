@@ -349,7 +349,9 @@ public class PlayerScript : MonoBehaviour
 		// 'destroyed', and because unity overloads null comparison to mean
 		// 'destroyed', well, we're going to do this check. Great.
         if (this == null) return;
-        if (networkView.isMine)
+        // Also check if enemy is null, might have been destroyed by the time
+		// this RPC is called.
+        if (networkView.isMine && enemy != null)
         {
             ScreenSpaceDebug.AddMessage("TARGETED BY", enemy.transform.position);
         }
@@ -358,7 +360,7 @@ public class PlayerScript : MonoBehaviour
     private void ReceiveStoppedBeingLockedOnBy(PlayerScript enemy)
     {
         if (this == null) return;
-        if (networkView.isMine)
+        if (networkView.isMine && enemy != null)
         {
             ScreenSpaceDebug.AddMessage("UNTARGETED BY", enemy.transform.position);
         }

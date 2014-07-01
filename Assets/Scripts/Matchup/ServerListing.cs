@@ -105,7 +105,7 @@ namespace MasterServer
         public int id;
     	public int version;
         public string message;
-        public bool mismatchedVersion { get { return version != Relay.Instance.CurrentVersionID; } }
+        public bool VersionMismatch { get { return version != Relay.Instance.CurrentVersionID; } }
     }
 
     // Handles notifying the master list server about a server that's being run,
@@ -161,7 +161,7 @@ namespace MasterServer
             CurrentMapName = "?";
             NumberOfPlayers = 0;
             GUID = "?";
-            Version = Relay.Instance.CurrentVersionID;
+            Version = Relay.Instance.PublicizedVersionID;
             IsListedOk = false;
 
             WebClient = new WebClient();

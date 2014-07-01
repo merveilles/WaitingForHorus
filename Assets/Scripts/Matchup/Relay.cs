@@ -15,6 +15,8 @@ public class Relay : MonoBehaviour
 
     public GameObject MainCamera;
 
+    public bool DevelopmentMode = false;
+
     private Server _CurrentServer;
 
     private bool TryingToConnect = false;
@@ -26,6 +28,11 @@ public class Relay : MonoBehaviour
     private float TimeBetweenRefreshes = 15f;
 
     public const int CharacterSpawnGroupID = 1;
+
+    public int PublicizedVersionID
+    {
+        get { return DevelopmentMode ? -1 : CurrentVersionID; }
+    }
 
     public Server CurrentServer
     {
@@ -261,10 +268,21 @@ public class Relay : MonoBehaviour
                 Connect(RunMode.Server);
             }
 			GUILayout.Box( "", BoxSpacer );
-            if(GUILayout.Button("RANDOM"))
+            if (DevelopmentMode)
             {
-                GlobalSoundsScript.PlayButtonPress();
-                Connect(RunMode.Client);
+                if(GUILayout.Button("LOCAL"))
+                {
+                    GlobalSoundsScript.PlayButtonPress();
+                    Connect(RunMode.Client);
+                }
+            }
+            else
+            {
+                if(GUILayout.Button("RANDOM"))
+                {
+                    GlobalSoundsScript.PlayButtonPress();
+                    ConnectToRandomServer();
+                }
             }
 
 			GUILayout.Box( "", BoxSpacer );
@@ -295,14 +313,14 @@ public class Relay : MonoBehaviour
                 sb.Append(serverInfo.ip);
                 sb.Append("]");
 
-                if( serverInfo.mismatchedVersion )
+                if( serverInfo.VersionMismatch )
                     sb.Append( " |Game Using Incompatible Version|" );
 
                 GUILayout.BeginHorizontal();
                 //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
                 GUILayout.Box(sb.ToString(), rowStyle);
     			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
-                GUI.enabled = !TryingToConnect && !serverInfo.mismatchedVersion;
+                GUI.enabled = !TryingToConnect && !serverInfo.VersionMismatch;
 
                 if(GUILayout.Button("JOIN"))
                 {
@@ -334,7 +352,7 @@ public class Relay : MonoBehaviour
         }
     }
 
-    public bool IsConnected { get { return false; } }
+    public bool IsConnected { get { return Network.peerType != NetworkPeerType.Disconnected; } }
 
     private void ReceiveServerMessage(string text)
     {

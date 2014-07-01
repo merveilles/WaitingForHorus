@@ -382,8 +382,8 @@ public class PlayerPresence : MonoBehaviour
         {
             if (Possession != null)
             {
-                Possession = null;
                 CleanupOldCharacter(Possession);
+                Possession = null;
             }
             DoActualSpawn(position);
         }
