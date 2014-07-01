@@ -133,48 +133,48 @@ MonoBehaviour:
   m_toggle:
     m_Name: toggle
     m_Normal:
-      m_Background: {fileID: 11018, guid: 0000000000000000e000000000000000, type: 0}
+      m_Background: {fileID: 2800000, guid: 748b512f5a5368044be96b9940787c24, type: 3}
       m_TextColor: {r: .891128957, g: .891128957, b: .891128957, a: 1}
     m_Hover:
-      m_Background: {fileID: 11014, guid: 0000000000000000e000000000000000, type: 0}
+      m_Background: {fileID: 2800000, guid: 3b7c782f5c25d344cb94504fd8a5f8b2, type: 3}
       m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_Active:
-      m_Background: {fileID: 11013, guid: 0000000000000000e000000000000000, type: 0}
+      m_Background: {fileID: 2800000, guid: cac9f33748685784cbeace42755938bb, type: 3}
       m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_Focused:
       m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_OnNormal:
-      m_Background: {fileID: 11016, guid: 0000000000000000e000000000000000, type: 0}
+      m_Background: {fileID: 2800000, guid: 738fbeae03e755c42bc9ced0367bac75, type: 3}
       m_TextColor: {r: .890196085, g: .890196085, b: .890196085, a: 1}
     m_OnHover:
-      m_Background: {fileID: 11015, guid: 0000000000000000e000000000000000, type: 0}
+      m_Background: {fileID: 2800000, guid: 3b7c782f5c25d344cb94504fd8a5f8b2, type: 3}
       m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_OnActive:
-      m_Background: {fileID: 11017, guid: 0000000000000000e000000000000000, type: 0}
+      m_Background: {fileID: 2800000, guid: cac9f33748685784cbeace42755938bb, type: 3}
       m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_OnFocused:
       m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Border:
-      m_Left: 14
+      m_Left: 0
       m_Right: 0
-      m_Top: 14
+      m_Top: 0
       m_Bottom: 0
     m_Margin:
-      m_Left: 4
-      m_Right: 4
-      m_Top: 4
-      m_Bottom: 4
-    m_Padding:
-      m_Left: 15
+      m_Left: 0
       m_Right: 0
-      m_Top: 3
+      m_Top: 0
+      m_Bottom: 0
+    m_Padding:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
       m_Bottom: 0
     m_Overflow:
-      m_Left: -1
+      m_Left: 0
       m_Right: 0
-      m_Top: -4
+      m_Top: -2
       m_Bottom: 0
     m_Font: {fileID: 0}
     m_FontSize: 0
@@ -184,10 +184,10 @@ MonoBehaviour:
     m_RichText: 1
     m_TextClipping: 1
     m_ImagePosition: 0
-    m_ContentOffset: {x: 3, y: 2}
-    m_FixedWidth: 0
-    m_FixedHeight: 0
-    m_StretchWidth: 1
+    m_ContentOffset: {x: 0, y: 0}
+    m_FixedWidth: 15
+    m_FixedHeight: 17
+    m_StretchWidth: 0
     m_StretchHeight: 0
   m_label:
     m_Name: label
@@ -1226,7 +1226,7 @@ MonoBehaviour:
     m_Margin:
       m_Left: 4
       m_Right: 4
-      m_Top: 10
+      m_Top: 13
       m_Bottom: 10
     m_Padding:
       m_Left: 0
@@ -1247,8 +1247,8 @@ MonoBehaviour:
     m_TextClipping: 0
     m_ImagePosition: 0
     m_ContentOffset: {x: 0, y: 0}
-    m_FixedWidth: 0
-    m_FixedHeight: 10
+    m_FixedWidth: 200
+    m_FixedHeight: 15
     m_StretchWidth: 1
     m_StretchHeight: 1
   - m_Name: Sensitivity Slider Thumb
@@ -1305,8 +1305,8 @@ MonoBehaviour:
     m_TextClipping: 0
     m_ImagePosition: 0
     m_ContentOffset: {x: 0, y: 0}
-    m_FixedWidth: 2
-    m_FixedHeight: 10
+    m_FixedWidth: 9
+    m_FixedHeight: 15
     m_StretchWidth: 1
     m_StretchHeight: 1
   - m_Name: HUDStuff

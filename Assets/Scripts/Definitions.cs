@@ -7,4 +7,5 @@ public static class Definitions
     public static int ScreenSpaceWindowID = 3;
     public static int MessageWindowID = 1;
     public static int LeaderboardWindowID = 4;
+    public static int OptionsWindowID = 5;
 }

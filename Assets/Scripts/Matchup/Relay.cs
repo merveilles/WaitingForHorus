@@ -29,6 +29,11 @@ public class Relay : MonoBehaviour
 
     public const int CharacterSpawnGroupID = 1;
 
+    public OptionsMenu OptionsMenu { get; private set; }
+    public bool ShowOptions { get; set; }
+
+    public AnimationCurve MouseSensitivityCurve;
+
     public int PublicizedVersionID
     {
         get { return DevelopmentMode ? -1 : CurrentVersionID; }
@@ -88,6 +93,13 @@ public class Relay : MonoBehaviour
         ExternalServerList.OnMasterServerListFetchError += ReceiveMasterListFetchError;
 
         BoxSpacer = new GUIStyle(BaseSkin.box) {fixedWidth = 1};
+
+        OptionsMenu = new OptionsMenu(BaseSkin);
+
+        OptionsMenu.OnOptionsMenuWantsClosed += () =>
+        { ShowOptions = false; };
+        OptionsMenu.OnOptionsMenuWantsQuitGame += Application.Quit;
+        OptionsMenu.OnOptionsMenuWantsGoToTitle += Network.Disconnect;
     }
 
     public void Start()
@@ -167,6 +179,10 @@ public class Relay : MonoBehaviour
             }
         }
 
+        // Hide/show options
+        if (Input.GetKeyDown(KeyCode.Escape) && !MessageLog.HasInputOpen)
+            ShowOptions = !ShowOptions;
+
         if (CurrentServer == null)
         {
             TimeUntilRefresh -= Time.deltaTime;
@@ -194,6 +210,8 @@ public class Relay : MonoBehaviour
             var characterName = presence.Possession == null ? "null" : presence.Possession.name;
             ScreenSpaceDebug.AddLineOnce("Presence: " + presence.Name + " possessing " + characterName);
         }
+
+        OptionsMenu.Update();
     }
 
     private bool ExternalServerListAvailable
@@ -246,6 +264,12 @@ public class Relay : MonoBehaviour
             GUILayout.Window(Definitions.LoginWindowID, new Rect( ( Screen.width / 2 ) - 155, Screen.height - 110, 77, 35), DrawLoginWindow, string.Empty);
     	    GUILayout.Window(Definitions.ServerListWindowID, new Rect( ( Screen.width / 2 ) - 155, Screen.height - ServerListHeight - 110, 312, ServerListHeight), DrawServerList, string.Empty);
         }
+
+        if (ShowOptions)
+        {
+            Screen.lockCursor = false;
+        }
+        OptionsMenu.DrawGUI();
     }
 
     private void DrawLoginWindow(int id)

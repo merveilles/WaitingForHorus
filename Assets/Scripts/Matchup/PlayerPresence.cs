@@ -103,19 +103,8 @@ public class PlayerPresence : MonoBehaviour
 
     public bool WantsExteriorView
     {
-        get
-        {
-            return _WantsExteriorView;
-        }
-        set
-        {
-            _WantsExteriorView = value;
-            if (networkView.isMine)
-            {
-                int asNumber = _WantsExteriorView ? 1 : 0;
-                PlayerPrefs.SetInt("thirdperson", asNumber);
-            }
-        }
+        get { return Relay.Instance.OptionsMenu.IsExteriorView; }
+        set { Relay.Instance.OptionsMenu.IsExteriorView = value; }
     }
 
     private bool _IsDoingMenuStuff = false;
@@ -129,8 +118,6 @@ public class PlayerPresence : MonoBehaviour
 	// just a timer, but this is a good enough hack for now.
     private const float MinTimeBetweenRespawnRequests = 0.75f;
     private float TimeSinceLastRespawnRequest = MinTimeBetweenRespawnRequests;
-
-    public OptionsMenu OptionsMenu { get; private set; }
 
     public void DisplayScoreForAWhile()
     {
@@ -224,11 +211,6 @@ public class PlayerPresence : MonoBehaviour
         PossessedCharacterViewID = NetworkViewID.unassigned;
         LastGUIDebugPositions = new WeakDictionary<PlayerScript, Vector2>();
 
-        if (networkView.isMine)
-        {
-            _WantsExteriorView = PlayerPrefs.GetInt("thirdperson", 1) > 0;
-        }
-
         // Ladies and gentlemen, the great and powerful Unity
         wasMine = networkView.isMine;
 
@@ -240,8 +222,11 @@ public class PlayerPresence : MonoBehaviour
             Relay.Instance.MessageLog.OnMessageEntered += ReceiveMessageEntered;
         }
 
-        if (networkView.isMine)
-            OptionsMenu = new OptionsMenu(this);
+    }
+
+    private void ReceiveOptionsMenuWantsClosed()
+    {
+        throw new NotImplementedException();
     }
 
     private void ReceiveMessageEntered(string text)
@@ -305,17 +290,21 @@ public class PlayerPresence : MonoBehaviour
 
             // Leaderboard show/hide
             // Always show when not possessing anything
-            if (Possession == null || TimeToHoldLeaderboardFor >= 0f)
+            // Never show when already showing options screen
+            if ((Possession == null || TimeToHoldLeaderboardFor >= 0f) && !Relay.Instance.ShowOptions)
             {
                 Server.Leaderboard.Show = true;
             }
             // Otherwise, show when holding tab
             else
             {
-                Server.Leaderboard.Show = Input.GetKey("tab");
+                Server.Leaderboard.Show = Input.GetKey("tab") && !Relay.Instance.ShowOptions;
             }
 
             TimeToHoldLeaderboardFor -= Time.deltaTime;
+
+            if (!Relay.Instance.ShowOptions && Possession != null)
+                Screen.lockCursor = true;
         }
 
         if (Possession != null)
@@ -370,7 +359,6 @@ public class PlayerPresence : MonoBehaviour
         {
             Relay.Instance.MessageLog.OnMessageEntered -= ReceiveMessageEntered;
         }
-
     }
 
     public void SpawnCharacter(Vector3 position)

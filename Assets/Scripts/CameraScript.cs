@@ -11,6 +11,9 @@ public class CameraScript : MonoBehaviour
     public bool HasSmoothedRotation = true;
     public bool UsesRaycastCrosshair = true;
     public float CrosshairSmoothingSpeed = 8.5f;
+
+    public const float MinimumFieldOfView = 45.0f;
+    public const float MaximumFieldOfView = 150.0f;
 	
 	bool aimingAtPlayer;
     public PlayerScript player;
@@ -48,8 +51,8 @@ public class CameraScript : MonoBehaviour
         set
         {
             _BaseFieldOfView = value;
-            if (player.networkView.isMine)
-                PlayerPrefs.SetFloat("fov", _BaseFieldOfView);
+            //if (player.networkView.isMine)
+            //    PlayerPrefs.SetFloat("fov", _BaseFieldOfView);
         }
     }
 
@@ -112,6 +115,21 @@ public class CameraScript : MonoBehaviour
     {
         if (HackDisableShadowsObjects == null)
             HackDisableShadowsObjects = new GameObject[0];
+
+        Relay.Instance.OptionsMenu.OnFOVOptionChanged += ReceiveFOVChanged;
+        BaseFieldOfView = Relay.Instance.OptionsMenu.FOVOptionValue;
+        Relay.Instance.OptionsMenu.OnExteriorViewOptionChanged += ReceiveExteriorViewOptionChanged;
+    }
+
+    public void OnDestroy()
+    {
+        Relay.Instance.OptionsMenu.OnFOVOptionChanged -= ReceiveFOVChanged;
+        Relay.Instance.OptionsMenu.OnExteriorViewOptionChanged -= ReceiveExteriorViewOptionChanged;
+    }
+
+    private void ReceiveFOVChanged(float fov)
+    {
+        BaseFieldOfView = fov;
     }
 
     public void AdjustCameraFOVInstantly()
@@ -148,13 +166,15 @@ public class CameraScript : MonoBehaviour
     public void Update()
     {
         if (!mainCamera) return;
+        if (!player.networkView.isMine) return;
+
         if (Input.GetButtonDown("DecreaseFOV"))
         {
-            BaseFieldOfView -= 5.0f;
+            Relay.Instance.OptionsMenu.FOVOptionValue -= 5.0f;
         }
         if (Input.GetButtonDown("IncreaseFOV"))
         {
-            BaseFieldOfView += 5.0f;
+            Relay.Instance.OptionsMenu.FOVOptionValue += 5.0f;
         }
         if (Input.GetKeyDown("x"))
         {
@@ -168,7 +188,7 @@ public class CameraScript : MonoBehaviour
         }
 
         // Prevent crazy values
-        BaseFieldOfView = Mathf.Clamp(BaseFieldOfView, 45f, 150f);
+        BaseFieldOfView = Mathf.Clamp(BaseFieldOfView, MinimumFieldOfView, MaximumFieldOfView);
 
         // Handle zoom changing
         bool newZoom = Input.GetButton("Zoom");
@@ -373,5 +393,10 @@ public class CameraScript : MonoBehaviour
             return hitInfo.point;
         else
             return transform.position + transform.forward * 1000;
+    }
+
+    private void ReceiveExteriorViewOptionChanged(bool newIsExterior)
+    {
+        IsExteriorView = newIsExterior;
     }
 }

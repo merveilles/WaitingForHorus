@@ -117,7 +117,32 @@ MonoBehaviour:
   BaseServer: {fileID: 11400000, guid: d632df868fa18584bad7f16c70fccf13, type: 2}
   CurrentVersionID: 25
   MainCamera: {fileID: 656731828}
-  DevelopmentMode: 0
+  DevelopmentMode: 1
+  MouseSensitivityCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: .25972119
+      value: .138709664
+      inSlope: .328430593
+      outSlope: .328430593
+      tangentMode: 0
+    - time: .896613598
+      value: .58392179
+      inSlope: 1.54934418
+      outSlope: 1.54934418
+      tangentMode: 0
+    - time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
   BaseSkin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
   ConnectingServerHostname: 127.0.0.1
 --- !u!4 &138782053

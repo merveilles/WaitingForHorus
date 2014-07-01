@@ -7,30 +7,37 @@ public class MouseSensitivityScript : MonoBehaviour
 
     public static float Sensitivity { get; private set; }
 
-    int sensitivityPercentage = 50;
+    float sensitivityPercentage = 50;
     //GUIStyle windowStyle;
 
     public void Awake()
     {
         //windowStyle = new GUIStyle(skin.window) { normal = { background = null } };
-        sensitivityPercentage = PlayerPrefs.GetInt("sensitivity", 50);
+        //sensitivityPercentage = PlayerPrefs.GetInt("sensitivity", 50);
+        Relay.Instance.OptionsMenu.OnSensitivityOptionChanged += ReceiveSensitivityChanged;
+    }
+
+    public void Start()
+    {
+        sensitivityPercentage = Relay.Instance.OptionsMenu.SensitivityOptionValue;
     }
 
     public void Update()
     {
         if(Input.GetButtonDown("Increase Sensitivity"))
         {
-            sensitivityPercentage += 2;
+            Relay.Instance.OptionsMenu.SensitivityOptionValue += 0.05f;
         }
         if(Input.GetButtonDown("Decrease Sensitivity"))
         {
-            sensitivityPercentage -= 2;
+            Relay.Instance.OptionsMenu.SensitivityOptionValue -= 0.05f;
         }
-        sensitivityPercentage = Mathf.Clamp(sensitivityPercentage, 0, 100);
-        PlayerPrefs.SetInt("sensitivity", sensitivityPercentage);
+        sensitivityPercentage = Mathf.Clamp01(sensitivityPercentage);
 
-        Sensitivity = baseSensitivity *
-            Mathf.Pow(2, sensitivityPercentage / 25.0f - 2);
+        float adjusted = Mathf.Lerp(0.05f, 1.0f, sensitivityPercentage);
+        float fromCurve = Relay.Instance.MouseSensitivityCurve.Evaluate(adjusted);
+        const float multiplier = 7.0f;
+        Sensitivity = fromCurve * multiplier;
     }
 
     public void OnGUI()
@@ -52,5 +59,15 @@ public class MouseSensitivityScript : MonoBehaviour
             GUILayout.ExpandWidth(false));*/
 		//GUILayout.TextField( Network.player.guid );
         GUILayout.EndHorizontal();
+    }
+
+    private void ReceiveSensitivityChanged(float newSensitivity)
+    {
+        sensitivityPercentage = newSensitivity;
+    }
+
+    public void OnDestroy()
+    {
+        Relay.Instance.OptionsMenu.OnSensitivityOptionChanged -= ReceiveSensitivityChanged;
     }
 }

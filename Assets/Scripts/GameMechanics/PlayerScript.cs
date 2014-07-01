@@ -33,7 +33,9 @@ public class PlayerScript : MonoBehaviour
     Vector3 fallingVelocity;
     Vector3 lastFallingVelocity;
     Vector3 recoilVelocity;
-	bool invertMouse = true;
+
+    private bool invertMouse { get { return Relay.Instance.OptionsMenu.IsAimInverted; }}
+
     Vector3 inputVelocity;
     Vector3 lastInputVelocity;
     Vector3 lookRotationEuler;
@@ -459,7 +461,7 @@ public class PlayerScript : MonoBehaviour
 			
 			if (Screen.lockCursor)
 			{
-                float invertMultiplier = invertMouse ? -1 : 1;
+                float invertMultiplier = invertMouse ? 1 : -1;
                 lookRotationEuler +=
                     MouseSensitivityScript.Sensitivity *
                     ZoomLookSensitivityMultiplier *
@@ -472,11 +474,8 @@ public class PlayerScript : MonoBehaviour
 			lookRotationEuler.x = Mathf.Clamp(
                 lookRotationEuler.x, -lookAngleLimit, lookAngleLimit);
 
-			if (Input.GetKeyDown("i"))
-				invertMouse = !invertMouse;
-
-            if (Input.GetMouseButtonUp(0))
-                Screen.lockCursor = true;
+            if (Input.GetMouseButtonUp(0) && !Relay.Instance.ShowOptions)
+               Screen.lockCursor = true;
 
             Screen.showCursor = !Screen.lockCursor;
             smoothYaw = lookRotationEuler.y;
@@ -783,7 +782,7 @@ public class PlayerScript : MonoBehaviour
             if (playDashSound && GlobalSoundsScript.soundEnabled) dashSound.Play();
             if (playJumpSound && GlobalSoundsScript.soundEnabled) jumpSound.Play();
 
-            bool isOverlappingGround = CheckOverlap(pPosition + new Vector3(0, -0.1f, 0));
+            //bool isOverlappingGround = CheckOverlap(pPosition + new Vector3(0, -0.1f, 0));
 
             lastNetworkFramePosition = pPosition;
 
