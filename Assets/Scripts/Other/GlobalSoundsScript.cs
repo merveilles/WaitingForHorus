@@ -43,7 +43,7 @@ public class GlobalSoundsScript : MonoBehaviour
 
     public void OnLevelWasLoaded( int levelIndex )
     {
-        bool shouldPlayMusic = !Application.isEditor || PlayMusicInEditor;
+        bool shouldPlayMusic = (!Application.isEditor || PlayMusicInEditor) && !Relay.Instance.DevelopmentMode;
         var indexInArray = levelIndex - 1;
 
         if( shouldPlayMusic && indexInArray < songs.Length )
