@@ -79,7 +79,8 @@ public class BulletScript : MonoBehaviour
         // useful when the damage collider is different from the
         // real collider
 
-        if( health != null)
+        // Don't do anything if we aren't dealing any damage
+        if(damage > 0 && health != null)
         {
             if (health.PlayerScript.Possessor != Instigator && // No Friendly Fire
                 Network.player == Instigator.networkView.owner) // only do damage from net player that fired
