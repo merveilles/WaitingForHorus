@@ -321,7 +321,8 @@ public class PlayerScript : MonoBehaviour
     {
         //ScreenSpaceDebug.AddMessage("RECEIVE TARGET BY", targetingUs.transform.position);
 
-        EnemiesTargetingUs.TryAddEnemyLockingOnToUs(targetingUs);
+        if (targetingUs != null)
+            EnemiesTargetingUs.TryAddEnemyLockingOnToUs(targetingUs);
 
         //print( "Targeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
@@ -336,7 +337,8 @@ public class PlayerScript : MonoBehaviour
     {
         //ScreenSpaceDebug.AddMessage("RECEIVE UNTARGET BY", enemy.transform.position);
 
-        EnemiesTargetingUs.TryRemoveEnemyLockingOnToUs(enemy);
+        if (enemy != null)
+            EnemiesTargetingUs.TryRemoveEnemyLockingOnToUs(enemy);
 		
         //print( "Untargeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
