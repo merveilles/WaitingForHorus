@@ -130,6 +130,8 @@ public class PlayerPresence : MonoBehaviour
     private const float MinTimeBetweenRespawnRequests = 0.75f;
     private float TimeSinceLastRespawnRequest = MinTimeBetweenRespawnRequests;
 
+    public OptionsMenu OptionsMenu { get; private set; }
+
     public void DisplayScoreForAWhile()
     {
         TimeToHoldLeaderboardFor = DefaultAutoLeaderboardTime;
@@ -238,6 +240,8 @@ public class PlayerPresence : MonoBehaviour
             Relay.Instance.MessageLog.OnMessageEntered += ReceiveMessageEntered;
         }
 
+        if (networkView.isMine)
+            OptionsMenu = new OptionsMenu(this);
     }
 
     private void ReceiveMessageEntered(string text)

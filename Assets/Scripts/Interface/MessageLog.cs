@@ -135,7 +135,7 @@ public class MessageLog
         // Never shot input field when disconnected (so that we can type in the name box)
         IsInputFieldEnabled = IsInputFieldEnabled && Relay.Instance.CurrentServer != null;
 
-	    GUILayout.Window(1, new Rect(35, 0, 247, Screen.height), DisplayLog, string.Empty);
+	    GUILayout.Window(Definitions.MessageWindowID, new Rect(35, 0, 247, Screen.height), DisplayLog, string.Empty);
 
     }
 

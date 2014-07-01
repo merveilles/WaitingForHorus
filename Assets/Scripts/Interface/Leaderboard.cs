@@ -73,7 +73,7 @@ public class Leaderboard
         float onScreen = 35;
         float xPosition = Mathf.Lerp(offScreen, onScreen, ShownAmount);
         if (!Mathf.Approximately(xPosition, offScreen))
-    	    GUILayout.Window(10, new Rect(xPosition, 35, 300, Screen.height), DisplayLeaderboard, string.Empty);
+    	    GUILayout.Window(Definitions.LeaderboardWindowID, new Rect(xPosition, 35, 300, Screen.height), DisplayLeaderboard, string.Empty);
     }
 
     private void DisplayLeaderboard(int id)
