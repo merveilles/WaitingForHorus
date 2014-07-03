@@ -75,6 +75,8 @@ public class PlayerPresence : MonoBehaviour
 
                 if (_Possession.networkView != null)
                     PossessedCharacterViewID = _Possession.networkView.viewID;
+
+                IsSpectating = false;
             }
         }
     }
@@ -119,6 +121,34 @@ public class PlayerPresence : MonoBehaviour
     private const float MinTimeBetweenRespawnRequests = 0.75f;
     private float TimeSinceLastRespawnRequest = MinTimeBetweenRespawnRequests;
 
+
+    private bool _IsSpectating;
+
+    public bool IsSpectating
+    {
+        get { return _IsSpectating; }
+        set
+        {
+            if (_IsSpectating != value)
+            {
+                _IsSpectating = value;
+                UpdateSpectating();
+                //if (_IsSpectating)
+                //{
+                //    ResetTransforms();
+                //}
+            }
+        }
+    }
+
+    private void UpdateSpectating()
+    {
+        if (networkView.isMine)
+        {
+            CameraSpin.Instance.IsSpectating = IsSpectating;
+        }
+    }
+
     public void DisplayScoreForAWhile()
     {
         TimeToHoldLeaderboardFor = DefaultAutoLeaderboardTime;
@@ -136,6 +166,10 @@ public class PlayerPresence : MonoBehaviour
         stream.Serialize(ref PossessedCharacterViewID);
         stream.Serialize(ref _IsDoingMenuStuff);
         stream.Serialize(ref _Score);
+
+        bool wasSpectating = _IsSpectating;
+        stream.Serialize(ref _IsSpectating);
+
         if (stream.isReading)
         {
             if (Possession == null)
@@ -155,6 +189,9 @@ public class PlayerPresence : MonoBehaviour
                     Possession = TryGetPlayerScriptFromNetworkViewID(PossessedCharacterViewID);
                 }
             }
+
+            if (wasSpectating != _IsSpectating)
+                UpdateSpectating();
         }
     }
 
@@ -224,11 +261,6 @@ public class PlayerPresence : MonoBehaviour
 
     }
 
-    private void ReceiveOptionsMenuWantsClosed()
-    {
-        throw new NotImplementedException();
-    }
-
     private void ReceiveMessageEntered(string text)
     {
         BroadcastChatMessageFrom(text);
@@ -238,12 +270,16 @@ public class PlayerPresence : MonoBehaviour
     {
         UnsafeAllPlayerPresences.Add(this);
         OnPlayerPresenceAdded(this);
+
+        IsSpectating = true;
     }
 
     public void Update()
     {
         if (networkView.isMine)
         {
+            WeaponIndicatorScript.Instance.ShouldRender = Possession != null;
+
             if (Possession == null)
             {
                 if (Input.GetButtonDown("Fire"))

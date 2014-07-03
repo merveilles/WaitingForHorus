@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class WeaponIndicatorScript : MonoBehaviour
 {
+    public static WeaponIndicatorScript Instance { get; private set; }
+    public bool ShouldRender { get; set; }
     Material mat;
 	float lastOpacity;
     bool isReady;
@@ -42,6 +44,12 @@ public class WeaponIndicatorScript : MonoBehaviour
 
     public List<PlayerData> Targets { get; private set; }
     public Vector2 CrosshairPosition { get; set; }
+
+    public void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        Instance = this;
+    }
 
     public void Start()
     {
@@ -140,8 +148,7 @@ public class WeaponIndicatorScript : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        if (true)
-        //if (!RoundScript.Instance.RoundStopped && !ServerScript.IsAsyncLoading && !ServerScript.Spectating)
+        if (ShouldRender)
         {
             // Circle around
 			var opacity = Mathf.Lerp(lastOpacity, CooldownStep < 1 ? 1 : 0.3f, 0.1f);

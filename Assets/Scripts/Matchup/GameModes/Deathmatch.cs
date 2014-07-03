@@ -129,7 +129,8 @@ public class Deathmatch : GameMode
         IsMapLoaded = true;
         CurrentMapName = Application.loadedLevelName;
         Server.BroadcastMessageFromServer("Welcome to " + CurrentMapName);
-        StartRound();
+        if (!IsRoundInProgress)
+            StartRound();
     }
     private void ReceivePresenceAdded(PlayerPresence newPlayerPresence)
     {
