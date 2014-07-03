@@ -5,6 +5,10 @@ public class Deathmatch : GameMode
 {
     public string CurrentMapName { get; private set; }
 
+    public float? TimeLimit { get; set; }
+    public int? ScoreLimit { get; set; }
+
+    private bool IsRoundInProgress = false;
     private bool IsMapLoaded = false;
     private List<PresenceListener> PresenceListeners;
 
@@ -123,13 +127,9 @@ public class Deathmatch : GameMode
     public override void ReceiveMapChanged()
     {
         IsMapLoaded = true;
-        foreach (var presence in Server.Presences)
-        {
-            presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
-            presence.SetScorePoints(0);
-        }
         CurrentMapName = Application.loadedLevelName;
         Server.BroadcastMessageFromServer("Welcome to " + CurrentMapName);
+        StartRound();
     }
     private void ReceivePresenceAdded(PlayerPresence newPlayerPresence)
     {
@@ -173,7 +173,7 @@ public class Deathmatch : GameMode
 
     private void PresenceListenerWantsRespawnFor(PlayerPresence presence)
     {
-        if (IsMapLoaded)
+        if (IsMapLoaded && IsRoundInProgress)
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
     }
 
@@ -214,6 +214,18 @@ public class Deathmatch : GameMode
                 if (args.Length > 0)
                     TryChangeLevel(args[0]);
             break;
+            case "start":
+                if (IsRoundInProgress)
+                    Relay.Instance.MessageLog.AddMessage("Unable to start round because a round is already in progress.");
+                else
+                    StartRound();
+            break;
+            case "end":
+                if (!IsRoundInProgress)
+                    Relay.Instance.MessageLog.AddMessage("Unable to end round because a round is not in progress.");
+                else
+                    EndRoundNow();
+            break;
         }
     }
 
@@ -221,15 +233,41 @@ public class Deathmatch : GameMode
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
+            if (IsRoundInProgress)
+                EndRoundNow();
+            // Is this also necessary?
             foreach (var playerScript in PlayerScript.AllEnabledPlayerScripts)
-            {
                 playerScript.PerformDestroy();
-            }
             Server.ChangeLevel(levelName);
         }
         else
         {
             Relay.Instance.MessageLog.AddMessage("Unable to change level to " + levelName + " because it is not available.");
         }
+    }
+
+    public void StartRound()
+    {
+        IsRoundInProgress = true;
+        foreach (var presence in Server.Presences)
+        {
+            presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
+            presence.SetScorePoints(0);
+        }
+        Server.BroadcastMessageFromServer("Round start.");
+    }
+
+    public void EndRoundNow()
+    {
+        IsRoundInProgress = false;
+        foreach (var playerScript in PlayerScript.AllEnabledPlayerScripts)
+        {
+            playerScript.PerformDestroy();
+        }
+        var leader = Leader;
+        string winMessage = leader != null ? 
+            leader.Name + " wins." :
+            "Tie game.";
+        Server.BroadcastMessageFromServer("Round over. " + winMessage);
     }
 }
