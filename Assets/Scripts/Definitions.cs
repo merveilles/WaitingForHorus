@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public static class Definitions
+﻿public static class Definitions
 {
     public static int LoginWindowID = 0;
     public static int ServerListWindowID = 2;
