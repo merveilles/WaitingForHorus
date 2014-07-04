@@ -250,7 +250,10 @@ public class OptionsMenu
         {
             GUILayout.Space(1);
             if (GUILayout.Button("SPECTATE", new GUIStyle(Skin.button) {fixedWidth = 95}))
+            {
                 OnOptionsMenuWantsSpectate();
+                OnOptionsMenuWantsClosed();
+            }
         }
 
         GUILayout.EndHorizontal();
