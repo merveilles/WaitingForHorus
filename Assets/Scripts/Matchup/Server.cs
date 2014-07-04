@@ -33,7 +33,7 @@ public class Server : MonoBehaviour
         get { return _IsGameActive; }
         set
         {
-            _IsGameActive = value; 
+            _IsGameActive = value;
         }
     }
 
@@ -108,6 +108,15 @@ public class Server : MonoBehaviour
             CurrentGameMode = (GameMode) Instantiate(DefaultGameMode, Vector3.zero, Quaternion.identity);
             CurrentGameMode.Server = this;
             ServerNotifier.Name = PlayerPrefs.GetString("username", "Anonymous") + "'s server";
+
+            var maps = new[]
+            {
+                "pi_mar",
+                "pi_set",
+                "pi_ven",
+                "pi_rah"
+            };
+            Relay.Instance.OptionsMenu.ListOfMaps = maps.Where(Application.CanStreamedLevelBeLoaded).ToList();
         }
 
         // I guess this check is redundant?

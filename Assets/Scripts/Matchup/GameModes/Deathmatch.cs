@@ -27,6 +27,11 @@ public class Deathmatch : GameMode
         PlayerPresence.OnPlayerPresenceRemoved += ReceivePresenceRemoved;
 
         Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
+
+        Relay.Instance.OptionsMenu.OnMapSelection += TryChangeLevel;
+        Relay.Instance.OptionsMenu.OnOptionsMenuWantsEndRound += EndRoundNow;
+        Relay.Instance.OptionsMenu.OnOptionsMenuWantsStartRound += StartRound;
+        Relay.Instance.OptionsMenu.DisplayRoundEndDelegate = () => IsRoundInProgress;
         
         StartAfterReceivingServer();
     }
@@ -35,22 +40,18 @@ public class Deathmatch : GameMode
     {
         base.Update();
         var leader = Leader;
-        ScreenSpaceDebug.AddLineOnce("Deathmatch update");
         if (leader != null)
         {
-            ScreenSpaceDebug.AddLineOnce("leader is " + leader.Name);
             for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
             {
                 var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
                 if (character.Possessor == null) continue;
                 bool flagVisible = character.Possessor == leader;
-                ScreenSpaceDebug.AddLineOnce("setting " + character.Possessor.Name + "'s flag to " + flagVisible);
                 character.HasFlagVisible = flagVisible;
             }
         }
         else
         {
-            ScreenSpaceDebug.AddLineOnce("null leader");
             for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
             {
                 var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
@@ -169,6 +170,10 @@ public class Deathmatch : GameMode
         PlayerScript.OnPlayerScriptDied -= ReceivePlayerDied;
         PlayerPresence.OnPlayerPresenceAdded -= ReceivePresenceAdded;
         Relay.Instance.MessageLog.OnCommandEntered -= ReceiveCommandEntered;
+        Relay.Instance.OptionsMenu.OnMapSelection -= TryChangeLevel;
+        Relay.Instance.OptionsMenu.OnOptionsMenuWantsEndRound -= EndRoundNow;
+        Relay.Instance.OptionsMenu.OnOptionsMenuWantsStartRound -= StartRound;
+        Relay.Instance.OptionsMenu.DisplayRoundEndDelegate = null;
     }
 
     private void SetupPresenceListener(PlayerPresence presence)

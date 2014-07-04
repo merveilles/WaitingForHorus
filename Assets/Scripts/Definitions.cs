@@ -7,4 +7,5 @@
     public static int LeaderboardWindowID = 4;
     public static int OptionsWindowID = 5;
     public static int PlayerGameChoicesWindowID = 6;
+    public static int ServerOptionsWindowID = 7;
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Permissions;
 using UnityEngine;
 
 public class OptionsMenu
@@ -25,6 +27,7 @@ public class OptionsMenu
         ShouldPlaySoundEffects = PlayerPrefs.GetInt("soundeffects", 1) > 0;
         ShouldPlayMusic = PlayerPrefs.GetInt("music", 1) > 0;
         IsAimInverted = PlayerPrefs.GetInt("invertaim", 0) > 0;
+        ListOfMaps = new List<string>();
     }
 
     public float FOVOptionValue
@@ -136,6 +139,8 @@ public class OptionsMenu
         }
     }
 
+    public List<string> ListOfMaps { get; set; }
+
     public delegate void OptionsMenuStateChangedHandler();
     public event OptionsMenuStateChangedHandler OnOptionsMenuWantsClosed = delegate {};
     public event OptionsMenuStateChangedHandler OnOptionsMenuWantsGoToTitle = delegate {};
@@ -150,20 +155,35 @@ public class OptionsMenu
     public event BoolOptionChangedHandler OnExteriorViewOptionChanged = delegate {};
     public event BoolOptionChangedHandler OnShouldPlaySoundEffectsOptionChanged = delegate {}; 
     public event BoolOptionChangedHandler OnShouldPlayMusicOptionChanged = delegate {};
-    public event BoolOptionChangedHandler OnIsAimInvertedOptionChanged = delegate {}; 
+    public event BoolOptionChangedHandler OnIsAimInvertedOptionChanged = delegate {};
+
+    public delegate void MapSelectionHandler(string mapName);
+    public event MapSelectionHandler OnMapSelection = delegate {};
+    public event OptionsMenuStateChangedHandler OnOptionsMenuWantsEndRound = delegate {};
+    public event OptionsMenuStateChangedHandler OnOptionsMenuWantsStartRound = delegate {};
 
     private float VisibilityAmount = 0f;
     private GUISkin _Skin;
 
     private GUIStyle LabelStyle;
 
+    public delegate bool DisplayRoundEndHandler();
+    public DisplayRoundEndHandler DisplayRoundEndDelegate = null;
+
     public bool ShouldDisplaySpectateButton { get; set; }
+    private bool ShouldDisplayServerOptions { get; set; }
+
+    public bool ShouldDisplayEndRound { get; set; }
 
     public void Update()
     {
         float speed = 0.000001f;
         float target = Relay.Instance.ShowOptions ? 1.0f : 0.0f;
         VisibilityAmount = Mathf.Lerp(VisibilityAmount, target, 1.0f - Mathf.Pow(speed, Time.deltaTime));
+
+        // Bit of a hack for now
+        if (Relay.Instance.CurrentServer != null)
+            ShouldDisplayServerOptions = Relay.Instance.CurrentServer.networkView.isMine;
     }
 
     public void DrawGUI()
@@ -174,9 +194,20 @@ public class OptionsMenu
         float offscreenY = (-35f * 2) - (height + 50);
         float onscreenY = 35f;
         float actualY = Mathf.Lerp(offscreenY, onscreenY, VisibilityAmount);
-        if (!Mathf.Approximately(actualY, offscreenY))
+
+        float serverHeight = 200f;
+        float serverOffscreenY = Screen.height + serverHeight + 50f;
+        float serverOnscreenY = Screen.height - (serverHeight + 35f);
+        float serverActualY = Mathf.Lerp(serverOffscreenY, serverOnscreenY, VisibilityAmount);
+
+        if (!Mathf.Approximately(VisibilityAmount, 0f))
+        {
             GUILayout.Window(Definitions.OptionsWindowID, new Rect(35, actualY, Screen.width - 35*2, 200), DrawWindow,
                 string.Empty);
+            if (ShouldDisplayServerOptions)
+                GUILayout.Window(Definitions.ServerOptionsWindowID, new Rect(35, serverActualY, Screen.width - 35*2, 200), DrawServerOptionsWindow,
+                    string.Empty);
+        }
     }
 
     private void DrawWindow(int id)
@@ -259,6 +290,55 @@ public class OptionsMenu
         GUILayout.EndHorizontal();
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();
+    }
 
+    private void DrawServerOptionsWindow(int id)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        GUILayout.BeginVertical();
+        GUILayout.FlexibleSpace();
+
+
+        GUILayout.BeginHorizontal(Skin.box);
+        GUILayout.Label("SERVER OPTIONS", LabelStyle);
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        if (DisplayRoundEndDelegate != null)
+        {
+            if (DisplayRoundEndDelegate())
+            {
+                if (GUILayout.Button("END ROUND", new GUIStyle(Skin.button) {fixedWidth = 96*4}))
+                    OnOptionsMenuWantsEndRound();
+            }
+            else
+            {
+                if (GUILayout.Button("START ROUND", new GUIStyle(Skin.button) {fixedWidth = 96 * 4}))
+                    OnOptionsMenuWantsStartRound();
+            }
+        }
+        GUILayout.Space(-3);
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(1);
+
+        GUILayout.BeginHorizontal(Skin.box);
+        GUILayout.Label("CHANGE MAP", LabelStyle);
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        foreach (var map in ListOfMaps)
+        {
+            if (GUILayout.Button(map, new GUIStyle(Skin.button) {fixedWidth = 95}))
+            {
+                OnMapSelection(map);
+            }
+            GUILayout.Space(1);
+        }
+        GUILayout.Space(-3);
+        GUILayout.EndHorizontal();
+
+
+        GUILayout.EndVertical();
+        GUILayout.EndHorizontal();
     }
 }
