@@ -191,6 +191,8 @@ public class Relay : MonoBehaviour
                 TimeUntilRefresh += TimeBetweenRefreshes;
                 ExternalServerList.Refresh();
             }
+
+            OptionsMenu.ShouldDisplaySpectateButton = false;
         }
 
         var sb = new StringBuilder();
