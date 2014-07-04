@@ -254,6 +254,7 @@ public class Deathmatch : GameMode
     public void StartRound()
     {
         IsRoundInProgress = true;
+        Server.IsGameActive = true;
         foreach (var presence in Server.Combatants)
         {
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
@@ -265,6 +266,7 @@ public class Deathmatch : GameMode
     public void EndRoundNow()
     {
         IsRoundInProgress = false;
+        Server.IsGameActive = false;
         foreach (var playerScript in PlayerScript.AllEnabledPlayerScripts)
         {
             playerScript.PerformDestroy();

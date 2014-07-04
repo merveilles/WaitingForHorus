@@ -27,9 +27,20 @@ public class Server : MonoBehaviour
 
     public Leaderboard Leaderboard { get; private set; }
 
+    private bool _IsGameActive;
+    public bool IsGameActive
+    {
+        get { return _IsGameActive; }
+        set
+        {
+            _IsGameActive = value; 
+        }
+    }
+
 
     // Map name stuff
     private string _CurrentMapName;
+
     public string CurrentMapName
     {
         get { return _CurrentMapName; }
@@ -74,7 +85,10 @@ public class Server : MonoBehaviour
         Leaderboard.Skin = Relay.Instance.BaseSkin;
 
         if (networkView.isMine)
+        {
             _CurrentMapName = "pi_mar";
+            IsGameActive = false;
+        }
     }
 
     public void OnNetworkInstantiate(NetworkMessageInfo info)
@@ -128,6 +142,11 @@ public class Server : MonoBehaviour
     {
         var presence = (PlayerPresence) Network.Instantiate(BasePlayerPresence, Vector3.zero, Quaternion.identity, 0);
         return presence;
+    }
+
+    public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+    {
+        stream.Serialize(ref _IsGameActive);
     }
 
     public void Update()

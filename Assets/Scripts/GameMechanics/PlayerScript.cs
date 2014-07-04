@@ -477,7 +477,6 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetMouseButtonUp(0) && !Relay.Instance.ShowOptions)
                Screen.lockCursor = true;
 
-            Screen.showCursor = !Screen.lockCursor;
             smoothYaw = lookRotationEuler.y;
             smoothLookRotation = Quaternion.Euler(lookRotationEuler);
         }

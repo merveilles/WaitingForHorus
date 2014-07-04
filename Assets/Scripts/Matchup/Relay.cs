@@ -214,6 +214,7 @@ public class Relay : MonoBehaviour
         }
 
         OptionsMenu.Update();
+        Screen.showCursor = !Screen.lockCursor;
     }
 
     private bool ExternalServerListAvailable

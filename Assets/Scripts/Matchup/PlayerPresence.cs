@@ -144,7 +144,7 @@ public class PlayerPresence : MonoBehaviour
 
     private void UpdateShouldCameraSpin()
     {
-        if (Possession == null && IsSpectating)
+        if ((Possession == null && IsSpectating) || !Server.IsGameActive)
         {
             CameraSpin.Instance.ShouldSpin = true;
         }
@@ -395,8 +395,9 @@ public class PlayerPresence : MonoBehaviour
             if (!Relay.Instance.ShowOptions && Possession != null && !ShouldDisplayJoinPanel)
                 Screen.lockCursor = true;
 
-            if (ShouldDisplayJoinPanel)
+            if (ShouldDisplayJoinPanel || Relay.Instance.ShowOptions || !Server.IsGameActive)
                 Screen.lockCursor = false;
+
         }
 
         if (Possession != null)
