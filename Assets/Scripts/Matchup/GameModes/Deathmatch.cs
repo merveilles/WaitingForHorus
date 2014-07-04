@@ -66,10 +66,14 @@ public class Deathmatch : GameMode
         {
             if (PlayerPresence.UnsafeAllPlayerPresences.Count < 1) return null;
             PlayerPresence leader = PlayerPresence.UnsafeAllPlayerPresences[0];
-            if (PlayerPresence.UnsafeAllPlayerPresences.Count == 1) return leader;
+            if (PlayerPresence.UnsafeAllPlayerPresences.Count == 1)
+            {
+                return leader.IsSpectating ? null : leader;
+            }
             bool anyChanged = false;
             foreach (var presence in Server.Presences)
             {
+                if (presence.IsSpectating) continue;
                 if (presence.Score != leader.Score)
                     anyChanged = true;
                 if (presence.Score > leader.Score)

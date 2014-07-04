@@ -12,14 +12,14 @@ public class CameraSpin : MonoBehaviour
 
     public GameObject Thingy;
 
-    public bool IsSpectating { get; set; }
+    public bool ShouldSpin { get; set; }
 
     public void Awake()
     {
         DontDestroyOnLoad(gameObject);
         Instance = this;
 
-        IsSpectating = false;
+        ShouldSpin = false;
     }
 
     public void Start()
@@ -41,9 +41,9 @@ public class CameraSpin : MonoBehaviour
         transform.Rotate(0, rotateSpeed * Time.deltaTime * sign, 0);
 
         if (Relay.Instance.CurrentServer == null)
-            IsSpectating = true;
+            ShouldSpin = true;
 
-        if (IsSpectating)
+        if (ShouldSpin)
         {
             Camera.main.transform.position = Thingy.transform.position;
             Camera.main.transform.rotation = Thingy.transform.rotation;

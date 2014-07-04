@@ -43,11 +43,13 @@ public class Leaderboard
 
     private float ShownAmount = 0f;
 
-    private readonly List<PlayerPresence> PresenceCache;
+    private readonly List<PlayerPresence> CombatantsCache;
+    private readonly List<PlayerPresence> SpectatorsCache;
 
     public Leaderboard()
     {
-        PresenceCache = new List<PlayerPresence>();
+        CombatantsCache = new List<PlayerPresence>();
+        SpectatorsCache = new List<PlayerPresence>();
     }
 
     public void Start()
@@ -60,14 +62,23 @@ public class Leaderboard
         float target = Show ? 1f : 0f;
         float speed = 0.0000000001f;
         ShownAmount = Mathf.Lerp(ShownAmount, target, 1.0f - Mathf.Pow(speed, Time.deltaTime));
+
+        CombatantsCache.Clear();
+        SpectatorsCache.Clear();
+        for (int i = 0; i < PlayerPresence.UnsafeAllPlayerPresences.Count; i++)
+        {
+            var presence = PlayerPresence.UnsafeAllPlayerPresences[i];
+            if (presence.IsSpectating)
+                SpectatorsCache.Add(presence);
+            else
+                CombatantsCache.Add(presence);
+        }
+        CombatantsCache.Sort((p1, p2) => p2.Score.CompareTo(p1.Score));
+        SpectatorsCache.Sort();
     }
 
     public void DrawGUI()
     {
-        PresenceCache.Clear();
-        PresenceCache.AddRange(PlayerPresence.UnsafeAllPlayerPresences);
-        PresenceCache.Sort((p1, p2) => p2.Score.CompareTo(p1.Score));
-
         GUI.skin = Skin;
         float offScreen = -300;
         float onScreen = 35;
@@ -79,19 +90,42 @@ public class Leaderboard
     private void DisplayLeaderboard(int id)
     {
         GUI.skin = Skin;
-        GUILayout.BeginHorizontal();
-        GUILayout.Box("NAME", NameTitleStyle);
-        GUILayout.Space(1);
-        GUILayout.Box("SCORE", ScoreTitleStyle);
-        GUILayout.EndHorizontal();
-        for (int i = 0; i < PresenceCache.Count; i++)
+        GUILayout.BeginVertical();
+
+        if (CombatantsCache.Count > 0)
         {
-            var presence = PresenceCache[i];
             GUILayout.BeginHorizontal();
-            GUILayout.Box(presence.Name, NameBoxStyle);
+            GUILayout.Box("COMBATANT NAME", NameTitleStyle);
             GUILayout.Space(1);
-            GUILayout.Box(presence.Score.ToString(), ScoreBoxStyle);
+            GUILayout.Box("SCORE", ScoreTitleStyle);
             GUILayout.EndHorizontal();
+            for (int i = 0; i < CombatantsCache.Count; i++)
+            {
+                var presence = CombatantsCache[i];
+                GUILayout.BeginHorizontal();
+                GUILayout.Box(presence.Name, NameBoxStyle);
+                GUILayout.Space(1);
+                GUILayout.Box(presence.Score.ToString(), ScoreBoxStyle);
+                GUILayout.EndHorizontal();
+            }
         }
+        if (CombatantsCache.Count > 0 && SpectatorsCache.Count > 0)
+            GUILayout.Space(10);
+
+        if (SpectatorsCache.Count > 0)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Box("SPECTATOR NAME", NameTitleStyle);
+            GUILayout.EndHorizontal();
+            for (int i = 0; i < SpectatorsCache.Count; i++)
+            {
+                var presence = SpectatorsCache[i];
+                GUILayout.BeginHorizontal();
+                GUILayout.Box(presence.Name, NameBoxStyle);
+                GUILayout.EndHorizontal();
+            }
+        }
+
+        GUILayout.EndVertical();
     }
 }

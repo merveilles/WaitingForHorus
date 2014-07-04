@@ -140,6 +140,7 @@ public class OptionsMenu
     public event OptionsMenuStateChangedHandler OnOptionsMenuWantsClosed = delegate {};
     public event OptionsMenuStateChangedHandler OnOptionsMenuWantsGoToTitle = delegate {};
     public event OptionsMenuStateChangedHandler OnOptionsMenuWantsQuitGame = delegate {};
+    public event OptionsMenuStateChangedHandler OnOptionsMenuWantsSpectate = delegate {};
 
     public delegate void FloatOptionChangedHandler(float optionValue);
     public delegate void BoolOptionChangedHandler(bool optionValue);
@@ -155,6 +156,8 @@ public class OptionsMenu
     private GUISkin _Skin;
 
     private GUIStyle LabelStyle;
+
+    public bool ShouldDisplaySpectateButton { get; set; }
 
     public void Update()
     {
@@ -242,6 +245,12 @@ public class OptionsMenu
         {
             if (GUILayout.Button("QUIT GAME", new GUIStyle(Skin.button) {fixedWidth = 95}))
                 OnOptionsMenuWantsQuitGame();
+        }
+        if (ShouldDisplaySpectateButton)
+        {
+            GUILayout.Space(1);
+            if (GUILayout.Button("SPECTATE", new GUIStyle(Skin.button) {fixedWidth = 95}))
+                OnOptionsMenuWantsSpectate();
         }
 
         GUILayout.EndHorizontal();

@@ -120,6 +120,10 @@ public class HealthScript : MonoBehaviour
     public void DeclareHitToOthers(int damage, Vector3 point, PlayerPresence instigator)
     {
         networkView.RPC("OthersReceiveHit", RPCMode.Others, damage, point, instigator.networkView.viewID);
+
+        // For doing self-damage
+        if (networkView.isMine)
+            OthersReceiveHit(damage, point, instigator.networkView.viewID);
     }
 
     [RPC]
@@ -160,7 +164,6 @@ public class HealthScript : MonoBehaviour
             }
         }
     }
-
 
     // Call from server or client
     public void PlayDeathPrefab()

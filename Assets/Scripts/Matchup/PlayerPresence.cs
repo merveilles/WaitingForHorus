@@ -58,6 +58,8 @@ public class PlayerPresence : MonoBehaviour
             if (_Possession != null)
             {
                 _Possession.OnDeath -= ReceivePawnDeath;
+                // Hmmm...
+                //_Possession.RequestedToDieByOwner(this);
             }
 
             _Possession = value;
@@ -132,20 +134,23 @@ public class PlayerPresence : MonoBehaviour
             if (_IsSpectating != value)
             {
                 _IsSpectating = value;
-                UpdateSpectating();
-                //if (_IsSpectating)
-                //{
-                //    ResetTransforms();
-                //}
+                //if (networkView.isMine)
+                //    // Always disable camera spin when stop spectating
+                //    if (!_IsSpectating)
+                //        CameraSpin.Instance.ShouldSpin = false;
             }
         }
     }
 
-    private void UpdateSpectating()
+    private void UpdateShouldCameraSpin()
     {
-        if (networkView.isMine)
+        if (Possession == null && IsSpectating)
         {
-            CameraSpin.Instance.IsSpectating = IsSpectating;
+            CameraSpin.Instance.ShouldSpin = true;
+        }
+        else
+        {
+            CameraSpin.Instance.ShouldSpin = false;
         }
     }
 
@@ -189,9 +194,6 @@ public class PlayerPresence : MonoBehaviour
                     Possession = TryGetPlayerScriptFromNetworkViewID(PossessedCharacterViewID);
                 }
             }
-
-            if (wasSpectating != _IsSpectating)
-                UpdateSpectating();
         }
     }
 
@@ -257,13 +259,9 @@ public class PlayerPresence : MonoBehaviour
 
             // TODO will obviously send messages to server twice if there are two local players, fix
             Relay.Instance.MessageLog.OnMessageEntered += ReceiveMessageEntered;
+            Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
         }
 
-    }
-
-    private void ReceiveMessageEntered(string text)
-    {
-        BroadcastChatMessageFrom(text);
     }
 
     public void Start()
@@ -272,6 +270,54 @@ public class PlayerPresence : MonoBehaviour
         OnPlayerPresenceAdded(this);
 
         IsSpectating = true;
+
+        if (networkView.isMine)
+        {
+            Relay.Instance.OptionsMenu.OnOptionsMenuWantsSpectate += OwnerGoSpectate;
+        }
+    }
+
+    public void OwnerGoJoin()
+    {
+        if (networkView.isMine)
+        {
+            if (Possession == null)
+                IndicateRespawn();
+        }
+    }
+
+    public void OwnerGoSpectate()
+    {
+        if (networkView.isMine)
+        {
+            if (Possession != null)
+                Possession.HealthScript.DeclareHitToOthers(999, Possession.transform.position, this);
+            IsSpectating = true;
+            Score = 0;
+        }
+    }
+
+    private void ReceiveMessageEntered(string text)
+    {
+        BroadcastChatMessageFrom(text);
+    }
+
+    private void ReceiveCommandEntered(string command, string[] args)
+    {
+        switch (command)
+        {
+            case "join":
+                OwnerGoJoin();
+            break;
+            case "spectate":
+                OwnerGoSpectate();
+            break;
+        }
+    }
+
+    private bool ShouldDisplayRespawnNotice()
+    {
+        return Possession == null && !IsSpectating;
     }
 
     public void Update()
@@ -279,10 +325,13 @@ public class PlayerPresence : MonoBehaviour
         if (networkView.isMine)
         {
             WeaponIndicatorScript.Instance.ShouldRender = Possession != null;
+            UpdateShouldCameraSpin();
+
+            Relay.Instance.OptionsMenu.ShouldDisplaySpectateButton = !IsSpectating;
 
             if (Possession == null)
             {
-                if (Input.GetButtonDown("Fire"))
+                if (Input.GetButtonDown("Fire") && !IsSpectating)
                 {
                     IndicateRespawn();
                 }
@@ -394,7 +443,10 @@ public class PlayerPresence : MonoBehaviour
         if (wasMine)
         {
             Relay.Instance.MessageLog.OnMessageEntered -= ReceiveMessageEntered;
+            Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
+            Relay.Instance.OptionsMenu.OnOptionsMenuWantsSpectate -= OwnerGoSpectate;
         }
+
     }
 
     public void SpawnCharacter(Vector3 position)
