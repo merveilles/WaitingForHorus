@@ -93,6 +93,7 @@ public class Server : MonoBehaviour
             OnPlayerConnected(Network.player);
             CurrentGameMode = (GameMode) Instantiate(DefaultGameMode, Vector3.zero, Quaternion.identity);
             CurrentGameMode.Server = this;
+            ServerNotifier.Name = PlayerPrefs.GetString("username", "Anonymous") + "'s server";
         }
 
         // I guess this check is redundant?

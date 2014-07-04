@@ -105,6 +105,7 @@ namespace MasterServer
         public int id;
     	public int version;
         public string message;
+        public string name;
         public bool VersionMismatch { get { return version != Relay.Instance.CurrentVersionID; } }
     }
 
@@ -131,6 +132,8 @@ namespace MasterServer
 
         public bool IsListedOk { get; private set; }
 
+        public string Name { get; set; }
+
         public delegate void ServerNotifierSuccessHandler();
         public event ServerNotifierListedOkHandler OnServerNotifierSuccess = delegate {};
 
@@ -151,6 +154,7 @@ namespace MasterServer
                     map = CurrentMapName,
                     id = ID,
                     version = Version,
+                    name = Name,
                 };
             }
         }
@@ -168,6 +172,7 @@ namespace MasterServer
             WebClient.UploadValuesCompleted += ReceiveUploadValuesCompleted;
             //Reader = new JsonReader();
             Writer = new JsonWriter();
+            Name = "Unnamed server";
         }
 
         public void Start()

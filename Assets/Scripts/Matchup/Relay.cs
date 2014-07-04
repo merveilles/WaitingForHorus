@@ -330,12 +330,11 @@ public class Relay : MonoBehaviour
             StringBuilder sb = new StringBuilder();
             foreach (var serverInfo in ExternalServerList.MasterListRaw.servers)
             {
+                sb.Append(serverInfo.name);
+                sb.Append(", ");
                 sb.Append(serverInfo.players);
                 sb.Append(" players on ");
                 sb.Append(serverInfo.map);
-                sb.Append(" [");
-                sb.Append(serverInfo.ip);
-                sb.Append("]");
 
                 if( serverInfo.VersionMismatch )
                     sb.Append( " |Game Using Incompatible Version|" );
