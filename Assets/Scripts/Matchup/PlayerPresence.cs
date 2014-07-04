@@ -269,10 +269,9 @@ public class PlayerPresence : MonoBehaviour
         UnsafeAllPlayerPresences.Add(this);
         OnPlayerPresenceAdded(this);
 
-        IsSpectating = true;
-
         if (networkView.isMine)
         {
+            IsSpectating = true;
             Relay.Instance.OptionsMenu.OnOptionsMenuWantsSpectate += OwnerGoSpectate;
         }
     }
@@ -315,10 +314,10 @@ public class PlayerPresence : MonoBehaviour
         }
     }
 
-    private bool ShouldDisplayRespawnNotice()
-    {
-        return Possession == null && !IsSpectating;
-    }
+    private bool ShouldDisplayRespawnNotice
+    { get { return Possession == null && !IsSpectating; } }
+    private bool ShouldDisplayJoinPanel
+    { get { return IsSpectating; } }
 
     public void Update()
     {
@@ -388,8 +387,11 @@ public class PlayerPresence : MonoBehaviour
 
             TimeToHoldLeaderboardFor -= Time.deltaTime;
 
-            if (!Relay.Instance.ShowOptions && Possession != null)
+            if (!Relay.Instance.ShowOptions && Possession != null && !ShouldDisplayJoinPanel)
                 Screen.lockCursor = true;
+
+            if (ShouldDisplayJoinPanel)
+                Screen.lockCursor = false;
         }
 
         if (Possession != null)
@@ -546,6 +548,37 @@ public class PlayerPresence : MonoBehaviour
                 GUI.Box(rect, otherPlayerName, boxStyle);
             }
         }
+
+        if (networkView.isMine)
+        {
+            if (ShouldDisplayJoinPanel)
+            {
+                GUI.skin = Relay.Instance.BaseSkin;
+                GUILayout.Window(Definitions.PlayerGameChoicesWindowID, new Rect( 0, Screen.height - 110, Screen.width, 110), DrawGameChoices, string.Empty);
+            }
+        }
+    }
+
+    private void DrawGameChoices(int id)
+    {
+        GUIStyle joinStyle = new GUIStyle(Relay.Instance.BaseSkin.button)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fixedWidth = 200,
+            padding = new RectOffset(0,0,0,0)
+        };
+        GUILayout.BeginVertical();
+        {
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("JOIN", joinStyle))
+                    OwnerGoJoin();
+                GUILayout.FlexibleSpace();
+            }
+            GUILayout.EndHorizontal();
+        }
+        GUILayout.EndVertical();
     }
 
     private void OnDrawDebugStuff()

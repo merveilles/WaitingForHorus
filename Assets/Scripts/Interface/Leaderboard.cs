@@ -74,7 +74,7 @@ public class Leaderboard
                 CombatantsCache.Add(presence);
         }
         CombatantsCache.Sort((p1, p2) => p2.Score.CompareTo(p1.Score));
-        SpectatorsCache.Sort();
+        SpectatorsCache.Sort((p1, p2) => System.String.Compare(p1.Name, p2.Name, System.StringComparison.Ordinal));
     }
 
     public void DrawGUI()

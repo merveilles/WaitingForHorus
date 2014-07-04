@@ -6,4 +6,5 @@
     public static int MessageWindowID = 1;
     public static int LeaderboardWindowID = 4;
     public static int OptionsWindowID = 5;
+    public static int PlayerGameChoicesWindowID = 6;
 }
