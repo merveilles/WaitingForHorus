@@ -103,8 +103,6 @@ public class PlayerPresence : MonoBehaviour
 
     private bool wasMine = false;
 
-    private bool _WantsExteriorView;
-
     public bool WantsExteriorView
     {
         get { return Relay.Instance.OptionsMenu.IsExteriorView; }
@@ -129,17 +127,7 @@ public class PlayerPresence : MonoBehaviour
     public bool IsSpectating
     {
         get { return _IsSpectating; }
-        set
-        {
-            if (_IsSpectating != value)
-            {
-                _IsSpectating = value;
-                //if (networkView.isMine)
-                //    // Always disable camera spin when stop spectating
-                //    if (!_IsSpectating)
-                //        CameraSpin.Instance.ShouldSpin = false;
-            }
-        }
+        set { _IsSpectating = value; }
     }
 
     private void UpdateShouldCameraSpin()
@@ -172,7 +160,6 @@ public class PlayerPresence : MonoBehaviour
         stream.Serialize(ref _IsDoingMenuStuff);
         stream.Serialize(ref _Score);
 
-        bool wasSpectating = _IsSpectating;
         stream.Serialize(ref _IsSpectating);
 
         if (stream.isReading)
@@ -215,10 +202,7 @@ public class PlayerPresence : MonoBehaviour
             var presence = view.observed as PlayerPresence;
             return presence;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
     private PlayerScript TryGetPlayerScriptFromNetworkViewID(NetworkViewID viewID)
@@ -238,10 +222,7 @@ public class PlayerPresence : MonoBehaviour
             var character = view.observed as PlayerScript;
             return character;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
     public void Awake()
@@ -477,6 +458,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteSpawnCharacter(Vector3 position, NetworkMessageInfo info)
     {
         if (info.sender == Server.networkView.owner)
@@ -645,6 +627,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void SendNameBack(NetworkMessageInfo info)
     {
         networkView.RPC("ReceiveNameSent", info.sender, Name);
@@ -678,6 +661,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void ServerBroadcastChatMessageFrom(string text, NetworkMessageInfo info)
     {
         if (Server.networkView.isMine && info.sender == networkView.owner)
@@ -695,6 +679,7 @@ public class PlayerPresence : MonoBehaviour
             networkView.RPC("RemoteSetScorePoints", networkView.owner, points);
     }
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteSetScorePoints(int points, NetworkMessageInfo info)
     {
         if (info.sender != Server.networkView.owner) return;
@@ -730,6 +715,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteReceiveScorePoints(int points, NetworkMessageInfo info)
     {
         if (info.sender != Server.networkView.owner) return;
