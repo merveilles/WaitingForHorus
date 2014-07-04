@@ -139,10 +139,10 @@ public class Deathmatch : GameMode
     private void ReceivePresenceAdded(PlayerPresence newPlayerPresence)
     {
         SetupPresenceListener(newPlayerPresence);
-        if (IsMapLoaded)
-        {
-            newPlayerPresence.SpawnCharacter(RespawnZone.GetRespawnPoint());
-        }
+        //if (IsMapLoaded)
+        //{
+        //    newPlayerPresence.SpawnCharacter(RespawnZone.GetRespawnPoint());
+        //}
         newPlayerPresence.SetScorePoints(0);
     }
 
@@ -254,7 +254,7 @@ public class Deathmatch : GameMode
     public void StartRound()
     {
         IsRoundInProgress = true;
-        foreach (var presence in Server.Presences)
+        foreach (var presence in Server.Combatants)
         {
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
             presence.SetScorePoints(0);

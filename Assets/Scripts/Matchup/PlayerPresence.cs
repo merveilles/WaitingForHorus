@@ -271,7 +271,12 @@ public class PlayerPresence : MonoBehaviour
 
         if (networkView.isMine)
         {
-            IsSpectating = true;
+            // Hack, should really compare against Server, but don't know if it's possibly null here?
+            if (Network.isServer)
+                IsSpectating = false;
+            else
+                IsSpectating = true;
+
             Relay.Instance.OptionsMenu.OnOptionsMenuWantsSpectate += OwnerGoSpectate;
         }
     }

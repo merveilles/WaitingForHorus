@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MasterServer;
 using UnityEngine;
 
@@ -10,6 +11,10 @@ public class Server : MonoBehaviour
 
     public List<NetworkPlayer> NetworkPlayers { get; private set; }
     public IEnumerable<PlayerPresence> Presences { get { return PlayerPresence.AllPlayerPresences; }}
+    public IEnumerable<PlayerPresence> Combatants { get
+    {
+        return PlayerPresence.AllPlayerPresences.Where(p => !p.IsSpectating);
+    } } 
 
     public GameMode DefaultGameMode;
 
