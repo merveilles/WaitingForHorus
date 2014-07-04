@@ -29,9 +29,7 @@ public class Deathmatch : GameMode
         Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
 
         Relay.Instance.OptionsMenu.OnMapSelection += TryChangeLevel;
-        Relay.Instance.OptionsMenu.OnOptionsMenuWantsEndRound += EndRoundNow;
-        Relay.Instance.OptionsMenu.OnOptionsMenuWantsStartRound += StartRound;
-        Relay.Instance.OptionsMenu.DisplayRoundEndDelegate = () => IsRoundInProgress;
+        Relay.Instance.OptionsMenu.DisplayRoundOptionsDelegate = DisplayRoundOptions;
         
         StartAfterReceivingServer();
     }
@@ -98,6 +96,23 @@ public class Deathmatch : GameMode
             Server.ChangeLevel("pi_mar");
     }
 
+    private void DisplayRoundOptions()
+    {
+        GUILayout.BeginHorizontal();
+        if (IsRoundInProgress)
+        {
+            if (GUILayout.Button("END ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 96*4}))
+                EndRoundNow();
+        }
+        else
+        {
+            if (GUILayout.Button("START ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 96 * 4}))
+                StartRound();
+        }
+        GUILayout.Space(-3);
+        GUILayout.EndHorizontal();
+
+    }
 
     //public override void OnNewConnection(NetworkPlayer newPlayer)
     //{
@@ -171,9 +186,7 @@ public class Deathmatch : GameMode
         PlayerPresence.OnPlayerPresenceAdded -= ReceivePresenceAdded;
         Relay.Instance.MessageLog.OnCommandEntered -= ReceiveCommandEntered;
         Relay.Instance.OptionsMenu.OnMapSelection -= TryChangeLevel;
-        Relay.Instance.OptionsMenu.OnOptionsMenuWantsEndRound -= EndRoundNow;
-        Relay.Instance.OptionsMenu.OnOptionsMenuWantsStartRound -= StartRound;
-        Relay.Instance.OptionsMenu.DisplayRoundEndDelegate = null;
+        Relay.Instance.OptionsMenu.DisplayRoundOptionsDelegate = null;
     }
 
     private void SetupPresenceListener(PlayerPresence presence)

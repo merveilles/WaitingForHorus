@@ -158,16 +158,14 @@ public class OptionsMenu
 
     public delegate void MapSelectionHandler(string mapName);
     public event MapSelectionHandler OnMapSelection = delegate {};
-    public event OptionsMenuStateChangedHandler OnOptionsMenuWantsEndRound = delegate {};
-    public event OptionsMenuStateChangedHandler OnOptionsMenuWantsStartRound = delegate {};
 
     private float VisibilityAmount = 0f;
     private GUISkin _Skin;
 
     private GUIStyle LabelStyle;
 
-    public delegate bool DisplayRoundEndHandler();
-    public DisplayRoundEndHandler DisplayRoundEndDelegate = null;
+    public delegate void DisplayRoundOptionsHandler();
+    public DisplayRoundOptionsHandler DisplayRoundOptionsDelegate = null;
 
     public bool ShouldDisplaySpectateButton { get; set; }
     private bool ShouldDisplayServerOptions { get; set; }
@@ -302,22 +300,9 @@ public class OptionsMenu
         GUILayout.BeginHorizontal(Skin.box);
         GUILayout.Label("SERVER OPTIONS", LabelStyle);
         GUILayout.EndHorizontal();
-        GUILayout.BeginHorizontal();
-        if (DisplayRoundEndDelegate != null)
-        {
-            if (DisplayRoundEndDelegate())
-            {
-                if (GUILayout.Button("END ROUND", new GUIStyle(Skin.button) {fixedWidth = 96*4}))
-                    OnOptionsMenuWantsEndRound();
-            }
-            else
-            {
-                if (GUILayout.Button("START ROUND", new GUIStyle(Skin.button) {fixedWidth = 96 * 4}))
-                    OnOptionsMenuWantsStartRound();
-            }
-        }
-        GUILayout.Space(-3);
-        GUILayout.EndHorizontal();
+
+        if (DisplayRoundOptionsDelegate != null)
+            DisplayRoundOptionsDelegate();
 
         GUILayout.Space(1);
 
