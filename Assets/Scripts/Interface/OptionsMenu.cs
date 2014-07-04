@@ -162,7 +162,7 @@ public class OptionsMenu
     private float VisibilityAmount = 0f;
     private GUISkin _Skin;
 
-    private GUIStyle LabelStyle;
+    public GUIStyle LabelStyle { get; private set; }
 
     public delegate void DisplayRoundOptionsHandler();
     public DisplayRoundOptionsHandler DisplayRoundOptionsDelegate = null;
@@ -296,10 +296,6 @@ public class OptionsMenu
         GUILayout.BeginVertical();
         GUILayout.FlexibleSpace();
 
-
-        GUILayout.BeginHorizontal(Skin.box);
-        GUILayout.Label("SERVER OPTIONS", LabelStyle);
-        GUILayout.EndHorizontal();
 
         if (DisplayRoundOptionsDelegate != null)
             DisplayRoundOptionsDelegate();

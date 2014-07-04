@@ -37,9 +37,54 @@ public class Server : MonoBehaviour
         }
     }
 
+    public delegate void StatusMessageChangedHandler();
+    public event StatusMessageChangedHandler OnStatusMessageChange = delegate {};
+
+    public string StatusMessage
+    {
+        get { return _StatusMessage; }
+        set
+        {
+            if (_StatusMessage != value)
+            {
+                _StatusMessage = value;
+                if (networkView.isMine)
+                    UpdateStatusMessage();
+                OnStatusMessageChange();
+            }
+        }
+    }
+
+    private void UpdateStatusMessage()
+    {
+        networkView.RPC("RemoteReceiveStatusMessage", RPCMode.Others, StatusMessage);
+    }
+
+    private void RequestStatusMessageFromRemote()
+    {
+        networkView.RPC("OwnerReceiveRemoteWantsStatusMessage", networkView.owner);
+    }
+
+    [RPC]
+    private void OwnerReceiveRemoteWantsStatusMessage(NetworkMessageInfo info)
+    {
+        if (networkView.isMine)
+        {
+            networkView.RPC("RemoteReceiveStatusMessage", info.sender, StatusMessage);
+        }
+    }
+
+    [RPC]
+    private void RemoteReceiveStatusMessage(string newStatusMessage, NetworkMessageInfo info)
+    {
+        if (info.sender == networkView.owner)
+            StatusMessage = newStatusMessage;
+    }
+
 
     // Map name stuff
     private string _CurrentMapName;
+    private string _StatusMessage;
 
     public string CurrentMapName
     {
@@ -84,6 +129,8 @@ public class Server : MonoBehaviour
         Leaderboard = new Leaderboard();
         Leaderboard.Skin = Relay.Instance.BaseSkin;
 
+        StatusMessage = "?";
+
         if (networkView.isMine)
         {
             _CurrentMapName = "pi_mar";
@@ -93,6 +140,10 @@ public class Server : MonoBehaviour
 
     public void OnNetworkInstantiate(NetworkMessageInfo info)
     {
+        if (!networkView.isMine)
+        {
+            RequestStatusMessageFromRemote();
+        }
     }
 
     public void Start()

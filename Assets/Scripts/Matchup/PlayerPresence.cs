@@ -268,6 +268,7 @@ public class PlayerPresence : MonoBehaviour
         {
             if (Possession == null)
                 IndicateRespawn();
+            IsSpectating = false;
         }
     }
 
@@ -361,7 +362,7 @@ public class PlayerPresence : MonoBehaviour
             // Leaderboard show/hide
             // Always show when not possessing anything
             // Never show when already showing options screen
-            if ((Possession == null || TimeToHoldLeaderboardFor >= 0f) && !Relay.Instance.ShowOptions)
+            if (Possession == null || TimeToHoldLeaderboardFor >= 0f)
             {
                 Server.Leaderboard.Show = true;
             }

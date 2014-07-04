@@ -1,16 +1,31 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class Deathmatch : GameMode
 {
     public string CurrentMapName { get; private set; }
 
-    public float? TimeLimit { get; set; }
-    public int? ScoreLimit { get; set; }
+    //public float? TimeLimit { get; set; }
+    public int ScoreLimit
+    {
+        get { return _ScoreLimit; }
+        set
+        {
+            if (_ScoreLimit != value && _ScoreLimit >= 0)
+            {
+                _ScoreLimit = value;
+                PlayerPrefs.SetInt("scorelimit", value);
+            }
+        }
+    }
 
     private bool IsRoundInProgress = false;
     private bool IsMapLoaded = false;
     private List<PresenceListener> PresenceListeners;
+    private int _ScoreLimit;
+
+    private bool StartRoundAfterMapChange;
 
     public override void Awake()
     {
@@ -30,7 +45,10 @@ public class Deathmatch : GameMode
 
         Relay.Instance.OptionsMenu.OnMapSelection += TryChangeLevel;
         Relay.Instance.OptionsMenu.DisplayRoundOptionsDelegate = DisplayRoundOptions;
-        
+
+        ScoreLimit = PlayerPrefs.GetInt("scorelimit", 35);
+
+        StartRoundAfterMapChange = true;
         StartAfterReceivingServer();
     }
 
@@ -47,6 +65,9 @@ public class Deathmatch : GameMode
                 bool flagVisible = character.Possessor == leader;
                 character.HasFlagVisible = flagVisible;
             }
+
+            if (ScoreLimit > 0 && leader.Score >= ScoreLimit)
+                EndRoundNow();
         }
         else
         {
@@ -99,19 +120,60 @@ public class Deathmatch : GameMode
     private void DisplayRoundOptions()
     {
         GUILayout.BeginHorizontal();
-        if (IsRoundInProgress)
-        {
-            if (GUILayout.Button("END ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 96*4}))
-                EndRoundNow();
-        }
-        else
-        {
-            if (GUILayout.Button("START ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 96 * 4}))
-                StartRound();
-        }
-        GUILayout.Space(-3);
-        GUILayout.EndHorizontal();
 
+        GUILayout.BeginVertical();
+        {
+            GUILayout.BeginHorizontal(Relay.Instance.BaseSkin.box);
+            GUILayout.Label("DEATHMATCH", Relay.Instance.OptionsMenu.LabelStyle);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            if (IsRoundInProgress)
+            {
+                if (GUILayout.Button("END ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
+                {
+                    EndRoundNow();
+                    StartRoundAfterMapChange = false;
+                }
+            }
+            else
+            {
+                if (GUILayout.Button("START ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
+                {
+                    StartRound();
+                    StartRoundAfterMapChange = true;
+                    Relay.Instance.ShowOptions = false;
+                }
+            }
+            GUILayout.Space(-3);
+            GUILayout.EndHorizontal();
+        }
+        GUILayout.EndVertical();
+
+        GUILayout.Space(1);
+
+        GUILayout.BeginVertical(new GUIStyle() {fixedWidth = 95});
+        {
+            GUILayout.BeginHorizontal(Relay.Instance.BaseSkin.box);
+            GUILayout.Label("SCORE LIMIT", Relay.Instance.OptionsMenu.LabelStyle);
+            GUILayout.EndHorizontal();
+
+            GUI.enabled = !IsRoundInProgress;
+            var numText = GUILayout.TextField(ScoreLimit.ToString(), new GUIStyle(Relay.Instance.BaseSkin.textField) {fixedWidth = 95});
+            if (numText.Length < 1) ScoreLimit = 0;
+            else
+            {
+                int num;
+                if (int.TryParse(numText, out num) && num > 0)
+                {
+                    ScoreLimit = num;
+                }
+            }
+            GUI.enabled = true;
+        }
+        GUILayout.EndVertical();
+
+        GUILayout.EndHorizontal();
     }
 
     //public override void OnNewConnection(NetworkPlayer newPlayer)
@@ -149,7 +211,7 @@ public class Deathmatch : GameMode
         IsMapLoaded = true;
         CurrentMapName = Application.loadedLevelName;
         Server.BroadcastMessageFromServer("Welcome to " + CurrentMapName);
-        if (!IsRoundInProgress)
+        if (!IsRoundInProgress && StartRoundAfterMapChange)
             StartRound();
     }
     private void ReceivePresenceAdded(PlayerPresence newPlayerPresence)
@@ -279,6 +341,14 @@ public class Deathmatch : GameMode
             presence.SetScorePoints(0);
         }
         Server.BroadcastMessageFromServer("Round start.");
+
+        var sb = new StringBuilder();
+        sb.AppendLine("DEATHMATCH");
+        if (ScoreLimit > 0)
+            sb.Append("FIRST TO " + ScoreLimit);
+        else
+            sb.Append("NO LIMIT");
+        Server.StatusMessage = sb.ToString();
     }
 
     public void EndRoundNow()
@@ -294,5 +364,6 @@ public class Deathmatch : GameMode
             leader.Name + " wins." :
             "Tie game.";
         Server.BroadcastMessageFromServer("Round over. " + winMessage);
+        Server.StatusMessage = "ROUND OVER";
     }
 }

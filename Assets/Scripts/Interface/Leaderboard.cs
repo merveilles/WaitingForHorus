@@ -17,6 +17,13 @@ public class Leaderboard
             ThinPadding.bottom = 5;
             ThinPadding.right = Skin.box.padding.right;
 
+            StatusMessageStyle = new GUIStyle(Skin.box)
+            {
+                fixedWidth = 231,
+                alignment = TextAnchor.MiddleCenter,
+                padding = ThinPadding
+            };
+
             NameBoxStyle = new GUIStyle(Skin.box)
             {
                 fixedWidth = 150,
@@ -33,6 +40,8 @@ public class Leaderboard
             {padding = ThinPadding};
         }
     }
+
+    private GUIStyle StatusMessageStyle;
 
     private GUIStyle NameTitleStyle;
     private GUIStyle ScoreTitleStyle;
@@ -92,6 +101,14 @@ public class Leaderboard
         GUI.skin = Skin;
         GUILayout.BeginVertical();
 
+        // Silly check
+        if (Relay.Instance.CurrentServer != null)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Box(Relay.Instance.CurrentServer.StatusMessage, StatusMessageStyle);
+            GUILayout.EndHorizontal();
+        }
+
         if (CombatantsCache.Count > 0)
         {
             GUILayout.BeginHorizontal();
@@ -109,8 +126,9 @@ public class Leaderboard
                 GUILayout.EndHorizontal();
             }
         }
-        if (CombatantsCache.Count > 0 && SpectatorsCache.Count > 0)
-            GUILayout.Space(10);
+
+        //if (CombatantsCache.Count > 0 && SpectatorsCache.Count > 0)
+        //    GUILayout.Space(10);
 
         if (SpectatorsCache.Count > 0)
         {
