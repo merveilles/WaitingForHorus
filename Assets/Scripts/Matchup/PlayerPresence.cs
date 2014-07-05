@@ -58,6 +58,8 @@ public class PlayerPresence : MonoBehaviour
             if (_Possession != null)
             {
                 _Possession.OnDeath -= ReceivePawnDeath;
+                // Hmmm...
+                //_Possession.RequestedToDieByOwner(this);
             }
 
             _Possession = value;
@@ -75,6 +77,8 @@ public class PlayerPresence : MonoBehaviour
 
                 if (_Possession.networkView != null)
                     PossessedCharacterViewID = _Possession.networkView.viewID;
+
+                IsSpectating = false;
             }
         }
     }
@@ -99,29 +103,44 @@ public class PlayerPresence : MonoBehaviour
 
     private bool wasMine = false;
 
-    private bool _WantsExteriorView;
-
     public bool WantsExteriorView
     {
-        get
-        {
-            return _WantsExteriorView;
-        }
-        set
-        {
-            _WantsExteriorView = value;
-            if (networkView.isMine)
-            {
-                int asNumber = _WantsExteriorView ? 1 : 0;
-                PlayerPrefs.SetInt("thirdperson", asNumber);
-            }
-        }
+        get { return Relay.Instance.OptionsMenu.IsExteriorView; }
+        set { Relay.Instance.OptionsMenu.IsExteriorView = value; }
     }
 
     private bool _IsDoingMenuStuff = false;
 
     private float TimeToHoldLeaderboardFor = 0f;
     private float DefaultAutoLeaderboardTime = 1.85f;
+
+    // Prevent rapid attempts at respawning. This is to prevent high-latency
+	// situations from causing players to respawn multiple times in a row, which
+	// is confusing and weird. Ideally we would have smarter logic here than
+	// just a timer, but this is a good enough hack for now.
+    private const float MinTimeBetweenRespawnRequests = 0.75f;
+    private float TimeSinceLastRespawnRequest = MinTimeBetweenRespawnRequests;
+
+
+    private bool _IsSpectating;
+
+    public bool IsSpectating
+    {
+        get { return _IsSpectating; }
+        set { _IsSpectating = value; }
+    }
+
+    private void UpdateShouldCameraSpin()
+    {
+        if ((Possession == null && IsSpectating) || !Server.IsGameActive)
+        {
+            CameraSpin.Instance.ShouldSpin = true;
+        }
+        else
+        {
+            CameraSpin.Instance.ShouldSpin = false;
+        }
+    }
 
     public void DisplayScoreForAWhile()
     {
@@ -140,6 +159,9 @@ public class PlayerPresence : MonoBehaviour
         stream.Serialize(ref PossessedCharacterViewID);
         stream.Serialize(ref _IsDoingMenuStuff);
         stream.Serialize(ref _Score);
+
+        stream.Serialize(ref _IsSpectating);
+
         if (stream.isReading)
         {
             if (Possession == null)
@@ -180,10 +202,7 @@ public class PlayerPresence : MonoBehaviour
             var presence = view.observed as PlayerPresence;
             return presence;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
     private PlayerScript TryGetPlayerScriptFromNetworkViewID(NetworkViewID viewID)
@@ -203,10 +222,7 @@ public class PlayerPresence : MonoBehaviour
             var character = view.observed as PlayerScript;
             return character;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
     public void Awake()
@@ -214,11 +230,6 @@ public class PlayerPresence : MonoBehaviour
         DontDestroyOnLoad(this);
         PossessedCharacterViewID = NetworkViewID.unassigned;
         LastGUIDebugPositions = new WeakDictionary<PlayerScript, Vector2>();
-
-        if (networkView.isMine)
-        {
-            _WantsExteriorView = PlayerPrefs.GetInt("thirdperson", 1) > 0;
-        }
 
         // Ladies and gentlemen, the great and powerful Unity
         wasMine = networkView.isMine;
@@ -229,8 +240,47 @@ public class PlayerPresence : MonoBehaviour
 
             // TODO will obviously send messages to server twice if there are two local players, fix
             Relay.Instance.MessageLog.OnMessageEntered += ReceiveMessageEntered;
+            Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
         }
 
+    }
+
+    public void Start()
+    {
+        UnsafeAllPlayerPresences.Add(this);
+        OnPlayerPresenceAdded(this);
+
+        if (networkView.isMine)
+        {
+            // Hack, should really compare against Server, but don't know if it's possibly null here?
+            if (Network.isServer)
+                IsSpectating = false;
+            else
+                IsSpectating = true;
+
+            Relay.Instance.OptionsMenu.OnOptionsMenuWantsSpectate += OwnerGoSpectate;
+        }
+    }
+
+    public void OwnerGoJoin()
+    {
+        if (networkView.isMine)
+        {
+            if (Possession == null)
+                IndicateRespawn();
+            IsSpectating = false;
+        }
+    }
+
+    public void OwnerGoSpectate()
+    {
+        if (networkView.isMine)
+        {
+            if (Possession != null)
+                Possession.HealthScript.DeclareHitToOthers(999, Possession.transform.position, this);
+            IsSpectating = true;
+            Score = 0;
+        }
     }
 
     private void ReceiveMessageEntered(string text)
@@ -238,19 +288,36 @@ public class PlayerPresence : MonoBehaviour
         BroadcastChatMessageFrom(text);
     }
 
-    public void Start()
+    private void ReceiveCommandEntered(string command, string[] args)
     {
-        UnsafeAllPlayerPresences.Add(this);
-        OnPlayerPresenceAdded(this);
+        switch (command)
+        {
+            case "join":
+                OwnerGoJoin();
+            break;
+            case "spectate":
+                OwnerGoSpectate();
+            break;
+        }
     }
+
+    private bool ShouldDisplayRespawnNotice
+    { get { return Possession == null && !IsSpectating; } }
+    private bool ShouldDisplayJoinPanel
+    { get { return IsSpectating; } }
 
     public void Update()
     {
         if (networkView.isMine)
         {
+            WeaponIndicatorScript.Instance.ShouldRender = Possession != null;
+            UpdateShouldCameraSpin();
+
+            Relay.Instance.OptionsMenu.ShouldDisplaySpectateButton = !IsSpectating;
+
             if (Possession == null)
             {
-                if (Input.GetButtonDown("Fire"))
+                if (Input.GetButtonDown("Fire") && !IsSpectating)
                 {
                     IndicateRespawn();
                 }
@@ -294,6 +361,7 @@ public class PlayerPresence : MonoBehaviour
 
             // Leaderboard show/hide
             // Always show when not possessing anything
+            // Never show when already showing options screen
             if (Possession == null || TimeToHoldLeaderboardFor >= 0f)
             {
                 Server.Leaderboard.Show = true;
@@ -301,10 +369,17 @@ public class PlayerPresence : MonoBehaviour
             // Otherwise, show when holding tab
             else
             {
-                Server.Leaderboard.Show = Input.GetKey("tab");
+                Server.Leaderboard.Show = Input.GetKey("tab") && !Relay.Instance.ShowOptions;
             }
 
             TimeToHoldLeaderboardFor -= Time.deltaTime;
+
+            if (!Relay.Instance.ShowOptions && Possession != null && !ShouldDisplayJoinPanel)
+                Screen.lockCursor = true;
+
+            if (ShouldDisplayJoinPanel || Relay.Instance.ShowOptions || !Server.IsGameActive)
+                Screen.lockCursor = false;
+
         }
 
         if (Possession != null)
@@ -315,6 +390,8 @@ public class PlayerPresence : MonoBehaviour
 
         if (Input.GetKeyDown("f11"))
             ScreenSpaceDebug.LogMessageSizes();
+
+        TimeSinceLastRespawnRequest += Time.deltaTime;
     }
 
     private Vector3 InfoPointForPlayerScript(PlayerScript playerScript)
@@ -326,6 +403,10 @@ public class PlayerPresence : MonoBehaviour
 
     private void IndicateRespawn()
     {
+        // Don't try to respawn if we just did it half a second ago
+        if (TimeSinceLastRespawnRequest < MinTimeBetweenRespawnRequests) return;
+        TimeSinceLastRespawnRequest = 0f;
+
         if (Network.isServer)
             OnPlayerPresenceWantsRespawn();
         else
@@ -352,6 +433,8 @@ public class PlayerPresence : MonoBehaviour
         if (wasMine)
         {
             Relay.Instance.MessageLog.OnMessageEntered -= ReceiveMessageEntered;
+            Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
+            Relay.Instance.OptionsMenu.OnOptionsMenuWantsSpectate -= OwnerGoSpectate;
         }
 
     }
@@ -376,14 +459,15 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteSpawnCharacter(Vector3 position, NetworkMessageInfo info)
     {
         if (info.sender == Server.networkView.owner)
         {
             if (Possession != null)
             {
-                Possession = null;
                 CleanupOldCharacter(Possession);
+                Possession = null;
             }
             DoActualSpawn(position);
         }
@@ -453,6 +537,37 @@ public class PlayerPresence : MonoBehaviour
                 GUI.Box(rect, otherPlayerName, boxStyle);
             }
         }
+
+        if (networkView.isMine)
+        {
+            if (ShouldDisplayJoinPanel)
+            {
+                GUI.skin = Relay.Instance.BaseSkin;
+                GUILayout.Window(Definitions.PlayerGameChoicesWindowID, new Rect( 0, Screen.height - 110, Screen.width, 110), DrawGameChoices, string.Empty);
+            }
+        }
+    }
+
+    private void DrawGameChoices(int id)
+    {
+        GUIStyle joinStyle = new GUIStyle(Relay.Instance.BaseSkin.button)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fixedWidth = 200,
+            padding = new RectOffset(0,0,0,0)
+        };
+        GUILayout.BeginVertical();
+        {
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("JOIN", joinStyle))
+                    OwnerGoJoin();
+                GUILayout.FlexibleSpace();
+            }
+            GUILayout.EndHorizontal();
+        }
+        GUILayout.EndVertical();
     }
 
     private void OnDrawDebugStuff()
@@ -513,6 +628,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void SendNameBack(NetworkMessageInfo info)
     {
         networkView.RPC("ReceiveNameSent", info.sender, Name);
@@ -546,6 +662,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void ServerBroadcastChatMessageFrom(string text, NetworkMessageInfo info)
     {
         if (Server.networkView.isMine && info.sender == networkView.owner)
@@ -563,6 +680,7 @@ public class PlayerPresence : MonoBehaviour
             networkView.RPC("RemoteSetScorePoints", networkView.owner, points);
     }
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteSetScorePoints(int points, NetworkMessageInfo info)
     {
         if (info.sender != Server.networkView.owner) return;
@@ -598,6 +716,7 @@ public class PlayerPresence : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteReceiveScorePoints(int points, NetworkMessageInfo info)
     {
         if (info.sender != Server.networkView.owner) return;

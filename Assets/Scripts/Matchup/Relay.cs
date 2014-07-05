@@ -15,6 +15,8 @@ public class Relay : MonoBehaviour
 
     public GameObject MainCamera;
 
+    public bool DevelopmentMode = false;
+
     private Server _CurrentServer;
 
     private bool TryingToConnect = false;
@@ -26,6 +28,16 @@ public class Relay : MonoBehaviour
     private float TimeBetweenRefreshes = 15f;
 
     public const int CharacterSpawnGroupID = 1;
+
+    public OptionsMenu OptionsMenu { get; private set; }
+    public bool ShowOptions { get; set; }
+
+    public AnimationCurve MouseSensitivityCurve;
+
+    public int PublicizedVersionID
+    {
+        get { return DevelopmentMode ? -1 : CurrentVersionID; }
+    }
 
     public Server CurrentServer
     {
@@ -81,6 +93,13 @@ public class Relay : MonoBehaviour
         ExternalServerList.OnMasterServerListFetchError += ReceiveMasterListFetchError;
 
         BoxSpacer = new GUIStyle(BaseSkin.box) {fixedWidth = 1};
+
+        OptionsMenu = new OptionsMenu(BaseSkin);
+
+        OptionsMenu.OnOptionsMenuWantsClosed += () =>
+        { ShowOptions = false; };
+        OptionsMenu.OnOptionsMenuWantsQuitGame += Application.Quit;
+        OptionsMenu.OnOptionsMenuWantsGoToTitle += Network.Disconnect;
     }
 
     public void Start()
@@ -160,6 +179,10 @@ public class Relay : MonoBehaviour
             }
         }
 
+        // Hide/show options
+        if (Input.GetKeyDown(KeyCode.Escape) && !MessageLog.HasInputOpen)
+            ShowOptions = !ShowOptions;
+
         if (CurrentServer == null)
         {
             TimeUntilRefresh -= Time.deltaTime;
@@ -168,6 +191,8 @@ public class Relay : MonoBehaviour
                 TimeUntilRefresh += TimeBetweenRefreshes;
                 ExternalServerList.Refresh();
             }
+
+            OptionsMenu.ShouldDisplaySpectateButton = false;
         }
 
         var sb = new StringBuilder();
@@ -187,6 +212,9 @@ public class Relay : MonoBehaviour
             var characterName = presence.Possession == null ? "null" : presence.Possession.name;
             ScreenSpaceDebug.AddLineOnce("Presence: " + presence.Name + " possessing " + characterName);
         }
+
+        OptionsMenu.Update();
+        Screen.showCursor = !Screen.lockCursor;
     }
 
     private bool ExternalServerListAvailable
@@ -236,9 +264,15 @@ public class Relay : MonoBehaviour
         {
             GUI.skin = BaseSkin;
             // TODO less magical layout numerology
-            GUILayout.Window(0, new Rect( ( Screen.width / 2 ) - 155, Screen.height - 110, 77, 35), DrawLoginWindow, string.Empty);
-    	    GUILayout.Window(2, new Rect( ( Screen.width / 2 ) - 155, Screen.height - ServerListHeight - 110, 312, ServerListHeight), DrawServerList, string.Empty);
+            GUILayout.Window(Definitions.LoginWindowID, new Rect( ( Screen.width / 2 ) - 155, Screen.height - 110, 77, 35), DrawLoginWindow, string.Empty);
+    	    GUILayout.Window(Definitions.ServerListWindowID, new Rect( ( Screen.width / 2 ) - 155, Screen.height - ServerListHeight - 110, 312, ServerListHeight), DrawServerList, string.Empty);
         }
+
+        if (ShowOptions)
+        {
+            Screen.lockCursor = false;
+        }
+        OptionsMenu.DrawGUI();
     }
 
     private void DrawLoginWindow(int id)
@@ -261,10 +295,21 @@ public class Relay : MonoBehaviour
                 Connect(RunMode.Server);
             }
 			GUILayout.Box( "", BoxSpacer );
-            if(GUILayout.Button("RANDOM"))
+            if (DevelopmentMode)
             {
-                GlobalSoundsScript.PlayButtonPress();
-                Connect(RunMode.Client);
+                if(GUILayout.Button("LOCAL"))
+                {
+                    GlobalSoundsScript.PlayButtonPress();
+                    Connect(RunMode.Client);
+                }
+            }
+            else
+            {
+                if(GUILayout.Button("RANDOM"))
+                {
+                    GlobalSoundsScript.PlayButtonPress();
+                    ConnectToRandomServer();
+                }
             }
 
 			GUILayout.Box( "", BoxSpacer );
@@ -288,21 +333,20 @@ public class Relay : MonoBehaviour
             StringBuilder sb = new StringBuilder();
             foreach (var serverInfo in ExternalServerList.MasterListRaw.servers)
             {
+                sb.Append(serverInfo.name);
+                sb.Append(", ");
                 sb.Append(serverInfo.players);
                 sb.Append(" players on ");
                 sb.Append(serverInfo.map);
-                sb.Append(" [");
-                sb.Append(serverInfo.ip);
-                sb.Append("]");
 
-                if( serverInfo.mismatchedVersion )
+                if( serverInfo.VersionMismatch )
                     sb.Append( " |Game Using Incompatible Version|" );
 
                 GUILayout.BeginHorizontal();
                 //rowStyle.normal.textColor = PlayerRegistry.For(log.Player).Color;
                 GUILayout.Box(sb.ToString(), rowStyle);
     			GUILayout.Box( "", new GUIStyle( BaseSkin.box ) { fixedWidth = 1 } );
-                GUI.enabled = !TryingToConnect && !serverInfo.mismatchedVersion;
+                GUI.enabled = !TryingToConnect && !serverInfo.VersionMismatch;
 
                 if(GUILayout.Button("JOIN"))
                 {
@@ -334,7 +378,7 @@ public class Relay : MonoBehaviour
         }
     }
 
-    public bool IsConnected { get { return false; } }
+    public bool IsConnected { get { return Network.peerType != NetworkPeerType.Disconnected; } }
 
     private void ReceiveServerMessage(string text)
     {

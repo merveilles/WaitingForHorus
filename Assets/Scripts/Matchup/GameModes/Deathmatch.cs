@@ -1,12 +1,31 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class Deathmatch : GameMode
 {
     public string CurrentMapName { get; private set; }
 
+    //public float? TimeLimit { get; set; }
+    public int ScoreLimit
+    {
+        get { return _ScoreLimit; }
+        set
+        {
+            if (_ScoreLimit != value && _ScoreLimit >= 0)
+            {
+                _ScoreLimit = value;
+                PlayerPrefs.SetInt("scorelimit", value);
+            }
+        }
+    }
+
+    private bool IsRoundInProgress = false;
     private bool IsMapLoaded = false;
     private List<PresenceListener> PresenceListeners;
+    private int _ScoreLimit;
+
+    private bool StartRoundAfterMapChange;
 
     public override void Awake()
     {
@@ -23,7 +42,13 @@ public class Deathmatch : GameMode
         PlayerPresence.OnPlayerPresenceRemoved += ReceivePresenceRemoved;
 
         Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
-        
+
+        Relay.Instance.OptionsMenu.OnMapSelection += TryChangeLevel;
+        Relay.Instance.OptionsMenu.DisplayRoundOptionsDelegate = DisplayRoundOptions;
+
+        ScoreLimit = PlayerPrefs.GetInt("scorelimit", 35);
+
+        StartRoundAfterMapChange = true;
         StartAfterReceivingServer();
     }
 
@@ -31,22 +56,21 @@ public class Deathmatch : GameMode
     {
         base.Update();
         var leader = Leader;
-        ScreenSpaceDebug.AddLineOnce("Deathmatch update");
         if (leader != null)
         {
-            ScreenSpaceDebug.AddLineOnce("leader is " + leader.Name);
             for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
             {
                 var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
                 if (character.Possessor == null) continue;
                 bool flagVisible = character.Possessor == leader;
-                ScreenSpaceDebug.AddLineOnce("setting " + character.Possessor.Name + "'s flag to " + flagVisible);
                 character.HasFlagVisible = flagVisible;
             }
+
+            if (ScoreLimit > 0 && leader.Score >= ScoreLimit)
+                EndRoundNow();
         }
         else
         {
-            ScreenSpaceDebug.AddLineOnce("null leader");
             for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
             {
                 var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
@@ -62,10 +86,14 @@ public class Deathmatch : GameMode
         {
             if (PlayerPresence.UnsafeAllPlayerPresences.Count < 1) return null;
             PlayerPresence leader = PlayerPresence.UnsafeAllPlayerPresences[0];
-            if (PlayerPresence.UnsafeAllPlayerPresences.Count == 1) return leader;
+            if (PlayerPresence.UnsafeAllPlayerPresences.Count == 1)
+            {
+                return leader.IsSpectating ? null : leader;
+            }
             bool anyChanged = false;
             foreach (var presence in Server.Presences)
             {
+                if (presence.IsSpectating) continue;
                 if (presence.Score != leader.Score)
                     anyChanged = true;
                 if (presence.Score > leader.Score)
@@ -89,6 +117,64 @@ public class Deathmatch : GameMode
             Server.ChangeLevel("pi_mar");
     }
 
+    private void DisplayRoundOptions()
+    {
+        GUILayout.BeginHorizontal();
+
+        GUILayout.BeginVertical();
+        {
+            GUILayout.BeginHorizontal(Relay.Instance.BaseSkin.box);
+            GUILayout.Label("DEATHMATCH", Relay.Instance.OptionsMenu.LabelStyle);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            if (IsRoundInProgress)
+            {
+                if (GUILayout.Button("END ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
+                {
+                    EndRoundNow();
+                    StartRoundAfterMapChange = false;
+                }
+            }
+            else
+            {
+                if (GUILayout.Button("START ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
+                {
+                    StartRound();
+                    StartRoundAfterMapChange = true;
+                    Relay.Instance.ShowOptions = false;
+                }
+            }
+            GUILayout.Space(-3);
+            GUILayout.EndHorizontal();
+        }
+        GUILayout.EndVertical();
+
+        GUILayout.Space(1);
+
+        GUILayout.BeginVertical(new GUIStyle() {fixedWidth = 95});
+        {
+            GUILayout.BeginHorizontal(Relay.Instance.BaseSkin.box);
+            GUILayout.Label("SCORE LIMIT", Relay.Instance.OptionsMenu.LabelStyle);
+            GUILayout.EndHorizontal();
+
+            GUI.enabled = !IsRoundInProgress;
+            var numText = GUILayout.TextField(ScoreLimit.ToString(), new GUIStyle(Relay.Instance.BaseSkin.textField) {fixedWidth = 95});
+            if (numText.Length < 1) ScoreLimit = 0;
+            else
+            {
+                int num;
+                if (int.TryParse(numText, out num) && num > 0)
+                {
+                    ScoreLimit = num;
+                }
+            }
+            GUI.enabled = true;
+        }
+        GUILayout.EndVertical();
+
+        GUILayout.EndHorizontal();
+    }
 
     //public override void OnNewConnection(NetworkPlayer newPlayer)
     //{
@@ -123,21 +209,18 @@ public class Deathmatch : GameMode
     public override void ReceiveMapChanged()
     {
         IsMapLoaded = true;
-        foreach (var presence in Server.Presences)
-        {
-            presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
-            presence.SetScorePoints(0);
-        }
         CurrentMapName = Application.loadedLevelName;
         Server.BroadcastMessageFromServer("Welcome to " + CurrentMapName);
+        if (!IsRoundInProgress && StartRoundAfterMapChange)
+            StartRound();
     }
     private void ReceivePresenceAdded(PlayerPresence newPlayerPresence)
     {
         SetupPresenceListener(newPlayerPresence);
-        if (IsMapLoaded)
-        {
-            newPlayerPresence.SpawnCharacter(RespawnZone.GetRespawnPoint());
-        }
+        //if (IsMapLoaded)
+        //{
+        //    newPlayerPresence.SpawnCharacter(RespawnZone.GetRespawnPoint());
+        //}
         newPlayerPresence.SetScorePoints(0);
     }
 
@@ -164,6 +247,8 @@ public class Deathmatch : GameMode
         PlayerScript.OnPlayerScriptDied -= ReceivePlayerDied;
         PlayerPresence.OnPlayerPresenceAdded -= ReceivePresenceAdded;
         Relay.Instance.MessageLog.OnCommandEntered -= ReceiveCommandEntered;
+        Relay.Instance.OptionsMenu.OnMapSelection -= TryChangeLevel;
+        Relay.Instance.OptionsMenu.DisplayRoundOptionsDelegate = null;
     }
 
     private void SetupPresenceListener(PlayerPresence presence)
@@ -173,7 +258,7 @@ public class Deathmatch : GameMode
 
     private void PresenceListenerWantsRespawnFor(PlayerPresence presence)
     {
-        if (IsMapLoaded)
+        if (IsMapLoaded && IsRoundInProgress)
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
     }
 
@@ -214,6 +299,18 @@ public class Deathmatch : GameMode
                 if (args.Length > 0)
                     TryChangeLevel(args[0]);
             break;
+            case "start":
+                if (IsRoundInProgress)
+                    Relay.Instance.MessageLog.AddMessage("Unable to start round because a round is already in progress.");
+                else
+                    StartRound();
+            break;
+            case "end":
+                if (!IsRoundInProgress)
+                    Relay.Instance.MessageLog.AddMessage("Unable to end round because a round is not in progress.");
+                else
+                    EndRoundNow();
+            break;
         }
     }
 
@@ -221,15 +318,52 @@ public class Deathmatch : GameMode
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
+            if (IsRoundInProgress)
+                EndRoundNow();
+            // Is this also necessary?
             foreach (var playerScript in PlayerScript.AllEnabledPlayerScripts)
-            {
                 playerScript.PerformDestroy();
-            }
             Server.ChangeLevel(levelName);
         }
         else
         {
             Relay.Instance.MessageLog.AddMessage("Unable to change level to " + levelName + " because it is not available.");
         }
+    }
+
+    public void StartRound()
+    {
+        IsRoundInProgress = true;
+        Server.IsGameActive = true;
+        foreach (var presence in Server.Combatants)
+        {
+            presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
+            presence.SetScorePoints(0);
+        }
+        Server.BroadcastMessageFromServer("Round start.");
+
+        var sb = new StringBuilder();
+        sb.AppendLine("DEATHMATCH");
+        if (ScoreLimit > 0)
+            sb.Append("FIRST TO " + ScoreLimit);
+        else
+            sb.Append("NO LIMIT");
+        Server.StatusMessage = sb.ToString();
+    }
+
+    public void EndRoundNow()
+    {
+        IsRoundInProgress = false;
+        Server.IsGameActive = false;
+        foreach (var playerScript in PlayerScript.AllEnabledPlayerScripts)
+        {
+            playerScript.PerformDestroy();
+        }
+        var leader = Leader;
+        string winMessage = leader != null ? 
+            leader.Name + " wins." :
+            "Tie game.";
+        Server.BroadcastMessageFromServer("Round over. " + winMessage);
+        Server.StatusMessage = "ROUND OVER";
     }
 }

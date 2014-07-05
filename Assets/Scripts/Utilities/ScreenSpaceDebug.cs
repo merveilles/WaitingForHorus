@@ -174,7 +174,7 @@ public class ScreenSpaceDebug : MonoBehaviour
         foreach (int i in LineMessages.Keys)
             KeysCache.Add(i);
         KeysCache.Sort();
-	    GUILayout.Window(3, new Rect( Screen.width - (35 + 300), 35, 300, 800), LineWindow, string.Empty);
+	    GUILayout.Window(Definitions.ScreenSpaceWindowID, new Rect( Screen.width - (35 + 300), 35, 300, 800), LineWindow, string.Empty);
     }
 
     private void LineWindow(int id)

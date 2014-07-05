@@ -10,13 +10,6 @@ public class GlobalSoundsScript : MonoBehaviour
 
     public bool PlayMusicInEditor = false;
 
-    public void Start () 
-    {
-        Instance = this;
-	}
-	
-    public AudioClip[] songs;
-
     public void Awake()
     {
         if( !playing )
@@ -27,6 +20,22 @@ public class GlobalSoundsScript : MonoBehaviour
         else Destroy( this );
     }
 
+    public void Start () 
+    {
+        Instance = this;
+
+        Relay.Instance.OptionsMenu.OnShouldPlaySoundEffectsOptionChanged += ReceiveSoundEffectsOptionChanged;
+        Relay.Instance.OptionsMenu.OnShouldPlayMusicOptionChanged += ReceiveMusicOptionChanged;
+    }
+
+    public void OnDestroy()
+    {
+        Relay.Instance.OptionsMenu.OnShouldPlaySoundEffectsOptionChanged -= ReceiveSoundEffectsOptionChanged;
+        Relay.Instance.OptionsMenu.OnShouldPlayMusicOptionChanged -= ReceiveMusicOptionChanged;
+    }
+	
+    public AudioClip[] songs;
+
     public static void PlayButtonPress()
     {
         Instance.buttonPressSound.Play();
@@ -34,16 +43,16 @@ public class GlobalSoundsScript : MonoBehaviour
 
     public void Update()
     {
-	    if( Input.GetKeyDown("m") )
+        if (Input.GetKeyDown("m"))
             audio.mute = !audio.mute; // Disable music
-		
-		if( Input.GetKeyDown("n") )
+
+        if (Input.GetKeyDown("n"))
             soundEnabled = !soundEnabled;
 	}
 
     public void OnLevelWasLoaded( int levelIndex )
     {
-        bool shouldPlayMusic = !Application.isEditor || PlayMusicInEditor;
+        bool shouldPlayMusic = (!Application.isEditor || PlayMusicInEditor) && !Relay.Instance.DevelopmentMode;
         var indexInArray = levelIndex - 1;
 
         if( shouldPlayMusic && indexInArray < songs.Length )
@@ -51,5 +60,14 @@ public class GlobalSoundsScript : MonoBehaviour
             audio.clip = songs[indexInArray];
             audio.Play();
         }
+    }
+
+    private void ReceiveSoundEffectsOptionChanged(bool isEnabled)
+    {
+        soundEnabled = isEnabled;
+    }
+    private void ReceiveMusicOptionChanged(bool isEnabled)
+    {
+        audio.mute = !isEnabled;
     }
 }

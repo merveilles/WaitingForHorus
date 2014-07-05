@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cancel.Interpolation;
+using Cancel.RateLimit;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
@@ -16,7 +18,7 @@ public class PlayerShootingScript : MonoBehaviour
     public float ShotgunSpread = 10;
     public float ShotgunBulletSpeedMultiplier = 0.25f;
     public float ShotgunHomingSpeed = 0.675f;
-    //public float CannonChargeTime = 0.5f;
+    public float CannonChargeTime = 0.5f;
     public float HeatAccuracyFudge = 0.5f;
 
     // Amount to modify heat by when when a shot is fired and we're zoomed in
@@ -57,6 +59,14 @@ public class PlayerShootingScript : MonoBehaviour
     public Texture2D cannonIndicator;
     public AnimationCurve cannonOuterScale;
     public AnimationCurve cannonInnerScale;
+
+    // Recoil & reloading animations and stuff
+    private ScalarSpring GunRecoilSpring;
+    private ScalarSpring ReloaderSpring;
+    private Throttler<float> GunRecoilThrotter;
+    private Delayer<float> ReloaderDelayer; 
+    public Transform BarrelTransform;
+    public Transform ReloaderTransform;
 
 	public float heat = 0.0f;
 	float cooldownLeft = 0.0f;
@@ -101,6 +111,17 @@ public class PlayerShootingScript : MonoBehaviour
         weaponIndicator = Camera.main.GetComponent<WeaponIndicatorScript>();
         targets = weaponIndicator.Targets;
         playerScript = GetComponent<PlayerScript>();
+
+        GunRecoilThrotter = new Throttler<float>();
+        GunRecoilThrotter.MinimumTimeBetweenItems = 0.09f;
+        GunRecoilSpring = new ScalarSpring(0f);
+        GunRecoilSpring.Strength = 2000f;
+        GunRecoilSpring.Damping = 0.00000000001f;
+        ReloaderSpring = new ScalarSpring(0f);
+        ReloaderSpring.Strength = 200f;
+        ReloaderSpring.Damping = 0.00000001f;
+        ReloaderDelayer = new Delayer<float>();
+        ReloaderDelayer.DelayTime = 0.25f;
     }
 
     public void Start()
@@ -113,6 +134,21 @@ public class PlayerShootingScript : MonoBehaviour
         for (int i = 0; i < targets.Count; i++)
             if (targets[i].Script == otherCharacter) return true;
         return false;
+    }
+
+    // Usually 0.5 ~ 1.5
+    private void AddGunImpulse(float strength)
+    {
+        const int maxRecoilItems = 1;
+        if (GunRecoilThrotter.Items.Count < maxRecoilItems)
+            GunRecoilThrotter.Add(-strength * 1000);
+        //GunRecoilSpring.AddImpulse(-strength * 1000);
+    }
+
+    private void AddReloadImpulse()
+    {
+        ReloaderDelayer.Add(500);
+        //ReloaderSpring.AddImpulse(500);
     }
 
     /*void Update()
@@ -138,6 +174,24 @@ public class PlayerShootingScript : MonoBehaviour
         var desiredGunRotation = Quaternion.Euler(gunRotationAngles.x, gunRotationAngles.y, 0);
         gun.transform.rotation = Quaternion.Slerp(gun.transform.rotation, desiredGunRotation,
             1.0f - Mathf.Pow(GunRotationSmoothingSpeed, -GunRotationSmoothingSpeed * Time.deltaTime));
+
+        // Update local position of barrel from recoil
+        foreach (var impulse in GunRecoilThrotter.Update())
+        {
+            GunRecoilSpring.AddImpulse(impulse);
+        }
+        GunRecoilSpring.Update();
+        Vector3 barrelLocalPosition = BarrelTransform.localPosition;
+        barrelLocalPosition.z = GunRecoilSpring.CurrentValue;
+        BarrelTransform.localPosition = barrelLocalPosition;
+
+        // Reload spring
+        foreach (var impulse in ReloaderDelayer.Update())
+            ReloaderSpring.AddImpulse(impulse);
+        ReloaderSpring.Update();
+        Vector3 reloadLocalPosition = ReloaderTransform.localPosition;
+        reloadLocalPosition.z = ReloaderSpring.CurrentValue;
+        ReloaderTransform.localPosition = reloadLocalPosition;
 
         if (playerScript.Paused)
             bulletsLeft = BurstCount;
@@ -175,8 +229,6 @@ public class PlayerShootingScript : MonoBehaviour
                         // find homing target(s)
     					var aimedAt = targets.Where( x => x.SinceInCrosshair >= AimingTime ).ToArray();
 
-                        //bulletsLeft *= 2;
-
     					var bulletsShot = bulletsLeft;
                         var first = true;
                         while( bulletsLeft > 0 )
@@ -198,6 +250,10 @@ public class PlayerShootingScript : MonoBehaviour
                         recoilImpulse *= playerScript.controller.isGrounded ? 25 : 87.5f;
                         recoilImpulse.y *= playerScript.controller.isGrounded ? 0.1f : 0.375f;
                         playerScript.AddRecoil(recoilImpulse);
+
+                        float cosmeticAmount = (float)bulletsShot / (float)BurstCount;
+                        playerCamera.AddGunShotImpulse(Mathf.Lerp(0.0f, 2.0f, cosmeticAmount));
+                        AddGunImpulse(cosmeticAmount);
                     }
 
                     //cannonChargeCountdown = CannonChargeTime;
@@ -221,6 +277,7 @@ public class PlayerShootingScript : MonoBehaviour
 					if( GlobalSoundsScript.soundEnabled )
                     	reloadSound.Play();
 					
+                    AddReloadImpulse();
                     cooldownLeft += ReloadTime;
                 }
             }
@@ -230,6 +287,7 @@ public class PlayerShootingScript : MonoBehaviour
                 bulletsLeft = BurstCount;
 				if( GlobalSoundsScript.soundEnabled )
                 	reloadSound.Play();
+                AddReloadImpulse();
             }
 
 			
@@ -342,6 +400,7 @@ public class PlayerShootingScript : MonoBehaviour
                     finalFiringPosition, finalFiringRotation, Network.player );
             }
             ShootFast( finalFiringPosition, finalFiringRotation, Network.player );
+            AddGunImpulse(0.5f);
         }
         else
         {
@@ -351,7 +410,9 @@ public class PlayerShootingScript : MonoBehaviour
                     finalFiringPosition, finalFiringRotation, Network.player);
             }
             Shoot( finalFiringPosition, finalFiringRotation, Network.player );
+            AddGunImpulse(0.3f);
         }
+        playerCamera.AddGunShotImpulse(0.5f);
     }
 
     public void InstantReload()
@@ -401,6 +462,8 @@ public class PlayerShootingScript : MonoBehaviour
                 finalFiringPosition, finalFiringRotation, Network.player);
         }
         ShootRail( finalFiringPosition, finalFiringRotation, Network.player );
+        playerCamera.AddGunShotImpulse(1.7f);
+        AddGunImpulse(3.0f);
     }
 
     [RPC]

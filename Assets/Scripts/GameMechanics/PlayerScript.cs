@@ -33,7 +33,9 @@ public class PlayerScript : MonoBehaviour
     Vector3 fallingVelocity;
     Vector3 lastFallingVelocity;
     Vector3 recoilVelocity;
-	bool invertMouse = true;
+
+    private bool invertMouse { get { return Relay.Instance.OptionsMenu.IsAimInverted; }}
+
     Vector3 inputVelocity;
     Vector3 lastInputVelocity;
     Vector3 lookRotationEuler;
@@ -95,12 +97,14 @@ public class PlayerScript : MonoBehaviour
     }
 
     [RPC]
-    private void RemoteReceiveHasFlagVisible(bool visible, NetworkMessageInfo info)
+// ReSharper disable once UnusedMember.Local
+    private void RemoteReceiveHasFlagVisible(bool visible)
     {
             HasFlagVisible = visible;
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void ReceiveRemoteWantsFlagVisibility(NetworkMessageInfo info)
     {
         if (Network.isServer && HasEverSetFlagVisibility) // try to avoid wastefulness
@@ -289,6 +293,7 @@ public class PlayerScript : MonoBehaviour
                 Targeted(enemy);
             }
         }
+// ReSharper disable once EmptyGeneralCatchClause
         catch (Exception)
         {
             // nope lol
@@ -307,6 +312,7 @@ public class PlayerScript : MonoBehaviour
                 Untargeted(enemy);
             }
         }
+// ReSharper disable once EmptyGeneralCatchClause
         catch (Exception)
         {
             // nope lol
@@ -317,7 +323,8 @@ public class PlayerScript : MonoBehaviour
     {
         //ScreenSpaceDebug.AddMessage("RECEIVE TARGET BY", targetingUs.transform.position);
 
-        EnemiesTargetingUs.TryAddEnemyLockingOnToUs(targetingUs);
+        if (targetingUs != null)
+            EnemiesTargetingUs.TryAddEnemyLockingOnToUs(targetingUs);
 
         //print( "Targeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
@@ -332,7 +339,8 @@ public class PlayerScript : MonoBehaviour
     {
         //ScreenSpaceDebug.AddMessage("RECEIVE UNTARGET BY", enemy.transform.position);
 
-        EnemiesTargetingUs.TryRemoveEnemyLockingOnToUs(enemy);
+        if (enemy != null)
+            EnemiesTargetingUs.TryRemoveEnemyLockingOnToUs(enemy);
 		
         //print( "Untargeted by: " + PlayerRegistry.For( aggressor ).Username );
 		
@@ -348,8 +356,12 @@ public class PlayerScript : MonoBehaviour
         // Sometimes unity will call an RPC even if 'this' has already been
 		// 'destroyed', and because unity overloads null comparison to mean
 		// 'destroyed', well, we're going to do this check. Great.
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+// ReSharper disable once HeuristicUnreachableCode
         if (this == null) return;
-        if (networkView.isMine)
+        // Also check if enemy is null, might have been destroyed by the time
+		// this RPC is called.
+        if (networkView.isMine && enemy != null)
         {
             ScreenSpaceDebug.AddMessage("TARGETED BY", enemy.transform.position);
         }
@@ -357,8 +369,10 @@ public class PlayerScript : MonoBehaviour
 
     private void ReceiveStoppedBeingLockedOnBy(PlayerScript enemy)
     {
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+// ReSharper disable once HeuristicUnreachableCode
         if (this == null) return;
-        if (networkView.isMine)
+        if (networkView.isMine && enemy != null)
         {
             ScreenSpaceDebug.AddMessage("UNTARGETED BY", enemy.transform.position);
         }
@@ -447,7 +461,7 @@ public class PlayerScript : MonoBehaviour
 			
 			if (Screen.lockCursor)
 			{
-                float invertMultiplier = invertMouse ? -1 : 1;
+                float invertMultiplier = invertMouse ? 1 : -1;
                 lookRotationEuler +=
                     MouseSensitivityScript.Sensitivity *
                     ZoomLookSensitivityMultiplier *
@@ -460,13 +474,9 @@ public class PlayerScript : MonoBehaviour
 			lookRotationEuler.x = Mathf.Clamp(
                 lookRotationEuler.x, -lookAngleLimit, lookAngleLimit);
 
-			if (Input.GetKeyDown("i"))
-				invertMouse = !invertMouse;
+            if (Input.GetMouseButtonUp(0) && !Relay.Instance.ShowOptions)
+               Screen.lockCursor = true;
 
-            if (Input.GetMouseButtonUp(0))
-                Screen.lockCursor = true;
-
-            Screen.showCursor = !Screen.lockCursor;
             smoothYaw = lookRotationEuler.y;
             smoothLookRotation = Quaternion.Euler(lookRotationEuler);
         }
@@ -618,7 +628,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         // Update running animation
-        if( controller.isGrounded && !justJumped )
+        if( controller.isGrounded && !justJumped && !activelyJumping)
         {
             if( MathHelper.AlmostEquals( smoothedInputVelocity, Vector3.zero, 0.1f ) && currentAnim != "idle" )
                     characterAnimation.CrossFade( currentAnim = "idle", IdleTransitionFadeLength );
@@ -654,6 +664,11 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
+        // If nothing else has caused us to play the jump animation now, being
+		// airborne for a while seems like a good time to do it.
+        if (sinceNotGrounded > 0.05 && currentAnim != "jump")
+            characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
+
         var smoothFallingVelocity = fallingVelocity * 0.4f + lastFallingVelocity * 0.65f;
         lastFallingVelocity = smoothFallingVelocity;
 
@@ -678,7 +693,11 @@ public class PlayerScript : MonoBehaviour
         bool doesOverlap = CheckOverlap(transform.position);
         if (doesOverlap)
         {
-            fallingVelocity = Vector3.zero;
+            // The maximum speed we can be moving when overlapping. Prevents
+			// velocity from building up and eventually allowing us to
+			// penetrate.
+            const float maxVelocityMagnitudeWhenOverlapping = 60f;
+            fallingVelocity = Vector3.ClampMagnitude(fallingVelocity, maxVelocityMagnitudeWhenOverlapping);
             if (InstantOverlapEjection)
                 transform.position = LastNonCollidingPosition;
             else
@@ -703,6 +722,19 @@ public class PlayerScript : MonoBehaviour
 
         if (controller.isGrounded)
             recoilVelocity.y = 0;
+
+        // Prevent recoil velocity from sticking us to the ceiling for a while
+        // by checking to see if we're hitting it. A smarter solution, honestly,
+		// is to raycast and then modify our velocity by the surface hit normal.
+		// But this is a good enough hack for now.
+        Vector3 aboveUs = transform.position;
+        aboveUs.y += 1;
+        bool hittingHeadOnCeiling = CheckOverlap(aboveUs);
+        if (!controller.isGrounded && hittingHeadOnCeiling)
+        {
+            recoilVelocity.y = Mathf.Min(0f, recoilVelocity.y);
+            fallingVelocity.y = Mathf.Min(0f, fallingVelocity.y);
+        }
     }
 
     // Used by HealthScript in Respawn
@@ -720,6 +752,8 @@ public class PlayerScript : MonoBehaviour
 
         Vector3 pPosition = stream.isWriting ? transform.position : Vector3.zero;
 
+        bool wasJumping = activelyJumping;
+
         stream.Serialize(ref pPosition);
         stream.Serialize(ref inputVelocity);
         stream.Serialize(ref fallingVelocity);
@@ -735,6 +769,7 @@ public class PlayerScript : MonoBehaviour
 
         if (stream.isReading)
         {
+                //characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
             //Debug.Log("pPosition = " + pPosition + " / transform.position = " + transform.position);
             if (lastNetworkFramePosition == pPosition)
                 transform.position = pPosition;
@@ -746,7 +781,16 @@ public class PlayerScript : MonoBehaviour
             if (playDashSound && GlobalSoundsScript.soundEnabled) dashSound.Play();
             if (playJumpSound && GlobalSoundsScript.soundEnabled) jumpSound.Play();
 
+            //bool isOverlappingGround = CheckOverlap(pPosition + new Vector3(0, -0.1f, 0));
+
             lastNetworkFramePosition = pPosition;
+
+            if (Possessor != null)
+                ScreenSpaceDebug.AddLineOnce(Possessor.Name + " jumping: " + activelyJumping);
+
+            // Play jump animation if it seems necessary
+            if (!wasJumping && activelyJumping && currentAnim != "jump")
+                characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
 
             HealthScript.UpdateShield();
         }
@@ -865,6 +909,7 @@ public class PlayerScript : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void ServerRequestedToDie(NetworkViewID instigatorPresenceViewID)
     {
         OnPlayerScriptDied(this, PlayerPresence.TryGetPlayerPresenceFromNetworkViewID(instigatorPresenceViewID));

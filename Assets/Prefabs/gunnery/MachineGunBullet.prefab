@@ -34,7 +34,6 @@ Transform:
   m_LocalScale: {x: .425000012, y: .425000012, z: 2.25}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
@@ -53,8 +52,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!33 &3300000
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -153,8 +153,9 @@ TrailRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
+  m_SortingLayerID: 0
   m_Time: 2
   m_StartWidth: 1
   m_EndWidth: .5
@@ -197,8 +198,6 @@ MonoBehaviour:
   accelerationSpeed: 1000
   target: {fileID: 0}
   TrailAlpha: .5
-  HomingSpeed: 16
-  RocketJumpImpulse: 2.75
   layerMask:
     serializedVersion: 2
     m_Bits: 4294965247

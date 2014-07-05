@@ -66,11 +66,11 @@ Material:
       data:
         first:
           name: _DesatuScale
-        second: 1
+        second: .722222209
       data:
         first:
           name: _AlphaScale
-        second: .174999997
+        second: .126811594
       data:
         first:
           name: _WaveScale
@@ -91,7 +91,7 @@ Material:
       data:
         first:
           name: _RefrColor
-        second: {r: .741176486, g: .989185631, b: 1, a: 1}
+        second: {r: 1, g: .926943004, b: .874509811, a: 1}
       data:
         first:
           name: _Fresnel_ST

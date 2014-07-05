@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MasterServer;
 using UnityEngine;
 
@@ -10,6 +11,10 @@ public class Server : MonoBehaviour
 
     public List<NetworkPlayer> NetworkPlayers { get; private set; }
     public IEnumerable<PlayerPresence> Presences { get { return PlayerPresence.AllPlayerPresences; }}
+    public IEnumerable<PlayerPresence> Combatants { get
+    {
+        return PlayerPresence.AllPlayerPresences.Where(p => !p.IsSpectating);
+    } } 
 
     public GameMode DefaultGameMode;
 
@@ -22,9 +27,65 @@ public class Server : MonoBehaviour
 
     public Leaderboard Leaderboard { get; private set; }
 
+    private bool _IsGameActive;
+    public bool IsGameActive
+    {
+        get { return _IsGameActive; }
+        set
+        {
+            _IsGameActive = value;
+        }
+    }
+
+    public delegate void StatusMessageChangedHandler();
+    public event StatusMessageChangedHandler OnStatusMessageChange = delegate {};
+
+    public string StatusMessage
+    {
+        get { return _StatusMessage; }
+        set
+        {
+            if (_StatusMessage != value)
+            {
+                _StatusMessage = value;
+                if (networkView.isMine)
+                    UpdateStatusMessage();
+                OnStatusMessageChange();
+            }
+        }
+    }
+
+    private void UpdateStatusMessage()
+    {
+        networkView.RPC("RemoteReceiveStatusMessage", RPCMode.Others, StatusMessage);
+    }
+
+    private void RequestStatusMessageFromRemote()
+    {
+        networkView.RPC("OwnerReceiveRemoteWantsStatusMessage", networkView.owner);
+    }
+
+    [RPC]
+    private void OwnerReceiveRemoteWantsStatusMessage(NetworkMessageInfo info)
+    {
+        if (networkView.isMine)
+        {
+            networkView.RPC("RemoteReceiveStatusMessage", info.sender, StatusMessage);
+        }
+    }
+
+    [RPC]
+    private void RemoteReceiveStatusMessage(string newStatusMessage, NetworkMessageInfo info)
+    {
+        if (info.sender == networkView.owner)
+            StatusMessage = newStatusMessage;
+    }
+
 
     // Map name stuff
     private string _CurrentMapName;
+    private string _StatusMessage;
+
     public string CurrentMapName
     {
         get { return _CurrentMapName; }
@@ -68,12 +129,21 @@ public class Server : MonoBehaviour
         Leaderboard = new Leaderboard();
         Leaderboard.Skin = Relay.Instance.BaseSkin;
 
+        StatusMessage = "?";
+
         if (networkView.isMine)
+        {
             _CurrentMapName = "pi_mar";
+            IsGameActive = false;
+        }
     }
 
     public void OnNetworkInstantiate(NetworkMessageInfo info)
     {
+        if (!networkView.isMine)
+        {
+            RequestStatusMessageFromRemote();
+        }
     }
 
     public void Start()
@@ -88,6 +158,16 @@ public class Server : MonoBehaviour
             OnPlayerConnected(Network.player);
             CurrentGameMode = (GameMode) Instantiate(DefaultGameMode, Vector3.zero, Quaternion.identity);
             CurrentGameMode.Server = this;
+            ServerNotifier.Name = PlayerPrefs.GetString("username", "Anonymous") + "'s server";
+
+            var maps = new[]
+            {
+                "pi_mar",
+                "pi_set",
+                "pi_ven",
+                "pi_rah"
+            };
+            Relay.Instance.OptionsMenu.ListOfMaps = maps.Where(Application.CanStreamedLevelBeLoaded).ToList();
         }
 
         // I guess this check is redundant?
@@ -122,6 +202,11 @@ public class Server : MonoBehaviour
     {
         var presence = (PlayerPresence) Network.Instantiate(BasePlayerPresence, Vector3.zero, Quaternion.identity, 0);
         return presence;
+    }
+
+    public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+    {
+        stream.Serialize(ref _IsGameActive);
     }
 
     public void Update()
