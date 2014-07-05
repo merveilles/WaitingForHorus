@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BaseServer: {fileID: 11400000, guid: d632df868fa18584bad7f16c70fccf13, type: 2}
-  CurrentVersionID: 28
+  CurrentVersionID: 29
   MainCamera: {fileID: 656731828}
   DevelopmentMode: 0
   MouseSensitivityCurve:
