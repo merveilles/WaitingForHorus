@@ -81,14 +81,14 @@ public static class MathExts
     public static void SpringDamperTo(float currentValue, float currentVelocity, float targetValue, float damping,
         float strength, float deltaTime, out float newValue, out float newVelocity)
     {
-        newVelocity = (targetValue - currentValue) * strength * deltaTime;
+        newVelocity = currentVelocity + (targetValue - currentValue) * strength * deltaTime;
         newVelocity *= Mathf.Pow(damping, deltaTime);
         newValue = currentValue + newVelocity * deltaTime;
     }
     public static void SpringDamperTo(Vector3 currentValue, Vector3 currentVelocity, Vector3 targetValue, float damping,
         float strength, float deltaTime, out Vector3 newValue, out Vector3 newVelocity)
     {
-        newVelocity = (targetValue - currentValue) * strength * deltaTime;
+        newVelocity = currentVelocity + (targetValue - currentValue) * strength * deltaTime;
         newVelocity *= Mathf.Pow(damping, deltaTime);
         newValue = currentValue + newVelocity * deltaTime;
     }
@@ -136,6 +136,72 @@ public static class MathExts
 
 namespace Cancel.Interpolation
 {
+    public class ScalarSpring
+    {
+        public float CurrentValue;
+        public float CurrentVelocity;
+        public float TargetValue;
+        public float Damping;
+        public float Strength;
+
+        public float ImpulseFalloff;
+        public float AmortizedImpulse;
+        public ScalarSpring(float startingValue)
+        {
+            CurrentValue = startingValue;
+            TargetValue = startingValue;
+            CurrentVelocity = 0f;
+            AmortizedImpulse = 0f;
+            Damping = 0.001f;
+            Strength = 200f;
+            ImpulseFalloff = 0.0001f;
+        }
+        public void Update()
+        {
+            CurrentVelocity += AmortizedImpulse * Time.deltaTime;
+            AmortizedImpulse = Mathf.Lerp(AmortizedImpulse, 0f,
+                1.0f - Mathf.Pow(ImpulseFalloff, Time.deltaTime));
+            MathExts.SpringDamperTo(CurrentValue, CurrentVelocity, TargetValue, Damping, Strength, Time.deltaTime, out CurrentValue, out CurrentVelocity);
+        }
+        public void AddImpulse(float velocity)
+        {
+            AmortizedImpulse += velocity;
+        }
+    }
+    public class PositionalSpring
+    {
+        public Vector3 CurrentValue;
+        public Vector3 CurrentVelocity;
+        public Vector3 TargetValue;
+        public float Damping;
+        public float Strength;
+
+        public float ImpulseFalloff;
+        private Vector3 AmortizedImpulse;
+
+        public PositionalSpring(Vector3 startingValue)
+        {
+            CurrentValue = startingValue;
+            TargetValue = startingValue;
+            CurrentVelocity = Vector3.zero;
+            AmortizedImpulse = Vector3.zero;
+            Damping = 0.001f;
+            Strength = 200f;
+            ImpulseFalloff = 0.0001f;
+        }
+        public void Update()
+        {
+            CurrentVelocity += AmortizedImpulse * Time.deltaTime;
+            AmortizedImpulse = Vector3.Lerp(AmortizedImpulse, Vector3.zero,
+                1.0f - Mathf.Pow(ImpulseFalloff, Time.deltaTime));
+            MathExts.SpringDamperTo(CurrentValue, CurrentVelocity, TargetValue, Damping, Strength, Time.deltaTime, out CurrentValue, out CurrentVelocity);
+        }
+        public void AddImpulse(Vector3 velocity)
+        {
+            AmortizedImpulse += velocity;
+        }
+    }
+
     public class RotationalSpring
     {
         public Quaternion CurrentValue;

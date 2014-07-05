@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Cancel.Interpolation;
 using Cancel.RateLimit;
 using UnityEngine;
