@@ -225,6 +225,28 @@ public class OptionsMenu
             1f, Skin.customStyles[0], Skin.customStyles[1]);
         GUILayout.EndHorizontal();
 
+        if (Debug.isDebugBuild)
+        {
+            float currentTarget = Application.targetFrameRate;
+            if (currentTarget < 0) currentTarget = 175f;
+            GUILayout.BeginHorizontal(Skin.box);
+            GUILayout.Label("FPS LIMIT", LabelStyle);
+            float newTarget = GUILayout.HorizontalSlider(currentTarget, 5f,
+                175f, Skin.customStyles[0], Skin.customStyles[1]);
+            GUILayout.EndHorizontal();
+            if (newTarget >= 150f)
+                Application.targetFrameRate = -1;
+            else
+                Application.targetFrameRate = Mathf.RoundToInt(newTarget);
+
+            
+            GUILayout.BeginHorizontal(Skin.box);
+            GUILayout.Label("TIME SCALE", LabelStyle);
+            Time.timeScale = GUILayout.HorizontalSlider(Time.timeScale, 0.1f,
+                1f, Skin.customStyles[0], Skin.customStyles[1]);
+            GUILayout.EndHorizontal();
+        }
+
 
 
         GUILayout.BeginHorizontal();
