@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using Cancel.Interpolation;
+using Cancel.RateLimit;
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour
@@ -51,8 +54,6 @@ public class CameraScript : MonoBehaviour
         set
         {
             _BaseFieldOfView = value;
-            //if (player.networkView.isMine)
-            //    PlayerPrefs.SetFloat("fov", _BaseFieldOfView);
         }
     }
 
@@ -61,6 +62,10 @@ public class CameraScript : MonoBehaviour
 
     private float SmoothedBaseFieldOfView = 85.0f;
     private float SmoothedFieldOfView = 85.0f;
+
+    // Looks better if there is some 'travel time' between the shot and the impulse reaching the 'camera'.
+    private Delayer<Vector3> QueuedScreenRecoils;
+    private RotationalSpring CosmeticSpring;
     public float DesiredFieldOfView
     {
         get { return SmoothedBaseFieldOfView * (IsZoomedIn ? ZoomedFieldOfViewRatio : 1.0f); }
@@ -111,10 +116,31 @@ public class CameraScript : MonoBehaviour
 	// not use this.
     private Vector2 SmoothedCrosshairPosition;
 
+    // Generally ~ 0.5 - 1.5
+    public void AddGunShotImpulse(float amount)
+    {
+        float verticalBase = amount * 1500;
+        float verticalExtra = UnityEngine.Random.Range(150, 400) * amount;
+        float lateralSign = Mathf.Sign(UnityEngine.Random.Range(-1f, 1f));
+        float lateral = amount * UnityEngine.Random.Range(100f, 500f) * lateralSign;
+        float roll = amount * UnityEngine.Random.Range(-100f, 100f);
+        // Add to the queue instead of directly into spring, because we want to
+        // delay recoil before it 'hits' the camera. Will be put into the actual
+		// spring in LateUpdate().
+        QueuedScreenRecoils.Add(new Vector3(-(verticalBase + verticalExtra), lateral, roll));
+    }
+
     public void Awake()
     {
         if (HackDisableShadowsObjects == null)
             HackDisableShadowsObjects = new GameObject[0];
+
+        QueuedScreenRecoils = new Delayer<Vector3>();
+
+        CosmeticSpring = new RotationalSpring(Quaternion.identity);
+        CosmeticSpring.Damping = 0.0000001f;
+        CosmeticSpring.Strength = 900f;
+        CosmeticSpring.ImpulseQueueLimit = 1;
 
         Relay.Instance.OptionsMenu.OnFOVOptionChanged += ReceiveFOVChanged;
         BaseFieldOfView = Relay.Instance.OptionsMenu.FOVOptionValue;
@@ -256,6 +282,14 @@ public class CameraScript : MonoBehaviour
 
         if(player.networkView.isMine)
         {
+            // Higher delay time when the camera is further from the gun
+            QueuedScreenRecoils.DelayTime = IsExteriorView ? 0.086f : 0.06f;
+            //QueuedScreenRecoils.DelayTime = 0.06f;
+            // Remove stuff from the lag queue and put it in the actual spring
+            foreach (var eulerAngles in QueuedScreenRecoils.Update())
+                CosmeticSpring.AddImpulse(eulerAngles);
+            CosmeticSpring.Update();
+
             if (Input.GetButtonDown("ToggleCameraSmoothing"))
             {
                 HasSmoothedRotation = !HasSmoothedRotation;
@@ -285,12 +319,6 @@ public class CameraScript : MonoBehaviour
 
             // TODO we need smarter handling for toggilng smoothing and first/third person at the same time
             if (HasSmoothedRotation && IsExteriorView)
-                // Old, not working with uncapped frame limit, but left for
-                // reference in case someone wants to match its settings exactly
-                // in the future.
-                //actualCameraRotation = Quaternion.Lerp(transform.rotation, actualCameraRotation,
-                //Easing.EaseOut(Mathf.Pow(smoothing, Time.deltaTime), EasingType.Quadratic));
-
             {
                 // TODO make a nicer interface for goofy power curve
                 var amt = (float)Math.Pow(0.0000000000001, Time.deltaTime);
@@ -302,33 +330,12 @@ public class CameraScript : MonoBehaviour
             Vector3 scaledLocalPosition = Vector3.Scale(transform.localPosition, transform.lossyScale);
             Vector3 direction = actualCameraRotation * scaledLocalPosition;
             Vector3 cameraPosition = transform.parent.position + direction;
-            //float magnitude = direction.magnitude;
-            // TODO what is this assignment? Should it be above? is it a mistake?
-            //direction /= magnitude;
-
-           /* RaycastHit hitInfo;
-            if(Physics.SphereCast(player.transform.position, collisionRadius,
-                                  direction, out hitInfo, magnitude))
-            {
-                cameraPosition = player.transform.position +
-                    direction * Mathf.Max(minDistance, hitInfo.distance);
-            }*/
-
-            /*var distance = Vector3.Distance(cameraPosition, player.transform.position);
-            var o = Mathf.Clamp01((distance - 2) / 8);
-            foreach (var r in player.GetComponentsInChildren<Renderer>())
-            {
-                if (!r.material.HasProperty("_Color")) continue;
-                if (r.gameObject.name == "TextBubble") continue;
-                var c = r.material.color;
-                r.material.color = new Color(c.r, c.g, c.b, o);
-            }*/
 
             // TODO can mainCamera be null here?
             if (mainCamera != null)
             {
                 mainCamera.transform.position = cameraPosition;
-                mainCamera.transform.rotation = actualCameraRotation;
+                mainCamera.transform.rotation = actualCameraRotation * CosmeticSpring.CurrentValue;
             }
 
 
@@ -386,7 +393,7 @@ public class CameraScript : MonoBehaviour
         else
         {
             position = mainCamera.transform.position;
-            forward = mainCamera.transform.forward;
+            forward = actualCameraRotation * Vector3.forward;
         }
         if(Physics.Raycast(position, forward, out hitInfo,
                            Mathf.Infinity, 1<<LayerMask.NameToLayer("Default")))

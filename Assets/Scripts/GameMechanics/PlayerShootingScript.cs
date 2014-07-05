@@ -196,6 +196,8 @@ public class PlayerShootingScript : MonoBehaviour
                         recoilImpulse *= playerScript.controller.isGrounded ? 25 : 87.5f;
                         recoilImpulse.y *= playerScript.controller.isGrounded ? 0.1f : 0.375f;
                         playerScript.AddRecoil(recoilImpulse);
+
+                        playerCamera.AddGunShotImpulse(Mathf.Lerp(0.0f, 2.0f, (float)bulletsShot / (float)BurstCount));
                     }
 
                     //cannonChargeCountdown = CannonChargeTime;
@@ -350,6 +352,7 @@ public class PlayerShootingScript : MonoBehaviour
             }
             Shoot( finalFiringPosition, finalFiringRotation, Network.player );
         }
+        playerCamera.AddGunShotImpulse(0.5f);
     }
 
     public void InstantReload()
@@ -399,6 +402,7 @@ public class PlayerShootingScript : MonoBehaviour
                 finalFiringPosition, finalFiringRotation, Network.player);
         }
         ShootRail( finalFiringPosition, finalFiringRotation, Network.player );
+        playerCamera.AddGunShotImpulse(1.7f);
     }
 
     [RPC]
