@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using MasterServer;
 using UnityEngine;
@@ -28,6 +30,14 @@ public class Relay : MonoBehaviour
     private float TimeBetweenRefreshes = 15f;
 
     public const int CharacterSpawnGroupID = 1;
+
+    public readonly string[] ListedMaps = new[]
+    {
+        "pi_mar",
+        "pi_set",
+        "pi_ven",
+        "pi_rah"
+    };
 
     public OptionsMenu OptionsMenu { get; private set; }
     public bool ShowOptions { get; set; }
@@ -102,9 +112,24 @@ public class Relay : MonoBehaviour
         OptionsMenu.OnOptionsMenuWantsGoToTitle += Network.Disconnect;
     }
 
+    private string GetRandomMapName()
+    {
+        List<string> maps = ListedMaps.ToList();
+        while (maps.Count > 0)
+        {
+            int idx = UnityEngine.Random.Range(0, maps.Count);
+            string mapName = maps[idx];
+            if (Application.CanStreamedLevelBeLoaded(mapName))
+                return mapName;
+            maps.RemoveAt(idx);
+        }
+        // Bummer :(
+        return "";
+    }
+
     public void Start()
     {
-        Application.LoadLevel("pi_mar");
+        Application.LoadLevel(GetRandomMapName());
 
         //ExternalServerList.Refresh();
     }

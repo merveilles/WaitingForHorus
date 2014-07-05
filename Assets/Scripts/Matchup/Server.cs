@@ -133,7 +133,7 @@ public class Server : MonoBehaviour
 
         if (networkView.isMine)
         {
-            _CurrentMapName = "pi_mar";
+            _CurrentMapName = Application.loadedLevelName;
             IsGameActive = false;
         }
     }
@@ -160,14 +160,7 @@ public class Server : MonoBehaviour
             CurrentGameMode.Server = this;
             ServerNotifier.Name = PlayerPrefs.GetString("username", "Anonymous") + "'s server";
 
-            var maps = new[]
-            {
-                "pi_mar",
-                "pi_set",
-                "pi_ven",
-                "pi_rah"
-            };
-            Relay.Instance.OptionsMenu.ListOfMaps = maps.Where(Application.CanStreamedLevelBeLoaded).ToList();
+            Relay.Instance.OptionsMenu.ListOfMaps = Relay.Instance.ListedMaps.Where(Application.CanStreamedLevelBeLoaded).ToList();
         }
 
         // I guess this check is redundant?
