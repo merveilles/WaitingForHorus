@@ -32,6 +32,9 @@ public class HealthScript : MonoBehaviour
     public PlayerScript PlayerScript;
 
     public const float KillHeight = -104;
+    private bool isInWater = false;
+    private bool justBouncedPlayer = false;
+    private float bounceCooldown = 0.0f;
 
     public void Awake()
     {
@@ -54,10 +57,34 @@ public class HealthScript : MonoBehaviour
 
     public void Update()
     {
-        // TODO magical -104 number, what does it do?
-        if( networkView.isMine && transform.position.y < KillHeight )
+        if( bounceCooldown > 0.0f && justBouncedPlayer )
+            bounceCooldown -= Time.deltaTime;
+        else
         {
-            DoDamageOwner(1, transform.position, PlayerScript.Possessor);
+            justBouncedPlayer = false;
+        }
+
+        // TODO magical -104 number, what does it do?
+        if( networkView.isMine && transform.position.y < KillHeight && !isInWater )
+        {
+            isInWater = true;
+
+            /*if( !justBouncedPlayer )
+            {
+                justBouncedPlayer = true;*/
+                PlayerScript.AddRecoil( Vector3.up * 275.0f );
+                DoDamageOwner( 1, transform.position, PlayerScript.Possessor );
+                /*bounceCooldown = 0.5f;
+            }
+            else
+            {*
+                justBouncedPlayer = false;
+                DoDamageOwner( 3, transform.position, PlayerScript.Possessor );
+            }*/
+        }
+        else
+        {
+            isInWater = false;
         }
 
         if (!firstSet && shieldRenderer != null)
@@ -120,10 +147,6 @@ public class HealthScript : MonoBehaviour
     public void DeclareHitToOthers(int damage, Vector3 point, PlayerPresence instigator)
     {
         networkView.RPC("OthersReceiveHit", RPCMode.Others, damage, point, instigator.networkView.viewID);
-
-        // For doing self-damage
-        if (networkView.isMine)
-            OthersReceiveHit(damage, point, instigator.networkView.viewID);
     }
 
     [RPC]
@@ -164,6 +187,7 @@ public class HealthScript : MonoBehaviour
             }
         }
     }
+
 
     // Call from server or client
     public void PlayDeathPrefab()
