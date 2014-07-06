@@ -55,26 +55,30 @@ public class Deathmatch : GameMode
     public override void Update()
     {
         base.Update();
-        var leader = Leader;
-        if (leader != null)
+        if (IsRoundInProgress)
         {
-            for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
+            var leader = Leader;
+            if (leader != null)
             {
-                var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
-                if (character.Possessor == null) continue;
-                bool flagVisible = character.Possessor == leader;
-                character.HasFlagVisible = flagVisible;
-            }
+                for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
+                {
+                    var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
+                    if (character.Possessor == null) continue;
+                    bool flagVisible = character.Possessor == leader;
+                    character.HasFlagVisible = flagVisible;
+                }
 
-            if (ScoreLimit > 0 && leader.Score >= ScoreLimit)
-                EndRoundNow();
-        }
-        else
-        {
-            for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
+                // End round if someone over score limit
+                if (ScoreLimit > 0 && leader.Score >= ScoreLimit)
+                    EndRoundNow();
+            }
+            else
             {
-                var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
-                character.HasFlagVisible = false;
+                for (int i = 0; i < PlayerScript.UnsafeAllEnabledPlayerScripts.Count; i++)
+                {
+                    var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
+                    character.HasFlagVisible = false;
+                }
             }
         }
     }
