@@ -202,7 +202,7 @@ namespace Cancel.Interpolation
         }
     }
 
-    public class RotationalSpring
+    public class ThrottledRotationalSpring
     {
         public Quaternion CurrentValue;
         public Vector3 CurrentVelocity;
@@ -232,7 +232,7 @@ namespace Cancel.Interpolation
             MathExts.SpringDamperTo(CurrentValue, CurrentVelocity, TargetValue, Damping, Strength, Time.deltaTime, out CurrentValue, out CurrentVelocity);
         }
 
-        public RotationalSpring(Quaternion startingValue)
+        public ThrottledRotationalSpring(Quaternion startingValue)
         {
             CurrentValue = startingValue;
             TargetValue = startingValue;
@@ -248,6 +248,42 @@ namespace Cancel.Interpolation
         {
             if (ImpulseQueueLimit < 1 || ThrottledImpulses.Items.Count < ImpulseQueueLimit)
                 ThrottledImpulses.Add(eulerAngles);
+        }
+    }
+    public class RotationalSpring
+    {
+        public Quaternion CurrentValue;
+        public Vector3 CurrentVelocity;
+        public Quaternion TargetValue;
+        public float Damping;
+        public float Strength;
+
+        public float ImpulseFalloff;
+        public int ImpulseQueueLimit = 0;
+        private Vector3 AmortizedImpulse;
+
+        public void Update()
+        {
+            CurrentVelocity += AmortizedImpulse * Time.deltaTime;
+            AmortizedImpulse = Vector3.Lerp(AmortizedImpulse, Vector3.zero,
+                1.0f - Mathf.Pow(ImpulseFalloff, Time.deltaTime));
+            MathExts.SpringDamperTo(CurrentValue, CurrentVelocity, TargetValue, Damping, Strength, Time.deltaTime, out CurrentValue, out CurrentVelocity);
+        }
+
+        public RotationalSpring(Quaternion startingValue)
+        {
+            CurrentValue = startingValue;
+            TargetValue = startingValue;
+            CurrentVelocity = Vector3.zero;
+            AmortizedImpulse = Vector3.zero;
+            Damping = 0.001f;
+            Strength = 200f;
+            ImpulseFalloff = 0.0001f;
+        }
+
+        public void AddImpulse(Vector3 eulerAngles)
+        {
+            AmortizedImpulse += eulerAngles;
         }
     }
 }

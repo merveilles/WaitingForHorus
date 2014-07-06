@@ -64,12 +64,13 @@ public class CameraScript : MonoBehaviour
 
     // Looks better if there is some 'travel time' between the shot and the impulse reaching the 'camera'.
     private Delayer<Vector3> QueuedScreenRecoils;
-    private RotationalSpring CosmeticSpring;
+    private ThrottledRotationalSpring CosmeticSpring;
 
     // Used to calculate inferred velocity
     private Vector3 LastInferredBodyPosition;
     private Vector3 LastInferredVelocity;
     private ScalarSpring YSpring;
+    private RotationalSpring ViewBobSpring;
 
     public float DesiredFieldOfView
     {
@@ -127,15 +128,20 @@ public class CameraScript : MonoBehaviour
     // Generally ~ 0.5 - 1.5
     public void AddGunShotImpulse(float amount)
     {
+        // Add to the queue instead of directly into spring, because we want to
+        // delay recoil before it 'hits' the camera. Will be put into the actual
+		// spring in LateUpdate().
+        QueuedScreenRecoils.Add(CalculateGunShotImpulse(amount));
+    }
+
+    public Vector3 CalculateGunShotImpulse(float amount)
+    {
         float verticalBase = amount * 1500;
         float verticalExtra = UnityEngine.Random.Range(150, 400) * amount;
         float lateralSign = Mathf.Sign(UnityEngine.Random.Range(-1f, 1f));
         float lateral = amount * UnityEngine.Random.Range(100f, 500f) * lateralSign;
         float roll = amount * UnityEngine.Random.Range(-100f, 100f);
-        // Add to the queue instead of directly into spring, because we want to
-        // delay recoil before it 'hits' the camera. Will be put into the actual
-		// spring in LateUpdate().
-        QueuedScreenRecoils.Add(new Vector3(-(verticalBase + verticalExtra), lateral, roll));
+        return new Vector3(-(verticalBase + verticalExtra), lateral, roll);
     }
 
     public void Awake()
@@ -145,7 +151,7 @@ public class CameraScript : MonoBehaviour
 
         QueuedScreenRecoils = new Delayer<Vector3>();
 
-        CosmeticSpring = new RotationalSpring(Quaternion.identity);
+        CosmeticSpring = new ThrottledRotationalSpring(Quaternion.identity);
         CosmeticSpring.Damping = 0.0000001f;
         CosmeticSpring.Strength = 900f;
         CosmeticSpring.ImpulseQueueLimit = 1;
@@ -158,6 +164,10 @@ public class CameraScript : MonoBehaviour
         YSpring = new ScalarSpring(0f);
         YSpring.Strength = 800f;
         YSpring.Damping = 0.000000000001f;
+
+        ViewBobSpring = new RotationalSpring(Quaternion.identity);
+        ViewBobSpring.Strength = 500f;
+        ViewBobSpring.Damping = 0.0000001f;
     }
 
     public void OnDestroy()
@@ -179,7 +189,10 @@ public class CameraScript : MonoBehaviour
 
     private void AddYSpringImpulse(float impulse)
     {
-        YSpring.AddImpulse(-impulse * 22f);
+        // TODO should probably apply external view modifier when applying the rotation, not here, oh well.
+        float scale = IsExteriorView ? 0.7f : 1.0f;
+        YSpring.AddImpulse(-impulse * 22f * scale);
+        ViewBobSpring.AddImpulse(CalculateGunShotImpulse(impulse * 0.01f * scale));
     }
 
     public void Start()
@@ -319,6 +332,8 @@ public class CameraScript : MonoBehaviour
                 // Values between 0.3f and 0.8f seem to look best for scaling the gun offset Y.
                 BarrelFirstPersonOffsetTransform.localPosition = new Vector3(0f, YSpring.CurrentValue * 0.3f, 0f);
 
+            ViewBobSpring.Update();
+
             // Higher delay time when the camera is further from the gun
             QueuedScreenRecoils.DelayTime = IsExteriorView ? 0.086f : 0.06f;
             //QueuedScreenRecoils.DelayTime = 0.06f;
@@ -375,7 +390,10 @@ public class CameraScript : MonoBehaviour
             if (mainCamera != null)
             {
                 mainCamera.transform.position = cameraPosition;
-                mainCamera.transform.rotation = actualCameraRotation * CosmeticSpring.CurrentValue;
+                mainCamera.transform.rotation =
+                    actualCameraRotation *
+                    ViewBobSpring.CurrentValue *
+                    CosmeticSpring.CurrentValue;
             }
 
 
