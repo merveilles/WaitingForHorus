@@ -65,6 +65,12 @@ public class CameraScript : MonoBehaviour
     // Looks better if there is some 'travel time' between the shot and the impulse reaching the 'camera'.
     private Delayer<Vector3> QueuedScreenRecoils;
     private RotationalSpring CosmeticSpring;
+
+    // Used to calculate inferred velocity
+    private Vector3 LastInferredBodyPosition;
+    private Vector3 LastInferredVelocity;
+    private ScalarSpring YSpring;
+
     public float DesiredFieldOfView
     {
         get { return SmoothedBaseFieldOfView * (IsZoomedIn ? ZoomedFieldOfViewRatio : 1.0f); }
@@ -115,6 +121,9 @@ public class CameraScript : MonoBehaviour
 	// not use this.
     private Vector2 SmoothedCrosshairPosition;
 
+    // Used to cosmetically update barrel position late into Update cycle (keep in sync with first-person camera).
+    public Transform BarrelFirstPersonOffsetTransform;
+
     // Generally ~ 0.5 - 1.5
     public void AddGunShotImpulse(float amount)
     {
@@ -144,6 +153,11 @@ public class CameraScript : MonoBehaviour
         Relay.Instance.OptionsMenu.OnFOVOptionChanged += ReceiveFOVChanged;
         BaseFieldOfView = Relay.Instance.OptionsMenu.FOVOptionValue;
         Relay.Instance.OptionsMenu.OnExteriorViewOptionChanged += ReceiveExteriorViewOptionChanged;
+
+        // Used for view bob and jump/landing etc
+        YSpring = new ScalarSpring(0f);
+        YSpring.Strength = 800f;
+        YSpring.Damping = 0.000000000001f;
     }
 
     public void OnDestroy()
@@ -161,6 +175,11 @@ public class CameraScript : MonoBehaviour
     {
         SmoothedBaseFieldOfView = _BaseFieldOfView;
         SmoothedFieldOfView = _BaseFieldOfView;
+    }
+
+    private void AddYSpringImpulse(float impulse)
+    {
+        YSpring.AddImpulse(-impulse * 22f);
     }
 
     public void Start()
@@ -186,6 +205,9 @@ public class CameraScript : MonoBehaviour
                 objectToHide.layer = layerID;
             }
         }
+
+        LastInferredBodyPosition = player.transform.position;
+        LastInferredVelocity = Vector3.zero;
     }
 
     public void Update()
@@ -281,6 +303,22 @@ public class CameraScript : MonoBehaviour
 
         if(player.networkView.isMine)
         {
+            // Update inferred position and velocity
+            Vector3 newPosition = player.transform.position;
+            Vector3 newVelocity = (newPosition - LastInferredBodyPosition) / Time.deltaTime;
+            Vector3 velocityDelta = newVelocity - LastInferredVelocity;
+            LastInferredVelocity = newVelocity;
+            LastInferredBodyPosition = newPosition;
+            AddYSpringImpulse(velocityDelta.y);
+            YSpring.Update();
+            // Clamp magnitude to prevent camera from clipping through ground on hard landings
+            YSpring.CurrentValue = Mathf.Clamp(YSpring.CurrentValue, -4f, 4f);
+            if (IsExteriorView)
+                BarrelFirstPersonOffsetTransform.localPosition = Vector3.zero;
+            else
+                // Values between 0.3f and 0.8f seem to look best for scaling the gun offset Y.
+                BarrelFirstPersonOffsetTransform.localPosition = new Vector3(0f, YSpring.CurrentValue * 0.3f, 0f);
+
             // Higher delay time when the camera is further from the gun
             QueuedScreenRecoils.DelayTime = IsExteriorView ? 0.086f : 0.06f;
             //QueuedScreenRecoils.DelayTime = 0.06f;
@@ -330,6 +368,9 @@ public class CameraScript : MonoBehaviour
             Vector3 direction = actualCameraRotation * scaledLocalPosition;
             Vector3 cameraPosition = transform.parent.position + direction;
 
+            // Modify Y for spring
+            cameraPosition.y += YSpring.CurrentValue;
+
             // TODO can mainCamera be null here?
             if (mainCamera != null)
             {
@@ -343,7 +384,6 @@ public class CameraScript : MonoBehaviour
                 1.0f - Mathf.Pow(CrosshairSmoothingSpeed, -CrosshairSmoothingSpeed * Time.deltaTime));
             Camera.main.GetComponent<WeaponIndicatorScript>()
                 .CrosshairPosition = SmoothedCrosshairPosition;
-
         }
     }
 	

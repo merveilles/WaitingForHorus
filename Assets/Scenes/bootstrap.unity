@@ -620,6 +620,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -663,6 +667,38 @@ Prefab:
     - target: {fileID: 14800000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
       propertyPath: m_ViewID.m_Type
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[1].time
+      value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[1].inSlope
+      value: .000129919703
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[1].outSlope
+      value: .000129919703
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[2].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[3].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: SmoothImpulseCurve.m_Curve.Array.data[3].value
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}

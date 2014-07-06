@@ -405,6 +405,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100052
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400052}
+  m_Layer: 0
+  m_Name: FirstPersonOffset
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &100056
 GameObject:
   m_ObjectHideFlags: 1
@@ -1318,8 +1333,23 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 400114}
+  m_Father: {fileID: 400052}
   m_RootOrder: 2
+--- !u!4 &400052
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100052}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 400056}
+  - {fileID: 400122}
+  - {fileID: 400050}
+  m_Father: {fileID: 400114}
+  m_RootOrder: 0
 --- !u!4 &400056
 Transform:
   m_ObjectHideFlags: 1
@@ -1330,7 +1360,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 400114}
+  m_Father: {fileID: 400052}
   m_RootOrder: 0
 --- !u!4 &400058
 Transform:
@@ -1689,9 +1719,7 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400056}
-  - {fileID: 400122}
-  - {fileID: 400050}
+  - {fileID: 400052}
   m_Father: {fileID: 400058}
   m_RootOrder: 0
 --- !u!4 &400116
@@ -1763,7 +1791,7 @@ Transform:
   m_Children:
   - {fileID: 400126}
   - {fileID: 400124}
-  m_Father: {fileID: 400114}
+  m_Father: {fileID: 400052}
   m_RootOrder: 1
 --- !u!4 &400124
 Transform:
@@ -2824,6 +2852,7 @@ MonoBehaviour:
   ZoomedFieldOfViewRatio: .5
   ExteriorViewOffset: {x: 0, y: 2.5, z: -6}
   InteriorViewOffset: {x: 0, y: 1, z: 0}
+  BarrelFirstPersonOffsetTransform: {fileID: 400052}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
