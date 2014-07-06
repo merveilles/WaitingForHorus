@@ -356,7 +356,7 @@ public class CameraScript : MonoBehaviour
             ScreenSpaceDebug.AddLineOnce(ZoomedAmount.ToString());
 
             // Higher delay time when the camera is further from the gun
-            QueuedScreenRecoils.DelayTime = IsExteriorView ? 0.086f : 0.06f;
+            QueuedScreenRecoils.DelayTime = IsExteriorView ? 0.071f : 0.048f;
             //QueuedScreenRecoils.DelayTime = 0.06f;
             // Remove stuff from the lag queue and put it in the actual spring
             foreach (var eulerAngles in QueuedScreenRecoils.Update())
