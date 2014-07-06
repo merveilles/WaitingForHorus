@@ -231,6 +231,7 @@ public class PlayerShootingScript : MonoBehaviour
 
     					var bulletsShot = bulletsLeft;
                         var first = true;
+                        int homingFired = 0;
                         while( bulletsLeft > 0 )
                         {
                             if( !aimedAt.Any() )
@@ -239,12 +240,22 @@ public class PlayerShootingScript : MonoBehaviour
     						{
             					var pd = aimedAt.OrderBy( x => Guid.NewGuid() ).First();
                                 DoHomingShot( ShotgunSpread, pd.Script, Mathf.Clamp01( pd.SinceInCrosshair / AimingTime ) * ShotgunHomingSpeed, first );
+    						    homingFired++;
     						}
     						
                             cooldownLeft += ShotCooldown;
                             first = false;
                         }
                         cooldownLeft += ReloadTime;
+
+                        float lockOnReduction = (float)homingFired / (float)BurstCount;
+                        float amountOfLockToRemove = WeaponIndicatorScript.PlayerData.LockStrengthLimitMultiplier *
+                                                     lockOnReduction;
+                        for (int i = 0; i < targets.Count; i++)
+                        {
+                            targets[i].LockStrength -= amountOfLockToRemove;
+                            targets[i].ClampStrength();
+                        }
 
                         var recoilImpulse = -gun.forward * ((float)bulletsShot / BurstCount);
                         recoilImpulse *= playerScript.controller.isGrounded ? 25 : 87.5f;
