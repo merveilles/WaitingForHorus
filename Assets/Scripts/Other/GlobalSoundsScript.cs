@@ -43,11 +43,6 @@ public class GlobalSoundsScript : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown("m"))
-            audio.mute = !audio.mute; // Disable music
-
-        if (Input.GetKeyDown("n"))
-            soundEnabled = !soundEnabled;
 	}
 
     public void OnLevelWasLoaded( int levelIndex )
