@@ -423,7 +423,7 @@ public class PlayerShootingScript : MonoBehaviour
             Shoot( finalFiringPosition, finalFiringRotation, Network.player );
             AddGunImpulse(0.3f);
         }
-        playerCamera.AddGunShotImpulse(0.5f);
+        playerCamera.AddGunShotImpulse(0.65f);
     }
 
     public void InstantReload()

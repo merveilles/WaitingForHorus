@@ -56,6 +56,23 @@ public class CameraScript : MonoBehaviour
         }
     }
 
+    // 0 .. 1
+    public float ZoomedAmount
+    {
+        get
+        {
+            float min = ZoomedFieldOfViewRatio * SmoothedBaseFieldOfView;
+            float max = SmoothedBaseFieldOfView;
+            float current = SmoothedFieldOfView;
+            float amt = (current - min) / (max - min);
+            if (amt < 0.00001f)
+                amt = 0f;
+            else if (amt > 0.9999f)
+                amt = 1f;
+            return 1 - amt;
+        }
+    }
+
     public const float DefaultBaseFieldOfView = 85.0f;
     public float ZoomedFieldOfViewRatio = 0.42f;
 
@@ -190,9 +207,12 @@ public class CameraScript : MonoBehaviour
     private void AddYSpringImpulse(float impulse)
     {
         // TODO should probably apply external view modifier when applying the rotation, not here, oh well.
-        float scale = IsExteriorView ? 0.7f : 1.0f;
-        YSpring.AddImpulse(-impulse * 22f * scale);
-        ViewBobSpring.AddImpulse(CalculateGunShotImpulse(impulse * 0.01f * scale));
+        float scale = IsExteriorView ? 0.75f : 1.0f;
+        YSpring.AddImpulse(-impulse * 18.2f * scale);
+        Vector3 shotImpulse = CalculateGunShotImpulse(impulse * 0.0072f * scale);
+        // Reduce amount of yaw
+        shotImpulse.y *= 0.2f;
+        ViewBobSpring.AddImpulse(shotImpulse);
     }
 
     public void Start()
@@ -333,6 +353,7 @@ public class CameraScript : MonoBehaviour
                 BarrelFirstPersonOffsetTransform.localPosition = new Vector3(0f, YSpring.CurrentValue * 0.3f, 0f);
 
             ViewBobSpring.Update();
+            ScreenSpaceDebug.AddLineOnce(ZoomedAmount.ToString());
 
             // Higher delay time when the camera is further from the gun
             QueuedScreenRecoils.DelayTime = IsExteriorView ? 0.086f : 0.06f;
@@ -386,13 +407,18 @@ public class CameraScript : MonoBehaviour
             // Modify Y for spring
             cameraPosition.y += YSpring.CurrentValue;
 
+            // We don't want to use view bob when zoomed in: we want the
+			// reticule to be very responsive.
+            Quaternion usedViewBob = Quaternion.Lerp(
+                ViewBobSpring.CurrentValue, Quaternion.identity, ZoomedAmount);
+
             // TODO can mainCamera be null here?
             if (mainCamera != null)
             {
                 mainCamera.transform.position = cameraPosition;
                 mainCamera.transform.rotation =
                     actualCameraRotation *
-                    ViewBobSpring.CurrentValue *
+                    usedViewBob *
                     CosmeticSpring.CurrentValue;
             }
 
