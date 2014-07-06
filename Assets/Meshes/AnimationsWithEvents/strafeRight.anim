@@ -48593,13 +48593,13 @@ AnimationClip:
     functionName: StepRight
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 70
+    floatParameter: 50
     intParameter: 0
     messageOptions: 0
   - time: .533333361
     functionName: StepRight
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: -45
+    floatParameter: -30
     intParameter: 0
     messageOptions: 0

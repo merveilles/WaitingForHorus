@@ -51353,13 +51353,13 @@ AnimationClip:
     functionName: StepForward
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: -100
+    floatParameter: 70
     intParameter: 0
     messageOptions: 0
   - time: .566666663
     functionName: StepForward
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 80
+    floatParameter: -80
     intParameter: 0
     messageOptions: 0

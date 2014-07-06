@@ -946,8 +946,10 @@ public class PlayerScript : MonoBehaviour
 
     private void ReceiveStepEvent(Vector3 localDirection)
     {
-        if (CameraScript.IsExteriorView)
-            CameraScript.AddYSpringImpulse(localDirection.z);
+        const float exteriorScale = 0.94f;
+        const float interiorScale = 0.40f;
+        float scale = CameraScript.IsExteriorView ? exteriorScale : interiorScale;
+        CameraScript.AddYSpringImpulse(localDirection.z * scale);
     }
 }
 

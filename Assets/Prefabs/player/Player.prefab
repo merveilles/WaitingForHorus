@@ -2662,7 +2662,7 @@ Animation:
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
-  m_CullingType: 1
+  m_CullingType: 0
 --- !u!111 &11100002
 Animation:
   m_ObjectHideFlags: 1
