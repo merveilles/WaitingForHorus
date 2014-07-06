@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Cancel.RateLimit;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -54,6 +55,7 @@ public class PlayerScript : MonoBehaviour
     public AudioSource dashSound;
     public AudioSource landingSound;
     public AudioSource jumpSound;
+    public AudioSource StepSound;
 
     public PlayerShootingScript ShootingScript;
     public CameraScript CameraScript;
@@ -98,6 +100,8 @@ public class PlayerScript : MonoBehaviour
 
     public MechaAnimationEvents AnimationEvents;
     private bool WasMine;
+
+    private Throttler<Action> FootstepThrottler;
 
     [RPC]
 // ReSharper disable once UnusedMember.Local
@@ -229,6 +233,11 @@ public class PlayerScript : MonoBehaviour
             (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Default"));
 
         WasMine = networkView.isMine;
+
+        FootstepThrottler = new Throttler<Action>
+        {
+            MinimumTimeBetweenItems = 0.17f
+        };
 	}
 
     public void Start()
@@ -743,6 +752,12 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    public void LateUpdate()
+    {
+        foreach (var action in FootstepThrottler.Update())
+            action();
+    }
+
     // Used by HealthScript in Respawn
     public void ResetAnimation()
     {
@@ -950,6 +965,32 @@ public class PlayerScript : MonoBehaviour
         const float interiorScale = 0.40f;
         float scale = CameraScript.IsExteriorView ? exteriorScale : interiorScale;
         CameraScript.AddYSpringImpulse(localDirection.z * scale);
+
+        // TODO super gross wtf is wrong with me
+        bool isStrafing = currentAnim == "strafeLeft" || currentAnim == "strafeRight";
+
+        // Don't stick more in if too many already
+        if (FootstepThrottler.Items.Count > 1) return;
+        if (localDirection.z > 0)
+        {
+            FootstepThrottler.Add(() =>
+            {
+                StepSound.pitch = 0.9f;
+                StepSound.volume = 0.18f;
+            if (GlobalSoundsScript.soundEnabled)
+                StepSound.Play();
+            });
+        }
+        else if (!isStrafing)
+        {
+            FootstepThrottler.Add(() =>
+            {
+                StepSound.volume = 0.06f;
+                StepSound.pitch = 0.8f;
+            if (GlobalSoundsScript.soundEnabled)
+                StepSound.Play();
+            });
+        }
     }
 }
 
