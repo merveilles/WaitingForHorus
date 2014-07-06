@@ -204,7 +204,7 @@ public class CameraScript : MonoBehaviour
         SmoothedFieldOfView = _BaseFieldOfView;
     }
 
-    private void AddYSpringImpulse(float impulse)
+    public void AddYSpringImpulse(float impulse)
     {
         // TODO should probably apply external view modifier when applying the rotation, not here, oh well.
         float scale = IsExteriorView ? 0.75f : 1.0f;

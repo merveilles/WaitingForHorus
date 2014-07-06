@@ -96,6 +96,9 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    public MechaAnimationEvents AnimationEvents;
+    private bool WasMine;
+
     [RPC]
 // ReSharper disable once UnusedMember.Local
     private void RemoteReceiveHasFlagVisible(bool visible)
@@ -224,6 +227,8 @@ public class PlayerScript : MonoBehaviour
 
         OtherPlayerVisibilityLayerMask =
             (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Default"));
+
+        WasMine = networkView.isMine;
 	}
 
     public void Start()
@@ -231,6 +236,7 @@ public class PlayerScript : MonoBehaviour
         if (networkView.isMine)
         {
             gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
+            AnimationEvents.OnStep += ReceiveStepEvent;
         }
         else
         {
@@ -805,6 +811,11 @@ public class PlayerScript : MonoBehaviour
         EnemiesTargetingUs.OnStoppedBeingLockedOnByEnemy -= ReceiveStoppedBeingLockedOnBy;
         EnemiesTargetingUs.Destroy();
 
+        if (WasMine)
+        {
+            AnimationEvents.OnStep -= ReceiveStepEvent;
+        }
+
         // TODO this belongs earlier in the chain of death-related stuff
         OnDeath();
     }
@@ -931,6 +942,12 @@ public class PlayerScript : MonoBehaviour
         }
         // Nope
         return false;
+    }
+
+    private void ReceiveStepEvent(Vector3 localDirection)
+    {
+        if (CameraScript.IsExteriorView)
+            CameraScript.AddYSpringImpulse(localDirection.z);
     }
 }
 

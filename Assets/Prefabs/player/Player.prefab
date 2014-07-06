@@ -926,6 +926,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400118}
   - 111: {fileID: 11100000}
+  - 114: {fileID: 11400014}
   m_Layer: 0
   m_Name: Animated Mesh Fixed
   m_TagString: Untagged
@@ -2652,12 +2653,12 @@ Animation:
   m_Animation: {fileID: 7400002, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   m_Animations:
   - {fileID: 7400002, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
-  - {fileID: 7400004, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
-  - {fileID: 7400006, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
-  - {fileID: 7400008, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
+  - {fileID: 7400000, guid: cab0aee4041bbb048ad4d3962aa94412, type: 2}
+  - {fileID: 7400000, guid: 5a8783fe6365cab449da119e3cb33a22, type: 2}
+  - {fileID: 7400000, guid: 36191ff924576d74b9eb8a5020f64b04, type: 2}
   - {fileID: 7400010, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
   - {fileID: 7400012, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
-  - {fileID: 7400014, guid: 4e8507c3ff89947f784b9548914eebdd, type: 3}
+  - {fileID: 7400000, guid: 9e5f87be092db7941a48f3ad23b50cfc, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
@@ -2728,6 +2729,7 @@ MonoBehaviour:
   FlagParts:
   - {fileID: 13700010}
   - {fileID: 13700008}
+  AnimationEvents: {fileID: 11400014}
   SafetyCollisionMask:
     serializedVersion: 2
     m_Bits: 257
@@ -2903,6 +2905,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skin: {fileID: 0}
   baseSensitivity: 3
+--- !u!114 &11400014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0e115825aac3ba478179e22bb3c111a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1
