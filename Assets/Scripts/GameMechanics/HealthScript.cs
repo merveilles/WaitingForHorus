@@ -72,8 +72,12 @@ public class HealthScript : MonoBehaviour
             /*if( !justBouncedPlayer )
             {
                 justBouncedPlayer = true;*/
+                PlayerScript.StopFalling();
                 PlayerScript.AddRecoil( Vector3.up * 275.0f );
                 DoDamageOwner( 1, transform.position, PlayerScript.Possessor );
+            // Don't play water effect on death
+                if (!dead)
+                    EffectsScript.PlayerWaterHitEffect(transform.position);
                 /*bounceCooldown = 0.5f;
             }
             else

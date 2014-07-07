@@ -13,6 +13,8 @@ public class EffectsScript : MonoBehaviour
     public GameObject explosionHitPrefab;
     public GameObject hitConePrefab;
 
+    public GameObject WaterHitPrefab;
+
     private static float LastExplosionSoundTime;
 
     public void Awake()
@@ -46,6 +48,18 @@ public class EffectsScript : MonoBehaviour
         var count = RandomHelper.Random.Next(1, 4);
         for (int i = 0; i < count; i++)
             Instantiate(Instance.hitConePrefab, position, rotation);
+    }
+
+    public static void PlayerWaterHitEffect(Vector3 position)
+    {
+        Instance.networkView.RPC("RemotePlayWaterHitEffect", RPCMode.Others, position);
+        Instance.RemotePlayWaterHitEffect(position);
+    }
+
+    [RPC]
+    private void RemotePlayWaterHitEffect(Vector3 position)
+    {
+        Instantiate(WaterHitPrefab, position, Quaternion.Euler(-90, 0, 0));
     }
 
 }

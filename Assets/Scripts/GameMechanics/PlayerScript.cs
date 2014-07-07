@@ -138,6 +138,11 @@ public class PlayerScript : MonoBehaviour
     //    if (presence) Possessor = presence;
     //}
 
+    public void StopFalling()
+    {
+        fallingVelocity.y = 0f;
+    }
+
     public bool Paused { get; set; }
 
     // Used as a global collection of all enabled PlayerScripts. Will help us

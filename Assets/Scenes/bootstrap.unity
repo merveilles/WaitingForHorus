@@ -658,7 +658,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 14800000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
       propertyPath: m_ViewID.m_ID
@@ -712,6 +712,10 @@ Prefab:
       propertyPath: m_Pitch
       value: .810000002
       objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: WaterHitPrefab
+      value: 
+      objectReference: {fileID: 100000, guid: 2faca3d6ecd21994594b321cbd170ff5, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
   m_RootGameObject: {fileID: 210913190}
@@ -907,6 +911,7 @@ MonoBehaviour:
   explosionPrefab: {fileID: 100000, guid: b4d7217f2a5f71f4fa566f5dce6c36b3, type: 2}
   explosionHitPrefab: {fileID: 100000, guid: 55246ff3c507476458227ef1615a081f, type: 2}
   hitConePrefab: {fileID: 100004, guid: a41ba4945ea359346a14ec46a438c3c3, type: 2}
+  WaterHitPrefab: {fileID: 100000, guid: 2faca3d6ecd21994594b321cbd170ff5, type: 2}
 --- !u!1 &1989565603
 GameObject:
   m_ObjectHideFlags: 0
