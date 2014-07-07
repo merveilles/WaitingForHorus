@@ -383,12 +383,14 @@ public class OptionsMenu
         GUILayout.BeginHorizontal();
         foreach (var map in ListOfMaps)
         {
+            GUI.enabled = map != Application.loadedLevelName;
             if (GUIExts.Button(map, new GUIStyle(Skin.button) {fixedWidth = 95}))
             {
                 OnMapSelection(map);
             }
             GUILayout.Space(1);
         }
+        GUI.enabled = true;
         GUILayout.Space(-3);
         GUILayout.EndHorizontal();
 
