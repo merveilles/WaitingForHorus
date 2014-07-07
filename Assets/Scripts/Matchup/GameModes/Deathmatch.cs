@@ -130,7 +130,7 @@ public class Deathmatch : GameMode
             GUILayout.BeginHorizontal();
             if (IsRoundInProgress)
             {
-                if (GUILayout.Button("END ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
+                if (GUIExts.Button("END ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
                 {
                     EndRoundNow();
                     StartRoundAfterMapChange = false;
@@ -138,7 +138,7 @@ public class Deathmatch : GameMode
             }
             else
             {
-                if (GUILayout.Button("START ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
+                if (GUIExts.Button("START ROUND", new GUIStyle(Relay.Instance.BaseSkin.button) {fixedWidth = 95*3 + 1}))
                 {
                     StartRound();
                     StartRoundAfterMapChange = true;

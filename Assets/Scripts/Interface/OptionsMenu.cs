@@ -336,23 +336,23 @@ public class OptionsMenu
         //GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("ACCEPT", Skin.button))
+        if (GUIExts.Button("ACCEPT", Skin.button))
             OnOptionsMenuWantsClosed();
         GUILayout.Space(1);
         if (Relay.Instance.CurrentServer != null)
         {
-            if (GUILayout.Button("LEAVE SERVER", new GUIStyle(Skin.button) {fixedWidth = 95}))
+            if (GUIExts.Button("LEAVE SERVER", new GUIStyle(Skin.button) {fixedWidth = 95}))
                 OnOptionsMenuWantsGoToTitle();
         }
         else
         {
-            if (GUILayout.Button("QUIT GAME", new GUIStyle(Skin.button) {fixedWidth = 95}))
+            if (GUIExts.Button("QUIT GAME", new GUIStyle(Skin.button) {fixedWidth = 95}))
                 OnOptionsMenuWantsQuitGame();
         }
         if (ShouldDisplaySpectateButton)
         {
             GUILayout.Space(1);
-            if (GUILayout.Button("SPECTATE", new GUIStyle(Skin.button) {fixedWidth = 95}))
+            if (GUIExts.Button("SPECTATE", new GUIStyle(Skin.button) {fixedWidth = 95}))
             {
                 OnOptionsMenuWantsSpectate();
                 OnOptionsMenuWantsClosed();
@@ -383,7 +383,7 @@ public class OptionsMenu
         GUILayout.BeginHorizontal();
         foreach (var map in ListOfMaps)
         {
-            if (GUILayout.Button(map, new GUIStyle(Skin.button) {fixedWidth = 95}))
+            if (GUIExts.Button(map, new GUIStyle(Skin.button) {fixedWidth = 95}))
             {
                 OnMapSelection(map);
             }

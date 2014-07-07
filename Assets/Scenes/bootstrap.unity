@@ -700,6 +700,10 @@ Prefab:
       propertyPath: SmoothImpulseCurve.m_Curve.Array.data[3].value
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8200002, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 9ea002823f3a04da79fe00824b60c058, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
   m_RootGameObject: {fileID: 210913190}
@@ -788,7 +792,7 @@ AudioSource:
   m_GameObject: {fileID: 1271378265}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 9ea002823f3a04da79fe00824b60c058, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
