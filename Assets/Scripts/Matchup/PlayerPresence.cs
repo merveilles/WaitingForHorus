@@ -277,7 +277,7 @@ public class PlayerPresence : MonoBehaviour
         if (networkView.isMine)
         {
             if (Possession != null)
-                Possession.HealthScript.DeclareHitToOthers(999, Possession.transform.position, this);
+                Possession.HealthScript.DoDamageOwner(999, Possession.transform.position, this);
             IsSpectating = true;
             Score = 0;
         }

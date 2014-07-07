@@ -162,7 +162,7 @@ public class HealthScript : MonoBehaviour
     }
 
     [RPC]
-    private void DoDamageOwner( int damage, Vector3 point, PlayerPresence instigator)
+    public void DoDamageOwner( int damage, Vector3 point, PlayerPresence instigator)
     {
         ScreenSpaceDebug.AddMessage("DAMAGE", point, Color.red);
         if ( !dead )
