@@ -27,6 +27,13 @@ public class OptionsMenu
         ShouldPlayMusic = PlayerPrefs.GetInt("music", 1) > 0;
         IsAimInverted = PlayerPrefs.GetInt("invertaim", 0) > 0;
         ListOfMaps = new List<string>();
+
+        int initialLength;
+        int initialBuffers; // unused by us
+        AudioSettings.GetDSPBufferSize(out initialLength, out initialBuffers);
+        InitialAudioBufferSize = initialLength;
+        _UseLowLatencyAudio = initialLength <= LowLatencyBufferSize;
+        UseLowLatencyAudio = PlayerPrefs.GetInt("lowlatencyaudio", 1) > 0;
     }
 
     public float FOVOptionValue
@@ -138,6 +145,37 @@ public class OptionsMenu
         }
     }
 
+    private int InitialAudioBufferSize = 1024;
+    private int LowLatencyBufferSize = 256;
+
+    private bool _UseLowLatencyAudio;
+
+    public bool UseLowLatencyAudio
+    {
+        get { return _UseLowLatencyAudio; }
+        set
+        {
+            if (_UseLowLatencyAudio != value)
+            {
+                int asNumber = value ? 1 : 0;
+                PlayerPrefs.SetInt("lowlatencyaudio", asNumber);
+                int newBufferLength = value ? LowLatencyBufferSize : InitialAudioBufferSize;
+                int currentBufferLength;
+                int currentNumBuffers;
+                AudioSettings.GetDSPBufferSize(out currentBufferLength, out currentNumBuffers);
+                if (newBufferLength != currentBufferLength)
+                {
+                    AudioSettings.SetDSPBufferSize(newBufferLength, currentNumBuffers);
+                }
+                if (Relay.Instance != null && Relay.Instance.MessageLog != null)
+                    Relay.Instance.MessageLog.AddMessage("Set from" + currentBufferLength + " to " + newBufferLength);
+                _UseLowLatencyAudio = value;
+                if (GlobalSoundsScript.Instance != null)
+                    GlobalSoundsScript.Instance.RestartAudio();
+            }
+        }
+    }
+
     public List<string> ListOfMaps { get; set; }
 
     public delegate void OptionsMenuStateChangedHandler();
@@ -187,7 +225,7 @@ public class OptionsMenu
     {
         GUI.skin = Skin;
 
-        float height = 200f;
+        float height = 230f;
         float offscreenY = (-35f * 2) - (height + 50);
         float onscreenY = 35f;
         float actualY = Mathf.Lerp(offscreenY, onscreenY, VisibilityAmount);
@@ -262,6 +300,10 @@ public class OptionsMenu
                 IsAimInverted = GUILayout.Toggle(IsAimInverted, "");
                 GUILayout.EndHorizontal();
 
+                GUILayout.BeginHorizontal(Skin.box);
+                GUILayout.Label(" ", LabelStyle);
+                GUILayout.EndHorizontal();
+
             GUILayout.EndVertical();
 
             GUILayout.Space(1);
@@ -278,9 +320,20 @@ public class OptionsMenu
                 ShouldPlaySoundEffects = GUILayout.Toggle(ShouldPlaySoundEffects, "");
                 GUILayout.EndHorizontal();
 
+                GUILayout.BeginHorizontal(Skin.box);
+                GUILayout.Label("LOW LAG AUDIO", LabelStyle);
+                UseLowLatencyAudio = GUILayout.Toggle(UseLowLatencyAudio, "");
+                GUILayout.EndHorizontal();
+
             GUILayout.EndVertical();
 
         GUILayout.EndHorizontal();
+
+
+        //GUILayout.BeginHorizontal();
+        //    GUILayout.BeginVertical();
+        //    GUILayout.EndVertical();
+        //GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("ACCEPT", Skin.button))

@@ -5,7 +5,7 @@ public class GlobalSoundsScript : MonoBehaviour
 	public static bool soundEnabled = true;
     public AudioSource buttonPressSound;
 	
-    static GlobalSoundsScript Instance;
+    public static GlobalSoundsScript Instance { get; private set; }
     static bool playing = false; //work around the fact that TaskManager does a DontDestroyOnLoad
 
     public bool PlayMusicInEditor = false;
@@ -18,14 +18,27 @@ public class GlobalSoundsScript : MonoBehaviour
             audio.Play();
         }
         else Destroy( this );
+        Instance = this;
+    }
+
+    public void RestartAudio()
+    {
+        bool shouldPlayMusic = (!Application.isEditor || PlayMusicInEditor) && !Relay.Instance.DevelopmentMode;
+        var indexInArray = Application.loadedLevel - 1;
+
+        if( shouldPlayMusic && indexInArray < songs.Length )
+        {
+            audio.clip = songs[indexInArray];
+            audio.Play();
+        }
     }
 
     public void Start () 
     {
-        Instance = this;
-
         Relay.Instance.OptionsMenu.OnShouldPlaySoundEffectsOptionChanged += ReceiveSoundEffectsOptionChanged;
         Relay.Instance.OptionsMenu.OnShouldPlayMusicOptionChanged += ReceiveMusicOptionChanged;
+
+        audio.mute = !Relay.Instance.OptionsMenu.ShouldPlayMusic;
     }
 
     public void OnDestroy()
@@ -38,7 +51,8 @@ public class GlobalSoundsScript : MonoBehaviour
 
     public static void PlayButtonPress()
     {
-        Instance.buttonPressSound.Play();
+        if (Instance != null)
+            Instance.buttonPressSound.Play();
     }
 
     public void Update()
@@ -47,14 +61,7 @@ public class GlobalSoundsScript : MonoBehaviour
 
     public void OnLevelWasLoaded( int levelIndex )
     {
-        bool shouldPlayMusic = (!Application.isEditor || PlayMusicInEditor) && !Relay.Instance.DevelopmentMode;
-        var indexInArray = levelIndex - 1;
-
-        if( shouldPlayMusic && indexInArray < songs.Length )
-        {
-            audio.clip = songs[indexInArray];
-            audio.Play();
-        }
+        RestartAudio();
     }
 
     private void ReceiveSoundEffectsOptionChanged(bool isEnabled)
@@ -64,5 +71,6 @@ public class GlobalSoundsScript : MonoBehaviour
     private void ReceiveMusicOptionChanged(bool isEnabled)
     {
         audio.mute = !isEnabled;
+        RestartAudio();
     }
 }
