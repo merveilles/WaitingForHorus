@@ -186,8 +186,8 @@ public class WeaponIndicatorScript : MonoBehaviour
         mat.SetPass(0);
 
         GL.Begin(GL.QUADS);
-        RenderAmmo(Color.white, 0.8f, ssPos - new Vector2(radius, -radius));
-        RenderAmmo(Color.black, 0.1f, ssPos - new Vector2(radius - 2, -radius));
+        RenderAmmo(Color.white, 0.9f, ssPos - new Vector2(radius, -radius));
+        RenderAmmo(Color.black, 0.2f, ssPos - new Vector2(radius - 2, -radius));
         RenderHealth(Color.white, 0.8f, ssPos - new Vector2(radius, radius));
         RenderHealth(Color.black, 0.1f, ssPos - new Vector2(radius - 3, radius));
         GL.End();
