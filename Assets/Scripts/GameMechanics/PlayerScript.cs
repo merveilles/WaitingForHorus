@@ -562,6 +562,16 @@ public class PlayerScript : MonoBehaviour
         if(!controller.enabled) return;
         if (Paused) return;
         UpdateMovement();
+
+        // FIXME Hackity hack
+        if (networkView.isMine)
+        {
+            var indicator = Relay.Instance.MainCamera.GetComponent<WeaponIndicatorScript>();
+            indicator.HealthCapacity = HealthScript.maxHealth;
+            indicator.ShieldCapacity = HealthScript.maxShield;
+            indicator.HealthAvailable = HealthScript.Health;
+            indicator.ShieldAvailable = HealthScript.Shield;
+        }
     }
 
     private void UpdateMovement()

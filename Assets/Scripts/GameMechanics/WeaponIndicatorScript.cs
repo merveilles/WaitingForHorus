@@ -10,6 +10,15 @@ public class WeaponIndicatorScript : MonoBehaviour
     Material mat;
 	float lastOpacity;
     bool isReady;
+    private GUIStyle ShieldTextStyle;
+    private GUIStyle DarkShieldTextStyle;
+
+    public int BulletCapacity { get; set; }
+    public int BulletsAvailable { get; set; }
+    public int HealthCapacity { get; set; }
+    public int HealthAvailable { get; set; }
+    public int ShieldCapacity { get; set; }
+    public int ShieldAvailable { get; set; }
 
     public class PlayerData
     {
@@ -64,6 +73,15 @@ public class WeaponIndicatorScript : MonoBehaviour
         mat.shader.hideFlags = HideFlags.HideAndDontSave;
 
         Targets = new List<PlayerData>();
+
+        ShieldTextStyle = new GUIStyle(Relay.Instance.BaseSkin.label)
+        {
+            padding = new RectOffset(0,0,0,0),
+            margin = new RectOffset(0,0,0,0),
+            fixedWidth = 0
+        };
+        DarkShieldTextStyle = new GUIStyle(ShieldTextStyle);
+        DarkShieldTextStyle.normal.textColor = new Color(0, 0, 0, 0.2f);
     }
 
     public float CooldownStep { get; set; }
@@ -144,6 +162,63 @@ public class WeaponIndicatorScript : MonoBehaviour
         GL.PopMatrix();
 	}
 
+    void RenderAmmo(Color color, float opacity, Vector2 origin)
+    {
+        GL.Color(new Color(color.r, color.g, color.b, opacity));
+
+        DrawMeter(BulletsAvailable, BulletCapacity - BulletsAvailable, origin, 1.25f, 2.5f, 5.5f, 1.5f);
+    }
+
+    void RenderHealth(Color color, float opacity, Vector2 origin)
+    {
+        GL.Color(new Color(color.r, color.g, color.b, opacity));
+        DrawMeter(HealthAvailable, HealthCapacity - HealthAvailable, origin, 2.25f, 2.5f, 5.5f, 1.5f);
+    }
+
+    void RenderMeters()
+    {
+        var radius = 130 * Screen.height / 1500f;
+        Vector2 ssPos = CrosshairPosition;
+
+        GL.PushMatrix();
+        GL.LoadPixelMatrix();
+
+        mat.SetPass(0);
+
+        GL.Begin(GL.QUADS);
+        RenderAmmo(Color.white, 0.8f, ssPos - new Vector2(radius, -radius));
+        RenderAmmo(Color.black, 0.1f, ssPos - new Vector2(radius - 2, -radius));
+        RenderHealth(Color.white, 0.8f, ssPos - new Vector2(radius, radius));
+        RenderHealth(Color.black, 0.1f, ssPos - new Vector2(radius - 3, radius));
+        GL.End();
+
+        GL.PopMatrix();
+    }
+
+    private void Rect(Vector2 origin, Vector2 end)
+    {
+        GL.Vertex3(origin.x, origin.y, 0);
+        GL.Vertex3(end.x, origin.y, 0);
+        GL.Vertex3(end.x, end.y, 0);
+        GL.Vertex3(origin.x, end.y, 0);
+    }
+
+    private void DrawMeter(int filledSegments, int emptySegments, Vector2 origin, float segmentWidth, float gapWidth,
+        float filledSegmentHeight, float emptySegmentHeight)
+    {
+        Vector2 originAccum = origin;
+        for (int i = 0; i < filledSegments; i++)
+        {
+            Rect(originAccum, originAccum + new Vector2(segmentWidth, filledSegmentHeight));
+            originAccum += new Vector2(segmentWidth + gapWidth, 0);
+        }
+        for (int i = 0; i < emptySegments; i++)
+        {
+            Rect(originAccum, originAccum + new Vector2(segmentWidth, emptySegmentHeight));
+            originAccum += new Vector2(segmentWidth + gapWidth, 0);
+        }
+    }
+
     public IEnumerator OnPostRender()
     {
         yield return new WaitForEndOfFrame();
@@ -163,7 +238,28 @@ public class WeaponIndicatorScript : MonoBehaviour
 			
 			Render( color, opacity * 1.75f, new Vector2(130, 130) );
 			Render( Color.black, 0.075f, new Vector2(128, 128) );
+            RenderMeters();
 			//Render( Color.black, 0.1f, new Vector2(132, 132) );
+
         }
+    }
+
+    public void OnGUI()
+    {
+        GUI.skin = Relay.Instance.BaseSkin;
+
+        var radius = 130 * Screen.height / 1500f;
+        Vector2 ssPos = CrosshairPosition;
+        ssPos.y = Screen.height - ssPos.y;
+        //Vector2 topRight = new Vector2(ssPos.x + radius, ssPos.y - radius);
+        Vector2 botRight = new Vector2(ssPos.x + radius, ssPos.y + radius);
+        string shieldText = ShieldAvailable > 0 ? "SHIELD" : "*****";
+        Vector2 labelSize = ShieldTextStyle.CalcSize(new GUIContent(shieldText));
+        float xOffset = 8f;
+        float yOffset = 4f;
+        GUI.Label(new Rect(xOffset + botRight.x - labelSize.x, yOffset + botRight.y - labelSize.y, xOffset + labelSize.x, yOffset + labelSize.y), shieldText, DarkShieldTextStyle);
+        xOffset += 1f;
+        yOffset += 1f;
+        GUI.Label(new Rect(xOffset + botRight.x - labelSize.x, yOffset + botRight.y - labelSize.y, xOffset + labelSize.x, yOffset + labelSize.y), shieldText, ShieldTextStyle);
     }
 }

@@ -304,6 +304,23 @@ public class PlayerShootingScript : MonoBehaviour
 			
             TestScreenSpaceLockTargets();
             CheckTargets();
+
+            // Update weapon indicator bullets count. Kind of hacky because
+            // bullet availability is not tracked like you might expect it to
+			// be.
+		    weaponIndicator.BulletCapacity = BurstCount;
+		    if (bulletsLeft == BurstCount && cooldownLeft >= Mathf.Epsilon)
+		    {
+		        weaponIndicator.BulletsAvailable = 0;
+		    }
+		    else if (cooldownLeft > Mathf.Epsilon && weaponIndicator.BulletsAvailable < bulletsLeft)
+		    {
+                // Do nothing, probably reloading
+		    }
+		    else
+		    {
+    		    weaponIndicator.BulletsAvailable = bulletsLeft;
+		    }
 		}
     }
 
