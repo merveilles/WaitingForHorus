@@ -4,6 +4,8 @@ public class GlobalSoundsScript : MonoBehaviour
 {
 	public static bool soundEnabled = true;
     public AudioSource buttonPressSound;
+
+    public AudioSource ChatMessageSound;
 	
     public static GlobalSoundsScript Instance { get; private set; }
     static bool playing = false; //work around the fact that TaskManager does a DontDestroyOnLoad
@@ -53,6 +55,12 @@ public class GlobalSoundsScript : MonoBehaviour
     {
         if (Instance != null)
             Instance.buttonPressSound.Play();
+    }
+
+    public static void PlayChatMessageSound()
+    {
+        if (Instance != null)
+            Instance.ChatMessageSound.Play();
     }
 
     public void Update()

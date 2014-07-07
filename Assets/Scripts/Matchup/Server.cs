@@ -285,11 +285,23 @@ public class Server : MonoBehaviour
 
     public event ReceiveServerMessageHandler OnReceiveServerMessage = delegate {};
 
+    public static int DefaultMessageType = 0;
+    public static int ChatMessageType = 1;
+
     public void BroadcastMessageFromServer(string text)
+    {
+        BroadcastMessageFromServer(text, DefaultMessageType);
+    }
+
+    public void BroadcastMessageFromServer(string text, int messageType)
     {
         if (networkView.isMine)
         {
-            networkView.RPC("ReceiveServerMessage", RPCMode.All, text);
+            networkView.RPC("ReceiveServerMessage", RPCMode.All, text, messageType);
+
+            // TODO hacky
+            if (messageType == ChatMessageType)
+                GlobalSoundsScript.PlayChatMessageSound();
             OnReceiveServerMessage(text);
         }
     }
@@ -298,16 +310,20 @@ public class Server : MonoBehaviour
     {
         if (networkView.isMine)
         {
-            networkView.RPC("ReceiveServerMessage", target, text);
+            networkView.RPC("ReceiveServerMessage", target, text, DefaultMessageType);
         }
     }
 
     [RPC]
 // ReSharper disable once UnusedMember.Local
-    void ReceiveServerMessage(string text, NetworkMessageInfo info)
+    void ReceiveServerMessage(string text, int messageType, NetworkMessageInfo info)
     {
         // Only care about messages from server
         if (info.sender != networkView.owner) return;
+
+        // TODO hacky
+        if (messageType == ChatMessageType)
+            GlobalSoundsScript.PlayChatMessageSound();
         OnReceiveServerMessage(text);
     }
 
@@ -315,7 +331,7 @@ public class Server : MonoBehaviour
     {
         bool isHost = playerPresence.networkView.owner == networkView.owner;
         string sigil = isHost ? "+ " : "";
-        BroadcastMessageFromServer(sigil + playerPresence.Name + " : " + text);
+        BroadcastMessageFromServer(sigil + playerPresence.Name + " : " + text, ChatMessageType);
     }
 
     public void ChangeLevel(string levelName)

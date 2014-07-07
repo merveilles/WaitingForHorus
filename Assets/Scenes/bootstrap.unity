@@ -704,6 +704,14 @@ Prefab:
       propertyPath: m_audioClip
       value: 
       objectReference: {fileID: 8300000, guid: 9ea002823f3a04da79fe00824b60c058, type: 3}
+    - target: {fileID: 11400010, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: ChatMessageSound
+      value: 
+      objectReference: {fileID: 1989565605}
+    - target: {fileID: 8200002, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+      propertyPath: m_Pitch
+      value: .810000002
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
   m_RootGameObject: {fileID: 210913190}
@@ -795,7 +803,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 9ea002823f3a04da79fe00824b60c058, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: .810000002
   Loop: 0
   Mute: 0
   Priority: 128
@@ -899,6 +907,93 @@ MonoBehaviour:
   explosionPrefab: {fileID: 100000, guid: b4d7217f2a5f71f4fa566f5dce6c36b3, type: 2}
   explosionHitPrefab: {fileID: 100000, guid: 55246ff3c507476458227ef1615a081f, type: 2}
   hitConePrefab: {fileID: 100004, guid: a41ba4945ea359346a14ec46a438c3c3, type: 2}
+--- !u!1 &1989565603
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100006, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1989565604}
+  - 82: {fileID: 1989565605}
+  m_Layer: 0
+  m_Name: Chat message
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1989565604
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400006, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1989565603}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2049539268}
+  m_RootOrder: 1
+--- !u!82 &1989565605
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 8200002, guid: 2dd6de682d9c2430d81417f49e0625c4,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1989565603}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_audioClip: {fileID: 8300000, guid: 01ff67c7e86784e22ac7e86e66c4c80e, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: .860000014
+  Loop: 0
+  Mute: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
 --- !u!1 &2049539267
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,6 +1022,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1271378266}
+  - {fileID: 1989565604}
   m_Father: {fileID: 210913191}
   m_RootOrder: 2
 --- !u!114 &2049539269
@@ -942,6 +1038,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonPressSound: {fileID: 1271378267}
+  ChatMessageSound: {fileID: 1989565605}
   PlayMusicInEditor: 0
   songs:
   - {fileID: 8300000, guid: 07f28d2eb73974f818f7786a07d023e4, type: 3}
