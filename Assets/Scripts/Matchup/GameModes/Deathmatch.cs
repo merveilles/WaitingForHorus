@@ -340,15 +340,16 @@ public class Deathmatch : GameMode
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
             presence.SetScorePoints(0);
         }
-        Server.BroadcastMessageFromServer("Round start.");
+        //Server.BroadcastMessageFromServer("Round start.");
 
         var sb = new StringBuilder();
-        sb.AppendLine("DEATHMATCH");
+        sb.AppendLine("Deathmatch");
         if (ScoreLimit > 0)
-            sb.Append("FIRST TO " + ScoreLimit);
+            sb.Append("First to " + ScoreLimit);
         else
-            sb.Append("NO LIMIT");
-        Server.StatusMessage = sb.ToString();
+            sb.Append("No limit");
+        Server.StatusMessage = sb.ToString().ToUpper();
+        Server.BroadcastMessageFromServer(sb.ToString(), Server.BannerMessageType);
     }
 
     public void EndRoundNow()
@@ -361,9 +362,9 @@ public class Deathmatch : GameMode
         }
         var leader = Leader;
         string winMessage = leader != null ? 
-            leader.Name + " wins." :
-            "Tie game.";
-        Server.BroadcastMessageFromServer("Round over. " + winMessage);
+            leader.Name + " wins" :
+            "Tie game";
+        Server.BroadcastMessageFromServer("Round over\n" + winMessage, Server.BannerMessageType);
         Server.StatusMessage = "ROUND OVER";
     }
 }

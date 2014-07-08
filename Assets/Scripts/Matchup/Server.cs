@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MasterServer;
 using UnityEngine;
@@ -55,6 +56,8 @@ public class Server : MonoBehaviour
         }
     }
 
+    private GUIStyle BannerStyle;
+
     private void UpdateStatusMessage()
     {
         networkView.RPC("RemoteReceiveStatusMessage", RPCMode.Others, StatusMessage);
@@ -66,6 +69,7 @@ public class Server : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void OwnerReceiveRemoteWantsStatusMessage(NetworkMessageInfo info)
     {
         if (networkView.isMine)
@@ -75,6 +79,7 @@ public class Server : MonoBehaviour
     }
 
     [RPC]
+// ReSharper disable once UnusedMember.Local
     private void RemoteReceiveStatusMessage(string newStatusMessage, NetworkMessageInfo info)
     {
         if (info.sender == networkView.owner)
@@ -131,6 +136,8 @@ public class Server : MonoBehaviour
 
         StatusMessage = "?";
 
+        BannerMessages = new List<BannerMessage>();
+
         if (networkView.isMine)
         {
             _CurrentMapName = Application.loadedLevelName;
@@ -168,6 +175,9 @@ public class Server : MonoBehaviour
         {
             networkView.RPC("RequestedMapNameFromRemote", networkView.owner);
         }
+
+        BannerStyle = Relay.Instance.BaseSkin.customStyles[3];
+        Relay.Instance.MessageLog.OnCommandEntered += ReceiveCommandEntered;
     }
 
     private void ReceivePlayerPresenceAdd(PlayerPresence newPlayerPresence)
@@ -212,6 +222,19 @@ public class Server : MonoBehaviour
             ServerNotifier.Update();
         }
         Leaderboard.Update();
+
+        // Update banner messages
+        float yAccum = 0f;
+        for (int i = BannerMessages.Count - 1; i >= 0; i--)
+        {
+            //BannerMessages[i].Index = displayIndex;
+            BannerMessages[i].IndexY = yAccum;
+            BannerMessages[i].Update();
+            if (BannerMessages[i].Active)
+                yAccum += BannerMessages[i].CalculatedHeight + 1f;
+            if (BannerMessages[i].Finished)
+                BannerMessages.RemoveAt(i);
+        }
     }
 
     // Only called by Unity on server
@@ -241,6 +264,8 @@ public class Server : MonoBehaviour
     {
         PlayerPresence.OnPlayerPresenceAdded -= ReceivePlayerPresenceAdd;
         PlayerPresence.OnPlayerPresenceRemoved -= ReceivePlayerPresenceRemove;
+        Relay.Instance.MessageLog.OnCommandEntered -= ReceiveCommandEntered;
+
         if (CurrentGameMode != null)
         {
             Destroy(CurrentGameMode.gameObject);
@@ -287,6 +312,7 @@ public class Server : MonoBehaviour
 
     public static int DefaultMessageType = 0;
     public static int ChatMessageType = 1;
+    public static int BannerMessageType = 2;
 
     public void BroadcastMessageFromServer(string text)
     {
@@ -299,9 +325,7 @@ public class Server : MonoBehaviour
         {
             networkView.RPC("ReceiveServerMessage", RPCMode.All, text, messageType);
 
-            // TODO hacky
-            if (messageType == ChatMessageType)
-                GlobalSoundsScript.PlayChatMessageSound();
+            HandleMessage(text, messageType);
             OnReceiveServerMessage(text);
         }
     }
@@ -314,6 +338,29 @@ public class Server : MonoBehaviour
         }
     }
 
+    private void HandleMessage(string text, int messageType)
+    {
+        if (messageType == ChatMessageType)
+            GlobalSoundsScript.PlayChatMessageSound();
+        else if (messageType == BannerMessageType)
+        {
+            BannerMessages.Add(new BannerMessage(text.ToUpper(), BannerStyle));
+        }
+    }
+
+    private void ReceiveCommandEntered(string command, string[] args)
+    {
+        switch (command)
+        {
+            case "announce":
+                if (args.Length < 1) break;
+                if (networkView.isMine)
+                    BroadcastMessageFromServer(String.Join(" ", args), BannerMessageType);
+            break;
+        }
+    }
+
+
     [RPC]
 // ReSharper disable once UnusedMember.Local
     void ReceiveServerMessage(string text, int messageType, NetworkMessageInfo info)
@@ -321,9 +368,7 @@ public class Server : MonoBehaviour
         // Only care about messages from server
         if (info.sender != networkView.owner) return;
 
-        // TODO hacky
-        if (messageType == ChatMessageType)
-            GlobalSoundsScript.PlayChatMessageSound();
+        HandleMessage(text, messageType);
         OnReceiveServerMessage(text);
     }
 
@@ -358,5 +403,60 @@ public class Server : MonoBehaviour
     public void OnGUI()
     {
         Leaderboard.DrawGUI();
+
+        for (int i = 0; i < BannerMessages.Count; i++)
+            BannerMessages[i].OnGUI();
+    }
+
+    private List<BannerMessage> BannerMessages; 
+
+    private class BannerMessage
+    {
+        public readonly string Text;
+        public readonly GUIStyle Style;
+
+        public float CalculatedHeight;
+
+        public float IndexY;
+        private float CurrentY = -100f;
+
+        public float DesiredY
+        {
+            get { return Age >= Lifetime ? -100f : IndexY; }
+        }
+
+        public float Age = 0f;
+        public float Lifetime = 4f;
+
+        public int NumberOfLines
+        { get { return Text.Split('\n').Length; } }
+
+        public BannerMessage(string text, GUIStyle style)
+        {
+            Text = text;
+            Style = style;
+            CalculatedHeight = NumberOfLines * 22 + Style.padding.top + Style.padding.bottom;
+        }
+
+        public void Update()
+        {
+            CurrentY = Mathf.Lerp(CurrentY, DesiredY, 1f - Mathf.Pow(0.00001f, Time.deltaTime));
+            Age += Time.deltaTime;
+        }
+
+        public bool Finished { get { return Age >= Lifetime && Mathf.Abs(CurrentY - DesiredY) < 0.01f; } }
+        public bool Active { get { return Age < Lifetime; } }
+
+        public void OnGUI()
+        {
+            var r = new Rect(35, 35 + CurrentY, Screen.width - 35 * 2, 100);
+            GUILayout.BeginArea(r);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(350);
+            GUILayout.Label(Text, Style);
+            GUILayout.Space(350);
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
+        }
     }
 }
