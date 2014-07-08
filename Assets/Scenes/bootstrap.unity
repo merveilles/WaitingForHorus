@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BaseServer: {fileID: 11400000, guid: d632df868fa18584bad7f16c70fccf13, type: 2}
-  CurrentVersionID: 29
+  CurrentVersionID: 30
   MainCamera: {fileID: 656731828}
   DevelopmentMode: 0
   MouseSensitivityCurve:
@@ -722,7 +722,7 @@ Prefab:
       objectReference: {fileID: 1850103431}
     - target: {fileID: 11400010, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
       propertyPath: PlayMusicInEditor
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8200000, guid: 2dd6de682d9c2430d81417f49e0625c4, type: 2}
       propertyPath: m_Volume
@@ -1149,7 +1149,7 @@ MonoBehaviour:
   buttonPressSound: {fileID: 1271378267}
   ChatMessageSound: {fileID: 1989565605}
   ServerMessageSound: {fileID: 1850103431}
-  PlayMusicInEditor: 1
+  PlayMusicInEditor: 0
   songs:
   - {fileID: 8300000, guid: 07f28d2eb73974f818f7786a07d023e4, type: 3}
   - {fileID: 8300000, guid: eae7aa79cd6b5496385d4d94456786df, type: 3}
