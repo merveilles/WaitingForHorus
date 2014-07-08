@@ -1403,10 +1403,10 @@ MonoBehaviour:
       m_Top: 0
       m_Bottom: 0
     m_Padding:
-      m_Left: 0
-      m_Right: 0
-      m_Top: 0
-      m_Bottom: 0
+      m_Left: 10
+      m_Right: 10
+      m_Top: 10
+      m_Bottom: 10
     m_Overflow:
       m_Left: 0
       m_Right: 0
@@ -1422,8 +1422,8 @@ MonoBehaviour:
     m_ImagePosition: 0
     m_ContentOffset: {x: 0, y: 0}
     m_FixedWidth: 0
-    m_FixedHeight: 18
-    m_StretchWidth: 0
+    m_FixedHeight: 0
+    m_StretchWidth: 1
     m_StretchHeight: 0
   m_Settings:
     m_DoubleClickSelectsWord: 1

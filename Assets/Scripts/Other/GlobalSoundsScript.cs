@@ -6,6 +6,7 @@ public class GlobalSoundsScript : MonoBehaviour
     public AudioSource buttonPressSound;
 
     public AudioSource ChatMessageSound;
+    public AudioSource ServerMessageSound;
 	
     public static GlobalSoundsScript Instance { get; private set; }
     static bool playing = false; //work around the fact that TaskManager does a DontDestroyOnLoad
@@ -61,6 +62,12 @@ public class GlobalSoundsScript : MonoBehaviour
     {
         if (Instance != null)
             Instance.ChatMessageSound.Play();
+    }
+
+    public static void PlayServerMessageSound()
+    {
+        if (Instance != null)
+            Instance.ServerMessageSound.Play();
     }
 
     public void Update()

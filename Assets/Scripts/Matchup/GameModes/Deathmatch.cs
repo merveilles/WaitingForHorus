@@ -364,7 +364,7 @@ public class Deathmatch : GameMode
         string winMessage = leader != null ? 
             leader.Name + " wins" :
             "Tie game";
-        Server.BroadcastMessageFromServer("Round over\n" + winMessage, Server.BannerMessageType);
+        Server.BroadcastMessageFromServer("Round over\n" + winMessage, Server.BannerMessageWithSoundType);
         Server.StatusMessage = "ROUND OVER";
     }
 }

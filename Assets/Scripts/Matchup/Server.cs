@@ -313,6 +313,7 @@ public class Server : MonoBehaviour
     public static int DefaultMessageType = 0;
     public static int ChatMessageType = 1;
     public static int BannerMessageType = 2;
+    public static int BannerMessageWithSoundType = 3;
 
     public void BroadcastMessageFromServer(string text)
     {
@@ -344,6 +345,11 @@ public class Server : MonoBehaviour
             GlobalSoundsScript.PlayChatMessageSound();
         else if (messageType == BannerMessageType)
         {
+            BannerMessages.Add(new BannerMessage(text.ToUpper(), BannerStyle));
+        }
+        else if (messageType == BannerMessageWithSoundType)
+        {
+            GlobalSoundsScript.PlayServerMessageSound();
             BannerMessages.Add(new BannerMessage(text.ToUpper(), BannerStyle));
         }
     }
