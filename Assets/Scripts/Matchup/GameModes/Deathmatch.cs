@@ -25,7 +25,17 @@ public class Deathmatch : GameMode
     private List<PresenceListener> PresenceListeners;
     private int _ScoreLimit;
 
+    private PlayerPresence LastLeader;
+    private bool AnnouncedFirstKill;
+
     private bool StartRoundAfterMapChange;
+
+    private int[] ScoreAnnouncementValues = new[]
+    {
+        10, 5, 3, 2, 1
+    };
+
+    private int PeakScoreThisRound;
 
     public override void Awake()
     {
@@ -71,6 +81,25 @@ public class Deathmatch : GameMode
                 // End round if someone over score limit
                 if (ScoreLimit > 0 && leader.Score >= ScoreLimit)
                     EndRoundNow();
+
+                // Else announce score remaining if needed
+                else if (leader.Score > PeakScoreThisRound)
+                {
+                    int prevScore = PeakScoreThisRound;
+                    PeakScoreThisRound = leader.Score;
+                    int pointsThatWereLeft = ScoreLimit - prevScore;
+                    int pointsLeft = ScoreLimit - PeakScoreThisRound;
+                    for (int i = ScoreAnnouncementValues.Length - 1; i >= 0; i--)
+                    {
+                        int value = ScoreAnnouncementValues[i];
+                        if (pointsThatWereLeft > value && pointsLeft <= value)
+                        {
+                            Server.BroadcastMessageFromServer(pointsLeft + " points remaining", Server.BannerMessageWithSoundType);
+                            break;
+                        }
+                    }
+                }
+
             }
             else
             {
@@ -78,6 +107,19 @@ public class Deathmatch : GameMode
                 {
                     var character = PlayerScript.UnsafeAllEnabledPlayerScripts[i];
                     character.HasFlagVisible = false;
+                }
+            }
+
+            if (leader != LastLeader && leader != null)
+            {
+                // Only start caring once we've got a kill
+                if (AnnouncedFirstKill)
+                {
+                    string message = LastLeader != null
+                        ? leader.Name + " has taken the lead from " + LastLeader.Name
+                        : leader.Name + " has taken the lead";
+                    Server.BroadcastMessageFromServer(message, Server.BannerMessageWithSoundType);
+                    LastLeader = leader;
                 }
             }
         }
@@ -199,6 +241,11 @@ public class Deathmatch : GameMode
             {
                 Server.BroadcastMessageFromServer(deadPlayerScript.Possessor.Name + " was destroyed by " + instigator.Name);
                 instigator.ReceiveScorePoints(1);
+                if (!AnnouncedFirstKill)
+                {
+                    Server.BroadcastMessageFromServer(instigator.Name + " draws first blood", Server.BannerMessageWithSoundType);
+                    AnnouncedFirstKill = true;
+                }
             }
         }
         else
@@ -335,6 +382,9 @@ public class Deathmatch : GameMode
     {
         IsRoundInProgress = true;
         Server.IsGameActive = true;
+        PeakScoreThisRound = 0;
+        LastLeader = null;
+        AnnouncedFirstKill = false;
         foreach (var presence in Server.Combatants)
         {
             presence.SpawnCharacter(RespawnZone.GetRespawnPoint());
