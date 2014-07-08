@@ -167,8 +167,6 @@ public class OptionsMenu
                 {
                     AudioSettings.SetDSPBufferSize(newBufferLength, currentNumBuffers);
                 }
-                if (Relay.Instance != null && Relay.Instance.MessageLog != null)
-                    Relay.Instance.MessageLog.AddMessage("Set from" + currentBufferLength + " to " + newBufferLength);
                 _UseLowLatencyAudio = value;
                 if (GlobalSoundsScript.Instance != null)
                     GlobalSoundsScript.Instance.RestartAudio();
