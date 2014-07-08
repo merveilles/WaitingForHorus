@@ -48,6 +48,7 @@ public class PlayerShootingScript : MonoBehaviour
     public AudioSource targetSound;
     public AudioSource pepperGunSound;
     public AudioSource burstGunSound;
+    public AudioSource FireRailSound;
 
     public BulletScript bulletPrefab;
     public BulletScript fastBulletPrefab;
@@ -547,6 +548,6 @@ public class PlayerShootingScript : MonoBehaviour
         cosmeticBullet.Instigator = playerScript.Possessor;
 		
 		if( GlobalSoundsScript.soundEnabled )
-        	burstGunSound.Play();
+        	FireRailSound.Play();
     }
 }

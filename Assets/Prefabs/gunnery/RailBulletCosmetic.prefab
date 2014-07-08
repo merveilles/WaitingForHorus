@@ -83,9 +83,9 @@ AudioSource:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: 6b351133daf857c4eb6b55b003eec73e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: dd42e01650b2b46beafc8271d7577811, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
