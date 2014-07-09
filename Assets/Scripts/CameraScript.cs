@@ -353,7 +353,6 @@ public class CameraScript : MonoBehaviour
                 BarrelFirstPersonOffsetTransform.localPosition = new Vector3(0f, YSpring.CurrentValue * 0.3f, 0f);
 
             ViewBobSpring.Update();
-            ScreenSpaceDebug.AddLineOnce(ZoomedAmount.ToString());
 
             // Higher delay time when the camera is further from the gun
             QueuedScreenRecoils.DelayTime = IsExteriorView ? 0.071f : 0.048f;
