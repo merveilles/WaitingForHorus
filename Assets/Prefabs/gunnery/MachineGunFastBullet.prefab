@@ -188,13 +188,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletCasingPrefab: {fileID: 100000, guid: 0c0f4137b2b770140abfda1e828f053f, type: 2}
-  speed: 12.25
+  speed: 25
   lifetime: 1
   damage: 1
   areaOfEffect: 0
   recoil: 0
   homing: 0
-  accelerationSpeed: 1200
+  accelerationSpeed: 1800
   target: {fileID: 0}
   TrailAlpha: .5
   layerMask:
