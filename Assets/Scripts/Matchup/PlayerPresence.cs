@@ -40,10 +40,36 @@ public class PlayerPresence : MonoBehaviour
 
     private PlayerScript _Possession;
 
+    private float _Ping;
     public float Ping
     {
         get { return _Ping; }
         private set { _Ping = value; }
+    }
+
+    private float _ConnectionQuality;
+    public float ConnectionQuality
+    {
+        get { return _ConnectionQuality; }
+        set
+        {
+            _ConnectionQuality = value;
+            if (Server.networkView.isMine)
+            {
+                networkView.RPC("ReceiveSetConnectionQuality", RPCMode.Others, value);
+            }
+        }
+    }
+
+    [RPC]
+// ReSharper disable once UnusedMember.Local
+    private void ReceiveSetConnectionQuality(float quality, NetworkMessageInfo info)
+    {
+        if (Server == null || networkView == null) return;
+        if (info.sender == Server.networkView.owner || networkView.isMine)
+        {
+            _ConnectionQuality = quality;
+        }
     }
 
     public PlayerScript Possession
@@ -129,7 +155,6 @@ public class PlayerPresence : MonoBehaviour
 
 
     private bool _IsSpectating;
-    private float _Ping;
 
     public bool IsSpectating
     {
@@ -316,7 +341,6 @@ public class PlayerPresence : MonoBehaviour
 
     public void Update()
     {
-        ScreenSpaceDebug.AddLineOnce(Name + " ping is " + Ping);
         if (networkView.isMine)
         {
             WeaponIndicatorScript.Instance.ShouldRender = Possession != null;

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class Leaderboard
@@ -20,7 +19,7 @@ public class Leaderboard
 
             StatusMessageStyle = new GUIStyle(Skin.box)
             {
-                fixedWidth = 231,
+                fixedWidth = 267,
                 alignment = TextAnchor.MiddleCenter,
                 padding = ThinPadding
             };
@@ -32,12 +31,17 @@ public class Leaderboard
             };
             ScoreBoxStyle = new GUIStyle(Skin.box)
             {
-                fixedWidth = 80,
+                fixedWidth = 62,
                 alignment = TextAnchor.MiddleLeft,
             };
             PingBoxStyle = new GUIStyle(Skin.box)
             {
                 fixedWidth = 53,
+                alignment = TextAnchor.MiddleLeft,
+            };
+            ConnectionQualityStyle = new GUIStyle(Skin.box)
+            {
+                fixedWidth = 8,
                 alignment = TextAnchor.MiddleLeft,
             };
             NameTitleStyle = new GUIStyle(NameBoxStyle)
@@ -64,6 +68,7 @@ public class Leaderboard
 
     private readonly List<PlayerPresence> CombatantsCache;
     private readonly List<PlayerPresence> SpectatorsCache;
+    private GUIStyle ConnectionQualityStyle;
 
     public Leaderboard()
     {
@@ -138,6 +143,13 @@ public class Leaderboard
                 GUILayout.Space(1);
                 string pingText = presence.Ping >= 0 ? presence.Ping.ToString("#.") : "";
                 GUILayout.Box(pingText, PingBoxStyle);
+                GUILayout.Space(1);
+                Color bg = Color.Lerp(Relay.Instance.BadConnectionColor,
+                    Relay.Instance.GoodConnectionColor, presence.ConnectionQuality);
+                Color prev = GUI.backgroundColor;
+                GUI.backgroundColor = bg;
+                GUILayout.Box("", ConnectionQualityStyle);
+                GUI.backgroundColor = prev;
                 GUILayout.EndHorizontal();
             }
         }

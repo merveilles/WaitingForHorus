@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using Cancel.RateLimit;
 using UnityEngine;
@@ -104,11 +105,14 @@ public class PlayerScript : MonoBehaviour
 
     // New network stuff
     private float TimeSinceLastNetworkFrame = 0f;
+    private float LastNetworkFrameTakeTime = 0f;
     private Vector3 PreviousNetworkPosition;
     private Vector3 NewestNetworkPosition;
     private Vector3 ImpliedInputVelocity;
     private Vector3 ImpliedMovementVelocity;
     private float AverageTimeBetweenNetworkFrames;
+    private float SlowAverageTimeBetweenNetworkFrames;
+    private float RecentWorstNetworkTakeTime;
 
     [RPC]
 // ReSharper disable once UnusedMember.Local
@@ -240,6 +244,12 @@ public class PlayerScript : MonoBehaviour
         OtherPlayerVisibilityLayerMask =
             (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Default"));
 
+        if (Network.isServer)
+        {
+            // Averaging slowly from this value, so start somewhere sensible
+            LastNetworkFrameTakeTime = Relay.DesiredTimeBetweenNetworkSends;
+            RecentWorstNetworkTakeTime = Relay.DesiredTimeBetweenNetworkSends;
+        }
         FootstepThrottler = new Throttler<Action>
         {
             MinimumTimeBetweenItems = 0.17f
@@ -276,6 +286,10 @@ public class PlayerScript : MonoBehaviour
         if (!Network.isServer)
         {
             networkView.RPC("ReceiveRemoteWantsFlagVisibility", RPCMode.Server);
+        }
+        if (Network.isServer)
+        {
+            StartCoroutine(ServerUpdateConnectionQuality());
         }
     }
 
@@ -440,9 +454,26 @@ public class PlayerScript : MonoBehaviour
 
     public void Update()
     {
+        // Accumulate and update values used for measuring network performance
+		// and predicting next packet time.
         TimeSinceLastNetworkFrame += Time.deltaTime;
 
-        //if (Network.peerType == NetworkPeerType.Disconnected) return;
+        // For the recent worst case, we want to quickly move towards bad times,
+		// and then more gently move back to the true average.
+        if (LastNetworkFrameTakeTime > RecentWorstNetworkTakeTime)
+            RecentWorstNetworkTakeTime = Mathf.Lerp(RecentWorstNetworkTakeTime, LastNetworkFrameTakeTime,
+                1f - Mathf.Pow(0.06f, Time.deltaTime));
+        else
+            RecentWorstNetworkTakeTime = Mathf.Lerp(RecentWorstNetworkTakeTime, LastNetworkFrameTakeTime,
+                1f - Mathf.Pow(0.60f, Time.deltaTime));
+
+        // This value will be used for actual network interpolation stuff
+        AverageTimeBetweenNetworkFrames = Mathf.Lerp(AverageTimeBetweenNetworkFrames, LastNetworkFrameTakeTime,
+            1f - Mathf.Pow(0.1f, Time.deltaTime));
+        // This value will be the one displayed to the users
+        SlowAverageTimeBetweenNetworkFrames = Mathf.Lerp(SlowAverageTimeBetweenNetworkFrames, RecentWorstNetworkTakeTime,
+            1f - Mathf.Pow(0.5f, Time.deltaTime));
+
         if (Paused) return;
 
         // Update enemies targeting us and related stuff
@@ -552,7 +583,6 @@ public class PlayerScript : MonoBehaviour
             if(dashVelocity.magnitude > 1/256.0)
             {
                 color.a = dashVelocity.magnitude / dashForwardVelocity / 8;
-                ScreenSpaceDebug.AddLineOnce("Local dash velocity: " + dashVelocity.magnitude / dashForwardVelocity / 8);
                 dashEffectPivot.LookAt(transform.position + dashVelocity.normalized);
             }
             else
@@ -772,7 +802,6 @@ public class PlayerScript : MonoBehaviour
 
     private void UpdateRemoteMovement()
     {
-        //ScreenSpaceDebug.AddLineOnce("Average update time: " + AverageTimeBetweenNetworkFrames.ToString("#.0000"));
         bool seemsGrounded = CheckOverlap(transform.position - new Vector3(0, 1f, 0));
         bool wasInAir = sinceNotGrounded >= 0.1f;
         sinceNotGrounded = seemsGrounded ? 0f : sinceNotGrounded + Time.deltaTime;
@@ -836,6 +865,26 @@ public class PlayerScript : MonoBehaviour
         dashEffectRenderer.material.SetColor("_TintColor", color);
     }
 
+    private IEnumerator ServerUpdateConnectionQuality()
+    {
+        for (;;)
+        {
+            if (Possessor != null)
+            {
+                // Amount of average time when compared to desired to be considered bad
+                float bad = 0.8f;
+                float q = Relay.DesiredTimeBetweenNetworkSends / SlowAverageTimeBetweenNetworkFrames;
+                // Set the quality on the possessor (we're measuring it based on
+				// the packets arriving for this networkView, that's why we do
+				// this stuff here instead of on the PlayerPresence, which is
+				// 'reliable delta compressed' type of networkview, and not as
+				// useful for measurements.
+                Possessor.ConnectionQuality = MathExts.Unlerp(bad, 1.0f, q);
+            }
+            yield return new WaitForSeconds(0.4f);
+        }
+    }
+
     public void LateUpdate()
     {
         foreach (var action in FootstepThrottler.Update())
@@ -867,9 +916,13 @@ public class PlayerScript : MonoBehaviour
         if (stream.isReading)
         {
             float elapsedTime = TimeSinceLastNetworkFrame;
-            AverageTimeBetweenNetworkFrames = Mathf.Lerp(AverageTimeBetweenNetworkFrames, elapsedTime,
-                1f - Mathf.Pow(0.1f, elapsedTime));
+            //AverageTimeBetweenNetworkFrames = Mathf.Lerp(AverageTimeBetweenNetworkFrames, elapsedTime,
+            //    1f - Mathf.Pow(0.1f, elapsedTime));
+            //SlowAverageTimeBetweenNetworkFrames = Mathf.Lerp(AverageTimeBetweenNetworkFrames, elapsedTime,
+            //    1f - Mathf.Pow(0.8f, elapsedTime));
             TimeSinceLastNetworkFrame = 0f;
+            LastNetworkFrameTakeTime = elapsedTime;
+            //RecentWorstNetworkTakeTime = Mathf.Max(RecentWorstNetworkTakeTime, LastNetworkFrameTakeTime);
             PreviousNetworkPosition = NewestNetworkPosition;
             NewestNetworkPosition = pPosition;
             Vector3 positionDifference = pPosition - lastNetworkFramePosition;

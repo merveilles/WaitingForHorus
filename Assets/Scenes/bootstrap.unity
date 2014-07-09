@@ -172,6 +172,8 @@ MonoBehaviour:
     m_PostInfinity: 2
   BaseSkin: {fileID: 11400000, guid: ca3d138dd65c2564f9ccc4895664196a, type: 2}
   ConnectingServerHostname: 127.0.0.1
+  GoodConnectionColor: {r: 0, g: 1, b: 0, a: 1}
+  BadConnectionColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &138782053
 Transform:
   m_ObjectHideFlags: 0

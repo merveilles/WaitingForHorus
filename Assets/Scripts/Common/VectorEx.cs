@@ -141,6 +141,11 @@ public static class MathExts
     {
 		return (1.0f - value)*from + value*to;
 	}
+
+    public static float Unlerp(float min, float max, float value)
+    {
+        return Mathf.Clamp01((value - min) / (max - min));
+    }
 }
 
 namespace Cancel.Interpolation

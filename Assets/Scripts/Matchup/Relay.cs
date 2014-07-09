@@ -49,9 +49,14 @@ public class Relay : MonoBehaviour
         get { return DevelopmentMode ? -1 : CurrentVersionID; }
     }
 
-    public static float TimeBetweenNetworkSends
+    public static float DesiredTimeBetweenNetworkSends
     {
-        get { return 1.0f / Network.sendRate; }
+        // Cheat a little and give some headroom. Unity is sometimes a frame or two late.
+        get { return 1f / 58f; }
+    }
+    public static float SpecifiedTimeBetweenNetworkSends
+    {
+        get { return 1f / Network.sendRate; }
     }
 
     public Server CurrentServer
@@ -94,6 +99,9 @@ public class Relay : MonoBehaviour
     public const int Port = 31415;
     public string ConnectingServerHostname = "127.0.0.1";
 
+    public Color GoodConnectionColor;
+    public Color BadConnectionColor;
+
     public void Awake()
     {
         DontDestroyOnLoad(this);
@@ -116,7 +124,10 @@ public class Relay : MonoBehaviour
         OptionsMenu.OnOptionsMenuWantsQuitGame += Application.Quit;
         OptionsMenu.OnOptionsMenuWantsGoToTitle += Network.Disconnect;
 
-        Network.sendRate = 60;
+        // We want 60fps send rate, but Unity seems retarded and won't actually
+		// send at the rate you give it. So we'll just specify it higher and
+		// hope to meet the minimum of 60 ticks per second.
+        Network.sendRate = 80;
     }
 
     private string GetRandomMapName()
