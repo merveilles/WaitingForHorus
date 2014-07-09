@@ -103,6 +103,14 @@ public class PlayerScript : MonoBehaviour
 
     private Throttler<Action> FootstepThrottler;
 
+    // New network stuff
+    private float TimeSinceLastNetworkFrame = 0f;
+    private Vector3 PreviousNetworkPosition;
+    private Vector3 NewestNetworkPosition;
+    private Vector3 ImpliedInputVelocity;
+    private Vector3 ImpliedMovementVelocity;
+    private float AverageTimeBetweenNetworkFrames;
+
     [RPC]
 // ReSharper disable once UnusedMember.Local
     private void RemoteReceiveHasFlagVisible(bool visible)
@@ -165,7 +173,6 @@ public class PlayerScript : MonoBehaviour
     public static event PlayerScriptDiedHandler OnPlayerScriptDied = delegate{};
         
     // for interpolation on remote computers only
-    VectorInterpolator iPosition;
     Vector3 lastNetworkFramePosition;
     Quaternion smoothLookRotation;
     float smoothYaw;
@@ -206,7 +213,6 @@ public class PlayerScript : MonoBehaviour
 	{
         DontDestroyOnLoad(gameObject);
 
-		//targetedBy = new List<NetworkPlayer>();
 		warningSpheres = new List<GameObject>();
 
         controller = GetComponent<CharacterController>();
@@ -227,8 +233,6 @@ public class PlayerScript : MonoBehaviour
             if (r.gameObject.name == "flag_flag001") continue;
             r.tag = "PlayerMaterial";
         }
-
-        iPosition = new VectorInterpolator();
 
         EnemiesTargetingUs = new EnemiesTargetingUs();
         EnemiesTargetingUs.OnStartedBeingLockedOnByEnemy += ReceiveStartedBeingLockedOnBy;
@@ -265,6 +269,11 @@ public class PlayerScript : MonoBehaviour
             var indicator = Relay.Instance.MainCamera.GetComponent<WeaponIndicatorScript>();
             if (indicator != null)
                 indicator.enabled = true;
+        }
+        else
+        {
+            PreviousNetworkPosition = transform.position;
+            NewestNetworkPosition = transform.position;
         }
 
         if (!Network.isServer)
@@ -434,6 +443,8 @@ public class PlayerScript : MonoBehaviour
 
     public void Update()
     {
+        TimeSinceLastNetworkFrame += Time.deltaTime;
+
         //if (Network.peerType == NetworkPeerType.Disconnected) return;
         if (Paused) return;
 
@@ -502,13 +513,11 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            // TODO fixme lol
-            if (iPosition != null && iPosition.IsRunning)
-            {
-                //Debug.Log("Before correct : " + transform.position);
-                transform.position += iPosition.Update();
-                //Debug.Log("After correct : " + transform.position);
-            }
+            Vector3 desired = MathExts.LerpUnclamped(PreviousNetworkPosition, NewestNetworkPosition,
+                TimeSinceLastNetworkFrame / Mathf.Clamp(AverageTimeBetweenNetworkFrames, 0f, 5f));
+            // Might get some gross values on the first few lerps
+            if (!(float.IsNaN(desired.x) || float.IsNaN(desired.y) || float.IsNaN(desired.z)))
+                transform.position = desired;
 
             var amt = (float)Math.Pow(0.0000000001, Time.deltaTime);
             smoothLookRotation = Quaternion.Slerp(smoothLookRotation, Quaternion.Euler(lookRotationEuler), 1.0f - amt);
@@ -539,34 +548,31 @@ public class PlayerScript : MonoBehaviour
         cameraPivot.rotation = smoothLookRotation;
 
         // dash animation
-        Color color = dashEffectRenderer.material.GetColor("_TintColor");
-        Vector3 dashVelocity = new Vector3(fallingVelocity.x, activelyJumping ? 0 : Math.Max(fallingVelocity.y, 0), fallingVelocity.z);
-        if(dashVelocity.magnitude > 1/256.0)
+        if (networkView.isMine)
         {
-            color.a = dashVelocity.magnitude / dashForwardVelocity / 8;
-            dashEffectPivot.LookAt(transform.position + dashVelocity.normalized);
+            Color color = dashEffectRenderer.material.GetColor("_TintColor");
+            Vector3 dashVelocity = new Vector3(fallingVelocity.x, activelyJumping ? 0 : Math.Max(fallingVelocity.y, 0), fallingVelocity.z);
+            if(dashVelocity.magnitude > 1/256.0)
+            {
+                color.a = dashVelocity.magnitude / dashForwardVelocity / 8;
+                ScreenSpaceDebug.AddLineOnce("Local dash velocity: " + dashVelocity.magnitude / dashForwardVelocity / 8);
+                dashEffectPivot.LookAt(transform.position + dashVelocity.normalized);
+            }
+            else
+            {
+                color.a = 0;
+            }
+            dashEffectRenderer.material.SetColor("_TintColor", color);
         }
-        else
-        {
-            color.a = 0;
-        }
-        dashEffectRenderer.material.SetColor("_TintColor", color);
-
-        /*if (owner.HasValue && PlayerRegistry.Has(owner.Value))
-        {
-            var info = PlayerRegistry.For(owner.Value);
-
-            transform.Find("Animated Mesh Fixed").Find("flag_pole001").Find("flag_flag001").renderer.material.color = info.Color;
-
-            if (!networkView.isMine)
-                GetComponentInChildren<TextMesh>().text = info.Username;
-        }*/
 
         TimeSinceRocketJump += Time.deltaTime;
 
         if(!controller.enabled) return;
         if (Paused) return;
-        UpdateMovement();
+        if (networkView.isMine)
+            UpdateMovement();
+        else
+            UpdateRemoteMovement();
 
         // FIXME Hackity hack
         if (networkView.isMine)
@@ -767,6 +773,72 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    private void UpdateRemoteMovement()
+    {
+        //ScreenSpaceDebug.AddLineOnce("Average update time: " + AverageTimeBetweenNetworkFrames.ToString("#.0000"));
+        bool seemsGrounded = CheckOverlap(transform.position - new Vector3(0, 1f, 0));
+        bool wasInAir = sinceNotGrounded >= 0.1f;
+        sinceNotGrounded = seemsGrounded ? 0f : sinceNotGrounded + Time.deltaTime;
+
+        if( seemsGrounded )
+        {
+            if( MathHelper.AlmostEquals( ImpliedInputVelocity, Vector3.zero, 0.1f ) && currentAnim != "idle" )
+                    characterAnimation.CrossFade( currentAnim = "idle", IdleTransitionFadeLength );
+            else
+            {
+                var xDir = Vector3.Dot( ImpliedInputVelocity, transform.right );
+                var zDir = Vector3.Dot( ImpliedInputVelocity, transform.forward );
+
+                const float epsilon = 15f;
+
+                if (zDir > epsilon)
+                {
+                    if (currentAnim != "run")
+                        characterAnimation.CrossFade(currentAnim = "run", IdleTransitionFadeLength );
+                }
+                else if (zDir < -epsilon)
+                {
+                    if (currentAnim != "backward")
+                        characterAnimation.CrossFade(currentAnim = "backward", IdleTransitionFadeLength );
+                }
+                else if (xDir > epsilon)
+                {
+                    if (currentAnim != "strafeRight")
+                        characterAnimation.CrossFade(currentAnim = "strafeRight", IdleTransitionFadeLength );
+                }
+                else if (xDir < -epsilon)
+                {
+                    if (currentAnim != "strafeLeft")
+                        characterAnimation.CrossFade(currentAnim = "strafeLeft", IdleTransitionFadeLength );
+                }
+            }
+            if (wasInAir)
+                landingSound.Play();
+        }
+        else if (currentAnim != "jump")
+        {
+            characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
+        }
+        UpdateRemoteDashVelocity();
+    }
+
+    private Vector3 RemoteDashVelocity = Vector3.zero;
+    private void UpdateRemoteDashVelocity()
+    {
+        RemoteDashVelocity = Vector3.Lerp(RemoteDashVelocity, Vector3.zero, 1f - Mathf.Pow(0.001f, Time.deltaTime));
+        Color color = dashEffectRenderer.material.GetColor("_TintColor");
+        if(RemoteDashVelocity.magnitude > Mathf.Epsilon)
+        {
+            color.a = RemoteDashVelocity.magnitude / 5f;
+            dashEffectPivot.LookAt(transform.position + RemoteDashVelocity.normalized);
+        }
+        else
+        {
+            color.a = 0;
+        }
+        dashEffectRenderer.material.SetColor("_TintColor", color);
+    }
+
     public void LateUpdate()
     {
         foreach (var action in FootstepThrottler.Update())
@@ -782,19 +854,11 @@ public class PlayerScript : MonoBehaviour
 
     public void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
-        //var pOwner = owner.HasValue ? owner.Value : default(NetworkPlayer);
-        //stream.Serialize(ref pOwner);
-        //if (stream.isReading) owner = pOwner;
-
         Vector3 pPosition = stream.isWriting ? transform.position : Vector3.zero;
 
         bool wasJumping = activelyJumping;
 
         stream.Serialize(ref pPosition);
-        stream.Serialize(ref inputVelocity);
-        stream.Serialize(ref fallingVelocity);
-        stream.Serialize(ref activelyJumping);
-        stream.Serialize(ref recoilVelocity);
         stream.Serialize(ref playDashSound);
         stream.Serialize(ref playJumpSound);
         stream.Serialize(ref lookRotationEuler);
@@ -805,24 +869,36 @@ public class PlayerScript : MonoBehaviour
 
         if (stream.isReading)
         {
-                //characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
-            //Debug.Log("pPosition = " + pPosition + " / transform.position = " + transform.position);
-            if (lastNetworkFramePosition == pPosition)
-                transform.position = pPosition;
+            float elapsedTime = TimeSinceLastNetworkFrame;
+            AverageTimeBetweenNetworkFrames = Mathf.Lerp(AverageTimeBetweenNetworkFrames, elapsedTime,
+                1f - Mathf.Pow(0.1f, elapsedTime));
+            TimeSinceLastNetworkFrame = 0f;
+            PreviousNetworkPosition = NewestNetworkPosition;
+            NewestNetworkPosition = pPosition;
+            Vector3 positionDifference = pPosition - lastNetworkFramePosition;
+            ImpliedMovementVelocity = positionDifference / elapsedTime;
+            ImpliedInputVelocity = ImpliedMovementVelocity;
+            ImpliedInputVelocity.y = 0;
 
-            // TODO iposition null check nope
-            if (iPosition != null && !iPosition.Start(pPosition - transform.position))
-                transform.position = pPosition;
+            inputVelocity = ImpliedInputVelocity;
 
-            if (playDashSound && GlobalSoundsScript.soundEnabled) dashSound.Play();
+
+            if (playDashSound && GlobalSoundsScript.soundEnabled)
+            {
+                dashSound.Play();
+                Vector3 implied = ImpliedMovementVelocity.normalized;
+                // In case dash is performed while jumping straight up
+                if (Vector3.Dot(implied, Vector3.down) > 0.8f)
+                    RemoteDashVelocity = Vector3.up;
+                else
+                    RemoteDashVelocity = ImpliedMovementVelocity.normalized;
+                if (currentAnim == "jump")
+                    characterAnimation.Rewind("jump");
+                else characterAnimation.CrossFade(currentAnim = "jump", IdleTransitionFadeLength );
+            }
             if (playJumpSound && GlobalSoundsScript.soundEnabled) jumpSound.Play();
 
-            //bool isOverlappingGround = CheckOverlap(pPosition + new Vector3(0, -0.1f, 0));
-
             lastNetworkFramePosition = pPosition;
-
-            if (Possessor != null)
-                ScreenSpaceDebug.AddLineOnce(Possessor.Name + " jumping: " + activelyJumping);
 
             // Play jump animation if it seems necessary
             if (!wasJumping && activelyJumping && currentAnim != "jump")
@@ -1006,49 +1082,6 @@ public class PlayerScript : MonoBehaviour
                 StepSound.Play();
             });
         }
-    }
-}
-
-abstract class Interpolator<T>
-{
-    const float InterpolateOver = 1;
-
-    public T Delta { get; protected set; }
-
-    public abstract bool Start(T delta);
-    public abstract T Update();
-    public bool IsRunning { get; protected set; }
-
-    protected void UpdateInternal()
-    {
-        if (!IsRunning) return;
-        SinceStarted += Time.deltaTime;
-        if (SinceStarted >= InterpolationTime)
-            IsRunning = false;
-    }
-
-    protected float InterpolationTime
-    {
-        get { return (1.0f / Network.sendRate) * InterpolateOver; }
-    }
-    protected float SinceStarted { get; set; }
-}
-class VectorInterpolator : Interpolator<Vector3>
-{
-    public override bool Start(Vector3 delta)
-    {
-        IsRunning = !MathHelper.AlmostEquals(delta, Vector3.zero, 0.01f);
-        //if (IsRunning) Debug.Log("vector interpolator started, delta == " + delta);
-        SinceStarted = 0;
-        Delta = delta;
-        return IsRunning;
-    }
-    public override Vector3 Update()
-    {
-        UpdateInternal();
-        if (!IsRunning) return Vector3.zero;
-        //Debug.Log("Correcting for " + Delta + " with " + (Delta * Time.deltaTime / InterpolationTime));
-        return Delta * Time.deltaTime / InterpolationTime;
     }
 }
 

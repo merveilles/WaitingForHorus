@@ -49,6 +49,11 @@ public class Relay : MonoBehaviour
         get { return DevelopmentMode ? -1 : CurrentVersionID; }
     }
 
+    public static float TimeBetweenNetworkSends
+    {
+        get { return 1.0f / Network.sendRate; }
+    }
+
     public Server CurrentServer
     {
         get
@@ -110,6 +115,8 @@ public class Relay : MonoBehaviour
         { ShowOptions = false; };
         OptionsMenu.OnOptionsMenuWantsQuitGame += Application.Quit;
         OptionsMenu.OnOptionsMenuWantsGoToTitle += Network.Disconnect;
+
+        Network.sendRate = 60;
     }
 
     private string GetRandomMapName()

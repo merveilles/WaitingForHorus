@@ -132,6 +132,15 @@ public static class MathExts
         }
         newValue = currentValue * Quaternion.Euler(newVelocity * deltaTime);
     }
+
+    public static float LerpUnclamped (float from, float to, float value)
+    {
+		return (1.0f - value)*from + value*to;
+	}
+    public static Vector3 LerpUnclamped (Vector3 from, Vector3 to, float value)
+    {
+		return (1.0f - value)*from + value*to;
+	}
 }
 
 namespace Cancel.Interpolation
