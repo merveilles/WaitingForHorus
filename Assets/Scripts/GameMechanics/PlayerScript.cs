@@ -99,7 +99,6 @@ public class PlayerScript : MonoBehaviour
     }
 
     public MechaAnimationEvents AnimationEvents;
-    private bool WasMine;
 
     private Throttler<Action> FootstepThrottler;
 
@@ -241,8 +240,6 @@ public class PlayerScript : MonoBehaviour
         OtherPlayerVisibilityLayerMask =
             (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Default"));
 
-        WasMine = networkView.isMine;
-
         FootstepThrottler = new Throttler<Action>
         {
             MinimumTimeBetweenItems = 0.17f
@@ -254,12 +251,12 @@ public class PlayerScript : MonoBehaviour
         if (networkView.isMine)
         {
             gameObject.layer = LayerMask.NameToLayer( "LocalPlayer" );
-            AnimationEvents.OnStep += ReceiveStepEvent;
         }
         else
         {
             gameObject.layer = LayerMask.NameToLayer( "Player" );
         }
+        AnimationEvents.OnStep += ReceiveStepEvent;
 
         OnPlayerScriptSpawned(this);
 
@@ -917,10 +914,7 @@ public class PlayerScript : MonoBehaviour
         EnemiesTargetingUs.OnStoppedBeingLockedOnByEnemy -= ReceiveStoppedBeingLockedOnBy;
         EnemiesTargetingUs.Destroy();
 
-        if (WasMine)
-        {
-            AnimationEvents.OnStep -= ReceiveStepEvent;
-        }
+        AnimationEvents.OnStep -= ReceiveStepEvent;
 
         // TODO this belongs earlier in the chain of death-related stuff
         OnDeath();
