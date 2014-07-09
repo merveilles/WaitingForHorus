@@ -348,9 +348,13 @@ public class PlayerShootingScript : MonoBehaviour
 
                 data.TimeSinceLastLockSend += Time.deltaTime;
 
+                // Only lock on half as fast when through walls
+                bool canSee = playerScript.CanSeeOtherPlayer(ps);
+                float strengthAdjustment = canSee ? 1.0f : 0.5f;
+
                 // TODO lots of redundant stuff here
                 data.ScreenPosition = screenPos.XY();
-                data.LockStrength += Time.deltaTime;
+                data.LockStrength += Time.deltaTime * strengthAdjustment;
                 data.ClampStrength();
                 data.Found = true;
 				
