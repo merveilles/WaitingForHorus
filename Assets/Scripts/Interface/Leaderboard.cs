@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class Leaderboard
@@ -34,9 +35,16 @@ public class Leaderboard
                 fixedWidth = 80,
                 alignment = TextAnchor.MiddleLeft,
             };
+            PingBoxStyle = new GUIStyle(Skin.box)
+            {
+                fixedWidth = 53,
+                alignment = TextAnchor.MiddleLeft,
+            };
             NameTitleStyle = new GUIStyle(NameBoxStyle)
             {padding = ThinPadding};
             ScoreTitleStyle = new GUIStyle(ScoreBoxStyle)
+            {padding = ThinPadding};
+            PingTitleStyle = new GUIStyle(PingBoxStyle)
             {padding = ThinPadding};
         }
     }
@@ -47,6 +55,8 @@ public class Leaderboard
     private GUIStyle ScoreTitleStyle;
     private GUIStyle NameBoxStyle;
     private GUIStyle ScoreBoxStyle;
+    private GUIStyle PingTitleStyle;
+    private GUIStyle PingBoxStyle;
 
     public bool Show { get; set; }
 
@@ -115,6 +125,8 @@ public class Leaderboard
             GUILayout.Box("COMBATANT NAME", NameTitleStyle);
             GUILayout.Space(1);
             GUILayout.Box("SCORE", ScoreTitleStyle);
+            GUILayout.Space(1);
+            GUILayout.Box("PING", PingTitleStyle);
             GUILayout.EndHorizontal();
             for (int i = 0; i < CombatantsCache.Count; i++)
             {
@@ -123,6 +135,9 @@ public class Leaderboard
                 GUILayout.Box(presence.Name, NameBoxStyle);
                 GUILayout.Space(1);
                 GUILayout.Box(presence.Score.ToString(), ScoreBoxStyle);
+                GUILayout.Space(1);
+                string pingText = presence.Ping >= 0 ? presence.Ping.ToString("#.") : "";
+                GUILayout.Box(pingText, PingBoxStyle);
                 GUILayout.EndHorizontal();
             }
         }

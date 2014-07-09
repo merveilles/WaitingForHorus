@@ -40,6 +40,12 @@ public class PlayerPresence : MonoBehaviour
 
     private PlayerScript _Possession;
 
+    public float Ping
+    {
+        get { return _Ping; }
+        private set { _Ping = value; }
+    }
+
     public PlayerScript Possession
     {
         get
@@ -123,6 +129,7 @@ public class PlayerPresence : MonoBehaviour
 
 
     private bool _IsSpectating;
+    private float _Ping;
 
     public bool IsSpectating
     {
@@ -161,6 +168,7 @@ public class PlayerPresence : MonoBehaviour
         stream.Serialize(ref _Score);
 
         stream.Serialize(ref _IsSpectating);
+        stream.Serialize(ref _Ping);
 
         if (stream.isReading)
         {
@@ -308,6 +316,7 @@ public class PlayerPresence : MonoBehaviour
 
     public void Update()
     {
+        ScreenSpaceDebug.AddLineOnce(Name + " ping is " + Ping);
         if (networkView.isMine)
         {
             WeaponIndicatorScript.Instance.ShouldRender = Possession != null;
@@ -380,6 +389,8 @@ public class PlayerPresence : MonoBehaviour
             if (ShouldDisplayJoinPanel || Relay.Instance.ShowOptions || !Server.IsGameActive)
                 Screen.lockCursor = false;
 
+            // Update ping
+            Ping = Network.GetAveragePing(Server.networkView.owner);
         }
 
         if (Possession != null)
