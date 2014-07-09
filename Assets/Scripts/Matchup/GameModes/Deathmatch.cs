@@ -79,11 +79,11 @@ public class Deathmatch : GameMode
                 }
 
                 // End round if someone over score limit
-                if (ScoreLimit > 0 && leader.Score >= ScoreLimit)
+                if (ScoreLimit > 0 && leader.Score >= ScoreLimit && AnnouncedFirstKill)
                     EndRoundNow();
 
                 // Else announce score remaining if needed
-                else if (leader.Score > PeakScoreThisRound)
+                else if (leader.Score > PeakScoreThisRound && AnnouncedFirstKill)
                 {
                     int prevScore = PeakScoreThisRound;
                     PeakScoreThisRound = leader.Score;
