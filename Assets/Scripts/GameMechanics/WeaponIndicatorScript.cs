@@ -115,6 +115,53 @@ public class WeaponIndicatorScript : MonoBehaviour
         }
 
         // Targets
+
+	    {
+        GL.Color(new Color(0, 0, 0, 0.8f));
+        var edge = 20 * (Screen.height - 40) / 1500f;
+        var offsetSize = 5;
+        var spacing = 1.0f;
+        var diag = edge;
+
+        isReady = false;
+        foreach (var t in Targets)
+        {
+            var step = 1 -
+                       Easing.EaseIn(Mathf.Clamp01(t.SinceInCrosshair / PlayerShootingScript.AimingTime),
+                                     EasingType.Cubic);
+            isReady |= Mathf.Approximately(step, 0);
+
+            step *= offsetSize;
+
+            ssPos = t.ScreenPosition;
+
+            var p1o = step * new Vector2(-edge / 2f, -diag / 2f);
+            var p2o = step * new Vector2(edge / 2f, -diag / 2f);
+            var p3o = step * new Vector2(0, diag / 2f);
+
+            var p1 = ssPos + new Vector2(-edge / 2f, -diag / 2f);
+            var p2 = ssPos + new Vector2(edge / 2f, -diag / 2f);
+            var p3 = ssPos + new Vector2(0, diag / 2f);
+
+            GL.Vertex3(p1.x + p1o.x, p1.y + p1o.y, 0);
+            GL.Vertex3(p1.x + edge / 2f * spacing + p1o.x, p1.y + p1o.y, 0);
+            GL.Vertex3(p1.x + p1o.x, p1.y + p1o.y, 0);
+            GL.Vertex3(p1.x + edge / 4f * spacing + p1o.x, p1.y + edge / 2f * spacing + p1o.y, 0);
+
+            GL.Vertex3(p2.x + p2o.x, p2.y + p2o.y, 0);
+            GL.Vertex3(p2.x - edge / 2f * spacing + p2o.x, p2.y + p2o.y, 0);
+            GL.Vertex3(p2.x + p2o.x, p2.y + p2o.y, 0);
+            GL.Vertex3(p2.x - edge / 4f * spacing + p2o.x, p2.y + edge / 2f * spacing + p2o.y, 0);
+
+            GL.Vertex3(p3.x + p3o.x, p3.y + p3o.y, 0);
+            GL.Vertex3(p3.x - edge / 4f * spacing + p3o.x, p3.y - edge / 2f * spacing + p3o.y, 0);
+            GL.Vertex3(p3.x + p3o.x, p3.y + p3o.y, 0);
+            GL.Vertex3(p3.x + edge / 4f * spacing + p3o.x, p3.y - edge / 2f * spacing + p3o.y, 0);
+        }
+	    }
+
+	    {
+        // Targets
         GL.Color(new Color(1, 1, 1, 1));
         var edge = 20 * Screen.height / 1500f;
         var offsetSize = 5;
@@ -156,6 +203,7 @@ public class WeaponIndicatorScript : MonoBehaviour
             GL.Vertex3(p3.x + p3o.x, p3.y + p3o.y, 0);
             GL.Vertex3(p3.x + edge / 4f * spacing + p3o.x, p3.y - edge / 2f * spacing + p3o.y, 0);
         }
+	    }
 
         GL.End();
 
