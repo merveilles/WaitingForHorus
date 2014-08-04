@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class DayNightCycleScript : MonoBehaviour {
@@ -16,6 +17,7 @@ public class DayNightCycleScript : MonoBehaviour {
 	
 	public Material worldTexture;
     //private GameObject[] playerMaterials;
+	public Camera[] cameras;
 
     void RecapturePlayerMaterials()
     {
@@ -25,7 +27,8 @@ public class DayNightCycleScript : MonoBehaviour {
     public void Start()
     {	
         RecapturePlayerMaterials();
-	}
+	    cameras = FindObjectsOfType<Camera>().Where(x => x.gameObject.layer == 0).ToArray();
+    }
 
     public void OnPlayerConnected( )
     {
@@ -41,7 +44,8 @@ public class DayNightCycleScript : MonoBehaviour {
         RenderSettings.fogDensity = Mathf.Lerp( MinDensity, MaxDensity, lerp );
 		
 		// Fix Camera
-		Camera.main.backgroundColor = Color.Lerp(daylightCameraColor, nightlightCameraColor, lerp);
+		foreach (var camera in cameras)
+			camera.backgroundColor = Color.Lerp(daylightCameraColor, nightlightCameraColor, lerp);
 		
 		// Fix Texture
 	    var newColor = Color.Lerp(daylightMaterialColor, nightlightMaterialColor, lerp);

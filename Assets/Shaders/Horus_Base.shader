@@ -41,7 +41,7 @@ Shader "Horus_Base"
 			
 			float3 AvgLumin = float3( AvgLumR, AvgLumG, AvgLumB );
 			float3 brtColor = color * brt;
-			float3 intensity = float3( dot( brtColor, LumCoeff ) );
+			float3 intensity = float3( dot( brtColor, LumCoeff ).xxx );
 			float3 satColor = lerp( intensity, brtColor, sat );
 			float3 conColor = lerp( AvgLumin, satColor, con );
 			return conColor;
