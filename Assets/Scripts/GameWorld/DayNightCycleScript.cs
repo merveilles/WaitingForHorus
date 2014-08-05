@@ -17,7 +17,7 @@ public class DayNightCycleScript : MonoBehaviour {
 	
 	public Material worldTexture;
     //private GameObject[] playerMaterials;
-	public Camera[] cameras;
+	public OVRCameraController cameraController;
 
     void RecapturePlayerMaterials()
     {
@@ -27,7 +27,7 @@ public class DayNightCycleScript : MonoBehaviour {
     public void Start()
     {	
         RecapturePlayerMaterials();
-	    cameras = FindObjectsOfType<Camera>().Where(x => x.gameObject.layer == 0).ToArray();
+	    cameraController = FindObjectOfType<OVRCameraController>();
     }
 
     public void OnPlayerConnected( )
@@ -44,8 +44,7 @@ public class DayNightCycleScript : MonoBehaviour {
         RenderSettings.fogDensity = Mathf.Lerp( MinDensity, MaxDensity, lerp );
 		
 		// Fix Camera
-		foreach (var camera in cameras)
-			camera.backgroundColor = Color.Lerp(daylightCameraColor, nightlightCameraColor, lerp);
+		cameraController.BackgroundColor = Color.Lerp(daylightCameraColor, nightlightCameraColor, lerp);
 		
 		// Fix Texture
 	    var newColor = Color.Lerp(daylightMaterialColor, nightlightMaterialColor, lerp);
@@ -58,4 +57,16 @@ public class DayNightCycleScript : MonoBehaviour {
         //    player.renderer.material.color = new Color( newColor.r, newColor.g, newColor.b, c.a );
         //}
     }
+
+	void OnDestroy()
+	{
+		if (worldTexture != null)
+			worldTexture.color = daylightCameraColor;
+	}
+
+	void OnApplicationQuit()
+	{
+		if (worldTexture != null)
+			worldTexture.color = daylightCameraColor;
+	}
 }
