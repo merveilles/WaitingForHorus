@@ -273,7 +273,7 @@ public class PlayerScript : MonoBehaviour
         // FIXME dirty hack
         if (networkView.isMine)
         {
-            var indicator = Relay.Instance.MainCamera.GetComponent<WeaponIndicatorScript>();
+	        var indicator = WeaponIndicatorScript.Instance;
             if (indicator != null)
                 indicator.enabled = true;
         }
@@ -604,7 +604,7 @@ public class PlayerScript : MonoBehaviour
         // FIXME Hackity hack
         if (networkView.isMine)
         {
-            var indicator = Relay.Instance.MainCamera.GetComponent<WeaponIndicatorScript>();
+	        var indicator = WeaponIndicatorScript.Instance;
             indicator.HealthCapacity = HealthScript.maxHealth;
             indicator.ShieldCapacity = HealthScript.maxShield;
             indicator.HealthAvailable = HealthScript.Health;

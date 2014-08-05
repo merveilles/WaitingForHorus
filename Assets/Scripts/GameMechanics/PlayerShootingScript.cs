@@ -109,7 +109,7 @@ public class PlayerShootingScript : MonoBehaviour
     {
 		bulletsLeft = BurstCount;
         playerCamera = GetComponentInChildren<CameraScript>();
-        weaponIndicator = Camera.main.GetComponent<WeaponIndicatorScript>();
+	    weaponIndicator = WeaponIndicatorScript.Instance;
         targets = weaponIndicator.Targets;
         playerScript = GetComponent<PlayerScript>();
 

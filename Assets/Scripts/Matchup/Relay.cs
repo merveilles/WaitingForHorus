@@ -18,6 +18,7 @@ public class Relay : MonoBehaviour
     public GameObject MainCamera;
 
     public bool DevelopmentMode = false;
+	public bool AutoHost = false;
 
     private Server _CurrentServer;
 
@@ -228,14 +229,23 @@ public class Relay : MonoBehaviour
 
         if (CurrentServer == null)
         {
-            TimeUntilRefresh -= Time.deltaTime;
-            if (TimeUntilRefresh <= 0f)
-            {
-                TimeUntilRefresh += TimeBetweenRefreshes;
-                ExternalServerList.Refresh();
-            }
+	        if (AutoHost)
+	        {
+				if (RespawnZone.HasRespawnPoints)
+					Connect(RunMode.Server);
+	        }
+	        else
+	        {
 
-            OptionsMenu.ShouldDisplaySpectateButton = false;
+		        TimeUntilRefresh -= Time.deltaTime;
+		        if (TimeUntilRefresh <= 0f)
+		        {
+			        TimeUntilRefresh += TimeBetweenRefreshes;
+			        ExternalServerList.Refresh();
+		        }
+
+		        OptionsMenu.ShouldDisplaySpectateButton = false;
+	        }
         }
 
         var sb = new StringBuilder();

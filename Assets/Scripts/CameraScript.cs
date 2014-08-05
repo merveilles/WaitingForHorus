@@ -20,9 +20,10 @@ public class CameraScript : MonoBehaviour
 	bool aimingAtPlayer;
     public PlayerScript player;
 
-    Camera mainCamera;
+    OVRCameraController mainCamera;
+	GameObject orientationTracker;
 
-    public Camera CameraUsed { get { return mainCamera; } }
+	public OVRCameraController CameraUsed { get { return mainCamera; } }
 
     Quaternion actualCameraRotation;
 
@@ -166,6 +167,8 @@ public class CameraScript : MonoBehaviour
         if (HackDisableShadowsObjects == null)
             HackDisableShadowsObjects = new GameObject[0];
 
+	    orientationTracker = new GameObject();
+
         QueuedScreenRecoils = new Delayer<Vector3>();
 
         CosmeticSpring = new ThrottledRotationalSpring(Quaternion.identity);
@@ -219,7 +222,8 @@ public class CameraScript : MonoBehaviour
     {
         if(player.networkView.isMine)
         {
-            mainCamera = Camera.main;
+			mainCamera = FindObjectOfType<OVRCameraController>();
+	        mainCamera.FollowOrientation = orientationTracker.transform;
         }
         SmoothedCrosshairPosition = GetCrosshairPosition();
 
@@ -289,8 +293,9 @@ public class CameraScript : MonoBehaviour
         if (!mainCamera) return;
         if (IsExteriorView)
         {
-            mainCamera.cullingMask = InitialCameraCullingMask;
-            mainCamera.nearClipPlane = InitialCameraNearClipPlane;
+			foreach (var c in mainCamera.GetComponentsInChildren<Camera>())
+				c.cullingMask = InitialCameraCullingMask;
+            mainCamera.NearClipPlane = InitialCameraNearClipPlane;
 
             foreach (var hackDisableShadowsObject in HackDisableShadowsObjects)
             {
@@ -299,8 +304,9 @@ public class CameraScript : MonoBehaviour
         }
         else
         {
-            mainCamera.cullingMask = InitialCameraCullingMask ^ (1 << LayerMask.NameToLayer("LocalPlayer"));
-            mainCamera.nearClipPlane = InitialCameraNearClipPlane / 2.0f;
+			foreach (var c in mainCamera.GetComponentsInChildren<Camera>())
+				c.cullingMask = InitialCameraCullingMask ^ (1 << LayerMask.NameToLayer("LocalPlayer"));
+            mainCamera.NearClipPlane = InitialCameraNearClipPlane / 2.0f;
 
             foreach (var hackDisableShadowsObject in HackDisableShadowsObjects)
             {
@@ -330,7 +336,7 @@ public class CameraScript : MonoBehaviour
         if (player.Paused && mainCamera != null)
         {
             mainCamera.transform.localPosition = new Vector3(-85.77416f, 32.8305f, -69.88891f);
-            mainCamera.transform.localRotation = Quaternion.Euler(16.48679f, 21.83607f, 6.487632f);
+            orientationTracker.transform.localRotation = Quaternion.Euler(16.48679f, 21.83607f, 6.487632f);
             return;
         }
 
@@ -380,8 +386,10 @@ public class CameraScript : MonoBehaviour
                 1.0f - Mathf.Pow(0.000001f, Time.deltaTime));
             if (mainCamera != null)
             {
-                if (!Mathf.Approximately(mainCamera.fieldOfView, SmoothedFieldOfView))
-                    mainCamera.fieldOfView = SmoothedFieldOfView;
+	            float curFOV = 0;
+	            mainCamera.GetVerticalFOV(ref curFOV);
+                if (!Mathf.Approximately(curFOV, SmoothedFieldOfView))
+                    mainCamera.SetVerticalFOV(SmoothedFieldOfView);
             }
 
             // Update and smooth view position
@@ -415,7 +423,7 @@ public class CameraScript : MonoBehaviour
             if (mainCamera != null)
             {
                 mainCamera.transform.position = cameraPosition;
-                mainCamera.transform.rotation =
+                orientationTracker.transform.rotation =
                     actualCameraRotation *
                     usedViewBob *
                     CosmeticSpring.CurrentValue;
@@ -425,8 +433,7 @@ public class CameraScript : MonoBehaviour
             var rawCrosshairPosition = GetCrosshairPosition();
             SmoothedCrosshairPosition = Vector2.Lerp(SmoothedCrosshairPosition, rawCrosshairPosition,
                 1.0f - Mathf.Pow(CrosshairSmoothingSpeed, -CrosshairSmoothingSpeed * Time.deltaTime));
-            Camera.main.GetComponent<WeaponIndicatorScript>()
-                .CrosshairPosition = SmoothedCrosshairPosition;
+			WeaponIndicatorScript.Instance.CrosshairPosition = SmoothedCrosshairPosition;
         }
     }
 	

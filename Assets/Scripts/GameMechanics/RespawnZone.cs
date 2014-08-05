@@ -24,4 +24,9 @@ public class RespawnZone : MonoBehaviour
     {
         return respawnZones[RandomIndex(respawnZones.Count)].transform.position;
     }
+
+	public static bool HasRespawnPoints
+	{
+		get { return respawnZones.Count > 0; }
+	}
 }
