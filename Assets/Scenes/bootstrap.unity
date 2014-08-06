@@ -404,7 +404,7 @@ MonoBehaviour:
   verticalFOV: 90
   CameraTextureScale: 1
   scaleRenderTarget: 1
-  CameraRootPosition: {x: 0, y: 0, z: -5}
+  CameraRootPosition: {x: 0, y: 0, z: 0}
   NeckPosition: {x: 0, y: 0, z: 0}
   UsePlayerEyeHeight: 0
   FollowOrientation: {fileID: 0}
@@ -426,7 +426,7 @@ Transform:
   m_GameObject: {fileID: 1069469268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: .421587944, z: -.78629458}
-  m_LocalScale: {x: 20, y: 20, z: 20}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children:
   - {fileID: 2011038271}
   - {fileID: 1806431523}
@@ -879,16 +879,15 @@ Transform:
 --- !u!114 &1806431524
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400002, guid: 126d619cf4daa52469682f85c1378b4a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1832532135}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1806431522}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 467c1e6bb64de664bbba9800bb135078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NeckPosition: {x: 0, y: .600000024, z: 0}
+  NeckPosition: {x: 0, y: 0, z: 0}
   EyePosition: {x: 0, y: .150000006, z: .0900000036}
   RightEye: 1
 --- !u!81 &1806431525
@@ -985,15 +984,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
       propertyPath: m_LocalScale.x
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
       propertyPath: m_LocalScale.y
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
       propertyPath: m_LocalScale.z
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 11400010, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
       propertyPath: farClipPlane
@@ -1013,9 +1012,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400010, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
       propertyPath: CameraRootPosition.z
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 11400006, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
+    - {fileID: 11400002, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 126d619cf4daa52469682f85c1378b4a, type: 2}
   m_RootGameObject: {fileID: 1069469268}
   m_IsPrefabParent: 0
@@ -1204,8 +1205,8 @@ GameObject:
   - 4: {fileID: 2011038271}
   - 20: {fileID: 2011038274}
   - 124: {fileID: 2011038273}
-  - 114: {fileID: 2011038272}
   - 114: {fileID: 2011038275}
+  - 114: {fileID: 2011038272}
   m_Layer: 0
   m_Name: CameraLeft
   m_TagString: MainCamera
@@ -1228,16 +1229,15 @@ Transform:
 --- !u!114 &2011038272
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400006, guid: 126d619cf4daa52469682f85c1378b4a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1832532135}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2011038270}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 467c1e6bb64de664bbba9800bb135078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NeckPosition: {x: 0, y: .600000024, z: 0}
+  NeckPosition: {x: 0, y: 0, z: 0}
   EyePosition: {x: 0, y: .150000006, z: .0900000036}
   RightEye: 0
 --- !u!124 &2011038273

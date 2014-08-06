@@ -224,6 +224,7 @@ public class CameraScript : MonoBehaviour
         {
 			mainCamera = FindObjectOfType<OVRCameraController>();
 	        mainCamera.FollowOrientation = orientationTracker.transform;
+	        SmoothedFieldOfView = SmoothedBaseFieldOfView = mainCamera.VerticalFOV;
         }
         SmoothedCrosshairPosition = GetCrosshairPosition();
 
@@ -270,6 +271,9 @@ public class CameraScript : MonoBehaviour
                 player.Possessor.WantsExteriorView = IsExteriorView;
             }
         }
+
+		if (Input.GetKeyDown("p"))
+			OVRDevice.ResetOrientation();
 
         // Prevent crazy values
         BaseFieldOfView = Mathf.Clamp(BaseFieldOfView, MinimumFieldOfView, MaximumFieldOfView);
@@ -384,15 +388,13 @@ public class CameraScript : MonoBehaviour
             // Interpolate field of view, set on main camera if necessary
             SmoothedFieldOfView = Mathf.Lerp(SmoothedFieldOfView, DesiredFieldOfView,
                 1.0f - Mathf.Pow(0.000001f, Time.deltaTime));
-            if (mainCamera != null)
-            {
-	            float curFOV = 0;
-	            mainCamera.GetVerticalFOV(ref curFOV);
-                if (!Mathf.Approximately(curFOV, SmoothedFieldOfView))
-                    mainCamera.SetVerticalFOV(SmoothedFieldOfView);
-            }
+	        if (mainCamera != null)
+	        {
+				if (!Mathf.Approximately(mainCamera.VerticalFOV, SmoothedFieldOfView))
+					mainCamera.VerticalFOV = SmoothedFieldOfView;
+	        }
 
-            // Update and smooth view position
+	        // Update and smooth view position
             SmoothedViewOffset = Vector3.Lerp(SmoothedViewOffset, DesiredViewOffset,
                 1.0f - Mathf.Pow(0.00001f, Time.deltaTime));
             transform.localPosition = SmoothedViewOffset;
