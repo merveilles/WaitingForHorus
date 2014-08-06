@@ -75,7 +75,7 @@ public class OVRCameraController : MonoBehaviour
 		set
 		{
 			ipd = value;
-			UpdateDistortionDirtyFlag = true;
+			UpdateCamerasDirtyFlag = true;
 		}
 	}
 	[SerializeField]
@@ -90,7 +90,7 @@ public class OVRCameraController : MonoBehaviour
 		set
 		{
 			verticalFOV = Mathf.Clamp(value, 40.0f, 170.0f);
-			UpdateDistortionDirtyFlag = true;
+			UpdateCamerasDirtyFlag = true;
 		}
 	}
 	[SerializeField]
@@ -381,7 +381,7 @@ public class OVRCameraController : MonoBehaviour
 
 		// Projection Matrix
 		Matrix4x4 camMat = Matrix4x4.identity;
-		OVRDevice.GetCameraProjection(cam.EyeId, NearClipPlane, FarClipPlane, ref camMat);
+		OVRDevice.GetCameraProjection(cam.EyeId, NearClipPlane, FarClipPlane, camera.fieldOfView, camera.aspect, ref camMat);
 		camera.projectionMatrix = camMat;
 		
 		// Set camera variables that pertain to the neck and eye position
