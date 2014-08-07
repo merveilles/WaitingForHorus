@@ -224,7 +224,7 @@ public class CameraScript : MonoBehaviour
         {
 			mainCamera = FindObjectOfType<OVRCameraController>();
 	        mainCamera.FollowOrientation = orientationTracker.transform;
-	        SmoothedFieldOfView = SmoothedBaseFieldOfView = mainCamera.VerticalFOV;
+			SmoothedFieldOfView = SmoothedBaseFieldOfView = _BaseFieldOfView = mainCamera.VerticalFOV;
         }
         SmoothedCrosshairPosition = GetCrosshairPosition();
 

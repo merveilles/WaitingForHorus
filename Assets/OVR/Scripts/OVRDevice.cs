@@ -340,19 +340,22 @@ public class OVRDevice : MonoBehaviour
 	/// <param name="nearClip">Near Clip Plane of the camera.</param>
 	/// <param name="farClip">Far Clip Plane of the camera.</param>
 	/// <param name="mat">The generated camera projection matrix.</param>
-	public static bool GetCameraProjection(int eyeId, float nearClip, float farClip, float vFOV, float aspect, ref Matrix4x4 mat)
+	public static bool GetCameraProjection(int eyeId, float nearClip, float farClip, float vFOV, ref Matrix4x4 mat)
 	{
         if (HMD == null || !SupportedPlatform)
             return false;
 
+		var defaultFov = HMD.GetDesc().DefaultEyeFov[eyeId];
+		var leftRatio = defaultFov.LeftTan / defaultFov.UpTan;
+		var rightRatio = defaultFov.RightTan / defaultFov.UpTan;
+
 		float tanHalfVerticalFov = Mathf.Tan(Mathf.Deg2Rad * vFOV / 2);
-		float tanHalfHorizontalFov = Mathf.Tan(Mathf.Deg2Rad * vFOV / 2 * aspect);
 		var fov = new ovrFovPort
 		{
 			DownTan = tanHalfVerticalFov,
 			UpTan = tanHalfVerticalFov,
-			LeftTan = tanHalfHorizontalFov,
-			RightTan = tanHalfHorizontalFov
+			LeftTan = tanHalfVerticalFov * leftRatio,
+			RightTan = tanHalfVerticalFov * rightRatio
 		};
 		mat = Hmd.GetProjection(fov, nearClip, farClip, true).ToMatrix4x4();
 		

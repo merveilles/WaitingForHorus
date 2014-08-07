@@ -381,7 +381,7 @@ public class OVRCameraController : MonoBehaviour
 
 		// Projection Matrix
 		Matrix4x4 camMat = Matrix4x4.identity;
-		OVRDevice.GetCameraProjection(cam.EyeId, NearClipPlane, FarClipPlane, camera.fieldOfView, camera.aspect, ref camMat);
+		OVRDevice.GetCameraProjection(cam.EyeId, NearClipPlane, FarClipPlane, camera.fieldOfView, ref camMat);
 		camera.projectionMatrix = camMat;
 		
 		// Set camera variables that pertain to the neck and eye position
