@@ -1,0 +1,73 @@
+fileFormatVersion: 2
+guid: 19e04774549234e00a3bb0c7ad5c46d5
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Tube
+    100002: Cylinder_Boole_1
+    100004: //RootNode
+    100006: Cube-Tube_1-Cube
+    400000: Tube
+    400002: Cylinder_Boole_1
+    400004: //RootNode
+    400006: Cube-Tube_1-Cube
+    2300000: Tube
+    2300002: Cylinder_Boole_1
+    2300004: Cube-Tube_1-Cube
+    3300000: Tube
+    3300002: Cylinder_Boole_1
+    3300004: Cube-Tube_1-Cube
+    4300000: Cube-Tube_1-Cube
+    4300002: Cylinder_Boole_1
+    4300004: Tube
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 0
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

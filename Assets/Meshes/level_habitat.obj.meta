@@ -1,0 +1,132 @@
+fileFormatVersion: 2
+guid: 4ff48b4b0d42b4f00904d45dd1ea072f
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Habitat_Cube_11 Cube_121
+    100002: Habitat_Cube_11
+    100004: Habitat_Cube_10 Cube_12
+    100006: Habitat_Cube_10
+    100008: Habitat_Cube_1
+    100010: Habitat_Cube
+    100012: //RootNode
+    100014: Habitat_Cube_7
+    100016: Habitat_Cube_6
+    100018: Habitat_Cube_5
+    100020: Habitat_Cube_4
+    100022: Habitat_Cube_3
+    100024: Habitat_Cube_2
+    400000: Habitat_Cube_11 Cube_121
+    400002: Habitat_Cube_11
+    400004: Habitat_Cube_10 Cube_12
+    400006: Habitat_Cube_10
+    400008: Habitat_Cube_1
+    400010: Habitat_Cube
+    400012: //RootNode
+    400014: Habitat_Cube_7
+    400016: Habitat_Cube_6
+    400018: Habitat_Cube_5
+    400020: Habitat_Cube_4
+    400022: Habitat_Cube_3
+    400024: Habitat_Cube_2
+    2300000: Habitat_Cube_11 Cube_121
+    2300002: Habitat_Cube_11
+    2300004: Habitat_Cube_10 Cube_12
+    2300006: Habitat_Cube_10
+    2300008: Habitat_Cube_1
+    2300010: Habitat_Cube
+    2300012: Habitat_Cube_7
+    2300014: Habitat_Cube_6
+    2300016: Habitat_Cube_5
+    2300018: Habitat_Cube_4
+    2300020: Habitat_Cube_3
+    2300022: Habitat_Cube_2
+    3300000: Habitat_Cube_11 Cube_121
+    3300002: Habitat_Cube_11
+    3300004: Habitat_Cube_10 Cube_12
+    3300006: Habitat_Cube_10
+    3300008: Habitat_Cube_1
+    3300010: Habitat_Cube
+    3300012: Habitat_Cube_7
+    3300014: Habitat_Cube_6
+    3300016: Habitat_Cube_5
+    3300018: Habitat_Cube_4
+    3300020: Habitat_Cube_3
+    3300022: Habitat_Cube_2
+    4300000: Habitat_Cube
+    4300002: Habitat_Cube_1
+    4300004: Habitat_Cube_10
+    4300006: Habitat_Cube_10 Cube_12
+    4300008: Habitat_Cube_11
+    4300010: Habitat_Cube_11 Cube_121
+    4300012: Habitat_Cube_2
+    4300014: Habitat_Cube_3
+    4300016: Habitat_Cube_4
+    4300018: Habitat_Cube_5
+    4300020: Habitat_Cube_6
+    4300022: Habitat_Cube_7
+    6400000: Habitat_Cube
+    6400002: Habitat_Cube_1
+    6400004: Habitat_Cube_10
+    6400006: Habitat_Cube_10 Cube_12
+    6400008: Habitat_Cube_11
+    6400010: Habitat_Cube_11 Cube_121
+    6400012: Habitat_Cube_2
+    6400014: Habitat_Cube_3
+    6400016: Habitat_Cube_4
+    6400018: Habitat_Cube_5
+    6400020: Habitat_Cube_6
+    6400022: Habitat_Cube_7
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 1
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  userData: 

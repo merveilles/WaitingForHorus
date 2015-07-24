@@ -1,0 +1,103 @@
+fileFormatVersion: 2
+guid: 073174eae357e443c9d4e7b8c7fb52f1
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Terrain
+    100002: Water
+    100004: Hall
+    100006: Dome
+    100008: LandPad
+    100010: MiniHall
+    100024: //RootNode
+    400000: Terrain
+    400002: Water
+    400004: Hall
+    400006: Dome
+    400008: LandPad
+    400010: MiniHall
+    400024: //RootNode
+    2300000: Terrain
+    2300002: Water
+    2300004: Hall
+    2300006: Dome
+    2300008: LandPad
+    2300010: MiniHall
+    3300000: Terrain
+    3300002: Water
+    3300004: Hall
+    3300006: Dome
+    3300008: LandPad
+    3300010: MiniHall
+    4300000: Boole-Cylinder
+    4300002: Boole_2-Cube
+    4300004: Boole_2-Cube1
+    4300006: Boole_2-Cube_1
+    4300008: Boole_2-Cube_2
+    4300010: Cube_Landscape
+    4300012: Disc
+    4300014: Sphere
+    4300016: Tube
+    4300018: Tube_1
+    4300020: Tube_2-Cylinder-Cube
+    4300022: Tube_2-Cylinder-Cube_1
+    4300024: Dome
+    4300026: Hall
+    4300028: Terrain
+    4300030: Water
+    4300032: Terrain-Cube
+    4300034: MiniHall
+    4300036: Water_WaterSave
+    4300038: Boole_1
+    4300040: LandPad
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 0
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

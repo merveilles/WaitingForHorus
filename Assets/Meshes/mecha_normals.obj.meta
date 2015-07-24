@@ -1,0 +1,153 @@
+fileFormatVersion: 2
+guid: b63a7ff239e634df3a1b60bf9f33b871
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: MECHA_Shoulder_FR Leg_FR
+    100002: MECHA_Shoulder_FR
+    100004: MECHA_Shoulder_FL Leg_FL
+    100006: MECHA_Shoulder_FL
+    100008: MECHA_Shoulder_BR Leg_BR
+    100010: MECHA_Shoulder_BR
+    100012: MECHA_Shoulder_BL Leg_BL
+    100014: MECHA_Shoulder_BL
+    100016: MECHA_Shield
+    100018: MECHA_Pipes_21 Tunes
+    100020: MECHA_Pipes_21
+    100022: MECHA_Pipes_2
+    100024: MECHA_Head Headpiece2
+    100026: MECHA_Head Headpiece1
+    100028: MECHA_Head
+    100030: MECHA_CellCarrier_Mini cells_mini
+    100032: MECHA_CellCarrier_Mini
+    100034: MECHA_CellCarrier_C cell_C
+    100036: MECHA_CellCarrier_C
+    100038: //RootNode
+    400000: MECHA_Shoulder_FR Leg_FR
+    400002: MECHA_Shoulder_FR
+    400004: MECHA_Shoulder_FL Leg_FL
+    400006: MECHA_Shoulder_FL
+    400008: MECHA_Shoulder_BR Leg_BR
+    400010: MECHA_Shoulder_BR
+    400012: MECHA_Shoulder_BL Leg_BL
+    400014: MECHA_Shoulder_BL
+    400016: MECHA_Shield
+    400018: MECHA_Pipes_21 Tunes
+    400020: MECHA_Pipes_21
+    400022: MECHA_Pipes_2
+    400024: MECHA_Head Headpiece2
+    400026: MECHA_Head Headpiece1
+    400028: MECHA_Head
+    400030: MECHA_CellCarrier_Mini cells_mini
+    400032: MECHA_CellCarrier_Mini
+    400034: MECHA_CellCarrier_C cell_C
+    400036: MECHA_CellCarrier_C
+    400038: //RootNode
+    2300000: MECHA_Shoulder_FR Leg_FR
+    2300002: MECHA_Shoulder_FR
+    2300004: MECHA_Shoulder_FL Leg_FL
+    2300006: MECHA_Shoulder_FL
+    2300008: MECHA_Shoulder_BR Leg_BR
+    2300010: MECHA_Shoulder_BR
+    2300012: MECHA_Shoulder_BL Leg_BL
+    2300014: MECHA_Shoulder_BL
+    2300016: MECHA_Shield
+    2300018: MECHA_Pipes_21 Tunes
+    2300020: MECHA_Pipes_21
+    2300022: MECHA_Pipes_2
+    2300024: MECHA_Head Headpiece2
+    2300026: MECHA_Head Headpiece1
+    2300028: MECHA_Head
+    2300030: MECHA_CellCarrier_Mini cells_mini
+    2300032: MECHA_CellCarrier_Mini
+    2300034: MECHA_CellCarrier_C cell_C
+    2300036: MECHA_CellCarrier_C
+    3300000: MECHA_Shoulder_FR Leg_FR
+    3300002: MECHA_Shoulder_FR
+    3300004: MECHA_Shoulder_FL Leg_FL
+    3300006: MECHA_Shoulder_FL
+    3300008: MECHA_Shoulder_BR Leg_BR
+    3300010: MECHA_Shoulder_BR
+    3300012: MECHA_Shoulder_BL Leg_BL
+    3300014: MECHA_Shoulder_BL
+    3300016: MECHA_Shield
+    3300018: MECHA_Pipes_21 Tunes
+    3300020: MECHA_Pipes_21
+    3300022: MECHA_Pipes_2
+    3300024: MECHA_Head Headpiece2
+    3300026: MECHA_Head Headpiece1
+    3300028: MECHA_Head
+    3300030: MECHA_CellCarrier_Mini cells_mini
+    3300032: MECHA_CellCarrier_Mini
+    3300034: MECHA_CellCarrier_C cell_C
+    3300036: MECHA_CellCarrier_C
+    4300000: MECHA_CellCarrier_C
+    4300002: MECHA_CellCarrier_C cell_C
+    4300004: MECHA_CellCarrier_Mini
+    4300006: MECHA_CellCarrier_Mini cells_mini
+    4300008: MECHA_Head
+    4300010: MECHA_Head Headpiece1
+    4300012: MECHA_Head Headpiece2
+    4300014: MECHA_Pipes_2
+    4300016: MECHA_Pipes_21
+    4300018: MECHA_Pipes_21 Tunes
+    4300020: MECHA_Shield
+    4300022: MECHA_Shoulder_BL
+    4300024: MECHA_Shoulder_BL Leg_BL
+    4300026: MECHA_Shoulder_BR
+    4300028: MECHA_Shoulder_BR Leg_BR
+    4300030: MECHA_Shoulder_FL
+    4300032: MECHA_Shoulder_FL Leg_FL
+    4300034: MECHA_Shoulder_FR
+    4300036: MECHA_Shoulder_FR Leg_FR
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 38
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

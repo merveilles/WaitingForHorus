@@ -1,0 +1,78 @@
+fileFormatVersion: 2
+guid: b6620e09e5c7443e1893049ff1e6a8f3
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Tube_1
+    100002: Lathe_NURBS
+    100004: Boole_2
+    100006: Boole
+    100008: //RootNode
+    400000: Tube_1
+    400002: Lathe_NURBS
+    400004: Boole_2
+    400006: Boole
+    400008: //RootNode
+    2300000: Tube_1
+    2300002: Lathe_NURBS
+    2300004: Boole_2
+    2300006: Boole
+    3300000: Tube_1
+    3300002: Lathe_NURBS
+    3300004: Boole_2
+    3300006: Boole
+    4300000: Boole
+    4300002: Boole_2
+    4300004: Lathe_NURBS
+    4300006: Tube_1
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 35
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

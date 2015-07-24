@@ -1,0 +1,76 @@
+fileFormatVersion: 2
+guid: 8313e18ae64bb46d6adb28e2cb61ff2c
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Handle2
+    100002: //RootNode
+    100004: Handle1
+    100006: charger
+    400000: Handle2
+    400002: //RootNode
+    400004: Handle1
+    400006: charger
+    2300000: Handle2
+    2300002: //RootNode
+    2300004: Handle1
+    2300006: charger
+    3300000: Handle2
+    3300002: //RootNode
+    3300004: Handle1
+    3300006: charger
+    4300000: Canon
+    4300002: charger
+    4300004: Handle2
+    4300006: Handle1
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 1
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 0
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 2
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 
