@@ -3092,17 +3092,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BurstCount: 6
-  ShotCooldown: .0450000018
-  ReloadTime: .287499994
-  BurstSpread: .324999988
-  ShotgunSpreadBase: .649999976
+  ShotCooldown: .0472499989
+  ReloadTime: .5
+  BurstSpread: .300000012
+  ShotgunSpreadBase: .6875
   ShotgunSpread: 12.5
-  ShotgunBulletSpeedMultiplier: .400000006
+  ShotgunBulletSpeedMultiplier: .5
   ShotgunHomingSpeed: .5
   CannonChargeTime: .5
-  HeatAccuracyFudge: 8
+  HeatAccuracyFudge: 12.75
+  HeatCooldownScale: .524999976
+  HeatPerShot: .112499997
   HeatAccuracyZoomedMultiplier: .5
-  ShotCooldownZoomedMultiplier: 2
+  ShotCooldownZoomedMultiplier: 1.5
   reloadSound: {fileID: 8200000}
   targetSound: {fileID: 8200002}
   pepperGunSound: {fileID: 8200018}

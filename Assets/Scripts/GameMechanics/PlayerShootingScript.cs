@@ -20,6 +20,8 @@ public class PlayerShootingScript : uLink.MonoBehaviour
     public float ShotgunHomingSpeed = 0.675f;
     public float CannonChargeTime = 0.5f;
     public float HeatAccuracyFudge = 0.5f;
+    public float HeatCooldownScale = 0.5f;
+    public float HeatPerShot = 0.1f;
 
     // Amount to modify heat by when when a shot is fired and we're zoomed in
 	// (instead of at regular zoom) (we want accuracy to decrease more slowly
@@ -175,6 +177,7 @@ public class PlayerShootingScript : uLink.MonoBehaviour
         var desiredGunRotation = Quaternion.Euler(gunRotationAngles.x, gunRotationAngles.y, 0);
         gun.transform.rotation = Quaternion.Slerp(gun.transform.rotation, desiredGunRotation,
             1.0f - Mathf.Pow(GunRotationSmoothingSpeed, -GunRotationSmoothingSpeed * Time.deltaTime));
+        var doReload = false;
 
         // Update local position of barrel from recoil
         foreach (var impulse in GunRecoilThrotter.Update())
@@ -200,7 +203,7 @@ public class PlayerShootingScript : uLink.MonoBehaviour
         if ( networkView.isMine && playerScript.lockMouse && !playerScript.Paused )
 		{
 			cooldownLeft = Mathf.Max( 0, cooldownLeft - Time.deltaTime );
-			heat = Mathf.Clamp01( heat - Time.deltaTime );
+            heat = Mathf.Clamp01( heat - ( Time.deltaTime * HeatCooldownScale ) );
             weaponIndicator.CooldownStep = 1 - Math.Min( Math.Max(cooldownLeft - ShotCooldown, 0) / ReloadTime, 1 );
 
 		    if( cooldownLeft <= Mathf.Epsilon )
@@ -278,31 +281,26 @@ public class PlayerShootingScript : uLink.MonoBehaviour
 
                     DoShot( BurstSpread );
                     cooldownLeft += CurrentShotCooldown;
-                    if( bulletsLeft <= 0 )
-                        cooldownLeft += ReloadTime;
                 }
 
-                if (bulletsLeft != BurstCount && Input.GetButton("Reload"))
+                if( Input.GetButton( "Reload" ) || bulletsLeft <= 0 )
                 {
-                    bulletsLeft = BurstCount;
-					
-					if( GlobalSoundsScript.soundEnabled )
-                    	reloadSound.Play();
-					
-                    AddReloadImpulse();
-                    cooldownLeft += ReloadTime;
+                    doReload = true;
                 }
             }
 
-            if( bulletsLeft <= 0 ) 
+            if( Input.GetButtonUp( "Fire" ) )
+                doReload = true;
+
+            if( doReload && bulletsLeft != BurstCount ) 
             {
+                cooldownLeft += ReloadTime * (float)( BurstCount - bulletsLeft ) / (float)BurstCount;
                 bulletsLeft = BurstCount;
 				if( GlobalSoundsScript.soundEnabled )
                 	reloadSound.Play();
                 AddReloadImpulse();
             }
 
-			
             TestScreenSpaceLockTargets();
             CheckTargets();
 
@@ -414,7 +412,7 @@ public class PlayerShootingScript : uLink.MonoBehaviour
     {
         bulletsLeft -= 1;
         spread += heat * CurrentHeatAccuracyFudge;
-		heat += 0.25f;
+        heat += HeatPerShot;
 
         float roll = Random.value * 360;
         Quaternion spreadRotation =

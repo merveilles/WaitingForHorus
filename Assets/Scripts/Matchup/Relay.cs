@@ -36,7 +36,7 @@ public class Relay : uLink.MonoBehaviour
     {
         "pi_mar",
         "pi_set",
-        //"pi_ven",
+        "pi_ven",
         "pi_rah",
         "pi_bas"
     };
